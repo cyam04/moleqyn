@@ -1,0 +1,2045 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Moleqyn – Next-Gen Virtual Chemistry Lab." />
+  <title>Moleqyn | Virtual Chemistry Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#00f0ff" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    /* Default: SOFT BLACK THEME */
+    :root {
+      --bg-base: #0f172a;
+      --glass-bg: rgba(30, 41, 59, 0.5);
+      --nav-bg-scrolled: rgba(15, 23, 42, 0.98);
+      --glass-border: rgba(255, 255, 255, 0.15);
+      --primary: #00f0ff;
+      --primary-glow: rgba(0, 240, 255, 0.4);
+      --secondary: #ff00aa;
+      --text-main: #ffffff;
+      --text-muted: #cbd5e1;
+      --card-hover-shadow: rgba(0, 240, 255, 0.2);
+      --hero-gradient: #1e293b;
+
+      /* Dropdown Colors */
+      --drop-bg: rgba(15, 23, 42, 0.95);
+      --drop-hover: rgba(255, 255, 255, 0.05);
+      --drop-icon-bg: rgba(255, 255, 255, 0.03);
+    }
+
+    /* DAY THEME */
+    :root[data-theme="day"] {
+      --bg-base: #f0f4f8;
+      --glass-bg: rgba(255, 255, 255, 0.7);
+      --nav-bg-scrolled: rgba(240, 244, 248, 0.98);
+      --glass-border: rgba(0, 0, 0, 0.15);
+      --primary: #0284c7;
+      --primary-glow: rgba(2, 132, 199, 0.4);
+      --secondary: #db2777;
+      --text-main: #0f172a;
+      --text-muted: #334155;
+      --card-hover-shadow: rgba(2, 132, 199, 0.25);
+      --hero-gradient: #e2e8f0;
+
+      /* Dropdown Colors Day */
+      --drop-bg: rgba(255, 255, 255, 0.98);
+      --drop-hover: rgba(0, 0, 0, 0.04);
+      --drop-icon-bg: rgba(0, 0, 0, 0.03);
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-base);
+      background-image: radial-gradient(circle at center 30vh, var(--hero-gradient) 0%, transparent 70%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      overflow-x: hidden;
+      transition: background-color 0.4s ease, color 0.4s ease;
+    }
+
+    #particle-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      opacity: 0.85;
+      pointer-events: none;
+    }
+
+    .content-wrapper {
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Scroll Reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(60px);
+      transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+    }
+
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .delay-1 {
+      transition-delay: 0.1s;
+    }
+
+    .delay-2 {
+      transition-delay: 0.2s;
+    }
+
+    .delay-3 {
+      transition-delay: 0.3s;
+    }
+
+    /* Navbar */
+    .navbar {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 95%;
+      max-width: 1200px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 25px;
+      border-radius: 40px;
+      border: 1px solid var(--glass-border);
+      z-index: 1000;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      transition: all 0.4s ease;
+    }
+
+    .navbar.scrolled {
+      top: 10px;
+      background: var(--nav-bg-scrolled);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+      border-color: var(--primary);
+    }
+
+    .brand {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-main);
+      text-decoration: none;
+    }
+
+    .brand span {
+      color: var(--primary);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      align-items: center;
+    }
+
+    .nav-links>li>a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 10px 0;
+    }
+
+    .nav-links>li>a:hover {
+      color: var(--primary);
+      text-shadow: 0 0 10px var(--primary-glow);
+    }
+
+    /* =========================================
+       PREMIUM FULL DROPDOWN MENU
+       ========================================= */
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-content {
+      visibility: hidden;
+      opacity: 0;
+      position: absolute;
+      top: 100%;
+      left: -80px;
+      background: var(--drop-bg);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      min-width: 400px;
+      border-radius: 16px;
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      padding: 15px;
+      transform: translateY(15px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      z-index: 2000;
+      max-height: 75vh;
+      overflow-y: auto;
+      /* Agar screen choti ho to scroll aayega */
+    }
+
+    /* Custom Scrollbar for Dropdown */
+    .dropdown-content::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .dropdown-content::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .dropdown-content::-webkit-scrollbar-thumb {
+      background: var(--glass-border);
+      border-radius: 10px;
+    }
+
+    .dropdown-content::-webkit-scrollbar-thumb:hover {
+      background: var(--primary);
+    }
+
+    :root[data-theme="day"] .dropdown-content {
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+    }
+
+    .dropdown:hover .dropdown-content {
+      visibility: visible;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .drop-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+      padding: 12px 15px;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: 0.2s;
+      cursor: pointer;
+    }
+
+    .drop-item:hover {
+      background: var(--drop-hover);
+      transform: translateX(5px);
+    }
+
+    .drop-icon {
+      font-size: 1.3rem;
+      background: var(--drop-icon-bg);
+      color: var(--primary);
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border: 1px solid var(--glass-border);
+    }
+
+    .drop-text {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .drop-title {
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .drop-sub {
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      line-height: 1.4;
+    }
+
+    /* Badges */
+    .badge {
+      font-size: 0.6rem;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-new {
+      background: rgba(0, 255, 102, 0.1);
+      color: #00ff66;
+      border: 1px solid rgba(0, 255, 102, 0.2);
+    }
+
+    .badge-soon {
+      background: rgba(255, 170, 0, 0.1);
+      color: #ffaa00;
+      border: 1px solid rgba(255, 170, 0, 0.2);
+    }
+
+    /* Theme Toggle */
+    .theme-toggle {
+      background: rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--glass-border);
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: 0.3s;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      outline: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-main);
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.1) rotate(15deg);
+      background: var(--primary-glow);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    :root[data-theme="day"] .theme-toggle {
+      background: rgba(255, 255, 255, 0.8);
+    }
+
+    /* Layout Components */
+    .hero {
+      min-height: 92vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 120px 5% 60px 5%;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    .hero-container {
+      display: grid;
+      grid-template-columns: 1.15fr 0.95fr;
+      gap: 50px;
+      align-items: center;
+      width: 100%;
+    }
+
+    @media (max-width: 992px) {
+      .hero-container {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+    }
+
+    .hero-content {
+      max-width: 680px;
+      text-align: left;
+    }
+
+    @media (max-width: 992px) {
+      .hero-content {
+        text-align: center;
+        margin: 0 auto;
+      }
+    }
+
+    .hero-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 2.5px;
+      color: var(--primary);
+      margin-bottom: 20px;
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      padding: 6px 14px;
+      border-radius: 30px;
+      font-weight: 700;
+    }
+
+    .hero-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 3.8rem;
+      font-weight: 700;
+      line-height: 1.15;
+      margin: 0 0 20px 0;
+      letter-spacing: -1px;
+    }
+
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2.6rem;
+      }
+    }
+
+    .hero-title .highlight {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+    }
+
+    .dynamic-cycle {
+      color: var(--primary);
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 2px;
+      transition: opacity 0.3s ease;
+    }
+
+    .hero-subtitle {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      margin-bottom: 35px;
+      line-height: 1.75;
+      font-weight: 400;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    @media (max-width: 992px) {
+      .hero-actions {
+        justify-content: center;
+      }
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 992px) {
+      .hero-badges {
+        justify-content: center;
+      }
+    }
+
+    .hero-badge-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--glass-border);
+      padding: 5px 12px;
+      border-radius: 20px;
+    }
+
+    /* =========================================
+       HERO LIVE MICRO-LAB WIDGET
+       ========================================= */
+    .hero-lab-widget {
+      background: var(--glass-bg);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s ease;
+    }
+
+    .hero-lab-widget:hover {
+      border-color: rgba(0, 240, 255, 0.4);
+      box-shadow: 0 30px 70px rgba(0, 240, 255, 0.15);
+    }
+
+    .widget-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--glass-border);
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+    }
+
+    .widget-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #38ef7d;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: #38ef7d;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #38ef7d;
+      animation: pulseDot 1.8s infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .widget-mode-pills {
+      display: flex;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 3px;
+      border-radius: 20px;
+      gap: 3px;
+    }
+
+    .mode-pill {
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .mode-pill.active {
+      background: var(--primary);
+      color: #030a16;
+      box-shadow: 0 2px 8px var(--primary-glow);
+    }
+
+    .widget-viewport {
+      position: relative;
+      background: rgba(4, 10, 22, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      height: 240px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+
+    #microLabCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .widget-overlay-data {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(10, 20, 38, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--primary);
+      backdrop-filter: blur(10px);
+      pointer-events: none;
+    }
+
+    .widget-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .control-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .control-label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .control-val {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-main);
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .micro-slider {
+      flex: 1;
+      accent-color: var(--primary);
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .widget-quick-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .substance-btn {
+      flex: 1;
+      padding: 7px 10px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--glass-border);
+      color: var(--text-main);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .substance-btn:hover, .substance-btn.active {
+      background: rgba(0, 240, 255, 0.15);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .widget-footer {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .widget-footer span {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .widget-footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: 0.2s;
+    }
+
+    .widget-footer a:hover {
+      text-shadow: 0 0 10px var(--primary-glow);
+      transform: translateX(3px);
+    }
+
+    .btn {
+      padding: 14px 32px;
+      font-size: 1rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #030a16;
+      box-shadow: 0 5px 20px var(--primary-glow);
+      border: none;
+      font-weight: 700;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 30px var(--primary-glow);
+    }
+
+    .btn-glow {
+      background: var(--glass-bg);
+      color: var(--text-main);
+      border: 1px solid var(--glass-border);
+    }
+
+    .btn-glow:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      transform: translateY(-4px);
+    }
+
+    .stats-container {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 30px;
+      max-width: 1000px;
+      margin: -50px auto 80px auto;
+      background: var(--glass-bg);
+      backdrop-filter: blur(15px);
+      padding: 40px;
+      border-radius: 20px;
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+      transition: all 0.4s ease;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 3.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .stat-label {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      margin-top: 5px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+    }
+
+    .section-padding {
+      padding: 80px 5% 120px 5%;
+    }
+
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.8rem;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .section-subtitle {
+      text-align: center;
+      color: var(--text-muted);
+      max-width: 650px;
+      margin: 0 auto 60px auto;
+      line-height: 1.7;
+      font-size: 1.1rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .module-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 50px 35px;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+    }
+
+    .module-card:hover {
+      transform: translateY(-10px);
+      border-color: var(--primary);
+      box-shadow: 0 15px 40px var(--card-hover-shadow);
+    }
+
+    .card-icon {
+      font-size: 2.5rem;
+      margin-bottom: 25px;
+    }
+
+    .card-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.4rem;
+      margin: 0 0 15px 0;
+    }
+
+    .card-desc {
+      color: var(--text-muted);
+      line-height: 1.7;
+      font-size: 1rem;
+    }
+
+    /* =========================================
+       GRADE / CURRICULUM PATHWAYS
+       ========================================= */
+    .tracks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 25px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .track-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 35px 30px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.35s ease;
+    }
+
+    .track-card:hover {
+      transform: translateY(-8px);
+      border-color: var(--primary);
+      box-shadow: 0 20px 45px var(--card-hover-shadow);
+    }
+
+    .track-badge {
+      display: inline-block;
+      align-self: flex-start;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 15px;
+    }
+
+    .track-badge-middle {
+      background: rgba(56, 239, 125, 0.15);
+      color: #38ef7d;
+      border: 1px solid rgba(56, 239, 125, 0.3);
+    }
+
+    .track-badge-secondary {
+      background: rgba(0, 240, 255, 0.15);
+      color: var(--primary);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+    }
+
+    .track-badge-senior {
+      background: rgba(255, 0, 204, 0.15);
+      color: var(--secondary);
+      border: 1px solid rgba(255, 0, 204, 0.3);
+    }
+
+    .track-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.5rem;
+      margin: 0 0 10px 0;
+      color: var(--text-main);
+    }
+
+    .track-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .track-topics {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 25px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .track-topics li {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .track-topics li span.bullet {
+      color: var(--primary);
+      font-weight: bold;
+    }
+
+    .track-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 0.92rem;
+      text-decoration: none;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--glass-border);
+      color: var(--text-main);
+      transition: 0.25s;
+    }
+
+    .track-btn:hover {
+      background: var(--primary);
+      color: #030a16;
+      border-color: var(--primary);
+      box-shadow: 0 5px 15px var(--primary-glow);
+    }
+
+    /* =========================================
+       WHY VIRTUAL LAB (COMPARISON)
+       ========================================= */
+    .compare-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 768px) {
+      .compare-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .compare-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 35px 30px;
+    }
+
+    .compare-card.positive {
+      border-color: rgba(0, 240, 255, 0.35);
+      background: radial-gradient(circle at 100% 0%, rgba(0, 240, 255, 0.08), var(--glass-bg));
+    }
+
+    .compare-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .compare-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.3rem;
+      margin: 0;
+    }
+
+    .compare-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .compare-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .compare-list li strong {
+      color: var(--text-main);
+    }
+
+    /* =========================================
+       FAQ ACCORDION
+       ========================================= */
+    .faq-container {
+      max-width: 850px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .faq-item {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .faq-item:hover {
+      border-color: rgba(0, 240, 255, 0.3);
+    }
+
+    .faq-question {
+      padding: 20px 24px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: none;
+      color: var(--text-main);
+    }
+
+    .faq-icon {
+      font-size: 1.2rem;
+      transition: transform 0.3s ease;
+      color: var(--primary);
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, padding 0.35s ease;
+      padding: 0 24px;
+      color: var(--text-muted);
+      font-size: 0.96rem;
+      line-height: 1.7;
+    }
+
+    .faq-item.active .faq-answer {
+      max-height: 250px;
+      padding: 0 24px 22px 24px;
+    }
+
+    .faq-item.active .faq-icon {
+      transform: rotate(45deg);
+    }
+
+    /* =========================================
+       CTA BANNER
+       ========================================= */
+    .cta-banner {
+      max-width: 1100px;
+      margin: 80px auto 40px auto;
+      background: radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.18), rgba(8, 18, 35, 0.85));
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      border-radius: 24px;
+      padding: 60px 40px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.5rem;
+      margin: 0 0 15px 0;
+      color: var(--text-main);
+    }
+
+    .cta-desc {
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto 30px auto;
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+
+    /* =========================================
+       MULTI-COLUMN COMPREHENSIVE FOOTER
+       ========================================= */
+    footer.rich-footer {
+      border-top: 1px solid var(--glass-border);
+      background: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      padding: 70px 5% 35px 5%;
+      color: var(--text-muted);
+      font-family: 'Inter', sans-serif;
+      margin-top: 60px;
+      position: relative;
+    }
+
+    :root[data-theme="day"] footer.rich-footer {
+      background: rgba(240, 244, 248, 0.6);
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.8fr 1fr 1fr 1.2fr;
+      gap: 40px;
+      max-width: 1200px;
+      margin: 0 auto 50px auto;
+    }
+
+    @media (max-width: 900px) {
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .footer-brand h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.8rem;
+      color: var(--text-main);
+      margin: 0 0 15px 0;
+    }
+
+    .footer-brand h3 span {
+      color: var(--primary);
+    }
+
+    .footer-brand p {
+      line-height: 1.7;
+      font-size: 0.92rem;
+      margin-bottom: 20px;
+      max-width: 340px;
+      color: var(--text-muted);
+    }
+
+    .footer-col h4 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.1rem;
+      color: var(--text-main);
+      margin: 0 0 18px 0;
+      letter-spacing: 0.5px;
+    }
+
+    .footer-links {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-links li a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .footer-links li a:hover {
+      color: var(--primary);
+      transform: translateX(4px);
+    }
+
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 0 auto;
+      border-top: 1px solid var(--glass-border);
+      padding-top: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .footer-bottom-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .footer-bottom-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: 0.2s;
+    }
+
+    .footer-bottom-links a:hover {
+      color: var(--primary);
+    }
+  </style>
+</head>
+
+<body>
+
+  <canvas id="particle-canvas"></canvas>
+
+  <nav class="navbar" id="mainNav">
+    <a href="index.html" class="brand">⚗️ Mole<span>qyn</span></a>
+
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+
+      <!-- =========================================
+           FULL 9-ITEM DROPDOWN MENU
+           ========================================= -->
+      <li class="dropdown">
+        <a href="simulators.html" class="dropbtn" style="cursor: pointer;">Products <span
+            style="font-size: 0.6rem; margin-left: 2px;">▼</span></a>
+
+        <div class="dropdown-content">
+          <!-- 1. Virtual Labs -->
+          <a href="simulators.html" class="drop-item">
+            <div class="drop-icon">🧪</div>
+            <div class="drop-text">
+              <div class="drop-title">Virtual Labs</div>
+              <div class="drop-sub">Chemistry & Science </div>
+            </div>
+          </a>
+
+          <!-- 3. Experiment Library -->
+          <a href="experiments.html" class="drop-item">
+            <div class="drop-icon">📔</div>
+            <div class="drop-text">
+              <div class="drop-title">Experiment Library</div>
+              <div class="drop-sub">Guided experiments across topics</div>
+            </div>
+          </a>
+
+          <!-- 4. AP Chemistry / Board Prep -->
+          <a href="board-prep.html" class="drop-item">
+            <div class="drop-icon">⚛️</div>
+            <div class="drop-text">
+              <div class="drop-title">AP Chemistry &amp; Board Prep</div>
+              <div class="drop-sub">Exam prep, FRQs &amp; practice</div>
+            </div>
+          </a>
+
+          <!-- 5. Junior Scientist -->
+          <a href="junior.html" class="drop-item">
+            <div class="drop-icon">🎓</div>
+            <div class="drop-text">
+              <div class="drop-title">Junior Scientist</div>
+              <div class="drop-sub">Ages 5–14 missions &amp; badges</div>
+            </div>
+          </a>
+
+          <!-- 6. Periodic Table -->
+          <a href="periodic-table.html" class="drop-item">
+            <div class="drop-icon">🔢</div>
+            <div class="drop-text">
+              <div class="drop-title">Periodic Table</div>
+              <div class="drop-sub">Interactive element explorer</div>
+            </div>
+          </a>
+
+          <!-- 7. AI Tutor -->
+          <a href="ai-tutor.html" class="drop-item">
+            <div class="drop-icon">🤖</div>
+            <div class="drop-text">
+              <div class="drop-title">AI Tutor</div>
+              <div class="drop-sub">Ask Moleqyn AI anything</div>
+            </div>
+          </a>
+
+          <!-- 8. Reaction Platform -->
+          <a href="reaction.html" class="drop-item">
+            <div class="drop-icon">⚗️</div>
+            <div class="drop-text">
+              <div class="drop-title">Moleqyn Reaction Balancer <span class="badge badge-new">NEW</span></div>
+              <div class="drop-sub">Understand &amp; balance every chemical reaction</div>
+            </div>
+          </a>
+
+          <!-- 9. VR Lab -->
+          <a href="vr-lab.html" class="drop-item">
+            <div class="drop-icon">🥽</div>
+            <div class="drop-text">
+              <div class="drop-title">Moleqyn VR Lab <span class="badge badge-new">NEW</span></div>
+              <div class="drop-sub">Immersive 3D science labs in your browser</div>
+            </div>
+          </a>
+
+          <!-- 10. IUPAC Nomenclature -->
+          <a href="nomenclature.html" class="drop-item">
+            <div class="drop-icon">🏷️</div>
+            <div class="drop-text">
+              <div class="drop-title">IUPAC Nomenclature Engine <span class="badge badge-new">NEW</span></div>
+              <div class="drop-sub">Organic naming, priority rules &amp; builder</div>
+            </div>
+          </a>
+        </div>
+      </li>
+      <!-- DROPDOWN END -->
+
+      <li><a href="learn.html">Learn</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="about.html">About us</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="login.html" class="btn btn-glow" style="padding: 8px 16px; margin-right: 10px; font-size: 0.9rem;">Login</a></li>
+      <li><button class="theme-toggle" id="themeBtn" title="Switch Theme">☀️</button></li>
+    </ul>
+  </nav>
+
+  <!-- Content Wrapper -->
+  <div class="content-wrapper">
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-container">
+        
+        <!-- Left Column: Copy & CTAs -->
+        <div class="hero-content reveal active">
+          <span class="hero-label">⚡ Pure Chemistry Digital Laboratory</span>
+          <h1 class="hero-title">
+            Master Chemistry Through<br />
+            <span class="highlight">Interactive Simulation</span><br />
+            <span style="font-size: 0.6em; font-weight: 500; color: var(--text-muted); display: block; margin-top: 6px;">
+              Directly visualize <span id="heroCycleText" class="dynamic-cycle">Atomic Orbitals &amp; Quantum Shells</span>
+            </span>
+          </h1>
+          <p class="hero-subtitle">
+            NCERT, CBSE &amp; ICSE aligned interactive virtual experiments for Class 6 to 12. Adjust thermodynamics, test chemical reactions, and explore 118 elements safely in real-time.
+          </p>
+          <div class="hero-actions">
+            <a href="simulators.html" class="btn btn-primary">
+              Launch Virtual Labs ➔
+            </a>
+            <a href="sim_atomverse.html" class="btn btn-glow">
+              Explore AtomVerse 3D
+            </a>
+          </div>
+          <div class="hero-badges">
+            <div class="hero-badge-item">✅ 100% Free &amp; Open Access</div>
+            <div class="hero-badge-item">🔬 Zero Hazard Practical Labs</div>
+            <div class="hero-badge-item">🎯 NCERT Classes 6–12</div>
+          </div>
+        </div>
+
+        <!-- Right Column: Live Interactive Micro-Lab Widget -->
+        <div class="hero-lab-widget reveal delay-1">
+          <div class="widget-header">
+            <div class="widget-status">
+              <span class="status-dot"></span>
+              <span>Live Engine Preview</span>
+            </div>
+            <div class="widget-mode-pills">
+              <button class="mode-pill active" id="btnModeStates" onclick="setMicroMode('states')">Phases</button>
+              <button class="mode-pill" id="btnModeBohr" onclick="setMicroMode('bohr')">Bohr Model</button>
+            </div>
+          </div>
+
+          <div class="widget-viewport">
+            <canvas id="microLabCanvas"></canvas>
+            <div class="widget-overlay-data" id="microDataOverlay">Temp: 300 K • Phase: Liquid</div>
+          </div>
+
+          <div class="widget-controls" id="widgetControls">
+            <!-- Dynamic Controls for States Mode -->
+            <div id="statesControls">
+              <div class="control-row">
+                <span class="control-label">🔥 Thermal Energy:</span>
+                <input type="range" id="tempSlider" class="micro-slider" min="50" max="600" value="300" oninput="updateMicroTemp(this.value)">
+                <span class="control-val" id="tempVal">300 K</span>
+              </div>
+              <div class="widget-quick-actions">
+                <button class="substance-btn active" onclick="setMicroSubstance('water', this)">H₂O (Water)</button>
+                <button class="substance-btn" onclick="setMicroSubstance('neon', this)">Ne (Noble Gas)</button>
+                <button class="substance-btn" onclick="setMicroSubstance('iron', this)">Fe (Metal)</button>
+              </div>
+            </div>
+
+            <!-- Dynamic Controls for Bohr Mode -->
+            <div id="bohrControls" style="display: none;">
+              <div class="control-row">
+                <span class="control-label">⚛️ Select Element:</span>
+                <div class="widget-quick-actions" style="flex: 1;">
+                  <button class="substance-btn active" onclick="setMicroElement(1, this)">H (1)</button>
+                  <button class="substance-btn" onclick="setMicroElement(6, this)">C (6)</button>
+                  <button class="substance-btn" onclick="setMicroElement(11, this)">Na (11)</button>
+                  <button class="substance-btn" onclick="setMicroElement(17, this)">Cl (17)</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="widget-footer">
+            <span>Powered by Moleqyn Canvas Engine</span>
+            <a href="simulators.html">Launch Full Lab ➔</a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <div class="stats-container reveal">
+      <div class="stat-item">
+        <div class="stat-num">400+</div>
+        <div class="stat-label">Active Students</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">6 to 12</div>
+        <div class="stat-label">Classes Covered</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">50+</div>
+        <div class="stat-label">Virtual Chemicals</div>
+      </div>
+    </div>
+
+    <!-- Lab Modules -->
+    <section id="explore" class="section-padding">
+      <h2 class="section-title reveal">Explore Core Modules</h2>
+      <p class="section-subtitle reveal">Everything you need to master chemistry in one digital ecosystem.</p>
+
+      <div class="grid">
+        <a href="simulators.html" class="module-card reveal delay-1">
+          <div class="card-icon">⚛️</div>
+          <h3 class="card-title">Particle Engine Simulator</h3>
+          <p class="card-desc">Interact with substances. Adjust thermodynamics in real-time and observe state changes at
+            a molecular level.</p>
+        </a>
+        <a href="experiments.html" class="module-card reveal delay-2">
+          <div class="card-icon">🔬</div>
+          <h3 class="card-title">Guided Practical Labs</h3>
+          <p class="card-desc">Step-by-step virtual procedures. Perform complex chemistry practicals with zero safety
+            risks.</p>
+        </a>
+        <a href="sim_atomverse.html" class="module-card reveal delay-3" style="border-color: rgba(0, 240, 255, 0.35); background: radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.1), var(--glass-bg));">
+          <div class="card-icon">🌌</div>
+          <h3 class="card-title">AtomVerse 3D Quantum Lab</h3>
+          <p class="card-desc">118 elements, Bohr models, 3D s/p/d/f orbitals, isotopes, quantum numbers, emission spectra and Hund/Pauli practice.</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- 1. Grade-Wise Curriculum Tracks -->
+    <section class="section-padding" style="padding-top: 20px;">
+      <h2 class="section-title reveal">Structured Chemistry Pathways</h2>
+      <p class="section-subtitle reveal">Tailored learning tracks aligned with CBSE, ICSE, and new NCERT Curiosity frameworks.</p>
+
+      <div class="tracks-grid">
+        <!-- Middle Stage Track -->
+        <div class="track-card reveal delay-1">
+          <span class="track-badge track-badge-middle">Classes 6 to 8 • Foundation</span>
+          <h3 class="track-title">Curiosity Science &amp; Matter</h3>
+          <p class="track-desc">Hands-on visual intuition of matter, mixtures, changes, and everyday acids &amp; bases without heavy equations.</p>
+          <ul class="track-topics">
+            <li><span class="bullet">✓</span> Class 6: Sorting &amp; Nature of Materials</li>
+            <li><span class="bullet">✓</span> Class 7: Curiosity Metals &amp; Non-metals</li>
+            <li><span class="bullet">✓</span> Class 7: Acids, Bases and Natural Indicators</li>
+            <li><span class="bullet">✓</span> Class 8: Combustion, Flame &amp; Fuel Efficiency</li>
+          </ul>
+          <a href="learn.html" class="track-btn">Explore Middle Labs ➔</a>
+        </div>
+
+        <!-- Secondary Stage Track -->
+        <div class="track-card reveal delay-2">
+          <span class="track-badge track-badge-secondary">Classes 9 &amp; 10 • Board Prep</span>
+          <h3 class="track-title">Core Chemistry &amp; Reactions</h3>
+          <p class="track-desc">Master stoichiometry, atomic structure, periodic classification, chemical reactions and carbon chemistry.</p>
+          <ul class="track-topics">
+            <li><span class="bullet">✓</span> Class 9: States of Matter &amp; Molecular Motion</li>
+            <li><span class="bullet">✓</span> Class 9: Atoms, Molecules &amp; Rutherford Model</li>
+            <li><span class="bullet">✓</span> Class 10: Chemical Equations &amp; Reaction Balancer</li>
+            <li><span class="bullet">✓</span> Class 10: Metals, Extraction &amp; Carbon Allotropes</li>
+          </ul>
+          <a href="learn.html" class="track-btn">Explore Board Labs ➔</a>
+        </div>
+
+        <!-- Senior Secondary Track -->
+        <div class="track-card reveal delay-3">
+          <span class="track-badge track-badge-senior">Classes 11 &amp; 12 • JEE &amp; NEET</span>
+          <h3 class="track-title">Advanced Physical &amp; Quantum</h3>
+          <p class="track-desc">Quantum mechanical model, 3D orbitals, thermodynamics, chemical kinetics, solutions, and titration curves.</p>
+          <ul class="track-topics">
+            <li><span class="bullet">✓</span> Class 11: AtomVerse 3D s/p/d/f Orbitals</li>
+            <li><span class="bullet">✓</span> Class 11: Gas Laws &amp; PV=nRT Particle Engine</li>
+            <li><span class="bullet">✓</span> Class 11: Chemical Bonding &amp; Molecular Geometry</li>
+            <li><span class="bullet">✓</span> Class 12: Electrochemistry &amp; Volumetric Titration</li>
+          </ul>
+          <a href="sim_atomverse.html" class="track-btn">Launch Quantum Engine ➔</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Why Virtual Lab? Comparison Section -->
+    <section class="section-padding" style="padding-top: 10px;">
+      <h2 class="section-title reveal">Why Moleqyn Virtual Laboratory?</h2>
+      <p class="section-subtitle reveal">Reinventing science education by removing physical constraints and hazards.</p>
+
+      <div class="compare-container">
+        <!-- Traditional Physical Lab -->
+        <div class="compare-card reveal delay-1">
+          <div class="compare-header">
+            <span style="font-size: 1.6rem;">🏫</span>
+            <h3 class="compare-title">Traditional School Lab</h3>
+          </div>
+          <ul class="compare-list">
+            <li>
+              <span>⚠️</span>
+              <div><strong>Safety Hazards:</strong> Risk of chemical spills, acid burns, and broken glassware during titrations.</div>
+            </li>
+            <li>
+              <span>⏳</span>
+              <div><strong>Time &amp; Access Constraints:</strong> Limited to 45-minute practical sessions once a week.</div>
+            </li>
+            <li>
+              <span>👁️</span>
+              <div><strong>Subatomic reactions invisible:</strong> Students see color changes but cannot observe electrons, bonds, or orbitals.</div>
+            </li>
+            <li>
+              <span>📉</span>
+              <div><strong>No Undo or Re-runs:</strong> Single experimental mistake wastes chemicals and requires full restart.</div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Moleqyn Digital Lab -->
+        <div class="compare-card positive reveal delay-2">
+          <div class="compare-header">
+            <span style="font-size: 1.6rem;">⚗️</span>
+            <h3 class="compare-title" style="color: var(--primary);">Moleqyn Interactive Ecosystem</h3>
+          </div>
+          <ul class="compare-list">
+            <li>
+              <span style="color: #38ef7d;">✅</span>
+              <div><strong>100% Zero-Risk Practical Learning:</strong> Run complex exothermic reactions and toxic tests with total safety.</div>
+            </li>
+            <li>
+              <span style="color: #38ef7d;">✅</span>
+              <div><strong>24/7 Unlimited Self-Paced Experiments:</strong> Practice titrations, gas laws, and equations as many times as needed.</div>
+            </li>
+            <li>
+              <span style="color: #38ef7d;">✅</span>
+              <div><strong>Subatomic Visualization:</strong> Watch electrons jump energy levels, bonds form, and orbitals spin in 3D.</div>
+            </li>
+            <li>
+              <span style="color: #38ef7d;">✅</span>
+              <div><strong>Instant Thermodynamic Feedback:</strong> Live pH meters, temperature sliders, pressure gauges, and colorimetric indicators.</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Frequently Asked Questions (Accordion) -->
+    <section class="section-padding" style="padding-top: 10px;">
+      <h2 class="section-title reveal">Frequently Asked Questions</h2>
+      <p class="section-subtitle reveal">Everything you need to know about using Moleqyn for study, boards, and school teaching.</p>
+
+      <div class="faq-container reveal">
+        <div class="faq-item active">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            <span>Is Moleqyn aligned with the latest NCERT and CBSE syllabus?</span>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            Yes, 100%! Moleqyn covers pure Chemistry curriculum from Class 6 up to Class 12, including the new "Curiosity" framework for middle school and rationalized CBSE/ICSE board syllabus. All chapters link directly to interactive simulations and syllabus notes.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            <span>Can I use Moleqyn on mobile devices and tablets?</span>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            Moleqyn is designed with responsive HTML5 Canvas technology and works smoothly on desktop, tablets, smart boards, and mobile browsers without requiring any plugin or heavy installation.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            <span>What makes AtomVerse different from standard periodic tables?</span>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            AtomVerse models all 118 elements with live revolving Bohr orbital shells, interactive 3D s/p/d/f orbitals, quantum number breakdowns (n, l, m, s), isotopic abundance charts, Hund/Pauli electronic spin practice, and emission spectral lines.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            <span>Is Moleqyn completely free for students and schools?</span>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            Yes. Moleqyn is built to provide high-quality interactive science education to every student without financial barriers or subscription paywalls.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Final CTA Banner -->
+    <div class="cta-banner reveal">
+      <h2 class="cta-title">Start Your Chemistry Experiment Today</h2>
+      <p class="cta-desc">Launch safe, interactive virtual simulations and master atomic models, titrations, and chemical reactions.</p>
+      <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+        <a href="simulators.html" class="btn btn-primary" style="padding: 16px 36px; font-size: 1.05rem;">
+          Open Virtual Lab ➔
+        </a>
+        <a href="learn.html" class="btn btn-glow" style="padding: 16px 36px; font-size: 1.05rem;">
+          Browse Chapters (Class 6–12)
+        </a>
+      </div>
+    </div>
+
+    <!-- 5. Multi-Column Comprehensive Footer -->
+    <footer class="rich-footer">
+      <div class="footer-grid">
+        <!-- Brand Info -->
+        <div class="footer-brand">
+          <h3>⚗️ Mole<span>qyn</span></h3>
+          <p>
+            The dedicated interactive chemistry laboratory ecosystem designed for students, teachers, and competitive exam aspirants across CBSE, ICSE, and State Boards.
+          </p>
+          <div style="display: flex; gap: 10px; font-size: 0.85rem; color: var(--primary);">
+            <span>Pure Chemistry Focus</span> • <span>Class 6 to 12</span> • <span>Free &amp; Open</span>
+          </div>
+        </div>
+
+        <!-- Column 1: Labs & Simulators -->
+        <div class="footer-col">
+          <h4>Virtual Labs</h4>
+          <ul class="footer-links">
+            <li><a href="sim_atomverse.html">⚛️ AtomVerse 3D</a></li>
+            <li><a href="sim_particle.html">❄️ States of Matter</a></li>
+            <li><a href="sim_titration.html">🧪 Acid-Base Titration</a></li>
+            <li><a href="sim_gaslaws.html">🎈 Gas Laws Engine</a></li>
+            <li><a href="sim_bonding.html">🔗 Chemical Bonding</a></li>
+            <li><a href="sim_electro.html">🔋 Electrochemistry</a></li>
+          </ul>
+        </div>
+
+        <!-- Column 2: Tools & Study -->
+        <div class="footer-col">
+          <h4>Tools &amp; Study</h4>
+          <ul class="footer-links">
+            <li><a href="periodic-table.html">🔢 118 Periodic Table</a></li>
+            <li><a href="reaction.html">⚖️ Reaction Balancer</a></li>
+            <li><a href="learn.html">📚 NCERT Class 6–12 Notes</a></li>
+            <li><a href="experiments.html">🔬 Guided Practicals</a></li>
+            <li><a href="quiz.html">🎯 Concept Quizzes</a></li>
+            <li><a href="ai-tutor.html">🤖 AI Chemistry Tutor</a></li>
+          </ul>
+        </div>
+
+        <!-- Column 3: Platform & Portal -->
+        <div class="footer-col">
+          <h4>Platform</h4>
+          <ul class="footer-links">
+            <li><a href="about.html">About Moleqyn</a></li>
+            <li><a href="dashboard.html">Student Portal</a></li>
+            <li><a href="login.html">Login / Register</a></li>
+            <li><a href="resources.html">Teacher &amp; Lab Resources</a></li>
+            <li><a href="contact.html">Contact &amp; Support</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Footer Bottom Bar -->
+      <div class="footer-bottom">
+        <div>
+          © 2026 Moleqyn Interactive. Developed for the love of Chemistry &amp; Pure Science.
+        </div>
+        <div class="footer-bottom-links">
+          <a href="learn.html">Curriculum</a>
+          <a href="simulators.html">All Simulators</a>
+          <a href="about.html">Mission</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Javascripts -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const themeBtn = document.getElementById('themeBtn');
+      themeBtn.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        if (currentTheme === 'day') {
+          document.documentElement.removeAttribute('data-theme');
+          themeBtn.innerText = '☀️';
+        } else {
+          document.documentElement.setAttribute('data-theme', 'day');
+          themeBtn.innerText = '🌙';
+        }
+      });
+
+      const nav = document.getElementById('mainNav');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+          nav.classList.add('scrolled');
+        } else {
+          nav.classList.remove('scrolled');
+        }
+      });
+
+      function reveal() {
+        var reveals = document.querySelectorAll(".reveal");
+        for (var i = 0; i < reveals.length; i++) {
+          var windowHeight = window.innerHeight;
+          var elementTop = reveals[i].getBoundingClientRect().top;
+          var elementVisible = 100;
+          if (elementTop < windowHeight - elementVisible) {
+            reveals[i].classList.add("active");
+          }
+        }
+      }
+      window.addEventListener("scroll", reveal); reveal();
+    });
+
+    // FAQ Accordion Toggle
+    function toggleFaq(headerElem) {
+      const parent = headerElem.parentElement;
+      const allItems = document.querySelectorAll('.faq-item');
+      allItems.forEach(item => {
+        if (item !== parent) item.classList.remove('active');
+      });
+      parent.classList.toggle('active');
+    }
+  </script>
+
+  <!-- Background Canvas Animation -->
+  <script>
+    const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d');
+    let particles = []; let sparks = []; let mouse = { x: null, y: null, radius: 150 };
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resize); resize();
+    window.addEventListener('mousemove', function (event) { mouse.x = event.x; mouse.y = event.y; });
+    window.addEventListener('mouseout', function () { mouse.x = null; mouse.y = null; });
+    window.addEventListener('click', function (event) { for (let i = 0; i < 20; i++) { sparks.push(new Spark(event.x, event.y)); } });
+    const ELEMENT_TYPES = [{ color: '#00f0ff', size: 4.5, speed: 0.8 }, { color: '#ff00aa', size: 6.5, speed: 0.4 }, { color: '#ffdd00', size: 2.5, speed: 1.5 }];
+    class Particle {
+      constructor() {
+        this.x = Math.random() * window.innerWidth; this.y = Math.random() * window.innerHeight;
+        let type = ELEMENT_TYPES[Math.floor(Math.random() * ELEMENT_TYPES.length)];
+        this.vx = (Math.random() - 0.5) * type.speed * 2.5; this.vy = (Math.random() - 0.5) * type.speed * 2.5;
+        this.radius = type.size + Math.random() * 2.5; this.baseRadius = this.radius; this.color = type.color;
+      }
+      update() {
+        this.x += this.vx; this.y += this.vy;
+        if (this.x < 0 || this.x > canvas.width) this.vx = -this.vx;
+        if (this.y < 0 || this.y > canvas.height) this.vy = -this.vy;
+        if (mouse.x != null) {
+          let dx = mouse.x - this.x; let dy = mouse.y - this.y;
+          if (Math.sqrt(dx * dx + dy * dy) < mouse.radius) {
+            if (this.radius < this.baseRadius * 1.8) this.radius += 0.2;
+          } else if (this.radius > this.baseRadius) this.radius -= 0.1;
+        } else if (this.radius > this.baseRadius) this.radius -= 0.1;
+      }
+      draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); ctx.fillStyle = this.color; ctx.shadowBlur = 15; ctx.shadowColor = this.color; ctx.fill(); ctx.shadowBlur = 0; }
+    }
+    class Spark {
+      constructor(x, y) {
+        this.x = x; this.y = y; this.vx = (Math.random() - 0.5) * 12; this.vy = (Math.random() - 0.5) * 12;
+        this.radius = Math.random() * 4 + 1; const sparkColors = ['#00f0ff', '#ff00aa', '#ffdd00'];
+        this.color = sparkColors[Math.floor(Math.random() * sparkColors.length)]; this.alpha = 1;
+      }
+      update() { this.x += this.vx; this.y += this.vy; this.alpha -= 0.04; this.radius *= 0.9; }
+      draw() { ctx.save(); ctx.globalAlpha = Math.max(0, this.alpha); ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); ctx.fillStyle = this.color; ctx.shadowBlur = 10; ctx.shadowColor = this.color; ctx.fill(); ctx.restore(); }
+    }
+    for (let i = 0; i < 55; i++) particles.push(new Particle());
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update(); particles[i].draw();
+        for (let j = i + 1; j < particles.length; j++) {
+          let dx = particles[i].x - particles[j].x; let dy = particles[i].y - particles[j].y; let distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance < 150) {
+            ctx.beginPath();
+            let gradient = ctx.createLinearGradient(particles[i].x, particles[i].y, particles[j].x, particles[j].y);
+            gradient.addColorStop(0, particles[i].color); gradient.addColorStop(1, particles[j].color);
+            ctx.strokeStyle = gradient; ctx.globalAlpha = Math.max(0, 0.8 - (distance / 150)); ctx.lineWidth = 1.5;
+            ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke(); ctx.globalAlpha = 1.0;
+          }
+        }
+      }
+      for (let i = 0; i < sparks.length; i++) { sparks[i].update(); sparks[i].draw(); }
+      sparks = sparks.filter(spark => spark.alpha > 0);
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+
+  <!-- Hero Dynamic Header Cycle & Interactive Micro-Lab Engine -->
+  <script>
+    // 1. Dynamic Typing / Concept Cycle
+    const concepts = [
+      "Atomic Orbitals & Quantum Shells",
+      "Acid-Base Titration Curves",
+      "Boyle's & Charles's Gas Laws",
+      "118 Periodic Element Spectra",
+      "Chemical Bonding & Octet Rule"
+    ];
+    let conceptIdx = 0;
+    const cycleElem = document.getElementById('heroCycleText');
+    if (cycleElem) {
+      setInterval(() => {
+        cycleElem.style.opacity = '0';
+        setTimeout(() => {
+          conceptIdx = (conceptIdx + 1) % concepts.length;
+          cycleElem.textContent = concepts[conceptIdx];
+          cycleElem.style.opacity = '1';
+        }, 300);
+      }, 3200);
+    }
+
+    // 2. Hero Micro-Lab Canvas Engine
+    const mCanvas = document.getElementById('microLabCanvas');
+    const mCtx = mCanvas ? mCanvas.getContext('2d') : null;
+    let microMode = 'states'; // 'states' or 'bohr'
+    let microTemp = 300;
+    let microSubstance = 'water';
+    let microElement = 1; // Hydrogen default
+    let microAngle = 0;
+
+    function resizeMicroCanvas() {
+      if (!mCanvas) return;
+      const rect = mCanvas.parentElement.getBoundingClientRect();
+      mCanvas.width = rect.width;
+      mCanvas.height = rect.height;
+    }
+    window.addEventListener('resize', resizeMicroCanvas);
+    setTimeout(resizeMicroCanvas, 100);
+
+    // Micro Particles for States of Matter
+    let microParticles = [];
+    const SUBSTANCES = {
+      water: { solidT: 273, gasT: 373, color: '#35ddff', mass: 18 },
+      neon: { solidT: 24, gasT: 27, color: '#ff5376', mass: 20 },
+      iron: { solidT: 400, gasT: 550, color: '#ffd166', mass: 56 }
+    };
+
+    function initMicroParticles() {
+      microParticles = [];
+      const count = 38;
+      for (let i = 0; i < count; i++) {
+        microParticles.push({
+          x: (mCanvas ? mCanvas.width / 2 : 150) + (Math.random() - 0.5) * 120,
+          y: (mCanvas ? mCanvas.height / 2 : 120) + (Math.random() - 0.5) * 80,
+          vx: (Math.random() - 0.5) * 2,
+          vy: (Math.random() - 0.5) * 2,
+          r: 5
+        });
+      }
+    }
+    initMicroParticles();
+
+    function setMicroMode(mode) {
+      microMode = mode;
+      document.getElementById('btnModeStates').classList.toggle('active', mode === 'states');
+      document.getElementById('btnModeBohr').classList.toggle('active', mode === 'bohr');
+      document.getElementById('statesControls').style.display = mode === 'states' ? 'block' : 'none';
+      document.getElementById('bohrControls').style.display = mode === 'bohr' ? 'block' : 'none';
+      updateMicroOverlay();
+    }
+
+    function updateMicroTemp(val) {
+      microTemp = parseInt(val, 10);
+      document.getElementById('tempVal').textContent = microTemp + ' K';
+      updateMicroOverlay();
+    }
+
+    function setMicroSubstance(sub, btn) {
+      microSubstance = sub;
+      document.querySelectorAll('#statesControls .substance-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      updateMicroOverlay();
+    }
+
+    const ELEMENTS_DATA = {
+      1: { name: 'Hydrogen', symbol: 'H', z: 1, shells: [1], color: '#35ddff' },
+      6: { name: 'Carbon', symbol: 'C', z: 6, shells: [2, 4], color: '#90e0ef' },
+      11: { name: 'Sodium', symbol: 'Na', z: 11, shells: [2, 8, 1], color: '#ffd166' },
+      17: { name: 'Chlorine', symbol: 'Cl', z: 17, shells: [2, 8, 7], color: '#06d6a0' }
+    };
+
+    function setMicroElement(z, btn) {
+      microElement = z;
+      document.querySelectorAll('#bohrControls .substance-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      updateMicroOverlay();
+    }
+
+    function updateMicroOverlay() {
+      const overlay = document.getElementById('microDataOverlay');
+      if (!overlay) return;
+      if (microMode === 'states') {
+        const sub = SUBSTANCES[microSubstance];
+        let phase = 'Liquid';
+        if (microTemp < sub.solidT) phase = 'Solid (Lattice)';
+        else if (microTemp > sub.gasT) phase = 'Gas (High Entropy)';
+        overlay.textContent = `Temp: ${microTemp} K • Phase: ${phase}`;
+      } else {
+        const el = ELEMENTS_DATA[microElement] || ELEMENTS_DATA[1];
+        overlay.textContent = `${el.name} (${el.symbol}) • Z=${el.z} • Shells: ${el.shells.join(', ')}`;
+      }
+    }
+
+    function renderMicroLab() {
+      if (!mCanvas || !mCtx) return;
+      mCtx.clearRect(0, 0, mCanvas.width, mCanvas.height);
+      const w = mCanvas.width;
+      const h = mCanvas.height;
+
+      if (microMode === 'states') {
+        // Render Thermodynamic Particles
+        const sub = SUBSTANCES[microSubstance];
+        const speedMultiplier = Math.max(0.2, (microTemp / 200));
+        const isSolid = microTemp < sub.solidT;
+        const isGas = microTemp > sub.gasT;
+
+        for (let i = 0; i < microParticles.length; i++) {
+          const p = microParticles[i];
+          if (isSolid) {
+            // Lattice vibration around center
+            const row = Math.floor(i / 6);
+            const col = i % 6;
+            const targetX = w / 2 - 60 + col * 24;
+            const targetY = h / 2 - 40 + row * 24;
+            p.x += (targetX - p.x) * 0.1 + (Math.random() - 0.5) * speedMultiplier * 1.2;
+            p.y += (targetY - p.y) * 0.1 + (Math.random() - 0.5) * speedMultiplier * 1.2;
+          } else {
+            p.x += p.vx * speedMultiplier;
+            p.y += p.vy * speedMultiplier;
+            if (p.x < 15 || p.x > w - 15) p.vx = -p.vx;
+            if (p.y < 15 || p.y > h - 15) p.vy = -p.vy;
+          }
+
+          // Draw Particle
+          mCtx.beginPath();
+          mCtx.arc(p.x, p.y, isGas ? 4 : 5.5, 0, Math.PI * 2);
+          mCtx.fillStyle = sub.color;
+          mCtx.shadowBlur = isGas ? 12 : 6;
+          mCtx.shadowColor = sub.color;
+          mCtx.fill();
+          mCtx.shadowBlur = 0;
+        }
+
+        // Connect nearby particles when liquid/solid
+        if (!isGas) {
+          for (let i = 0; i < microParticles.length; i++) {
+            for (let j = i + 1; j < microParticles.length; j++) {
+              const dx = microParticles[i].x - microParticles[j].x;
+              const dy = microParticles[i].y - microParticles[j].y;
+              const dist = Math.sqrt(dx * dx + dy * dy);
+              if (dist < 32) {
+                mCtx.beginPath();
+                mCtx.strokeStyle = sub.color;
+                mCtx.globalAlpha = 0.25;
+                mCtx.lineWidth = 1;
+                mCtx.moveTo(microParticles[i].x, microParticles[i].y);
+                mCtx.lineTo(microParticles[j].x, microParticles[j].y);
+                mCtx.stroke();
+                mCtx.globalAlpha = 1.0;
+              }
+            }
+          }
+        }
+      } else {
+        // Render Bohr Model
+        microAngle += 0.025;
+        const cx = w / 2;
+        const cy = h / 2;
+        const el = ELEMENTS_DATA[microElement] || ELEMENTS_DATA[1];
+
+        // Nucleus
+        mCtx.beginPath();
+        mCtx.arc(cx, cy, 14, 0, Math.PI * 2);
+        const nucGrad = mCtx.createRadialGradient(cx, cy, 2, cx, cy, 14);
+        nucGrad.addColorStop(0, '#ff4b8b');
+        nucGrad.addColorStop(1, '#9b1d56');
+        mCtx.fillStyle = nucGrad;
+        mCtx.shadowBlur = 15;
+        mCtx.shadowColor = '#ff4b8b';
+        mCtx.fill();
+        mCtx.shadowBlur = 0;
+
+        mCtx.font = 'bold 10px JetBrains Mono';
+        mCtx.fillStyle = '#ffffff';
+        mCtx.textAlign = 'center';
+        mCtx.textBaseline = 'middle';
+        mCtx.fillText(el.symbol, cx, cy);
+
+        // Shells & revolving electrons
+        const shellRadii = [36, 62, 88];
+        el.shells.forEach((electronsCount, sIdx) => {
+          const r = shellRadii[sIdx] || (36 + sIdx * 26);
+          mCtx.beginPath();
+          mCtx.arc(cx, cy, r, 0, Math.PI * 2);
+          mCtx.strokeStyle = 'rgba(0, 240, 255, 0.25)';
+          mCtx.setLineDash([3, 4]);
+          mCtx.stroke();
+          mCtx.setLineDash([]);
+
+          // Electrons
+          const step = (Math.PI * 2) / electronsCount;
+          for (let e = 0; e < electronsCount; e++) {
+            const rot = microAngle * (sIdx % 2 === 0 ? 1 : -1) * (1.2 / (sIdx + 1));
+            const angle = e * step + rot;
+            const ex = cx + r * Math.cos(angle);
+            const ey = cy + r * Math.sin(angle);
+
+            mCtx.beginPath();
+            mCtx.arc(ex, ey, 4.5, 0, Math.PI * 2);
+            mCtx.fillStyle = '#00f0ff';
+            mCtx.shadowBlur = 10;
+            mCtx.shadowColor = '#00f0ff';
+            mCtx.fill();
+            mCtx.shadowBlur = 0;
+          }
+        });
+      }
+
+      requestAnimationFrame(renderMicroLab);
+    }
+    renderMicroLab();
+  </script>
+</body>
+
+</html>
+
+

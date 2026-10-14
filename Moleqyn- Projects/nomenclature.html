@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Moleqyn IUPAC Nomenclature Engine — Interactive organic compound naming, dynamic structure builder, functional group priority order, and coordination complex rules."/>
+  <title>Moleqyn | IUPAC Nomenclature Engine & Interactive Builder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #050d1a;
+      --panel: #0a172c;
+      --panel-sub: #0f2240;
+      --border: rgba(0, 240, 255, 0.18);
+      --primary: #00f0ff;
+      --primary-glow: rgba(0, 240, 255, 0.35);
+      --secondary: #ff00aa;
+      --accent: #38ef7d;
+      --text: #f0f6fc;
+      --muted: #8b9bb4;
+      --card-bg: rgba(10, 23, 44, 0.78);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --gold: #f59e0b;
+      --tag-prefix: #c084fc;
+      --tag-root: #38bdf8;
+      --tag-suffix: #4ade80;
+    }
+
+    html.light-mode {
+      --bg: #f1f5fa;
+      --panel: #ffffff;
+      --panel-sub: #edf3f8;
+      --border: rgba(2, 132, 199, 0.22);
+      --primary: #0284c7;
+      --primary-glow: rgba(2, 132, 199, 0.25);
+      --secondary: #db2777;
+      --accent: #059669;
+      --text: #0f172a;
+      --muted: #475569;
+      --card-bg: rgba(255, 255, 255, 0.88);
+      --glass-border: rgba(0, 0, 0, 0.08);
+      --gold: #d97706;
+      --tag-prefix: #7e22ce;
+      --tag-root: #0284c7;
+      --tag-suffix: #15803d;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    /* UNIFIED NAVBAR */
+    .mlab-nav {
+      position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+      width: 95%; max-width: 1220px;
+      background: var(--card-bg);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border); border-radius: 40px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 26px; z-index: 1000;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      transition: all 0.3s;
+    }
+    .mlab-nav.scrolled { top: 8px; box-shadow: 0 15px 40px rgba(0,0,0,0.35); }
+    .mlab-brand { font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+    .mlab-brand span { color: var(--primary); }
+    .mlab-links { display: flex; align-items: center; gap: 6px; list-style: none; }
+    .mlab-links a { color: var(--text); text-decoration: none; font-size: 0.9rem; font-weight: 500; padding: 7px 14px; border-radius: 20px; transition: all 0.2s; }
+    .mlab-links a:hover, .mlab-links a.active { color: var(--primary); background: rgba(0,240,255,0.08); }
+    .mlab-dropdown { position: relative; }
+    .mlab-dropbtn { cursor: pointer; display: flex; align-items: center; gap: 4px; }
+    .mlab-dropdown-content {
+      position: absolute; top: calc(100% + 10px); left: 0;
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: 16px; min-width: 280px; padding: 10px;
+      display: none; flex-direction: column; gap: 4px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.4); z-index: 1100;
+    }
+    .mlab-dropdown:hover .mlab-dropdown-content { display: flex; }
+    .mlab-drop-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; text-decoration: none; color: var(--text); transition: all 0.2s; }
+    .mlab-drop-item:hover { background: rgba(0,240,255,0.1); transform: translateX(3px); }
+    .mlab-drop-icon { font-size: 1.25rem; }
+    .mlab-drop-title { font-weight: 600; font-size: 0.88rem; color: var(--text); }
+    .mlab-drop-sub { font-size: 0.72rem; color: var(--muted); }
+    .mlab-nav-right { display: flex; align-items: center; gap: 12px; }
+    .mlab-login-btn { background: var(--primary); color: #000 !important; font-weight: 700; font-size: 0.88rem; padding: 8px 18px; border-radius: 20px; text-decoration: none; transition: 0.2s; }
+    .mlab-login-btn:hover { box-shadow: 0 4px 15px var(--primary-glow); transform: translateY(-1px); }
+    .mlab-theme-btn { background: none; border: 1px solid var(--border); color: var(--text); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+    .mlab-theme-btn:hover { border-color: var(--primary); }
+
+    /* HERO */
+    .hero-wrap {
+      padding: 130px 24px 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid var(--border);
+      color: var(--primary);
+      padding: 6px 16px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .hero-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .hero-title span {
+      background: linear-gradient(90deg, #a855f7, var(--primary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-desc {
+      color: var(--muted);
+      max-width: 760px;
+      margin: 0 auto 30px;
+      font-size: 1.05rem;
+      line-height: 1.7;
+    }
+
+    /* MODULE TABS */
+    .view-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 35px;
+    }
+    .tab-btn {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      padding: 12px 24px;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.25s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tab-btn:hover, .tab-btn.active {
+      background: var(--primary);
+      color: #030a16;
+      border-color: var(--primary);
+      box-shadow: 0 4px 18px var(--primary-glow);
+      transform: translateY(-2px);
+    }
+
+    /* MAIN CONTAINER */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    /* BUILDER SECTION */
+    .builder-grid {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 28px;
+    }
+    @media (max-width: 992px) {
+      .builder-grid { grid-template-columns: 1fr; }
+    }
+
+    /* DISPLAY DISPLAY CARD */
+    .result-display-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 30px;
+      backdrop-filter: blur(15px);
+      margin-bottom: 24px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+    }
+    .result-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .iupac-name-banner {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.25;
+      margin-bottom: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 6px;
+    }
+    .name-part {
+      padding: 2px 6px;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+    .part-prefix { color: var(--tag-prefix); background: rgba(192, 132, 252, 0.12); }
+    .part-root { color: var(--tag-root); background: rgba(56, 189, 248, 0.12); }
+    .part-bond { color: var(--gold); background: rgba(245, 158, 11, 0.12); }
+    .part-suffix { color: var(--tag-suffix); background: rgba(74, 222, 128, 0.12); }
+
+    .formula-line {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary);
+      background: rgba(0,0,0,0.25);
+      border: 1px solid var(--border);
+      padding: 12px 18px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      word-break: break-all;
+    }
+
+    /* 2D STRUCTURAL BACKBONE CANVAS / SVG */
+    .struct-canvas-wrap {
+      background: rgba(4, 10, 22, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 130px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+    }
+    .chain-render {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+    .carbon-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      padding: 6px 12px;
+      border: 1px dashed rgba(0, 240, 255, 0.4);
+      border-radius: 10px;
+      background: rgba(0, 240, 255, 0.06);
+    }
+    .carbon-idx {
+      font-size: 0.65rem;
+      color: var(--muted);
+      position: absolute;
+      top: -14px;
+    }
+    .bond-symbol {
+      color: var(--muted);
+      font-size: 1.2rem;
+    }
+
+    /* STEP BY STEP BREAKDOWN */
+    .rationale-card {
+      background: var(--panel-sub);
+      border-left: 4px solid var(--primary);
+      border-radius: 0 12px 12px 0;
+      padding: 16px 20px;
+      font-size: 0.9rem;
+      line-height: 1.65;
+    }
+    .rationale-card strong { color: var(--primary); font-family: 'Space Grotesk', sans-serif; }
+
+    /* CONTROLS (RIGHT) */
+    .builder-controls {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 26px;
+      backdrop-filter: blur(15px);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .ctrl-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .ctrl-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .ctrl-val {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--primary);
+      font-size: 0.95rem;
+    }
+    .chain-slider {
+      width: 100%;
+      height: 6px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.1);
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .select-pill-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+    .sel-btn {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: 10px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+    }
+    .sel-btn:hover, .sel-btn.active {
+      background: var(--primary);
+      color: #030a16;
+      border-color: var(--primary);
+      box-shadow: 0 3px 12px var(--primary-glow);
+    }
+
+    /* QUICK PRESETS */
+    .presets-wrap {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+    .preset-chip {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .preset-chip:hover {
+      background: rgba(0, 240, 255, 0.15);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* PRIORITY TABLE TAB */
+    .table-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      backdrop-filter: blur(15px);
+      overflow-x: auto;
+    }
+    .priority-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      text-align: left;
+    }
+    .priority-table th {
+      background: var(--panel);
+      color: var(--primary);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      padding: 14px 18px;
+      border-bottom: 2px solid var(--border);
+    }
+    .priority-table td {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    .priority-table tr:hover td {
+      background: rgba(0, 240, 255, 0.04);
+    }
+    .p-rank {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      color: var(--gold);
+    }
+    .func-formula {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* COORDINATION TAB */
+    .coord-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    .coord-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px;
+      transition: all 0.25s;
+    }
+    .coord-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0, 240, 255, 0.12);
+    }
+    .coord-formula {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .coord-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+    .coord-rule-box {
+      background: var(--panel-sub);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* QUIZ TAB */
+    .quiz-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 30px;
+      backdrop-filter: blur(15px);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .quiz-q-num {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .quiz-q-formula {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+    .quiz-prompt {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 22px;
+    }
+    .quiz-opts {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .quiz-opt-btn {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .quiz-opt-btn:hover { border-color: var(--primary); background: rgba(0, 240, 255, 0.08); }
+    .quiz-opt-btn.correct { background: rgba(56, 239, 125, 0.2); border-color: var(--accent); color: var(--accent); }
+    .quiz-opt-btn.wrong { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #ef4444; }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 30px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- UNIFIED NAVBAR -->
+  <nav class="mlab-nav" id="mlabNav">
+    <a href="index.html" class="mlab-brand">⚗️ Mole<span>qyn</span></a>
+    <ul class="mlab-links">
+      <li><a href="index.html">Home</a></li>
+      <li class="mlab-dropdown">
+        <a class="mlab-dropbtn active">Virtual Labs ▾</a>
+        <div class="mlab-dropdown-content">
+          <a href="simulators.html" class="mlab-drop-item"><div class="mlab-drop-icon">🧪</div><div><div class="mlab-drop-title">Virtual Simulators</div><div class="mlab-drop-sub">Interactive engines for Class 6-12</div></div></a>
+          <a href="nomenclature.html" class="mlab-drop-item"><div class="mlab-drop-icon">🏷️</div><div><div class="mlab-drop-title">IUPAC Nomenclature</div><div class="mlab-drop-sub">Interactive organic naming engine</div></div></a>
+          <a href="experiments.html" class="mlab-drop-item"><div class="mlab-drop-icon">📔</div><div><div class="mlab-drop-title">Experiment Library</div><div class="mlab-drop-sub">NCERT guided practicals</div></div></a>
+          <a href="board-prep.html" class="mlab-drop-item"><div class="mlab-drop-icon">⚛️</div><div><div class="mlab-drop-title">Board &amp; AP Prep</div><div class="mlab-drop-sub">PYQs, marking schemes &amp; drills</div></div></a>
+          <a href="junior.html" class="mlab-drop-item"><div class="mlab-drop-icon">🎓</div><div><div class="mlab-drop-title">Junior Scientist</div><div class="mlab-drop-sub">Class 6–8 foundation lab</div></div></a>
+          <a href="vr-lab.html" class="mlab-drop-item"><div class="mlab-drop-icon">🥽</div><div><div class="mlab-drop-title">3D VR Lab</div><div class="mlab-drop-sub">Virtual apparatus &amp; 3D space</div></div></a>
+          <a href="periodic-table.html" class="mlab-drop-item"><div class="mlab-drop-icon">🔢</div><div><div class="mlab-drop-title">Periodic Table</div><div class="mlab-drop-sub">Explore all 118 elements</div></div></a>
+          <a href="reaction.html" class="mlab-drop-item"><div class="mlab-drop-icon">⚗️</div><div><div class="mlab-drop-title">Reaction Balancer</div><div class="mlab-drop-sub">Balance chemical equations</div></div></a>
+          <a href="ai-tutor.html" class="mlab-drop-item"><div class="mlab-drop-icon">🤖</div><div><div class="mlab-drop-title">AI Chemistry Tutor</div><div class="mlab-drop-sub">Ask any doubt 24/7</div></div></a>
+        </div>
+      </li>
+      <li><a href="learn.html">Learn</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="quiz.html">Quiz</a></li>
+      <li><a href="dashboard.html">Progress</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div class="mlab-nav-right">
+      <a href="login.html" class="mlab-login-btn">Login</a>
+      <button class="mlab-theme-btn" id="mlabThemeBtn" title="Switch Theme">☀️</button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero-wrap">
+    <div class="hero-badge">🏷️ Systematic Chemistry Taxonomy</div>
+    <h1 class="hero-title">IUPAC <span>Nomenclature Engine</span></h1>
+    <p class="hero-desc">
+      Build organic molecules interactively, determine longest carbon chains, apply lowest locant rules, and master priority sequences for alcohols, carboxylic acids, aldehydes, and Class 12 coordination complexes.
+    </p>
+
+    <!-- MODULE TABS -->
+    <div class="view-tabs">
+      <button class="tab-btn active" onclick="switchView('builder')">🔬 Interactive Builder</button>
+      <button class="tab-btn" onclick="switchView('priority')">📊 Functional Group Priority Order</button>
+      <button class="tab-btn" onclick="switchView('coordination')">⚛️ Coordination Complexes (Class 12)</button>
+      <button class="tab-btn" onclick="switchView('quiz')">🎯 IUPAC Naming Drill</button>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- VIEW 1: INTERACTIVE BUILDER -->
+    <div id="viewBuilder" class="builder-grid">
+
+      <!-- LEFT: VISUAL COMPOUND DISPLAY -->
+      <div>
+        <div class="result-display-card">
+          <div class="result-label">Systematic IUPAC Name (Color-Coded)</div>
+          <div class="iupac-name-banner" id="iupacNameBanner">
+            <span class="name-part part-prefix" id="dispPrefix">3-methyl</span>
+            <span class="name-part part-root" id="dispRoot">butan</span>
+            <span class="name-part part-bond" id="dispBond"></span>
+            <span class="name-part part-suffix" id="dispSuffix">-1-oic acid</span>
+          </div>
+
+          <div class="result-label">Condensed Structural Formula</div>
+          <div class="formula-line" id="dispFormula">CH₃-CH(CH₃)-CH₂-COOH</div>
+
+          <div class="result-label">2D Carbon Backbone Schematic</div>
+          <div class="struct-canvas-wrap">
+            <div class="chain-render" id="chainRender"></div>
+          </div>
+
+          <div class="rationale-card" id="dispRationale">
+            <strong>IUPAC Naming Breakdown:</strong>
+            <ul style="padding-left:18px; margin-top:6px;" id="rationaleList">
+              <li><strong>Longest Chain:</strong> 4 Carbon continuous chain gives root word <em>'But'</em>.</li>
+              <li><strong>Principal Group:</strong> Carboxylic acid takes carbon #1 giving suffix <em>'-oic acid'</em>.</li>
+              <li><strong>Substituent:</strong> Methyl branch at carbon #3 gives prefix <em>'3-methyl'</em>.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- QUICK PRESETS -->
+        <div style="background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:18px;">
+          <div style="font-size:0.8rem; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:8px;">
+            ⚡ Quick Board Examination Presets:
+          </div>
+          <div class="presets-wrap">
+            <button class="preset-chip" onclick="loadPreset(2, 'alkane', 'none', 'none', 0)">Ethane (C₂H₆)</button>
+            <button class="preset-chip" onclick="loadPreset(2, 'alcohol', 'none', 'none', 0)">Ethanol (C₂H₅OH)</button>
+            <button class="preset-chip" onclick="loadPreset(2, 'acid', 'none', 'none', 0)">Ethanoic Acid (Acetic)</button>
+            <button class="preset-chip" onclick="loadPreset(3, 'ketone', 'none', 'none', 0)">Propan-2-one (Acetone)</button>
+            <button class="preset-chip" onclick="loadPreset(4, 'alkene', 'none', 'none', 0)">But-2-ene</button>
+            <button class="preset-chip" onclick="loadPreset(4, 'acid', 'methyl', 'left', 3)">3-Methylbutanoic Acid</button>
+            <button class="preset-chip" onclick="loadPreset(3, 'alcohol', 'chloro', 'left', 2)">2-Chloropropan-1-ol</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: DYNAMIC CONTROLS -->
+      <aside class="builder-controls">
+        
+        <!-- CARBON CHAIN LENGTH -->
+        <div class="ctrl-group">
+          <div class="ctrl-header">
+            <span>Carbon Chain Length</span>
+            <span class="ctrl-val" id="chainLenVal">4 Carbons (But-)</span>
+          </div>
+          <input type="range" class="chain-slider" id="chainSlider" min="1" max="8" value="4" oninput="updateBuilder()"/>
+        </div>
+
+        <!-- PRINCIPAL FUNCTIONAL GROUP -->
+        <div class="ctrl-group">
+          <div class="ctrl-header">
+            <span>Principal Functional Group</span>
+          </div>
+          <div class="select-pill-grid">
+            <button class="sel-btn" data-group="alkane" onclick="setGroup('alkane')">Alkane (-ane)</button>
+            <button class="sel-btn" data-group="alcohol" onclick="setGroup('alcohol')">Alcohol (-ol)</button>
+            <button class="sel-btn" data-group="aldehyde" onclick="setGroup('aldehyde')">Aldehyde (-al)</button>
+            <button class="sel-btn" data-group="ketone" onclick="setGroup('ketone')">Ketone (-one)</button>
+            <button class="sel-btn active" data-group="acid" onclick="setGroup('acid')">Acid (-oic acid)</button>
+            <button class="sel-btn" data-group="amine" onclick="setGroup('amine')">Amine (-amine)</button>
+          </div>
+        </div>
+
+        <!-- C-C BOND DEGREE -->
+        <div class="ctrl-group">
+          <div class="ctrl-header">
+            <span>Primary Unsaturation</span>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="sel-btn active" style="flex:1;" data-bond="single" onclick="setBond('single')">Single (C-C)</button>
+            <button class="sel-btn" style="flex:1;" data-bond="double" onclick="setBond('double')">Double (C=C)</button>
+            <button class="sel-btn" style="flex:1;" data-bond="triple" onclick="setBond('triple')">Triple (C≡C)</button>
+          </div>
+        </div>
+
+        <!-- BRANCH / SUBSTITUENT -->
+        <div class="ctrl-group">
+          <div class="ctrl-header">
+            <span>Substituent Branch</span>
+          </div>
+          <div class="select-pill-grid">
+            <button class="sel-btn" data-sub="none" onclick="setSub('none')">None</button>
+            <button class="sel-btn active" data-sub="methyl" onclick="setSub('methyl')">-CH₃ Methyl</button>
+            <button class="sel-btn" data-sub="chloro" onclick="setSub('chloro')">-Cl Chloro</button>
+            <button class="sel-btn" data-sub="bromo" onclick="setSub('bromo')">-Br Bromo</button>
+          </div>
+        </div>
+
+      </aside>
+
+    </div>
+
+    <!-- VIEW 2: FUNCTIONAL GROUP PRIORITY HIERARCHY -->
+    <div id="viewPriority" style="display:none;">
+      <div class="table-card">
+        <h3 style="font-family:'Space Grotesk',sans-serif; font-size:1.4rem; margin-bottom:8px;">Official IUPAC Priority Order of Functional Groups</h3>
+        <p style="color:var(--muted); font-size:0.9rem; margin-bottom:24px;">When a polyfunctional organic compound has two or more groups, the higher priority group acts as the principal functional group (suffix), while lower priority groups are named as substituents (prefixes).</p>
+
+        <table class="priority-table">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Class of Compound</th>
+              <th>Functional Group</th>
+              <th>Prefix (Substituent)</th>
+              <th>Suffix (Principal)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="p-rank">1</td>
+              <td>Carboxylic Acid</td>
+              <td class="func-formula">-COOH</td>
+              <td>Carboxy-</td>
+              <td>-oic acid</td>
+            </tr>
+            <tr>
+              <td class="p-rank">2</td>
+              <td>Sulfonic Acid</td>
+              <td class="func-formula">-SO₃H</td>
+              <td>Sulfo-</td>
+              <td>-sulfonic acid</td>
+            </tr>
+            <tr>
+              <td class="p-rank">3</td>
+              <td>Ester</td>
+              <td class="func-formula">-COOR</td>
+              <td>Alkoxycarbonyl-</td>
+              <td>alkyl ... -oate</td>
+            </tr>
+            <tr>
+              <td class="p-rank">4</td>
+              <td>Acid Halide</td>
+              <td class="func-formula">-COX</td>
+              <td>Halocarbonyl-</td>
+              <td>-oyl halide</td>
+            </tr>
+            <tr>
+              <td class="p-rank">5</td>
+              <td>Amide</td>
+              <td class="func-formula">-CONH₂</td>
+              <td>Carbamoyl-</td>
+              <td>-amide</td>
+            </tr>
+            <tr>
+              <td class="p-rank">6</td>
+              <td>Nitrile (Cyanide)</td>
+              <td class="func-formula">-CN</td>
+              <td>Cyano-</td>
+              <td>-nitrile</td>
+            </tr>
+            <tr>
+              <td class="p-rank">7</td>
+              <td>Aldehyde</td>
+              <td class="func-formula">-CHO</td>
+              <td>Formyl- / Oxo-</td>
+              <td>-al</td>
+            </tr>
+            <tr>
+              <td class="p-rank">8</td>
+              <td>Ketone</td>
+              <td class="func-formula">&gt;C=O</td>
+              <td>Oxo- / Keto-</td>
+              <td>-one</td>
+            </tr>
+            <tr>
+              <td class="p-rank">9</td>
+              <td>Alcohol &amp; Phenol</td>
+              <td class="func-formula">-OH</td>
+              <td>Hydroxy-</td>
+              <td>-ol</td>
+            </tr>
+            <tr>
+              <td class="p-rank">10</td>
+              <td>Amine</td>
+              <td class="func-formula">-NH₂</td>
+              <td>Amino-</td>
+              <td>-amine</td>
+            </tr>
+            <tr>
+              <td class="p-rank">11</td>
+              <td>Alkene</td>
+              <td class="func-formula">&gt;C=C&lt;</td>
+              <td>—</td>
+              <td>-ene</td>
+            </tr>
+            <tr>
+              <td class="p-rank">12</td>
+              <td>Alkyne</td>
+              <td class="func-formula">-C≡C-</td>
+              <td>—</td>
+              <td>-yne</td>
+            </tr>
+            <tr>
+              <td class="p-rank">13</td>
+              <td>Halo, Nitro, Alkoxy</td>
+              <td class="func-formula">-X, -NO₂, -OR</td>
+              <td>Halo-, Nitro-, Alkoxy-</td>
+              <td>Always Prefix Only</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- VIEW 3: COORDINATION COMPLEXES (CLASS 12) -->
+    <div id="viewCoordination" style="display:none;">
+      <div style="margin-bottom:24px;">
+        <h3 style="font-family:'Space Grotesk',sans-serif; font-size:1.4rem; margin-bottom:6px;">Class 12 Coordination Compounds Nomenclature</h3>
+        <p style="color:var(--muted); font-size:0.92rem;">Master Werner's nomenclature rules: Ligands in alphabetical order with prefixes (di, tri, tetra), central metal name, and Roman numeral oxidation state.</p>
+      </div>
+
+      <div class="coord-grid">
+        <div class="coord-card">
+          <div class="coord-formula">[Co(NH₃)₆]Cl₃</div>
+          <div class="coord-name">Hexaamminecobalt(III) chloride</div>
+          <div class="coord-rule-box">
+            <strong>Rules Applied:</strong> Cationic coordination sphere named first. Neutral ligand NH₃ named 'ammine'. Cobalt oxidation state = +3. Counter anion chloride named last.
+          </div>
+        </div>
+
+        <div class="coord-card">
+          <div class="coord-formula">K₄[Fe(CN)₆]</div>
+          <div class="coord-name">Potassium hexacyanidoferrate(II)</div>
+          <div class="coord-rule-box">
+            <strong>Rules Applied:</strong> Potassium cation named first. Anionic coordination entity requires '-ate' suffix on metal (ferrate). CN⁻ is named 'cyanido'. Fe state = +2.
+          </div>
+        </div>
+
+        <div class="coord-card">
+          <div class="coord-formula">[Pt(NH₃)₂Cl(NO₂)]</div>
+          <div class="coord-name">Diamminechloridonitrito-N-platinum(II)</div>
+          <div class="coord-rule-box">
+            <strong>Rules Applied:</strong> Alphabetical order of ligands: Ammine &gt; Chlorido &gt; Nitrito. Linkage through nitrogen denoted as nitrito-N. Neutral complex retains metal name.
+          </div>
+        </div>
+
+        <div class="coord-card">
+          <div class="coord-formula">[Ni(CO)₄]</div>
+          <div class="coord-name">Tetracarbonylnickel(0)</div>
+          <div class="coord-rule-box">
+            <strong>Rules Applied:</strong> CO ligand named 'carbonyl'. Nickel has 0 oxidation state indicated as (0) in parentheses.
+          </div>
+        </div>
+
+        <div class="coord-card">
+          <div class="coord-formula">[Cr(H₂O)₄Cl₂]⁺</div>
+          <div class="coord-name">Tetraaquadichloridochromium(III) ion</div>
+          <div class="coord-rule-box">
+            <strong>Rules Applied:</strong> Water ligand is 'aqua'. Alphabetical: aqua before chlorido. Cr oxidation state = +3. Ends in 'ion'.
+          </div>
+        </div>
+
+        <div class="coord-card">
+          <div class="coord-formula">K₂[PdCl₄]</div>
+          <div class="coord-name">Potassium tetrachloridopalladate(II)</div>
+          <div class="coord-rule-box">
+            <strong>Rules Applied:</strong> Anionic complex converts Palladium to 'palladate'. Oxidation state = 4 - 2 = +2.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 4: QUIZ CHALLENGE -->
+    <div id="viewQuiz" style="display:none;">
+      <div class="quiz-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+          <div class="quiz-q-num" id="quizProgress">Question 1 of 6</div>
+          <div style="font-family:'JetBrains Mono',monospace; color:var(--accent); font-weight:700;">Score: <span id="quizScore">0</span> / 6</div>
+        </div>
+
+        <div class="quiz-q-formula" id="quizFormula">CH₃-CH(OH)-CH₂-CH₃</div>
+        <div class="quiz-prompt" id="quizPrompt">Identify the correct systematic IUPAC name for this compound:</div>
+
+        <div class="quiz-opts" id="quizOptsList"></div>
+
+        <div id="quizExp" style="display:none; margin-top:14px; padding:12px; border-radius:10px; background:var(--panel-sub); border-left:3px solid var(--accent); font-size:0.88rem; line-height:1.5;"></div>
+
+        <div style="display:flex; justify-content:flex-end; margin-top:20px;">
+          <button class="tab-btn" onclick="nextQuizQuestion()" id="btnNextQuiz" style="padding:10px 20px;">Next Question →</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    Moleqyn — Virtual Chemistry Laboratory &amp; Learning Platform &nbsp;|&nbsp; 
+    <a href="index.html" style="color:var(--primary); text-decoration:none;">Home</a> &bull; 
+    <a href="nomenclature.html" style="color:var(--primary); text-decoration:none;">IUPAC Nomenclature</a> &bull; 
+    <a href="board-prep.html" style="color:var(--primary); text-decoration:none;">Board Prep</a> &bull; 
+    <a href="resources.html" style="color:var(--primary); text-decoration:none;">Resources</a> &bull; 
+    <a href="contact.html" style="color:var(--primary); text-decoration:none;">Contact</a>
+  </footer>
+
+  <script src="js/shared-nav.js"></script>
+  <script>
+    // Theme toggle & scroll handling
+    (function(){
+      var nav = document.getElementById('mlabNav');
+      var btn = document.getElementById('mlabThemeBtn');
+      if (nav && btn) {
+        if (localStorage.getItem('mlab-theme') === 'light') {
+          document.documentElement.classList.add('light-mode');
+          btn.textContent = '🌙';
+        }
+        btn.addEventListener('click', function(){
+          document.documentElement.classList.toggle('light-mode');
+          var isLight = document.documentElement.classList.contains('light-mode');
+          localStorage.setItem('mlab-theme', isLight ? 'light' : 'dark');
+          btn.textContent = isLight ? '🌙' : '☀️';
+        });
+        window.addEventListener('scroll', function(){
+          nav.classList.toggle('scrolled', window.scrollY > 50);
+        });
+      }
+    })();
+
+    // Tab Navigation
+    function switchView(viewKey) {
+      document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+      if (event && event.target) event.target.classList.add('active');
+
+      document.getElementById('viewBuilder').style.display = viewKey === 'builder' ? 'grid' : 'none';
+      document.getElementById('viewPriority').style.display = viewKey === 'priority' ? 'block' : 'none';
+      document.getElementById('viewCoordination').style.display = viewKey === 'coordination' ? 'block' : 'none';
+      document.getElementById('viewQuiz').style.display = viewKey === 'quiz' ? 'block' : 'none';
+    }
+
+    // BUILDER STATE
+    var state = {
+      chainLength: 4,
+      group: 'acid',
+      bond: 'single',
+      substituent: 'methyl'
+    };
+
+    var rootWords = ["", "Meth", "Eth", "Prop", "But", "Pent", "Hex", "Hept", "Oct"];
+
+    function setGroup(grp) {
+      state.group = grp;
+      document.querySelectorAll('[data-group]').forEach(function(b){ b.classList.toggle('active', b.dataset.group === grp); });
+      updateBuilder();
+    }
+
+    function setBond(bnd) {
+      state.bond = bnd;
+      document.querySelectorAll('[data-bond]').forEach(function(b){ b.classList.toggle('active', b.dataset.bond === bnd); });
+      updateBuilder();
+    }
+
+    function setSub(sub) {
+      state.substituent = sub;
+      document.querySelectorAll('[data-sub]').forEach(function(b){ b.classList.toggle('active', b.dataset.sub === sub); });
+      updateBuilder();
+    }
+
+    function loadPreset(len, grp, sub, dummy, dummy2) {
+      state.chainLength = len;
+      document.getElementById('chainSlider').value = len;
+      setGroup(grp);
+      setSub(sub);
+      setBond('single');
+    }
+
+    function updateBuilder() {
+      state.chainLength = parseInt(document.getElementById('chainSlider').value, 10);
+      var len = state.chainLength;
+      var root = rootWords[len];
+      document.getElementById('chainLenVal').textContent = len + " Carbons (" + root + "-)";
+
+      var prefixStr = "";
+      var rootStr = root.toLowerCase();
+      var bondStr = "";
+      var suffixStr = "";
+      var formulaStr = "";
+      var rationale = [];
+
+      // 1. Substituent prefix
+      if (state.substituent !== 'none' && len >= 3) {
+        var subPos = len > 3 ? (len - 1) : 2;
+        prefixStr = subPos + "-" + state.substituent;
+        rationale.push("<strong>Substituent Rule:</strong> " + state.substituent + " branch is present at lowest valid locant C-" + subPos + ".");
+      }
+
+      // 2. Primary saturation
+      if (state.bond === 'double') {
+        bondStr = len > 2 ? "-2-en" : "-en";
+      } else if (state.bond === 'triple') {
+        bondStr = len > 2 ? "-1-yn" : "-yn";
+      } else {
+        bondStr = "an";
+      }
+
+      // 3. Functional group suffix & formula
+      if (state.group === 'acid') {
+        suffixStr = "-1-oic acid";
+        rationale.push("<strong>Principal Suffix:</strong> Carboxylic acid (-COOH) is highest priority, assigned C-1 giving '-oic acid'.");
+      } else if (state.group === 'alcohol') {
+        suffixStr = "-1-ol";
+        rationale.push("<strong>Principal Suffix:</strong> Hydroxyl group (-OH) gives suffix '-ol'.");
+      } else if (state.group === 'aldehyde') {
+        suffixStr = "-1-al";
+        rationale.push("<strong>Principal Suffix:</strong> Terminal formyl group (-CHO) gives suffix '-al'.");
+      } else if (state.group === 'ketone') {
+        if (len < 3) {
+          // Ketone requires at least 3 carbons
+          len = 3;
+          state.chainLength = 3;
+          document.getElementById('chainSlider').value = 3;
+          root = rootWords[3];
+          rootStr = root.toLowerCase();
+        }
+        suffixStr = "-2-one";
+        rationale.push("<strong>Principal Suffix:</strong> Carbonyl &gt;C=O group situated at internal C-2 gives suffix '-one'.");
+      } else if (state.group === 'amine') {
+        suffixStr = "-1-amine";
+        rationale.push("<strong>Principal Suffix:</strong> Amino group (-NH₂) gives suffix '-amine'.");
+      } else {
+        // Alkane
+        suffixStr = "e";
+        bondStr = state.bond === 'double' ? (len > 2 ? "-2-ene" : "-ene") : (state.bond === 'triple' ? "-1-yne" : "ane");
+      }
+
+      rationale.push("<strong>Longest Continuous Chain:</strong> " + len + " carbons detected, setting base root word to <em>'" + root + "'</em>.");
+
+      // Formulate condensed structural formula
+      if (state.group === 'acid') {
+        if (len === 1) formulaStr = "H-COOH";
+        else if (len === 2) formulaStr = "CH₃-COOH";
+        else if (len === 3) formulaStr = (state.substituent === 'methyl' ? "CH₃-CH(CH₃)-COOH" : "CH₃-CH₂-COOH");
+        else if (len === 4) formulaStr = (state.substituent === 'methyl' ? "CH₃-CH(CH₃)-CH₂-COOH" : "CH₃-CH₂-CH₂-COOH");
+        else formulaStr = "CH₃-(CH₂)" + (len - 2) + "-COOH";
+      } else if (state.group === 'alcohol') {
+        if (len === 1) formulaStr = "CH₃-OH";
+        else if (len === 2) formulaStr = "CH₃-CH₂-OH";
+        else formulaStr = "CH₃-(CH₂)" + (len - 2) + "-CH₂-OH";
+      } else if (state.group === 'aldehyde') {
+        if (len === 1) formulaStr = "H-CHO";
+        else if (len === 2) formulaStr = "CH₃-CHO";
+        else formulaStr = "CH₃-(CH₂)" + (len - 2) + "-CHO";
+      } else if (state.group === 'ketone') {
+        if (len === 3) formulaStr = "CH₃-CO-CH₃";
+        else formulaStr = "CH₃-CO-(CH₂)" + (len - 3) + "-CH₃";
+      } else {
+        formulaStr = len === 1 ? "CH₄" : ("CH₃-(CH₂)" + (len - 2 > 0 ? (len - 2) : 0) + "-CH₃");
+      }
+
+      // Display elements
+      document.getElementById('dispPrefix').textContent = prefixStr;
+      document.getElementById('dispPrefix').style.display = prefixStr ? "inline-block" : "none";
+      document.getElementById('dispRoot').textContent = rootStr;
+      document.getElementById('dispBond').textContent = bondStr;
+      document.getElementById('dispSuffix').textContent = suffixStr;
+      document.getElementById('dispFormula').textContent = formulaStr;
+
+      // Render 2D nodes
+      var renderEl = document.getElementById('chainRender');
+      renderEl.innerHTML = "";
+      for (var i = 1; i <= len; i++) {
+        var node = document.createElement('div');
+        node.className = "carbon-node";
+        node.innerHTML = '<span class="carbon-idx">C' + i + '</span>' + (i === 1 && state.group === 'acid' ? 'C=O' : 'CH₂');
+        renderEl.appendChild(node);
+        if (i < len) {
+          var bond = document.createElement('span');
+          bond.className = "bond-symbol";
+          bond.textContent = state.bond === 'double' && i === 2 ? "=" : "—";
+          renderEl.appendChild(bond);
+        }
+      }
+
+      // Rationale list
+      var rList = document.getElementById('rationaleList');
+      rList.innerHTML = "";
+      rationale.forEach(function(item){
+        var li = document.createElement('li');
+        li.innerHTML = item;
+        rList.appendChild(li);
+      });
+    }
+
+    // QUIZ DATA
+    var quizQuestions = [
+      {
+        formula: "CH₃-CH(OH)-CH₂-CH₃",
+        prompt: "Identify the correct systematic IUPAC name for this secondary alcohol:",
+        opts: ["Butan-2-ol", "Butan-3-ol", "2-Hydroxybutane", "sec-Butyl alcohol"],
+        ans: 0,
+        exp: "Numbering starts from the left to give the -OH functional group the lowest locant (position 2). Hence, butan-2-ol."
+      },
+      {
+        formula: "CH₃-CH=CH-COOH",
+        prompt: "Identify the correct IUPAC name for this unsaturated carboxylic acid:",
+        opts: ["But-2-en-1-oic acid", "But-3-enoic acid", "Crotonic acid", "Pent-2-enoic acid"],
+        ans: 0,
+        exp: "The carboxylic acid carbon is assigned locant 1. The double bond starts at C-2. Therefore, but-2-en-1-oic acid."
+      },
+      {
+        formula: "CH₃-C(CH₃)₂-CH₂-CHO",
+        prompt: "What is the IUPAC name of this branched aldehyde?",
+        opts: ["3,3-Dimethylbutanal", "2,2-Dimethylbutanal", "3,3-Dimethylbutan-1-one", "tert-Pentanal"],
+        ans: 0,
+        exp: "The -CHO carbon is C-1. The two methyl substituents reside on carbon 3. Hence, 3,3-dimethylbutanal."
+      },
+      {
+        formula: "CH≡C-CH₂-CH=CH₂",
+        prompt: "When both double and triple bonds are equidistant from terminal carbons:",
+        opts: ["Pent-1-en-4-yne", "Pent-4-en-1-yne", "Pent-1-yn-4-ene", "Pentyne-ene"],
+        ans: 0,
+        exp: "By IUPAC rules, when double and triple bonds are at identical positions from ends, the double bond (-ene) gets numbering priority over triple bond (-yne). Hence, pent-1-en-4-yne."
+      },
+      {
+        formula: "CH₃-O-CH₂-CH₃",
+        prompt: "What is the systematic IUPAC name of ethyl methyl ether?",
+        opts: ["Methoxyethane", "Ethoxy methane", "1-Methoxyethane", "Ethylmethyl ether"],
+        ans: 0,
+        exp: "Ethers are named as alkoxyalkanes. The smaller alkyl group (-CH₃) forms the alkoxy prefix 'methoxy', and the larger chain (ethane) forms the parent alkane: methoxyethane."
+      },
+      {
+        formula: "K₃[Fe(CN)₆]",
+        prompt: "What is the IUPAC name for this coordination complex?",
+        opts: ["Potassium hexacyanidoferrate(III)", "Potassium hexacyanoiron(III)", "Tripotassium hexacyanoferrate(II)", "Hexacyanidoferrate(III) potassium"],
+        ans: 0,
+        exp: "Potassium cation is named first. The anionic entity gets the suffix '-ate' on iron (ferrate). Oxidation state of Fe is 6 - 3 = +3: Potassium hexacyanidoferrate(III)."
+      }
+    ];
+
+    var currentQIndex = 0;
+    var quizScore = 0;
+
+    function loadQuizQ() {
+      if (currentQIndex >= quizQuestions.length) {
+        document.getElementById('viewQuiz').innerHTML = 
+          '<div class="quiz-card" style="text-align:center;">' +
+            '<div style="font-size:3rem; margin-bottom:12px;">🏆</div>' +
+            '<h2 style="font-family:\'Space Grotesk\',sans-serif; margin-bottom:8px;">Nomenclature Drill Completed!</h2>' +
+            '<p style="color:var(--muted); font-size:1.05rem; margin-bottom:20px;">Your Final Score: <strong style="color:var(--accent); font-size:1.3rem;">' + quizScore + ' / ' + quizQuestions.length + '</strong></p>' +
+            '<button class="tab-btn" onclick="restartQuiz()" style="margin:0 auto;">Restart Quiz</button>' +
+          '</div>';
+        return;
+      }
+
+      var q = quizQuestions[currentQIndex];
+      document.getElementById('quizProgress').textContent = "Question " + (currentQIndex + 1) + " of " + quizQuestions.length;
+      document.getElementById('quizFormula').textContent = q.formula;
+      document.getElementById('quizPrompt').textContent = q.prompt;
+      document.getElementById('quizExp').style.display = "none";
+
+      var optsContainer = document.getElementById('quizOptsList');
+      optsContainer.innerHTML = "";
+      q.opts.forEach(function(optText, idx){
+        var btn = document.createElement('button');
+        btn.className = "quiz-opt-btn";
+        btn.textContent = optText;
+        btn.onclick = function() { checkQuizAnswer(idx, btn, q); };
+        optsContainer.appendChild(btn);
+      });
+    }
+
+    function checkQuizAnswer(selectedIdx, btnEl, qObj) {
+      var allBtns = document.querySelectorAll('.quiz-opt-btn');
+      allBtns.forEach(function(b){ b.disabled = true; });
+
+      if (selectedIdx === qObj.ans) {
+        btnEl.classList.add('correct');
+        quizScore++;
+        document.getElementById('quizScore').textContent = quizScore;
+      } else {
+        btnEl.classList.add('wrong');
+        allBtns[qObj.ans].classList.add('correct');
+      }
+
+      var expEl = document.getElementById('quizExp');
+      expEl.style.display = "block";
+      expEl.innerHTML = "<strong>IUPAC Rule Explanation:</strong> " + qObj.exp;
+    }
+
+    function nextQuizQuestion() {
+      if (currentQIndex < quizQuestions.length) {
+        currentQIndex++;
+        loadQuizQ();
+      }
+    }
+
+    function restartQuiz() {
+      currentQIndex = 0;
+      quizScore = 0;
+      location.reload();
+    }
+
+    // Init Builder on load
+    updateBuilder();
+    loadQuizQ();
+  </script>
+</body>
+</html>

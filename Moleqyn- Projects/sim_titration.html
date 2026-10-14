@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Moleqyn | Acid-Base Titration Virtual Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: #0f1e35;
+      --border: rgba(255, 255, 255, 0.1);
+      --primary: #00d4ff;
+      --secondary: #ff00cc;
+      --accent: #ffd700;
+      --text: #f0f4ff;
+      --muted: #7a90b0;
+      --green: #4ade80;
+      --red: #fb7185;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    nav {
+      background: rgba(7, 17, 31, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-brand {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .nav-brand span {
+      color: var(--primary);
+    }
+
+    .nav-back {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+
+    .nav-back:hover {
+      color: var(--primary);
+    }
+
+    .lab-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      height: calc(100vh - 58px);
+      overflow: hidden;
+    }
+
+    /* CANVAS SIDE */
+    .canvas-side {
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      gap: 12px;
+      overflow: hidden;
+    }
+
+    .lab-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .lab-title span {
+      color: var(--primary);
+    }
+
+    .canvas-wrap {
+      flex: 1;
+      background: var(--panel);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      position: relative;
+    }
+
+    #labCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* CONTROL PANEL */
+    .ctrl-panel {
+      background: var(--panel);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      overflow-y: auto;
+    }
+
+    .ctrl-section {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .ctrl-section h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+
+    .ctrl-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .ctrl-label {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .ctrl-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    select,
+    input[type=range] {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      width: 100%;
+      cursor: pointer;
+    }
+
+    select option {
+      background: #0f1e35;
+    }
+
+    input[type=range] {
+      padding: 4px 0;
+      accent-color: var(--primary);
+    }
+
+    .big-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 6px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #000;
+    }
+
+    .btn-primary:hover {
+      background: #00e8ff;
+      box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+    }
+
+    .btn-danger {
+      background: rgba(251, 113, 133, 0.15);
+      color: var(--red);
+      border: 1px solid var(--red) !important;
+      background: transparent;
+    }
+
+    .btn-danger:hover {
+      background: var(--red);
+      color: #fff;
+    }
+
+    /* pH METER */
+    .ph-display {
+      background: rgba(0, 0, 0, 0.3);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .ph-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 3rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .ph-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .ph-bar {
+      height: 12px;
+      border-radius: 6px;
+      background: linear-gradient(to right, #ff0000, #ff8800, #ffff00, #00ff00, #0088ff, #8800ff);
+      margin-top: 8px;
+      position: relative;
+      border-radius: 6px;
+    }
+
+    .ph-indicator {
+      position: absolute;
+      top: -4px;
+      width: 20px;
+      height: 20px;
+      background: #fff;
+      border: 2px solid #000;
+      border-radius: 50%;
+      transform: translateX(-50%);
+      transition: left 0.4s ease;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+    }
+
+    /* DATA TABLE */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+    }
+
+    .data-table th {
+      background: rgba(0, 212, 255, 0.1);
+      color: var(--primary);
+      padding: 6px 8px;
+      text-align: left;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+    }
+
+    .data-table td {
+      padding: 5px 8px;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .equiv-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      background: rgba(74, 222, 128, 0.15);
+      color: var(--green);
+      border: 1px solid var(--green);
+    }
+
+    /* AHA BOX */
+    .aha-box {
+      background: rgba(0, 212, 255, 0.05);
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .aha-box strong {
+      color: var(--primary);
+      display: block;
+      margin-bottom: 4px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    @media(max-width:768px) {
+      .lab-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .ctrl-panel {
+        height: auto;
+        overflow-y: visible;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <a href="index.html" class="nav-brand">⚗️ Mole<span>qyn</span></a>
+    <a href="simulators.html" class="nav-back">← Back to Simulators</a>
+  </nav>
+
+  <!-- ⚠️ EDUCATIONAL SIMULATOR DISCLAIMER -->
+  <div id="simDisclaimer"
+    style="background:linear-gradient(90deg,rgba(0,212,255,0.08),rgba(255,0,200,0.06));border-bottom:1px solid rgba(0,212,255,0.2);padding:6px 24px;display:flex;align-items:center;justify-content:space-between;font-size:0.75rem;color:#7a90b0;gap:12px;">
+    <span>⚠️ <strong style="color:#00d4ff;">Educational Simulation</strong> — Practice tool for CBSE/NCERT titration
+      concepts. The Unknown Challenge answer is stored client-side and can be inspected. Reports are not verified
+      scientific records.</span>
+    <button onclick="document.getElementById('simDisclaimer').style.display='none'"
+      style="background:transparent;border:1px solid rgba(0,212,255,0.25);color:#7a90b0;border-radius:6px;padding:2px 8px;cursor:pointer;font-size:0.72rem;white-space:nowrap;">OK</button>
+  </div>
+
+  <div class="lab-layout">
+    <!-- CANVAS -->
+    <div class="canvas-side">
+      <div class="lab-title">💧 Acid-Base <span>Titration Lab</span></div>
+      <div class="canvas-wrap">
+        <canvas id="labCanvas"></canvas>
+      </div>
+    </div>
+    <!-- CONTROLS -->
+    <div class="ctrl-panel">
+      <div class="ctrl-section">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <h3 style="margin-bottom:0;">Setup & Solutions</h3>
+          <button type="button" id="unknownModeBtn" class="m-tab"
+            style="padding:3px 8px;font-size:0.7rem;border-radius:12px;border:1px solid var(--accent);color:var(--accent);"
+            onclick="toggleUnknownMode()">🧪 Unknown Conc Test</button>
+        </div>
+
+        <div style="margin-bottom:8px;">
+          <div class="ctrl-label" style="margin-bottom:4px;">Acid (in Conical Flask)</div>
+          <select id="acidSel" onchange="handleSolutionChange()">
+            <option value="HCl">HCl – Hydrochloric Acid (Strong, 1 H⁺)</option>
+            <option value="H2SO4">H₂SO₄ – Sulphuric Acid (Strong, 2 H⁺)</option>
+            <option value="CH3COOH">CH₃COOH – Acetic Acid (Weak, Ka=1.8×10⁻⁵)</option>
+            <option value="HNO3">HNO₃ – Nitric Acid (Strong, 1 H⁺)</option>
+            <option value="H2C2O4">H₂C₂O₄ – Oxalic Acid (NCERT Standard, 2 H⁺)</option>
+            <option value="H3PO4">H₃PO₄ – Phosphoric Acid (Triprotic, 3 H⁺)</option>
+            <option value="CUSTOM_ACID" style="color:var(--accent);font-weight:bold;">⚙️ Custom Acid Solution...
+            </option>
+          </select>
+        </div>
+
+        <!-- CUSTOM ACID BUILDER (hidden by default) -->
+        <div id="customAcidBox"
+          style="display:none;background:rgba(251,113,133,0.08);border:1px dashed var(--red);border-radius:8px;padding:8px 10px;margin-bottom:10px;">
+          <div style="font-size:0.72rem;color:var(--red);font-weight:700;margin-bottom:4px;">⚙️ CUSTOM ACID PARAMETERS
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;">
+            <div>
+              <div style="font-size:0.68rem;color:var(--muted);">Formula / Name</div>
+              <input type="text" id="custAcidName" value="HA" maxlength="8"
+                style="padding:4px 6px;font-size:0.75rem;width:100%;" oninput="update()" />
+            </div>
+            <div>
+              <div style="font-size:0.68rem;color:var(--muted);">Protons (Basicity)</div>
+              <select id="custAcidProtons" style="padding:4px 6px;font-size:0.75rem;" onchange="update()">
+                <option value="1">Monoprotic (1 H⁺)</option>
+                <option value="2">Diprotic (2 H⁺)</option>
+                <option value="3">Triprotic (3 H⁺)</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:0.68rem;color:var(--muted);">Acid Strength (Ka):</div>
+            <select id="custAcidKa" style="padding:4px 6px;font-size:0.75rem;" onchange="update()">
+              <option value="1e10">Strong Acid (Complete Dissociation)</option>
+              <option value="1.8e-4">Moderately Weak (Ka = 1.8 × 10⁻⁴)</option>
+              <option value="1.8e-5">Weak Acid (Ka = 1.8 × 10⁻⁵)</option>
+              <option value="1e-8">Very Weak Acid (Ka = 1.0 × 10⁻⁸)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-bottom:8px;">
+          <div class="ctrl-label" style="margin-bottom:4px;">Base (in Burette Titrant)</div>
+          <select id="baseSel" onchange="handleSolutionChange()">
+            <option value="NaOH">NaOH – Sodium Hydroxide (Strong, 1 OH⁻)</option>
+            <option value="KOH">KOH – Potassium Hydroxide (Strong, 1 OH⁻)</option>
+            <option value="Ca(OH)2">Ca(OH)₂ – Calcium Hydroxide (Strong, 2 OH⁻)</option>
+            <option value="NH4OH">NH₄OH – Ammonium Hydroxide (Weak, Kb=1.8×10⁻⁵)</option>
+            <option value="Ba(OH)2">Ba(OH)₂ – Barium Hydroxide (Strong, 2 OH⁻)</option>
+            <option value="CUSTOM_BASE" style="color:var(--accent);font-weight:bold;">⚙️ Custom Base Solution...
+            </option>
+          </select>
+        </div>
+
+        <!-- CUSTOM BASE BUILDER (hidden by default) -->
+        <div id="customBaseBox"
+          style="display:none;background:rgba(74,222,128,0.08);border:1px dashed var(--green);border-radius:8px;padding:8px 10px;margin-bottom:10px;">
+          <div style="font-size:0.72rem;color:var(--green);font-weight:700;margin-bottom:4px;">⚙️ CUSTOM BASE PARAMETERS
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+            <div>
+              <div style="font-size:0.68rem;color:var(--muted);">Formula / Name</div>
+              <input type="text" id="custBaseName" value="BOH" maxlength="8"
+                style="padding:4px 6px;font-size:0.75rem;width:100%;" oninput="update()" />
+            </div>
+            <div>
+              <div style="font-size:0.68rem;color:var(--muted);">OH⁻ Count</div>
+              <select id="custBaseOH" style="padding:4px 6px;font-size:0.75rem;" onchange="update()">
+                <option value="1">1 OH⁻</option>
+                <option value="2">2 OH⁻</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:8px;">
+          <div class="ctrl-label" style="margin-bottom:4px;">Indicator</div>
+          <select id="indicatorSel" onchange="changeIndicator()">
+            <option value="phenolphthalein">Phenolphthalein (Colorless → Pink, pH 8.2–10.0)</option>
+            <option value="methyl_orange">Methyl Orange (Red → Yellow, pH 3.1–4.4)</option>
+            <option value="litmus">Litmus (Red → Blue, pH 5.0–8.0)</option>
+            <option value="methyl_red">Methyl Red (Red → Yellow, pH 4.4–6.2)</option>
+          </select>
+        </div>
+
+        <div id="knownAcidRow">
+          <div class="ctrl-row" style="margin-bottom:4px;">
+            <span class="ctrl-label">Acid concentration in Flask</span>
+            <span class="ctrl-val" id="acidConcVal">0.10 M</span>
+          </div>
+          <input type="range" id="acidConc" min="0.01" max="1.0" step="0.01" value="0.10" oninput="update()" />
+        </div>
+
+        <!-- UNKNOWN CONCENTRATION CHALLENGE BOX -->
+        <div id="unknownChallengeBox"
+          style="display:none;background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.3);border-radius:10px;padding:10px;margin-bottom:10px;">
+          <div style="font-size:0.78rem;font-weight:700;color:var(--accent);margin-bottom:4px;">🎯 UNKNOWN CONCENTRATION
+            CHALLENGE</div>
+          <div style="font-size:0.72rem;color:var(--muted);line-height:1.4;margin-bottom:8px;">
+            Titrate until color change occurs. Note burette reading V₂, then calculate unknown M₁:
+          </div>
+          <div style="display:flex;gap:6px;">
+            <input type="number" id="userCalcMolarity" placeholder="e.g. 0.125" step="0.001"
+              style="flex:1;padding:6px;background:rgba(0,0,0,0.4);border:1px solid var(--border);color:#fff;border-radius:6px;font-size:0.8rem;" />
+            <button type="button" class="m-tab active" style="padding:6px 10px;font-size:0.75rem;"
+              onclick="checkUnknownAnswer()">Check M₁</button>
+          </div>
+          <div id="unknownResultMsg" style="font-size:0.72rem;margin-top:6px;font-weight:600;"></div>
+        </div>
+
+        <div class="ctrl-row" style="margin-top:8px;margin-bottom:4px;">
+          <span class="ctrl-label">Base concentration (Standard Titrant)</span>
+          <span class="ctrl-val" id="baseConcVal">0.10 M</span>
+        </div>
+        <input type="range" id="baseConc" min="0.01" max="1.0" step="0.01" value="0.10" oninput="update()" />
+      </div>
+
+      <div class="ctrl-section">
+        <h3>pH Meter</h3>
+        <div class="ph-display">
+          <div class="ph-val" id="phDisplay" style="color:#4ade80;">7.00</div>
+          <div class="ph-label">pH Reading</div>
+          <div class="ph-bar">
+            <div class="ph-indicator" id="phIndicator" style="left:50%;"></div>
+          </div>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Volume added</span>
+          <span class="ctrl-val" id="volAdded">0.00 mL</span>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Moles acid</span>
+          <span class="ctrl-val" id="molesAcid">—</span>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Equivalence Pt</span>
+          <span class="ctrl-val" id="equivPt">—</span>
+        </div>
+      </div>
+
+      <div class="ctrl-section">
+        <h3>Titration Control</h3>
+        <div class="ctrl-row" style="margin-bottom:4px;">
+          <span class="ctrl-label">Drop rate</span>
+          <span class="ctrl-val" id="dropRateVal">0.5 mL</span>
+        </div>
+        <input type="range" id="dropRate" min="0.1" max="5.0" step="0.1" value="0.5" oninput="updateDropRate()" />
+        <button class="big-btn btn-primary" id="addDropBtn" onclick="addDrop()">💧 Add Drop</button>
+        <button class="big-btn"
+          style="background:rgba(255,215,0,0.1);color:var(--accent);border:1px solid var(--accent);margin-top:6px;"
+          onclick="autoTitrate()">⚡ Auto-Titrate to EP</button>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;">
+          <button class="big-btn btn-danger" style="margin-top:0;border:1px solid var(--red);" onclick="resetLab()">🔄
+            Reset</button>
+          <button class="big-btn"
+            style="margin-top:0;background:rgba(0,212,255,0.15);color:var(--primary);border:1px solid var(--primary);"
+            onclick="generateTitrationReport()">📄 Lab Report</button>
+        </div>
+      </div>
+
+      <div class="ctrl-section">
+        <h3>Observation Table</h3>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Vol (mL)</th>
+                <th>pH</th>
+                <th>Note</th>
+              </tr>
+            </thead>
+            <tbody id="dataTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="ctrl-section">
+        <h3>📖 Concept Note</h3>
+        <div class="aha-box" id="ahaBox">
+          <strong>Titration Principle</strong>
+          Titration determines unknown concentration by reacting with a known-concentration solution until equivalence
+          point (neutralisation). At EP: moles acid = moles base (for 1:1 reaction). Indicators change colour at/near
+          EP.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('labCanvas');
+    const ctx = canvas.getContext('2d');
+    let W, H;
+
+    // State
+    let state = {
+      volAdded: 0,       // mL of base added
+      acidVol: 25,       // mL of acid in flask
+      acidConc: 0.1,
+      baseConc: 0.1,
+      dropSize: 0.5,
+      indicator: 'phenolphthalein',
+      pH: 1.2,
+      tableData: [],
+      drops: [],         // animated drops
+      animating: false,
+      equivPoint: 25,    // mL base needed for EP
+      flaskColor: [255, 255, 255, 0.08],
+      autoRunning: false
+    };
+
+    function resize() {
+      const wrap = canvas.parentElement;
+      W = canvas.width = wrap.clientWidth;
+      H = canvas.height = wrap.clientHeight;
+    }
+    window.addEventListener('resize', resize); resize();
+
+    // CALCULATE pH
+    function calcPH(volBase) {
+      const Ca = state.acidConc, Va = state.acidVol, Cb = state.baseConc;
+      const aP = getActiveAcidParams();
+      const bP = getActiveBaseParams();
+      const eqAcid = aP.protons * Ca * Va;
+      const eqBase = bP.oh * Cb * volBase;
+      const isWeak = aP.isWeak;
+      const Ka = aP.Ka || 1.8e-5;
+      const EP = (aP.protons * Ca * Va) / (bP.oh * Cb); // mL base needed
+
+      if (volBase === 0) {
+        if (isWeak) return -Math.log10(Math.sqrt(Ka * Ca));
+        return -Math.log10(Math.max(1e-14, aP.protons * Ca));
+      }
+      if (Math.abs(volBase - EP) < 0.05) {
+        return isWeak ? 8.65 : 7.00;
+      }
+
+      const totalVol = (Va + volBase); // mL total
+      if (volBase < EP) {
+        const excessH = (eqAcid - eqBase) / totalVol; // mol/L
+        if (isWeak) {
+          // Buffer region: Henderson-Hasselbalch
+          const fractionNeutralized = volBase / EP;
+          const ratio = fractionNeutralized / Math.max(0.001, 1 - fractionNeutralized);
+          return Math.max(1.5, Math.min(6.5, -Math.log10(Ka) + Math.log10(ratio)));
+        }
+        return Math.max(0.1, -Math.log10(Math.max(excessH, 1e-14)));
+      } else {
+        const excessOH = (eqBase - eqAcid) / totalVol; // mol/L
+        const pOH = -Math.log10(Math.max(excessOH, 1e-14));
+        return Math.min(14, 14 - pOH);
+      }
+    }
+    function Kb_estimate(Ka) { return 1e-14 / Ka; }
+
+    function getFlaskColor(pH, indicator) {
+      // Solution color based on indicator
+      if (indicator === 'phenolphthalein') {
+        if (pH < 8.2) return [255, 255, 255, 0.15]; // colourless
+        const t = Math.min(1, (pH - 8.2) / 1.5);
+        return [255 * (1 - t) + 220 * t, 255 * (1 - t) + 20 * t, 255 * (1 - t) + 120 * t, 0.5 + t * 0.3];
+      }
+      if (indicator === 'methyl_orange') {
+        if (pH < 3.1) return [255, 80, 40, 0.6]; // red
+        if (pH > 4.4) return [255, 165, 0, 0.5]; // orange-yellow
+        const t = (pH - 3.1) / 1.3;
+        return [255, 80 + 85 * t, 40 + 0 * t, 0.55];
+      }
+      if (indicator === 'litmus') {
+        if (pH < 7) return [220, 50, 80, 0.5]; // red
+        return [70, 80, 220, 0.5]; // blue
+      }
+      if (indicator === 'methyl_red') {
+        if (pH < 4.4) return [255, 60, 60, 0.5];
+        if (pH > 6.2) return [255, 200, 60, 0.5];
+        return [255, 130, 60, 0.5];
+      }
+      return [255, 255, 255, 0.15];
+    }
+
+    // DRAW
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+
+      // Background gradient
+      const bg = ctx.createLinearGradient(0, 0, 0, H);
+      bg.addColorStop(0, '#07111f'); bg.addColorStop(1, '#0a1828');
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+
+      // Apparatus Placement - Perfectly Aligned along Centerline cx
+      const cx = W / 2 + 40;
+      const burW = 28;
+      const burX = cx - burW / 2;
+      const burY = 30;
+      const bH = Math.min(260, H * 0.42);
+
+      const flaskW = 140, flaskNeckW = 46, flaskH = 170, neckH = 65;
+      const flaskX = cx - flaskW / 2;
+      const flaskY = burY + bH + 35; // Positioned directly below burette tip
+
+      // Draw burette
+      drawBurette(burX, burY, bH);
+
+      // Draw flask
+      drawFlask(flaskX, flaskY, flaskW, flaskNeckW, flaskH, neckH);
+
+      // Draw graph (pH curve)
+      drawGraph();
+
+      // Animated drops falling directly from tip into flask neck
+      state.drops.forEach((d) => {
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(100,200,255,${d.alpha})`;
+        ctx.fill();
+        d.y += 5;
+        // Fade out once reaching liquid inside flask
+        if (d.y > flaskY + neckH + 20) {
+          d.alpha -= 0.12;
+        }
+      });
+      state.drops = state.drops.filter(d => d.alpha > 0);
+
+      // Labels
+      ctx.font = '600 12px Inter';
+      ctx.fillStyle = 'rgba(255,255,255,0.7)';
+      ctx.textAlign = 'center';
+      ctx.fillText('Burette (Base NaOH)', cx, burY - 10);
+      ctx.fillText('Conical Flask (Analyte)', cx, flaskY + flaskH + 28);
+
+      requestAnimationFrame(draw);
+    }
+
+    function drawBurette(x, y, customBH) {
+      const bW = 28;
+      const bH = customBH || Math.min(260, H * 0.42);
+      ctx.save();
+      // Body
+      const grad = ctx.createLinearGradient(x, y, x + bW, y);
+      grad.addColorStop(0, 'rgba(200,230,255,0.15)');
+      grad.addColorStop(0.3, 'rgba(200,230,255,0.08)');
+      grad.addColorStop(1, 'rgba(200,230,255,0.15)');
+      ctx.fillStyle = grad; ctx.strokeStyle = 'rgba(200,230,255,0.4)'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.roundRect(x, y, bW, bH, 4); ctx.fill(); ctx.stroke();
+      // Liquid level inside
+      const fillFrac = Math.max(0, 1 - state.volAdded / 60); // 60mL burette
+      const liquidH = bH * 0.85 * fillFrac;
+      ctx.fillStyle = 'rgba(80,160,240,0.5)';
+      ctx.fillRect(x + 2, y + bH * 0.05 + bH * 0.85 * (1 - fillFrac), bW - 4, liquidH);
+      // Graduation marks
+      for (let i = 0; i <= 5; i++) {
+        const ly = y + bH * 0.05 + (bH * 0.85 * i / 5);
+        ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(x, ly); ctx.lineTo(x + 8, ly); ctx.stroke();
+        ctx.font = '400 9px JetBrains Mono'; ctx.fillStyle = 'rgba(255,255,255,0.5)';
+        ctx.textAlign = 'right'; ctx.fillText(`${i * 10}mL`, x - 3, ly + 3);
+      }
+      // Tip
+      ctx.fillStyle = 'rgba(200,230,255,0.3)'; ctx.strokeStyle = 'rgba(200,230,255,0.4)';
+      ctx.beginPath(); ctx.moveTo(x + bW / 2 - 4, y + bH); ctx.lineTo(x + bW / 2 + 4, y + bH);
+      ctx.lineTo(x + bW / 2 + 2, y + bH + 30); ctx.lineTo(x + bW / 2 - 2, y + bH + 30); ctx.closePath();
+      ctx.fill(); ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawFlask(fx, fy, fw, fnw, fh, nh) {
+      ctx.save();
+      const fc = state.flaskColor;
+      const cx2 = fx + fw / 2;
+      // Flask outline path
+      ctx.beginPath();
+      ctx.moveTo(cx2 - fnw / 2, fy); // neck top-left
+      ctx.lineTo(cx2 + fnw / 2, fy); // neck top-right
+      ctx.lineTo(cx2 + fnw / 2, fy + nh); // neck bottom-right
+      ctx.bezierCurveTo(cx2 + fw / 2 + 10, fy + nh + 20, cx2 + fw / 2, fy + fh, cx2, fy + fh); // right curve
+      ctx.bezierCurveTo(cx2 - fw / 2, fy + fh, cx2 - fw / 2 - 10, fy + nh + 20, cx2 - fnw / 2, fy + nh); // left curve
+      ctx.closePath();
+
+      // Fill gradient glass
+      const glassGrad = ctx.createLinearGradient(fx, fy, fx + fw, fy);
+      glassGrad.addColorStop(0, 'rgba(255,255,255,0.15)');
+      glassGrad.addColorStop(0.5, 'rgba(255,255,255,0.05)');
+      glassGrad.addColorStop(1, 'rgba(255,255,255,0.15)');
+      ctx.fillStyle = glassGrad; ctx.fill();
+
+      // Liquid inside
+      const liquidLevel = 0.55; // fill level
+      ctx.save();
+      ctx.clip();
+      const liquidGrad = ctx.createLinearGradient(0, fy + fh * (1 - liquidLevel), 0, fy + fh);
+      const [r, g, b, a] = fc;
+      liquidGrad.addColorStop(0, `rgba(${r},${g},${b},${a * 0.7})`);
+      liquidGrad.addColorStop(1, `rgba(${r},${g},${b},${a})`);
+      ctx.fillStyle = liquidGrad;
+      ctx.fillRect(fx - 10, fy + fh * (1 - liquidLevel), fw + 20, fh * (liquidLevel) + 10);
+
+      // Bubbles
+      const t = Date.now() * 0.001;
+      for (let i = 0; i < 4; i++) {
+        const bx = fx + fw * 0.2 + (i * 0.2) * fw + Math.sin(t * 1.5 + i) * 8;
+        const by = fy + fh - 20 + Math.sin(t * 2 + i * 1.5) * 15;
+        ctx.beginPath(); ctx.arc(bx, by, 3 + i * 1.5, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,0.2)`; ctx.fill();
+      }
+      ctx.restore();
+
+      // Outline
+      ctx.beginPath();
+      ctx.moveTo(cx2 - fnw / 2, fy);
+      ctx.lineTo(cx2 + fnw / 2, fy);
+      ctx.lineTo(cx2 + fnw / 2, fy + nh);
+      ctx.bezierCurveTo(cx2 + fw / 2 + 10, fy + nh + 20, cx2 + fw / 2, fy + fh, cx2, fy + fh);
+      ctx.bezierCurveTo(cx2 - fw / 2, fy + fh, cx2 - fw / 2 - 10, fy + nh + 20, cx2 - fnw / 2, fy + nh);
+      ctx.closePath();
+      ctx.strokeStyle = 'rgba(200,230,255,0.5)'; ctx.lineWidth = 2; ctx.stroke();
+
+      // pH text on flask
+      ctx.font = 'bold 16px JetBrains Mono'; ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.textAlign = 'center';
+      ctx.fillText(`pH ${state.pH.toFixed(2)}`, cx2, fy + fh * 0.7);
+      ctx.restore();
+    }
+
+    function drawGraph() {
+      if (state.tableData.length < 2) return;
+      const gx = 20, gy = H * 0.65, gw = W * 0.6, gh = H * 0.28;
+      // Background
+      ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.fillRect(gx, gy, gw, gh);
+      ctx.strokeStyle = 'rgba(255,255,255,0.15)'; ctx.lineWidth = 1; ctx.strokeRect(gx, gy, gw, gh);
+      // Grid
+      ctx.strokeStyle = 'rgba(255,255,255,0.05)'; ctx.lineWidth = 0.5;
+      for (let i = 0; i <= 7; i++) { const py = gy + (gh / 7) * i; ctx.beginPath(); ctx.moveTo(gx, py); ctx.lineTo(gx + gw, py); ctx.stroke(); }
+      for (let i = 0; i <= 6; i++) { const px = gx + (gw / 6) * i; ctx.beginPath(); ctx.moveTo(px, gy); ctx.lineTo(px, gy + gh); ctx.stroke(); }
+      // Axes labels
+      ctx.font = '400 9px JetBrains Mono'; ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.textAlign = 'center';
+      ctx.fillText('Volume Base Added (mL)', gx + gw / 2, gy + gh + 14);
+      ctx.save(); ctx.translate(gx - 12, gy + gh / 2); ctx.rotate(-Math.PI / 2);
+      ctx.fillText('pH', 0, 0); ctx.restore();
+      // Title
+      ctx.font = '500 10px Inter'; ctx.fillStyle = 'rgba(0,212,255,0.8)'; ctx.textAlign = 'left';
+      ctx.fillText('pH Curve', gx + 4, gy + 14);
+      // Plot points
+      const maxVol = Math.max(50, state.tableData[state.tableData.length - 1]?.vol || 50);
+      ctx.beginPath(); ctx.strokeStyle = 'rgba(0,212,255,0.9)'; ctx.lineWidth = 2.5;
+      state.tableData.forEach((d, i) => {
+        const px = gx + (d.vol / maxVol) * gw;
+        const py = gy + gh - (d.pH / 14) * gh;
+        if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      });
+      ctx.stroke();
+      // EP marker
+      if (state.volAdded >= state.equivPoint) {
+        const epX = gx + (state.equivPoint / maxVol) * gw;
+        ctx.strokeStyle = 'rgba(74,222,128,0.8)'; ctx.lineWidth = 1.5; ctx.setLineDash([4, 4]);
+        ctx.beginPath(); ctx.moveTo(epX, gy); ctx.lineTo(epX, gy + gh); ctx.stroke();
+        ctx.setLineDash([]); ctx.font = '500 9px Inter'; ctx.fillStyle = 'rgba(74,222,128,0.9)';
+        ctx.textAlign = 'center'; ctx.fillText('EP', epX, gy - 3);
+      }
+    }
+
+    // SOLUTION PROPERTIES
+    const ACID_DATA = {
+      HCl: { name: 'HCl', protons: 1, Ka: 1e10, isWeak: false },
+      H2SO4: { name: 'H₂SO₄', protons: 2, Ka: 1e10, isWeak: false },
+      CH3COOH: { name: 'CH₃COOH', protons: 1, Ka: 1.8e-5, isWeak: true },
+      HNO3: { name: 'HNO₃', protons: 1, Ka: 1e10, isWeak: false },
+      H2C2O4: { name: 'H₂C₂O₄', protons: 2, Ka: 5.9e-2, isWeak: false },
+      H3PO4: { name: 'H₃PO₄', protons: 3, Ka: 7.5e-3, isWeak: true }
+    };
+
+    const BASE_DATA = {
+      NaOH: { name: 'NaOH', oh: 1, Kb: 1e10, isWeak: false },
+      KOH: { name: 'KOH', oh: 1, Kb: 1e10, isWeak: false },
+      'Ca(OH)2': { name: 'Ca(OH)₂', oh: 2, Kb: 1e10, isWeak: false },
+      NH4OH: { name: 'NH₄OH', oh: 1, Kb: 1.8e-5, isWeak: true },
+      'Ba(OH)2': { name: 'Ba(OH)₂', oh: 2, Kb: 1e10, isWeak: false }
+    };
+
+    let unknownModeActive = false;
+    let secretUnknownMolarity = 0.125;
+
+    function handleSolutionChange() {
+      const aSel = document.getElementById('acidSel').value;
+      const bSel = document.getElementById('baseSel').value;
+      document.getElementById('customAcidBox').style.display = aSel === 'CUSTOM_ACID' ? 'block' : 'none';
+      document.getElementById('customBaseBox').style.display = bSel === 'CUSTOM_BASE' ? 'block' : 'none';
+      resetLab();
+    }
+
+    function toggleUnknownMode() {
+      unknownModeActive = !unknownModeActive;
+      const btn = document.getElementById('unknownModeBtn');
+      const box = document.getElementById('unknownChallengeBox');
+      const knownRow = document.getElementById('knownAcidRow');
+
+      if (unknownModeActive) {
+        btn.textContent = '✕ Exit Challenge';
+        btn.className = 'm-tab active';
+        btn.style.background = 'var(--accent)';
+        btn.style.color = '#000';
+        box.style.display = 'block';
+        knownRow.style.opacity = '0.35';
+        knownRow.style.pointerEvents = 'none';
+
+        // Generate random secret molarity between 0.05 and 0.25 M
+        secretUnknownMolarity = parseFloat((0.05 + Math.random() * 0.20).toFixed(3));
+        state.acidConc = secretUnknownMolarity;
+        document.getElementById('acidConcVal').textContent = '? M (Hidden)';
+        document.getElementById('unknownResultMsg').textContent = 'Conical flask filled with unknown acid. Titrate to find equivalence volume!';
+      } else {
+        btn.textContent = '🧪 Unknown Conc Test';
+        btn.className = 'm-tab';
+        btn.style.background = 'transparent';
+        btn.style.color = 'var(--accent)';
+        box.style.display = 'none';
+        knownRow.style.opacity = '1';
+        knownRow.style.pointerEvents = 'auto';
+        update();
+      }
+      resetLab();
+    }
+
+    function checkUnknownAnswer() {
+      const val = parseFloat(document.getElementById('userCalcMolarity').value);
+      const msgEl = document.getElementById('unknownResultMsg');
+      if (isNaN(val) || val <= 0) {
+        msgEl.innerHTML = '<span style="color:var(--red);">Please enter a valid molarity!</span>';
+        return;
+      }
+      const exact = secretUnknownMolarity;
+      const err = Math.abs(val - exact) / exact * 100;
+
+      if (err < 3.0) {
+        msgEl.innerHTML = `<span style="color:var(--green);">🎉 Excellent! Exact: ${exact.toFixed(3)} M, Your Answer: ${val.toFixed(3)} M (Error: ${err.toFixed(1)}%). Perfect practical technique!</span>`;
+      } else if (err < 10.0) {
+        msgEl.innerHTML = `<span style="color:var(--accent);">⚠️ Close! Exact: ${exact.toFixed(3)} M, Your Answer: ${val.toFixed(3)} M (Error: ${err.toFixed(1)}%). Check your endpoint volume reading!</span>`;
+      } else {
+        msgEl.innerHTML = `<span style="color:var(--red);">❌ Off target. Exact: ${exact.toFixed(3)} M. Use formula: (n₁ × M₁ × V₁) = (n₂ × M₂ × V₂).</span>`;
+      }
+    }
+
+    // CHEMISTRY CALCULATIONS
+    function getActiveAcidParams() {
+      const aSel = document.getElementById('acidSel').value;
+      if (aSel === 'CUSTOM_ACID') {
+        return {
+          name: (document.getElementById('custAcidName').value || 'HA').trim(),
+          protons: parseInt(document.getElementById('custAcidProtons').value, 10),
+          Ka: parseFloat(document.getElementById('custAcidKa').value),
+          isWeak: parseFloat(document.getElementById('custAcidKa').value) < 1e5
+        };
+      }
+      return ACID_DATA[aSel] || ACID_DATA.HCl;
+    }
+
+    function getActiveBaseParams() {
+      const bSel = document.getElementById('baseSel').value;
+      if (bSel === 'CUSTOM_BASE') {
+        return {
+          name: (document.getElementById('custBaseName').value || 'BOH').trim(),
+          oh: parseInt(document.getElementById('custBaseOH').value, 10),
+          Kb: 1e10,
+          isWeak: false
+        };
+      }
+      return BASE_DATA[bSel] || BASE_DATA.NaOH;
+    }
+
+    function calcEquivPoint() {
+      const Ca = state.acidConc, Va = state.acidVol, Cb = state.baseConc;
+      const aP = getActiveAcidParams();
+      const bP = getActiveBaseParams();
+      // nA * Ca * Va = nB * Cb * Vb => Vb = (nA * Ca * Va) / (nB * Cb)
+      state.equivPoint = (aP.protons * Ca * Va) / (bP.oh * Cb);
+    }
+
+    function update() {
+      if (!unknownModeActive) {
+        state.acidConc = parseFloat(document.getElementById('acidConc').value);
+        document.getElementById('acidConcVal').textContent = state.acidConc.toFixed(2) + ' M';
+      }
+      state.baseConc = parseFloat(document.getElementById('baseConc').value);
+      document.getElementById('baseConcVal').textContent = state.baseConc.toFixed(2) + ' M';
+      calcEquivPoint();
+      document.getElementById('equivPt').textContent = state.equivPoint.toFixed(1) + ' mL';
+      document.getElementById('molesAcid').textContent = (state.acidConc * state.acidVol / 1000).toFixed(4) + ' mol';
+    }
+
+    function updateDropRate() {
+      state.dropSize = parseFloat(document.getElementById('dropRate').value);
+      document.getElementById('dropRateVal').textContent = state.dropSize.toFixed(1) + ' mL';
+    }
+
+    function changeIndicator() {
+      state.indicator = document.getElementById('indicatorSel').value;
+      recalcFlaskColor();
+    }
+
+    function recalcFlaskColor() {
+      state.flaskColor = getFlaskColor(state.pH, state.indicator);
+    }
+
+    function addDrop() {
+      state.volAdded += state.dropSize;
+      state.pH = Math.max(0, Math.min(14, calcPH(state.volAdded)));
+      recalcFlaskColor();
+      // Spawn drop animation precisely at burette tip
+      const cx = W / 2 + 40;
+      const bH = Math.min(260, H * 0.42);
+      const tipY = 30 + bH + 28;
+      state.drops.push({ x: cx, y: tipY, r: 4.5, alpha: 1.0 });
+      // Update displays
+      document.getElementById('phDisplay').textContent = state.pH.toFixed(2);
+      const phColor = state.pH < 4 ? '#ff4f4f' : state.pH < 7 ? '#ffa500' : state.pH < 9 ? '#4ade80' : '#7c3aed';
+      document.getElementById('phDisplay').style.color = phColor;
+      document.getElementById('phIndicator').style.left = (state.pH / 14 * 100) + '%';
+      document.getElementById('volAdded').textContent = state.volAdded.toFixed(2) + ' mL';
+      // AHA box
+      updateAHA();
+      // Add to table (every 1mL)
+      if (state.tableData.length === 0 || state.volAdded - state.tableData[state.tableData.length - 1]?.vol >= 1) {
+        const isEP = Math.abs(state.volAdded - state.equivPoint) < state.dropSize;
+        state.tableData.push({ vol: state.volAdded, pH: state.pH, note: isEP ? 'EP' : '' });
+        renderTable();
+      }
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('dataTable');
+      tbody.innerHTML = '';
+      const recent = state.tableData.slice(-8);
+      recent.forEach(d => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${d.vol.toFixed(1)}</td><td>${d.pH.toFixed(2)}</td><td>${d.note ? `<span class="equiv-badge">${d.note}</span>` : ''}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function autoTitrate() {
+      if (state.autoRunning) return;
+      state.autoRunning = true;
+      const target = state.equivPoint;
+      function step() {
+        if (state.volAdded >= target + 5 || !state.autoRunning) { state.autoRunning = false; return; }
+        addDrop();
+        setTimeout(step, 120);
+      }
+      step();
+    }
+
+    function updateAHA() {
+      const box = document.getElementById('ahaBox');
+      const vol = state.volAdded, ep = state.equivPoint, ph = state.pH;
+      const aP = getActiveAcidParams();
+      const bP = getActiveBaseParams();
+      let msg = '', title = '';
+      if (vol === 0) { title = 'Starting Condition'; msg = `${aP.name} fills the flask. The solution is acidic. Add titrant ${bP.name} dropwise from the burette.`; }
+      else if (vol < ep * 0.5) { title = 'Early Titration'; msg = `pH = ${ph.toFixed(2)}. Neutralisation proceeding: ${vol.toFixed(1)} mL of ${ep.toFixed(1)} mL added.`; }
+      else if (vol < ep * 0.92) { title = 'Approaching Endpoint'; msg = `pH = ${ph.toFixed(2)}. Buffer/steep inflection region approaching. Add drops slowly!`; }
+      else if (Math.abs(vol - ep) < 1.5) { title = '⚡ EQUIVALENCE POINT REACHED!'; msg = `pH = ${ph.toFixed(2)}. Neutralisation complete! Equivalents of acid = equivalents of base. End point colour has changed.`; }
+      else { title = 'Post-Equivalence'; msg = `pH = ${ph.toFixed(2)}. Excess base in solution. Endpoint passed by ${(vol - ep).toFixed(1)} mL.`; }
+      box.innerHTML = `<strong>${title}</strong>${msg}`;
+    }
+
+    function resetLab() {
+      state.volAdded = 0; state.pH = calcPH(0); state.tableData = []; state.drops = [];
+      state.autoRunning = false;
+      recalcFlaskColor();
+      document.getElementById('phDisplay').textContent = state.pH.toFixed(2);
+      document.getElementById('volAdded').textContent = '0.00 mL';
+      document.getElementById('dataTable').innerHTML = '';
+      document.getElementById('phIndicator').style.left = (state.pH / 14 * 100) + '%';
+      document.getElementById('ahaBox').innerHTML = '<strong>Ready</strong>Lab reset. Solution configured. Click 💧 Add Drop to titrate.';
+      calcEquivPoint();
+      document.getElementById('equivPt').textContent = state.equivPoint.toFixed(1) + ' mL';
+    }
+
+    function generateTitrationReport() {
+      let modal = document.getElementById('titrReportModal');
+      if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'titrReportModal';
+        modal.style.cssText = 'position:fixed;inset:0;background:rgba(2,6,18,0.85);backdrop-filter:blur(10px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+        document.body.appendChild(modal);
+      }
+
+      // SECURITY FIX: Use correct lowercase key 'moleqyn_user' (written by login.html).
+      // Old key 'Moleqyn_user' was never written by any login flow — always fell back.
+      const _storedUser = localStorage.getItem('moleqyn_user');
+      const currentUser = _storedUser ? JSON.parse(_storedUser).name : 'Guest Student';
+      const dateStr = new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+      const aP = getActiveAcidParams();
+      const bP = getActiveBaseParams();
+
+      modal.innerHTML = `
+    <div style="background:#0b192c;border:1px solid rgba(0,212,255,0.3);border-radius:16px;max-width:760px;width:100%;max-height:90vh;overflow-y:auto;padding:28px;color:#f0f4ff;box-shadow:0 25px 60px rgba(0,0,0,0.7);font-family:'Inter',sans-serif;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid rgba(255,255,255,0.12);padding-bottom:16px;margin-bottom:20px;">
+        <div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;color:#00d4ff;">⚗️ Acid-Base Titration Lab Record</div>
+          <div style="font-size:0.82rem;color:#7a90b0;margin-top:2px;">Volumetric Analysis & Equivalence Point Determination</div>
+        </div>
+        <div style="text-align:right;">
+          <span style="display:inline-block;padding:4px 10px;background:rgba(74,222,128,0.15);color:#4ade80;border:1px solid #4ade80;border-radius:12px;font-size:0.75rem;font-weight:700;">NCERT EXPERIMENT</span>
+          <div style="font-size:0.75rem;color:#7a90b0;margin-top:4px;">${dateStr}</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:0.85rem;">
+        <div><strong>Student Name:</strong> <span style="color:#00d4ff;">${currentUser}</span></div>
+        <div><strong>Acid in Flask (V₁):</strong> ${aP.name} (25.0 mL)</div>
+        <div><strong>Titrant Base in Burette:</strong> ${bP.name} (${state.baseConc.toFixed(2)} M)</div>
+        <div><strong>Indicator Used:</strong> <span style="text-transform:capitalize;">${state.indicator}</span></div>
+      </div>
+
+      <div style="margin-bottom:18px;">
+        <h4 style="font-family:'Space Grotesk',sans-serif;color:#ffd700;font-size:0.92rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">1. Volumetric Data & Equivalence Point</h4>
+        <table style="width:100%;border-collapse:collapse;font-size:0.82rem;background:#071222;border-radius:8px;overflow:hidden;">
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#7a90b0;">Theoretical Equivalence Volume (V₂)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-weight:bold;color:#4ade80;">${state.equivPoint.toFixed(2)} mL</td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#7a90b0;">Actual Added Volume at Endpoint</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-weight:bold;color:#00d4ff;">${state.volAdded.toFixed(2)} mL</td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#7a90b0;">Solution pH at Endpoint</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;">${state.pH.toFixed(2)}</td></tr>
+          <tr><td style="padding:8px 12px;color:#7a90b0;">Molarity of Acid Solution (M₁)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-weight:bold;color:#ffd700;">${state.acidConc.toFixed(3)} M</td></tr>
+        </table>
+      </div>
+
+      <div style="margin-bottom:20px;padding:12px;background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.2);border-radius:10px;font-size:0.84rem;line-height:1.6;">
+        <strong style="color:#00d4ff;display:block;margin-bottom:4px;">Stoichiometric Calculation & Inference:</strong>
+        Formula: (n₁ × M₁ × V₁) = (n₂ × M₂ × V₂). With acid basicity n₁ = ${aP.protons} and base acidity n₂ = ${bP.oh}, neutralization reaches sharp inflection at pH = ${state.pH.toFixed(2)}. Color change accurately signals the end point with ${state.indicator}.
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:10px;border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;">
+        <button type="button" class="m-tab" onclick="document.getElementById('titrReportModal').style.display='none'">✕ Close</button>
+        <button type="button" class="m-tab active" style="background:#00d4ff;color:#000;font-weight:bold;" onclick="window.print()">🖨️ Print / Save PDF</button>
+      </div>
+    </div>
+  `;
+      modal.style.display = 'flex';
+    }
+
+    // Init
+    update(); updateDropRate(); calcEquivPoint();
+    state.pH = calcPH(0); recalcFlaskColor();
+    document.getElementById('phDisplay').textContent = state.pH.toFixed(2);
+    document.getElementById('equivPt').textContent = state.equivPoint.toFixed(1) + ' mL';
+    document.getElementById('molesAcid').textContent = (state.acidConc * state.acidVol / 1000).toFixed(4) + ' mol';
+    draw();
+  </script>
+</body>
+
+</html>

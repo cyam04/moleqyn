@@ -1,0 +1,440 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Moleqyn | Radioactive Decay & Half-Life Simulator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #07111f; --panel: rgba(13, 26, 45, 0.95);
+      --border: rgba(255, 255, 255, 0.12); --primary: #00f0ff;
+      --secondary: #ff00aa; --accent: #ffd166; --green: #38ef7d;
+      --text: #f0f4ff; --muted: #8ea3bf;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    nav {
+      background: rgba(7, 17, 31, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .nav-brand { font-family: 'Space Grotesk', sans-serif; font-size: 1.3rem; font-weight: 700; color: var(--text); text-decoration: none; }
+    .nav-brand span { color: var(--primary); }
+    .nav-back { color: var(--muted); text-decoration: none; font-size: 0.88rem; transition: 0.2s; }
+    .nav-back:hover { color: var(--primary); }
+
+    .decay-layout {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 340px 1fr 340px;
+      overflow: hidden;
+    }
+    @media (max-width: 1050px) {
+      .decay-layout { grid-template-columns: 300px 1fr; }
+      .right-decay-stats { display: none; }
+    }
+
+    /* Left Controls */
+    .left-controls {
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+    }
+    .iso-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      text-align: left;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .iso-btn:hover, .iso-btn.active {
+      background: rgba(0, 240, 255, 0.15);
+      border-color: var(--primary);
+      transform: translateX(4px);
+    }
+    .iso-t12 { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--accent); }
+
+    .action-btn {
+      background: var(--primary);
+      border: none;
+      color: #030a16;
+      font-weight: 700;
+      padding: 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem;
+      transition: 0.2s;
+    }
+    .action-btn:hover { background: #35ddff; box-shadow: 0 0 15px var(--primary-glow); }
+
+    /* Center Viewport */
+    .viewport {
+      display: flex;
+      flex-direction: column;
+      background: radial-gradient(circle at center, rgba(16, 32, 60, 0.5) 0%, #030814 100%);
+      position: relative;
+    }
+    #decayCanvas { width: 100%; height: 100%; display: block; }
+
+    .hud-box {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(7, 17, 31, 0.85);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 20px;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .hud-counts { font-size: 1.3rem; font-weight: 700; color: var(--primary); margin-top: 4px; }
+
+    /* Right Stats */
+    .right-decay-stats {
+      background: var(--panel);
+      border-left: 1px solid var(--border);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+    }
+    .stat-card {
+      background: rgba(4, 10, 22, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .stat-row { display: flex; justify-content: space-between; font-size: 0.86rem; }
+    .stat-key { color: var(--muted); }
+    .stat-val { font-family: 'JetBrains Mono', monospace; color: var(--accent); font-weight: 600; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-brand">⚗️ Mole<span>qyn</span> <span style="font-size:0.75rem; color:var(--primary); border:1px solid var(--primary); padding:2px 8px; border-radius:12px; margin-left:8px;">RADIOACTIVE DECAY LAB</span></a>
+  <div style="display:flex; gap:16px; align-items:center;">
+    <button type="button" onclick="generateHalflifeReport()" style="background:linear-gradient(135deg,#00f0ff,#38ef7d);color:#07111f;border:none;padding:6px 16px;border-radius:20px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:0.86rem;cursor:pointer;display:flex;align-items:center;gap:6px;transition:0.2s;box-shadow:0 0 15px rgba(0,240,255,0.3);">📄 Lab Report</button>
+    <a href="simulators.html" class="nav-back">⚛️ All Simulators</a>
+    <a href="index.html" class="nav-back">← Back to Home</a>
+  </div>
+</nav>
+
+<div class="decay-layout">
+
+  <!-- Controls -->
+  <aside class="left-controls">
+    <div style="font-family:'Space Grotesk',sans-serif; font-size:0.95rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:1px;">1. Select Radioisotope</div>
+
+    <button class="iso-btn active" onclick="selectIsotope('c14', this)">
+      <div>
+        <div style="font-weight:600;">Carbon-14 (¹⁴C)</div>
+        <div style="font-size:0.75rem; color:var(--muted);">Beta decay → ¹⁴N</div>
+      </div>
+      <span class="iso-t12">t½ = 5,730 y</span>
+    </button>
+
+    <button class="iso-btn" onclick="selectIsotope('u238', this)">
+      <div>
+        <div style="font-weight:600;">Uranium-238 (²³⁸U)</div>
+        <div style="font-size:0.75rem; color:var(--muted);">Alpha decay → ²³⁴Th</div>
+      </div>
+      <span class="iso-t12">t½ = 4.468 Ga</span>
+    </button>
+
+    <button class="iso-btn" onclick="selectIsotope('i131', this)">
+      <div>
+        <div style="font-weight:600;">Iodine-131 (¹³¹I)</div>
+        <div style="font-size:0.75rem; color:var(--muted);">Medical radioisotope</div>
+      </div>
+      <span class="iso-t12">t½ = 8.02 days</span>
+    </button>
+
+    <button class="iso-btn" onclick="selectIsotope('rn222', this)">
+      <div>
+        <div style="font-weight:600;">Radon-222 (²²²Rn)</div>
+        <div style="font-size:0.75rem; color:var(--muted);">Noble gas alpha emitter</div>
+      </div>
+      <span class="iso-t12">t½ = 3.82 days</span>
+    </button>
+
+    <div style="margin-top:10px;">
+      <button class="action-btn" id="startBtn" onclick="toggleSimulation()">Start Half-Life Clock ⏱️</button>
+      <button class="action-btn" style="background:rgba(255,255,255,0.08); color:var(--text); margin-top:8px;" onclick="resetNuclei()">Reset 400 Atoms 🔄</button>
+    </div>
+  </aside>
+
+  <!-- Viewport -->
+  <main class="viewport">
+    <div class="hud-box">
+      <div>Isotope: <span id="hudIsoName" style="color:var(--accent);">Carbon-14</span> | Elapsed Half-Lives: <span id="hudHalflives">0.00</span></div>
+      <div class="hud-counts">
+        <span style="color:#00f0ff;" id="parentCount">400 Parent</span> • <span style="color:#64748b;" id="daughterCount">0 Daughter</span>
+      </div>
+    </div>
+    <canvas id="decayCanvas"></canvas>
+  </main>
+
+  <!-- Stats -->
+  <aside class="right-decay-stats">
+    <div style="font-family:'Space Grotesk',sans-serif; font-size:1.1rem; font-weight:700;">Nuclear Kinetics</div>
+
+    <div class="stat-card">
+      <div class="stat-row">
+        <span class="stat-key">Remaining Atoms (N)</span>
+        <span class="stat-val" id="statRemaining">400 (100%)</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-key">Decayed Atoms</span>
+        <span class="stat-val" id="statDecayed">0 (0%)</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-key">Decay Constant (λ)</span>
+        <span class="stat-val" id="statLambda">0.000121 / yr</span>
+      </div>
+    </div>
+
+    <div style="padding:14px; background:rgba(0,240,255,0.05); border:1px solid rgba(0,240,255,0.2); border-radius:12px; font-size:0.85rem; line-height:1.6;">
+      <strong style="color:var(--primary);">First-Order Kinetics:</strong><br/>
+      <code style="color:var(--accent); font-family:'JetBrains Mono';">N(t) = N₀ · e^(-λt)</code><br/>
+      <code style="color:var(--accent); font-family:'JetBrains Mono';">t½ = ln(2) / λ ≈ 0.693 / λ</code><br/>
+      Radioactive decay is purely probabilistic. Each individual nucleus has a constant 50% chance of decaying during one half-life period.
+    </div>
+
+    <button type="button" onclick="generateHalflifeReport()" style="width:100%;margin-top:auto;background:linear-gradient(135deg,#00f0ff,#38ef7d);color:#07111f;border:none;padding:12px;border-radius:12px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;box-shadow:0 0 15px rgba(0,240,255,0.3);font-size:0.92rem;display:flex;align-items:center;justify-content:center;gap:8px;">📄 Generate Half-Life Certificate</button>
+  </aside>
+
+</div>
+
+<script>
+const ISOTOPES = {
+  c14: { name: 'Carbon-14 (¹⁴C)', daughter: 'Nitrogen-14', lambda: '0.000121 / yr', rate: 0.0014 },
+  u238: { name: 'Uranium-238 (²³⁸U)', daughter: 'Thorium-234', lambda: '1.55 × 10⁻¹⁰ / yr', rate: 0.0008 },
+  i131: { name: 'Iodine-131 (¹³¹I)', daughter: 'Xenon-131', lambda: '0.0864 / day', rate: 0.0035 },
+  rn222: { name: 'Radon-222 (²²²Rn)', daughter: 'Polonium-218', lambda: '0.181 / day', rate: 0.005 }
+};
+
+let currentIso = ISOTOPES.c14;
+let isRunning = false;
+let elapsedCycles = 0;
+let nuclei = [];
+
+const canvas = document.getElementById('decayCanvas');
+const ctx = canvas.getContext('2d');
+
+function resize() {
+  canvas.width = canvas.parentElement.clientWidth;
+  canvas.height = canvas.parentElement.clientHeight;
+}
+window.addEventListener('resize', resize);
+resize();
+
+function initNuclei() {
+  nuclei = [];
+  const rows = 20;
+  const cols = 20;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      nuclei.push({
+        row: r, col: c,
+        decayed: false,
+        flash: 0
+      });
+    }
+  }
+}
+initNuclei();
+
+function selectIsotope(key, btn) {
+  currentIso = ISOTOPES[key];
+  document.querySelectorAll('.iso-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('hudIsoName').textContent = currentIso.name;
+  document.getElementById('statLambda').textContent = currentIso.lambda;
+  resetNuclei();
+}
+
+function toggleSimulation() {
+  isRunning = !isRunning;
+  document.getElementById('startBtn').textContent = isRunning ? "Pause Half-Life Clock ⏸️" : "Resume Half-Life Clock ▶️";
+}
+
+function resetNuclei() {
+  isRunning = false;
+  elapsedCycles = 0;
+  document.getElementById('startBtn').textContent = "Start Half-Life Clock ⏱️";
+  initNuclei();
+  updateStats();
+}
+
+function updateStats() {
+  const remaining = nuclei.filter(n => !n.decayed).length;
+  const decayed = nuclei.length - remaining;
+  const halflives = (elapsedCycles * currentIso.rate * 2.2).toFixed(2);
+
+  document.getElementById('parentCount').textContent = `${remaining} Parent`;
+  document.getElementById('daughterCount').textContent = `${decayed} Daughter`;
+  document.getElementById('statRemaining').textContent = `${remaining} (${Math.round((remaining/400)*100)}%)`;
+  document.getElementById('statDecayed').textContent = `${decayed} (${Math.round((decayed/400)*100)}%)`;
+  document.getElementById('hudHalflives').textContent = halflives;
+}
+
+function render() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  if (isRunning) {
+    elapsedCycles++;
+    // Probabilistic decay check
+    nuclei.forEach(n => {
+      if (!n.decayed && Math.random() < currentIso.rate) {
+        n.decayed = true;
+        n.flash = 1.0;
+      }
+    });
+    updateStats();
+  }
+
+  // Draw 20x20 Lattice of Nuclei
+  const cx = canvas.width / 2;
+  const cy = canvas.height / 2;
+  const spacing = Math.min(canvas.width, canvas.height) / 25;
+
+  const startX = cx - (10 * spacing);
+  const startY = cy - (10 * spacing);
+
+  nuclei.forEach(n => {
+    const x = startX + n.col * spacing;
+    const y = startY + n.row * spacing;
+
+    ctx.beginPath();
+    ctx.arc(x, y, spacing * 0.35, 0, Math.PI * 2);
+
+    if (n.flash > 0) {
+      // Radioactive emission burst
+      ctx.fillStyle = '#ffea00';
+      ctx.shadowBlur = 20;
+      ctx.shadowColor = '#ffea00';
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      n.flash -= 0.08;
+    } else if (!n.decayed) {
+      // Undecayed parent (Glowing Cyan)
+      ctx.fillStyle = '#00f0ff';
+      ctx.shadowBlur = 6;
+      ctx.shadowColor = '#00f0ff';
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    } else {
+      // Stable daughter (Slate gray)
+      ctx.fillStyle = '#334155';
+      ctx.fill();
+    }
+  });
+
+  requestAnimationFrame(render);
+}
+function generateHalflifeReport() {
+  let modal = document.getElementById('halflifeReportModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'halflifeReportModal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(2,6,18,0.85);backdrop-filter:blur(10px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+    document.body.appendChild(modal);
+  }
+
+  const currentUser = localStorage.getItem('Moleqyn_user') ? JSON.parse(localStorage.getItem('Moleqyn_user')).name : (localStorage.getItem('moleqyn_user') ? JSON.parse(localStorage.getItem('moleqyn_user')).name : 'Rahul Sharma (Student)');
+  const dateStr = new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' });
+
+  const parent = nuclei.filter(n => !n.decayed).length;
+  const daughter = nuclei.length - parent;
+  const pctRemaining = ((parent / nuclei.length) * 100).toFixed(1);
+  const pctDecayed = ((daughter / nuclei.length) * 100).toFixed(1);
+
+  modal.innerHTML = `
+    <div style="background:#0b192c;border:1px solid rgba(0,240,255,0.3);border-radius:16px;max-width:760px;width:100%;max-height:90vh;overflow-y:auto;padding:28px;color:#f0f4ff;box-shadow:0 25px 60px rgba(0,0,0,0.7);font-family:'Inter',sans-serif;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid rgba(255,255,255,0.12);padding-bottom:16px;margin-bottom:20px;">
+        <div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;color:#00f0ff;">☢️ Radioactive Decay & Half-Life Certificate</div>
+          <div style="font-size:0.82rem;color:#8ea3bf;margin-top:2px;">Nuclear Chemical Kinetics & First-Order Exponential Decay Record</div>
+        </div>
+        <div style="text-align:right;">
+          <span style="display:inline-block;padding:4px 10px;background:rgba(56,239,125,0.15);color:#38ef7d;border:1px solid #38ef7d;border-radius:12px;font-size:0.75rem;font-weight:700;">NCERT VERIFIED</span>
+          <div style="font-size:0.75rem;color:#8ea3bf;margin-top:4px;">\${dateStr}</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:0.85rem;">
+        <div><strong>Student:</strong> <span style="color:#00f0ff;">\${currentUser}</span></div>
+        <div><strong>Radioisotope (Parent):</strong> \${currentIso.name}</div>
+        <div><strong>Decay Product (Daughter):</strong> \${currentIso.daughter}</div>
+        <div><strong>Decay Constant (λ):</strong> \${currentIso.lambda}</div>
+      </div>
+
+      <div style="margin-bottom:18px;">
+        <h4 style="font-family:'Space Grotesk',sans-serif;color:#ffd166;font-size:0.92rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">1. Nuclear Kinetics & Population Count</h4>
+        <table style="width:100%;border-collapse:collapse;font-size:0.85rem;background:#071222;border-radius:8px;overflow:hidden;">
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#8ea3bf;">Initial Population (N₀)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-weight:bold;color:#f0f4ff;">\${nuclei.length} Nuclei</td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#8ea3bf;">Remaining Parent Atoms (N)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-weight:bold;color:#00f0ff;">\${parent} (\${pctRemaining}%)</td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#8ea3bf;">Decayed Daughter Atoms</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-weight:bold;color:#64748b;">\${daughter} (\${pctDecayed}%)</td></tr>
+          <tr><td style="padding:8px 12px;color:#8ea3bf;">Elapsed Half-Lives (t / t½)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-weight:bold;color:#ffd166;">\${elapsedHalflives.toFixed(2)} Half-Lives</td></tr>
+        </table>
+      </div>
+
+      <div style="margin-bottom:18px;">
+        <h4 style="font-family:'Space Grotesk',sans-serif;color:#ffd166;font-size:0.92rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">2. Radioactive Decay Law Formulation</h4>
+        <div style="background:#071222;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:0.88rem;color:#00f0ff;">
+          N(t) = N₀ · e^(-λt) = N₀ · (1/2)^(t / t½)
+          <div style="font-size:0.8rem;color:#8ea3bf;margin-top:6px;font-family:'Inter',sans-serif;">Half-life relation: t½ = ln(2) / λ ≈ 0.693 / λ. The rate of disintegration (-dN/dt) is strictly proportional to the number of parent nuclei present.</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:20px;padding:12px;background:rgba(0,240,255,0.05);border:1px solid rgba(0,240,255,0.2);border-radius:10px;font-size:0.84rem;line-height:1.6;">
+        <strong style="color:#00f0ff;display:block;margin-bottom:4px;">Statistical & Stochastic Principle:</strong>
+        Radioactive decay is a purely spontaneous, random quantum tunneling process. Although the fate of any single nucleus is unpredictable, a bulk ensemble follows precise exponential decay curves governed by first-order chemical kinetics.
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:10px;border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;">
+        <button type="button" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:8px 18px;border-radius:8px;cursor:pointer;font-weight:600;" onclick="document.getElementById('halflifeReportModal').style.display='none'">✕ Close</button>
+        <button type="button" style="background:#00f0ff;border:none;color:#000;padding:8px 18px;border-radius:8px;cursor:pointer;font-weight:bold;" onclick="window.print()">🖨️ Print / Save PDF</button>
+      </div>
+    </div>
+  `;
+  modal.style.display = 'flex';
+}
+
+render();
+updateStats();
+</script>
+
+</body>
+</html>

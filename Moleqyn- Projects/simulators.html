@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Moleqyn – Interactive Chemistry Simulators for Class 6-12." />
+    <title>Moleqyn | Virtual Chemistry Labs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet" />
+
+    <style>
+        /* Default: SOFT BLACK THEME */
+        :root {
+            --bg-base: #0f172a;
+            --glass-bg: rgba(30, 41, 59, 0.5);
+            --nav-bg-scrolled: rgba(15, 23, 42, 0.98);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --primary: #00f0ff;
+            --primary-glow: rgba(0, 240, 255, 0.4);
+            --secondary: #ff00aa;
+            --text-main: #ffffff;
+            --text-muted: #cbd5e1;
+            --card-hover-shadow: rgba(0, 240, 255, 0.2);
+            --hero-gradient: #1e293b;
+
+            /* Dropdown Colors */
+            --drop-bg: rgba(15, 23, 42, 0.95);
+            --drop-hover: rgba(255, 255, 255, 0.05);
+            --drop-icon-bg: rgba(255, 255, 255, 0.03);
+        }
+
+        /* DAY THEME */
+        :root[data-theme="day"] {
+            --bg-base: #f0f4f8;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --nav-bg-scrolled: rgba(240, 244, 248, 0.98);
+            --glass-border: rgba(0, 0, 0, 0.15);
+            --primary: #0284c7;
+            --primary-glow: rgba(2, 132, 199, 0.4);
+            --secondary: #db2777;
+            --text-main: #0f172a;
+            --text-muted: #334155;
+            --card-hover-shadow: rgba(2, 132, 199, 0.25);
+            --hero-gradient: #e2e8f0;
+
+            /* Dropdown Colors Day */
+            --drop-bg: rgba(255, 255, 255, 0.98);
+            --drop-hover: rgba(0, 0, 0, 0.04);
+            --drop-icon-bg: rgba(0, 0, 0, 0.03);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-base);
+            background-image: radial-gradient(circle at top, var(--hero-gradient) 0%, transparent 60%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            overflow-x: hidden;
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            opacity: 0.85;
+            pointer-events: none;
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Scroll Reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.6s cubic-bezier(0.5, 0, 0, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .delay-1 {
+            transition-delay: 0.1s;
+        }
+
+        .delay-2 {
+            transition-delay: 0.2s;
+        }
+
+        .delay-3 {
+            transition-delay: 0.3s;
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            max-width: 1200px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 25px;
+            border-radius: 40px;
+            border: 1px solid var(--glass-border);
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s ease;
+        }
+
+        .navbar.scrolled {
+            top: 10px;
+            background: var(--nav-bg-scrolled);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary);
+        }
+
+        .brand {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            text-decoration: none;
+        }
+
+        .brand span {
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            align-items: center;
+        }
+
+        .nav-links>li>a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 10px 0;
+        }
+
+        .nav-links>li>a:hover,
+        .nav-links>li>a.active {
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        /* Pure Chemistry Dropdown */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            top: 100%;
+            left: -80px;
+            background: var(--drop-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            min-width: 380px;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            transform: translateY(15px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            z-index: 2000;
+        }
+
+        :root[data-theme="day"] .dropdown-content {
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+        }
+
+        .dropdown:hover .dropdown-content {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .drop-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 12px 15px;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .drop-item:hover {
+            background: var(--drop-hover);
+            transform: translateX(5px);
+        }
+
+        .drop-icon {
+            font-size: 1.3rem;
+            background: var(--drop-icon-bg);
+            color: var(--primary);
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border: 1px solid var(--glass-border);
+        }
+
+        .drop-text {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .drop-title {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .drop-sub {
+            color: var(--text-muted);
+            font-size: 0.82rem;
+            line-height: 1.4;
+        }
+
+        .badge {
+            font-size: 0.6rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-class {
+            background: rgba(0, 240, 255, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+        }
+
+        .theme-toggle {
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--glass-border);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            outline: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-main);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+            background: var(--primary-glow);
+            color: #fff;
+            border-color: var(--primary);
+        }
+
+        :root[data-theme="day"] .theme-toggle {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Page Header */
+        .page-header {
+            padding: 130px 5% 50px 5%;
+            text-align: center;
+        }
+
+        .page-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin: 0 0 15px 0;
+            letter-spacing: -1px;
+        }
+
+        .page-title span {
+            color: var(--primary);
+        }
+
+        .page-subtitle {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            max-width: 650px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* Simulators Grid */
+        .sim-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 5% 100px 5%;
+        }
+
+        .sim-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sim-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+            box-shadow: 0 15px 40px var(--card-hover-shadow);
+        }
+
+        .sim-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .sim-icon {
+            font-size: 2.5rem;
+            background: var(--drop-icon-bg);
+            padding: 15px;
+            border-radius: 15px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .sim-card h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.4rem;
+            color: var(--text-main);
+            margin: 0 0 10px 0;
+        }
+
+        .sim-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin: 0 0 25px 0;
+            flex-grow: 1;
+        }
+
+        .launch-btn {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            border-radius: 10px;
+            font-weight: 600;
+            font-family: 'Space Grotesk', sans-serif;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        .sim-card:hover .launch-btn {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 5px 15px var(--primary-glow);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Full Page Background Animation -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Navbar (Strictly Chemistry Focused) -->
+    <nav class="navbar" id="mainNav">
+        <a href="index.html" class="brand">⚗️ Mole<span>qyn</span></a>
+
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+
+            <!-- DROPDOWN MENU -->
+            <li class="dropdown">
+                <a href="simulators.html" class="dropbtn active" style="cursor: pointer;">Virtual Labs <span
+                        style="font-size: 0.6rem; margin-left: 2px;">▼</span></a>
+
+                <div class="dropdown-content">
+                    <!-- Only Chemistry Related Tools -->
+                    <a href="simulators.html" class="drop-item">
+                        <div class="drop-icon">🧪</div>
+                        <div class="drop-text">
+                            <div class="drop-title">Virtual Simulators Hub</div>
+                        </div>
+                    </a>
+                    <a href="sim_atomverse.html" class="drop-item">
+                        <div class="drop-icon">⚛️</div>
+                        <div class="drop-text">
+                            <div class="drop-title">AtomVerse Quantum Lab <span style="font-size:0.6rem;background:rgba(0,212,255,0.2);color:#00d4ff;padding:2px 6px;border-radius:8px;margin-left:4px">NEW</span></div>
+                            <div class="drop-sub">118 elements, live electron orbits & orbitals</div>
+                            <div class="drop-sub">Interactive engines for Class 6-12</div>
+                        </div>
+                    </a>
+                    <a href="experiments.html" class="drop-item">
+                        <div class="drop-icon">📔</div>
+                        <div class="drop-text">
+                            <div class="drop-title">Experiment Library</div>
+                            <div class="drop-sub">NCERT guided practicals & titrations</div>
+                        </div>
+                    </a>
+                    <a href="periodic-table.html" class="drop-item">
+                        <div class="drop-icon">🔢</div>
+                        <div class="drop-text">
+                            <div class="drop-title">Interactive Periodic Table</div>
+                            <div class="drop-sub">Explore element properties in 3D</div>
+                        </div>
+                    </a>
+                    <a href="reaction.html" class="drop-item">
+                        <div class="drop-icon">⚗️</div>
+                        <div class="drop-text">
+                            <div class="drop-title">Reaction Balancer</div>
+                            <div class="drop-sub">Understand & balance chemical equations</div>
+                        </div>
+                    </a>
+                    <a href="sim_molecules.html" class="drop-item">
+                        <div class="drop-icon">🔮</div>
+                        <div class="drop-text">
+                            <div class="drop-title">3D Molecule Lab</div>
+                            <div class="drop-sub">Geometry, bond angles &amp; hybridization</div>
+                        </div>
+                    </a>
+                    <a href="nomenclature.html" class="drop-item">
+                        <div class="drop-icon">🏷️</div>
+                        <div class="drop-text">
+                            <div class="drop-title">IUPAC Nomenclature Engine</div>
+                            <div class="drop-sub">Organic naming, priority order &amp; builder</div>
+                        </div>
+                    </a>
+                    <a href="sim_equilibrium.html" class="drop-item">
+                        <div class="drop-icon">🔄</div>
+                        <div class="drop-text">
+                            <div class="drop-title">Le Chatelier Equilibrium</div>
+                            <div class="drop-sub">Haber process shifts &amp; Kc dynamics</div>
+                        </div>
+                    </a>
+                    <a href="sim_flametest.html" class="drop-item">
+                        <div class="drop-icon">🔥</div>
+                        <div class="drop-text">
+                            <div class="drop-title">Flame Test Lab</div>
+                            <div class="drop-sub">Qualitative cation excitation tests</div>
+                        </div>
+                    </a>
+                    <a href="sim_calorimetry.html" class="drop-item">
+                        <div class="drop-icon">🌡️</div>
+                        <div class="drop-text">
+                            <div class="drop-title">Calorimetry &amp; Enthalpy</div>
+                            <div class="drop-sub">q = mcΔT neutralization &amp; cold-pack physics</div>
+                        </div>
+                    </a>
+                    <a href="sim_halflife.html" class="drop-item">
+                        <div class="drop-icon">☢️</div>
+                        <div class="drop-text">
+                            <div class="drop-title">Radioactive Decay &amp; Half-Life</div>
+                            <div class="drop-sub">Nuclear kinetics for C-14, U-238, I-131</div>
+                        </div>
+                    </a>
+                    <a href="ai-tutor.html" class="drop-item">
+                        <div class="drop-icon">🤖</div>
+                        <div class="drop-text">
+                            <div class="drop-title">AI Chemistry Tutor</div>
+                            <div class="drop-sub">Ask any doubt 24/7</div>
+                        </div>
+                    </a>
+                </div>
+            </li>
+            <!-- DROPDOWN END -->
+
+            <li><a href="learn.html">Learn</a></li>
+            <li><a href="about.html">About us</a></li>
+            <li><a href="dashboard.html">Student Portal</a></li>
+            <li><a href="login.html" class="btn btn-glow" style="padding: 8px 16px; margin-right: 10px; font-size: 0.9rem;">Login</a></li>
+      <li><button class="theme-toggle" id="themeBtn" title="Switch Theme">☀️</button></li>
+        </ul>
+    </nav>
+
+    <!-- Content Wrapper -->
+    <div class="content-wrapper">
+
+        <!-- Page Header -->
+        <header class="page-header reveal active">
+            <h1 class="page-title">Chemistry <span>Simulators</span></h1>
+            <p class="page-subtitle">Select a module below to launch the interactive particle engine. Designed
+                specifically to visualize NCERT and CBSE concepts for Class 6 to 12.</p>
+        </header>
+
+        <!-- Simulators Grid -->
+        <div class="sim-grid">
+
+            <!-- Featured Card 0: AtomVerse -->
+            <div class="sim-card reveal delay-1" style="border:1px solid rgba(53,221,255,0.45);background:radial-gradient(circle at 50% 0%,rgba(53,221,255,0.15),rgba(15,30,53,0.95));box-shadow:0 0 25px rgba(0,212,255,0.15)">
+                <div class="sim-card-header">
+                    <div class="sim-icon">⚛️</div>
+                    <span class="badge badge-class" style="background:rgba(53,221,255,0.2);color:#35ddff">Class 9 - 12 &amp; Competitive</span>
+                </div>
+                <h3>AtomVerse: Atomic Structure &amp; Quantum Lab</h3>
+                <p>Interactive 118-element Bohr model, revolving electron orbits, 3D s/p/d/f orbitals, quantum numbers, emission spectra &amp; Hund/Pauli practice.</p>
+                <button class="launch-btn" style="background:linear-gradient(135deg,#00d4ff,#0ea5e9);color:#020812;font-weight:700" onclick="window.location.href='sim_atomverse.html'">Launch AtomVerse ▶</button>
+            </div>
+            <!-- Featured Card: Universal Chemical Reaction Lab & AI Predictor -->
+            <div class="sim-card reveal delay-2" style="border:1px solid rgba(74,222,128,0.45);background:radial-gradient(circle at 50% 0%,rgba(74,222,128,0.12),rgba(15,30,53,0.95));box-shadow:0 0 25px rgba(74,222,128,0.15)">
+                <div class="sim-card-header">
+                    <div class="sim-icon">⚗️</div>
+                    <span class="badge badge-class" style="background:rgba(74,222,128,0.2);color:#4ade80">Universal Sandbox • Class 10 to 12</span>
+                </div>
+                <h3>Universal Chemical Reaction Lab &amp; AI Predictor</h3>
+                <p>Input ANY custom chemical reaction or reactants from your mind! Predict products, precipitate colors, gas effervescence (H₂, CO₂), virtual beaker mixing, and exact algebraic stoichiometric balancing.</p>
+                <button class="launch-btn" style="background:linear-gradient(135deg,#4ade80,#22c55e);color:#020812;font-weight:700" onclick="window.location.href='reaction.html'">Launch Reaction Lab ▶</button>
+            </div>
+
+            <!-- Card 1: States of Matter & Universal Particle Simulator -->
+            <div class="sim-card reveal delay-1">
+                <div class="sim-card-header">
+                    <div class="sim-icon">❄️</div>
+                    <span class="badge badge-class">Class 9 - 11</span>
+                </div>
+                <h3>States of Matter &amp; Universal Particles</h3>
+                <p>Control temperature and test custom substances or elements (Water, Oxygen, Iron, Ethanol, Mercury, or ANY custom compound) with real thermodynamic phase transitions.</p>
+                <button class="launch-btn" onclick="window.location.href='sim_particle.html'">Launch Lab</button>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="sim-card reveal delay-2">
+                <div class="sim-card-header">
+                    <div class="sim-icon">💧</div>
+                    <span class="badge badge-class">Class 10 - 12</span>
+                </div>
+                <h3>Acid-Base Titration</h3>
+                <p>Perform precise virtual titrations. Monitor pH changes, use indicators, and find equivalence points
+                    safely.</p>
+                <button class="launch-btn" onclick="window.location.href='sim_titration.html'">Launch Lab</button>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="sim-card reveal delay-3">
+                <div class="sim-card-header">
+                    <div class="sim-icon">⚛️</div>
+                    <span class="badge badge-class">Class 11</span>
+                </div>
+                <h3>Chemical Bonding</h3>
+                <p>Explore VSEPR theory. Build 3D molecules, understand bond angles, polarity, and molecular geometry.
+                </p>
+                <button class="launch-btn" onclick="window.location.href='sim_bonding.html'">Launch Lab</button>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="sim-card reveal delay-1">
+                <div class="sim-card-header">
+                    <div class="sim-icon">🎯</div>
+                    <span class="badge badge-class">Class 9 & 11</span>
+                </div>
+                <h3>Rutherford's Model</h3>
+                <p>Recreate the famous Gold Foil experiment. Fire alpha particles and observe atomic nuclei deflection.
+                </p>
+                <button class="launch-btn" onclick="window.location.href='sim_rutherford.html'">Launch Lab</button>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="sim-card reveal delay-2">
+                <div class="sim-card-header">
+                    <div class="sim-icon">🎈</div>
+                    <span class="badge badge-class">Class 11</span>
+                </div>
+                <h3>Ideal Gas Laws</h3>
+                <p>Experiment with Boyle's, Charles', and Gay-Lussac's laws. Alter volume, pressure, and temperature
+                    interactively.</p>
+                <button class="launch-btn" onclick="window.location.href='sim_gaslaws.html'">Launch Lab</button>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="sim-card reveal delay-3">
+                <div class="sim-card-header">
+                    <div class="sim-icon">🔋</div>
+                    <span class="badge badge-class">Class 12</span>
+                </div>
+                <h3>Electrochemistry</h3>
+                <p>Construct Galvanic and Electrolytic cells. Choose electrodes, salt bridges, and measure cell
+                    potentials.</p>
+                <button class="launch-btn" onclick="window.location.href='sim_electro.html'">Launch Lab</button>
+            </div>
+
+            <!-- Card 7: 3D Molecular Geometry -->
+            <div class="sim-card reveal delay-1" style="border-color: rgba(0, 240, 255, 0.35);">
+                <div class="sim-card-header">
+                    <div class="sim-icon">🔮</div>
+                    <span class="badge badge-class" style="background: rgba(0,240,255,0.15); color: #00f0ff;">Class 11 &amp; 12</span>
+                </div>
+                <h3>3D Molecule &amp; Hybridization Viewer</h3>
+                <p>Interactive 3D ball-and-stick models for Water, Methane, Benzene, Ethanol. Inspect bond angles, sp/sp²/sp³ hybridization &amp; net dipole vectors.</p>
+                <button class="launch-btn" onclick="window.location.href='sim_molecules.html'">Launch 3D Lab</button>
+            </div>
+
+            <!-- Card 8: Chemical Equilibrium -->
+            <div class="sim-card reveal delay-2" style="border-color: rgba(255, 209, 102, 0.35);">
+                <div class="sim-card-header">
+                    <div class="sim-icon">🔄</div>
+                    <span class="badge badge-class" style="background: rgba(255,209,102,0.15); color: #ffd166;">Class 11 &amp; Competitive</span>
+                </div>
+                <h3>Chemical Equilibrium &amp; Le Chatelier Lab</h3>
+                <p>Haber process (N₂ + 3H₂ ⇌ 2NH₃). Test real-time temperature, pressure, concentration shifts, and catalyst dynamics on Kc/Qc.</p>
+                <button class="launch-btn" onclick="window.location.href='sim_equilibrium.html'">Launch Lab</button>
+            </div>
+
+            <!-- Card 9: Flame Test & Salt Analysis -->
+            <div class="sim-card reveal delay-3" style="border-color: rgba(56, 239, 125, 0.35);">
+                <div class="sim-card-header">
+                    <div class="sim-icon">🔥</div>
+                    <span class="badge badge-class" style="background: rgba(56,239,125,0.15); color: #38ef7d;">Class 9 to 12 Practicals</span>
+                </div>
+                <h3>Flame Test &amp; Qualitative Salt Analysis</h3>
+                <p>Perform Bunsen burner excitation tests for Cu²⁺, Na⁺, Sr²⁺, K⁺, Ba²⁺, Li⁺. Observe characteristic visible spectral wavelengths and Planck photon theory.</p>
+                <button class="launch-btn" onclick="window.location.href='sim_flametest.html'">Launch Lab</button>
+            </div>
+
+            <!-- Card 10: Calorimetry & Enthalpy -->
+            <div class="sim-card reveal delay-1" style="border-color: rgba(255, 83, 118, 0.35);">
+                <div class="sim-card-header">
+                    <div class="sim-icon">🌡️</div>
+                    <span class="badge badge-class" style="background: rgba(255,83,118,0.15); color: #ff5376;">Class 11 Physical Chem</span>
+                </div>
+                <h3>Calorimetry &amp; Enthalpy of Reaction</h3>
+                <p>Insulated coffee-cup calorimeter. Test exothermic neutralization (HCl + NaOH) and endothermic cold-pack salts (NH₄NO₃) with live q = mcΔT thermodynamics.</p>
+                <button class="launch-btn" onclick="window.location.href='sim_calorimetry.html'">Launch Lab</button>
+            </div>
+
+            <!-- Card 11: Radioactive Decay -->
+            <div class="sim-card reveal delay-2" style="border-color: rgba(0, 240, 255, 0.35);">
+                <div class="sim-card-header">
+                    <div class="sim-icon">☢️</div>
+                    <span class="badge badge-class" style="background: rgba(0,240,255,0.15); color: #00f0ff;">Class 12 &amp; Competitive</span>
+                </div>
+                <h3>Radioactive Decay &amp; Half-Life Simulator</h3>
+                <p>Track 400 probabilistic parent-daughter nuclei for Carbon-14, Uranium-238, and Iodine-131. Real-time first-order kinetics N(t) = N₀e^(-λt).</p>
+                <button class="launch-btn" onclick="window.location.href='sim_halflife.html'">Launch Lab</button>
+            <!-- Card 12: IUPAC Nomenclature Engine -->
+            <div class="sim-card reveal delay-3" style="border-color: rgba(192, 132, 252, 0.45); background: radial-gradient(circle at 50% 0%, rgba(192, 132, 252, 0.12), rgba(15, 30, 53, 0.95));">
+                <div class="sim-card-header">
+                    <div class="sim-icon">🏷️</div>
+                    <span class="badge badge-class" style="background: rgba(192, 132, 252, 0.2); color: #c084fc;">Class 10 to 12 &amp; Competitive</span>
+                </div>
+                <h3>IUPAC Nomenclature Engine</h3>
+                <p>Interactive 2D carbon backbone builder. Apply longest chain, lowest locant rule, functional group priority order, and Class 12 coordination complexes naming.</p>
+                <button class="launch-btn" style="background: linear-gradient(135deg, #c084fc, #9333ea); color: #fff; font-weight: 700;" onclick="window.location.href='nomenclature.html'">Launch Nomenclature Lab</button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Javascripts -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Theme Toggle Logic
+            const themeBtn = document.getElementById('themeBtn');
+            themeBtn.addEventListener('click', () => {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                if (currentTheme === 'day') {
+                    document.documentElement.removeAttribute('data-theme');
+                    themeBtn.innerText = '☀️';
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'day');
+                    themeBtn.innerText = '🌙';
+                }
+            });
+
+            // Navbar Solid on Scroll
+            const nav = document.getElementById('mainNav');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    nav.classList.add('scrolled');
+                } else {
+                    nav.classList.remove('scrolled');
+                }
+            });
+
+            // Scroll Reveal
+            function reveal() {
+                var reveals = document.querySelectorAll(".reveal");
+                for (var i = 0; i < reveals.length; i++) {
+                    var windowHeight = window.innerHeight;
+                    var elementTop = reveals[i].getBoundingClientRect().top;
+                    var elementVisible = 50;
+                    if (elementTop < windowHeight - elementVisible) {
+                        reveals[i].classList.add("active");
+                    }
+                }
+            }
+            window.addEventListener("scroll", reveal); reveal();
+        });
+    </script>
+
+    <!-- Background Canvas Animation (Same as Home) -->
+    <script>
+        const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d');
+        let particles = []; let sparks = []; let mouse = { x: null, y: null, radius: 150 };
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize); resize();
+        window.addEventListener('mousemove', function (event) { mouse.x = event.x; mouse.y = event.y; });
+        window.addEventListener('mouseout', function () { mouse.x = null; mouse.y = null; });
+        window.addEventListener('click', function (event) { for (let i = 0; i < 15; i++) { sparks.push(new Spark(event.x, event.y)); } });
+
+        const ELEMENT_TYPES = [{ color: '#00f0ff', size: 4, speed: 0.6 }, { color: '#ff00aa', size: 6, speed: 0.3 }, { color: '#ffdd00', size: 2.5, speed: 1.2 }];
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * window.innerWidth; this.y = Math.random() * window.innerHeight;
+                let type = ELEMENT_TYPES[Math.floor(Math.random() * ELEMENT_TYPES.length)];
+                this.vx = (Math.random() - 0.5) * type.speed * 2; this.vy = (Math.random() - 0.5) * type.speed * 2;
+                this.radius = type.size + Math.random() * 2; this.baseRadius = this.radius; this.color = type.color;
+            }
+            update() {
+                this.x += this.vx; this.y += this.vy;
+                if (this.x < 0 || this.x > canvas.width) this.vx = -this.vx;
+                if (this.y < 0 || this.y > canvas.height) this.vy = -this.vy;
+                if (mouse.x != null) {
+                    let dx = mouse.x - this.x; let dy = mouse.y - this.y;
+                    if (Math.sqrt(dx * dx + dy * dy) < mouse.radius) {
+                        if (this.radius < this.baseRadius * 1.5) this.radius += 0.2;
+                    } else if (this.radius > this.baseRadius) this.radius -= 0.1;
+                } else if (this.radius > this.baseRadius) this.radius -= 0.1;
+            }
+            draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); ctx.fillStyle = this.color; ctx.shadowBlur = 10; ctx.shadowColor = this.color; ctx.fill(); ctx.shadowBlur = 0; }
+        }
+        class Spark {
+            constructor(x, y) {
+                this.x = x; this.y = y; this.vx = (Math.random() - 0.5) * 10; this.vy = (Math.random() - 0.5) * 10;
+                this.radius = Math.random() * 3 + 1; const sparkColors = ['#00f0ff', '#ff00aa', '#ffdd00'];
+                this.color = sparkColors[Math.floor(Math.random() * sparkColors.length)]; this.alpha = 1;
+            }
+            update() { this.x += this.vx; this.y += this.vy; this.alpha -= 0.05; this.radius *= 0.9; }
+            draw() { ctx.save(); ctx.globalAlpha = Math.max(0, this.alpha); ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); ctx.fillStyle = this.color; ctx.shadowBlur = 8; ctx.shadowColor = this.color; ctx.fill(); ctx.restore(); }
+        }
+        for (let i = 0; i < 40; i++) particles.push(new Particle());
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update(); particles[i].draw();
+                for (let j = i + 1; j < particles.length; j++) {
+                    let dx = particles[i].x - particles[j].x; let dy = particles[i].y - particles[j].y; let distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < 130) {
+                        ctx.beginPath();
+                        let gradient = ctx.createLinearGradient(particles[i].x, particles[i].y, particles[j].x, particles[j].y);
+                        gradient.addColorStop(0, particles[i].color); gradient.addColorStop(1, particles[j].color);
+                        ctx.strokeStyle = gradient; ctx.globalAlpha = Math.max(0, 0.6 - (distance / 130)); ctx.lineWidth = 1;
+                        ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke(); ctx.globalAlpha = 1.0;
+                    }
+                }
+            }
+            for (let i = 0; i < sparks.length; i++) { sparks[i].update(); sparks[i].draw(); }
+            sparks = sparks.filter(spark => spark.alpha > 0);
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+
+</html>
+

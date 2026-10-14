@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Moleqyn Learn – Complete NCERT-aligned science notes for Class 6 to 12. Topics, subtopics, key formulas, and virtual lab links."/>
+  <title>Moleqyn | Learn – Class 6 to 12</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--bg:#080e20;--bg2:#101a32;--glass:rgba(255,255,255,0.04);--border:rgba(255,255,255,0.1);--primary:#00d4ff;--primary-glow:rgba(0,212,255,0.2);--secondary:#ff00cc;--accent3:#ffd700;--text:#f0f4ff;--muted:#8899bb;--nav-h:70px;}
+    :root[data-theme="day"]{--bg:#f0f4f8;--bg2:#ffffff;--glass:rgba(0,0,0,0.04);--border:rgba(0,0,0,0.12);--text:#0f172a;--muted:#64748b;--primary:#0284c7;--primary-glow:rgba(2,132,199,0.2);--secondary:#db2777;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;transition:background 0.3s,color 0.3s;}
+    nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:rgba(8,14,32,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:1000;display:flex;align-items:center;padding:0 2rem;justify-content:space-between;}
+    :root[data-theme="day"] nav{background:rgba(240,244,248,0.95);}
+    .nav-brand{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;color:var(--text);text-decoration:none;}
+    .nav-brand span{color:var(--primary);}
+    .nav-links-row{display:flex;gap:1.5rem;list-style:none;align-items:center;}
+    .nav-links-row a{color:var(--muted);text-decoration:none;font-size:0.9rem;transition:color 0.2s;}
+    .nav-links-row a:hover,.nav-links-row a.active{color:var(--primary);}
+    .theme-btn{background:none;border:1px solid var(--border);color:var(--text);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1rem;transition:all 0.3s;}
+    .theme-btn:hover{border-color:var(--primary);}
+    .page-wrap{padding-top:100px;padding-bottom:80px;max-width:1100px;margin:0 auto;padding-left:20px;padding-right:20px;}
+    .page-hero{text-align:center;padding:30px 0 24px;}
+    .page-hero h1{font-family:'Space Grotesk',sans-serif;font-size:2.8rem;font-weight:700;margin-bottom:10px;}
+    .page-hero h1 span{background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+    .page-hero p{color:var(--muted);max-width:650px;margin:0 auto;line-height:1.7;}
+    /* CONTROLS */
+    .controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center;padding:16px 0 8px;}
+    .search-box{display:flex;align-items:center;gap:8px;background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:10px 16px;min-width:260px;flex:1;max-width:380px;}
+    .search-box input{background:none;border:none;outline:none;color:var(--text);font-size:0.9rem;width:100%;}
+    .search-box input::placeholder{color:var(--muted);}
+    .filter-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:8px 0 16px;}
+    .fc{padding:7px 18px;border-radius:25px;border:1px solid var(--border);font-size:0.82rem;font-weight:600;cursor:pointer;background:var(--glass);color:var(--muted);transition:all 0.2s;font-family:'Space Grotesk',sans-serif;}
+    .fc:hover,.fc.active{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 4px 15px var(--primary-glow);}
+    /* TOPICS GRID */
+    .topics-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;}
+    /* TOPIC CARD */
+    .tc{background:var(--glass);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:all 0.3s;}
+    .tc:hover{border-color:var(--primary);box-shadow:0 6px 25px var(--primary-glow);}
+    .tc.hidden{display:none;}
+    .tc-head{display:flex;align-items:center;gap:12px;padding:16px 18px;cursor:pointer;user-select:none;}
+    .tc-icon{font-size:1.6rem;flex-shrink:0;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:rgba(0,212,255,0.08);border-radius:10px;border:1px solid var(--border);}
+    .tc-meta{flex:1;}
+    .tc-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:0.98rem;margin-bottom:3px;}
+    .tc-sub{font-size:0.76rem;color:var(--muted);}
+    .tc-badges{display:flex;gap:6px;align-items:center;flex-shrink:0;}
+    .badge-cls{font-size:0.65rem;padding:3px 10px;border-radius:12px;font-weight:700;background:rgba(0,212,255,0.1);color:var(--primary);border:1px solid rgba(0,212,255,0.25);}
+    .badge-diff{font-size:0.62rem;padding:2px 8px;border-radius:12px;font-weight:700;}
+    .badge-easy{background:rgba(74,222,128,0.15);color:#4ade80;border:1px solid rgba(74,222,128,0.3);}
+    .badge-med{background:rgba(250,204,21,0.15);color:#facc15;border:1px solid rgba(250,204,21,0.3);}
+    .badge-hard{background:rgba(251,113,133,0.15);color:#fb7185;border:1px solid rgba(251,113,133,0.3);}
+    .tc-arrow{color:var(--muted);font-size:0.8rem;transition:transform 0.3s;flex-shrink:0;}
+    .tc.open .tc-arrow{transform:rotate(90deg);}
+    .tc-body{display:none;padding:0 18px 18px;}
+    .tc.open .tc-body{display:block;animation:fadeDown 0.25s ease;}
+    @keyframes fadeDown{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:none;}}
+    .tc-body p{color:var(--muted);font-size:0.88rem;line-height:1.7;margin-bottom:10px;}
+    .subtopics{margin:10px 0;}
+    .subtopics h4{font-family:'Space Grotesk',sans-serif;font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;color:var(--primary);margin-bottom:8px;}
+    .st-list{list-style:none;display:flex;flex-direction:column;gap:5px;}
+    .st-list li{display:flex;align-items:flex-start;gap:8px;font-size:0.84rem;color:var(--muted);padding:5px 8px;border-radius:8px;background:var(--glass);border:1px solid var(--border);}
+    .st-list li::before{content:'→';color:var(--primary);font-weight:700;flex-shrink:0;margin-top:1px;}
+    .key-box{background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.2);border-radius:10px;padding:12px 14px;margin:10px 0;font-size:0.84rem;}
+    .key-box strong{color:var(--primary);display:block;margin-bottom:5px;font-family:'Space Grotesk',sans-serif;}
+    .key-box p{color:var(--muted);margin:0;font-family:'JetBrains Mono',monospace;font-size:0.8rem;line-height:1.5;}
+    .formula-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0;}
+    .fchip{background:rgba(255,0,204,0.08);border:1px solid rgba(255,0,204,0.2);border-radius:8px;padding:4px 10px;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--secondary);}
+    .sim-link{display:inline-flex;align-items:center;gap:6px;margin-top:12px;padding:8px 16px;background:var(--primary);color:#fff;border-radius:8px;text-decoration:none;font-size:0.82rem;font-weight:600;font-family:'Space Grotesk',sans-serif;transition:all 0.2s;}
+    .sim-link:hover{background:var(--secondary);box-shadow:0 4px 15px rgba(255,0,204,0.3);}
+    .divider{height:1px;background:var(--border);margin:10px 0;}
+    /* SECTION HEADING */
+    .class-section-heading{font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;padding:20px 0 10px;color:var(--primary);display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);margin-bottom:14px;}
+    /* GLOSSARY */
+    .glossary-section{margin-top:40px;padding-top:30px;border-top:1px solid var(--border);}
+    .glossary-section h2{font-family:'Space Grotesk',sans-serif;font-size:1.8rem;margin-bottom:8px;}
+    .glossary-section p{color:var(--muted);margin-bottom:20px;}
+    .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;}
+    .gitem{background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:14px;}
+    .gterm{font-family:'Space Grotesk',sans-serif;font-weight:700;color:var(--primary);margin-bottom:5px;font-size:0.9rem;}
+    .gdef{color:var(--muted);font-size:0.82rem;line-height:1.5;}
+    @media(max-width:768px){.topics-grid{grid-template-columns:1fr;}.page-hero h1{font-size:2rem;}.nav-links-row{display:none;}}
+  
+    /* ===== UNIFIED MATTERLAB FLOATING NAVBAR ===== */
+    :root{--glass-bg:rgba(15,23,42,0.7);--nav-bg-scrolled:rgba(15,23,42,0.98);--glass-border:rgba(255,255,255,0.08);--btn-primary:#0ea5e9;}
+    html.light-mode{--bg:#f0f9ff;--bg2:#ffffff;--glass:rgba(0,0,0,0.04);--border:rgba(0,0,0,0.12);--text:#0f172a;--muted:#64748b;--primary:#0284c7;--primary-glow:rgba(2,132,199,0.2);--secondary:#db2777;--glass-bg:rgba(255,255,255,0.85);--nav-bg-scrolled:rgba(255,255,255,0.98);--glass-border:rgba(0,0,0,0.1);--btn-primary:#0284c7;}
+    .mlab-nav{position:fixed;top:20px;left:50%;transform:translateX(-50%);width:95%;max-width:1200px;background:var(--glass-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;justify-content:space-between;align-items:center;padding:12px 25px;border-radius:40px;border:1px solid var(--glass-border);z-index:1000;box-shadow:0 10px 30px rgba(0,0,0,0.1);transition:all 0.4s ease;}
+    .mlab-nav.scrolled{top:10px;background:var(--nav-bg-scrolled);box-shadow:0 15px 40px rgba(0,0,0,0.15);border-color:var(--primary);}
+    .mlab-brand{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;color:var(--text);text-decoration:none;}
+    .mlab-brand span{color:var(--primary);}
+    .mlab-links{display:flex;list-style:none;align-items:center;gap:0.4rem;}
+    .mlab-links>li>a{color:var(--muted);text-decoration:none;font-size:0.88rem;font-weight:500;padding:7px 14px;border-radius:20px;transition:all 0.2s;display:block;}
+    .mlab-links>li>a:hover,.mlab-links>li>a.active{color:var(--primary);background:var(--primary-glow);}
+    .mlab-dropdown{position:relative;}
+    .mlab-dropbtn{color:var(--muted);text-decoration:none;font-size:0.88rem;font-weight:500;padding:7px 14px;border-radius:20px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all 0.2s;}
+    .mlab-dropbtn:hover{color:var(--primary);background:var(--primary-glow);}
+    .mlab-dropdown-content{display:none;position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);background:var(--nav-bg-scrolled);border:1px solid var(--glass-border);border-radius:16px;padding:8px;min-width:270px;box-shadow:0 20px 50px rgba(0,0,0,0.3);z-index:2000;backdrop-filter:blur(20px);}
+    .mlab-dropdown:hover .mlab-dropdown-content{display:block;animation:navFadeIn 0.2s ease;}
+    @keyframes navFadeIn{from{opacity:0;transform:translateX(-50%) translateY(-8px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+    .mlab-drop-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;text-decoration:none;color:var(--muted);transition:all 0.2s;}
+    .mlab-drop-item:hover{background:var(--primary-glow);color:var(--primary);}
+    .mlab-drop-icon{font-size:1.1rem;width:30px;text-align:center;}
+    .mlab-drop-title{font-size:0.84rem;font-weight:600;color:var(--text);}
+    .mlab-drop-sub{font-size:0.71rem;color:var(--muted);margin-top:2px;}
+    .mlab-drop-item:hover .mlab-drop-title{color:var(--primary);}
+    .mlab-nav-right{display:flex;align-items:center;gap:10px;}
+    .mlab-login-btn{background:var(--btn-primary);color:#fff !important;text-decoration:none;padding:7px 18px;border-radius:20px;font-size:0.85rem;font-weight:600;transition:all 0.2s;}
+    .mlab-login-btn:hover{opacity:0.85;box-shadow:0 4px 15px var(--primary-glow);}
+    .mlab-theme-btn{background:none;border:1px solid var(--glass-border);color:var(--text);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1rem;transition:all 0.3s;}
+    .mlab-theme-btn:hover{border-color:var(--primary);}
+    /* ===== END NAVBAR CSS ===== */
+  </style>
+</head>
+<body>
+  <nav class="mlab-nav" id="mlabNav">
+    <a href="index.html" class="mlab-brand">⚗️ Mole<span>qyn</span></a>
+    <ul class="mlab-links">
+      <li><a href="index.html">Home</a></li>
+      <li class="mlab-dropdown">
+        <a class="mlab-dropbtn">Virtual Labs ▾</a>
+        <div class="mlab-dropdown-content">
+          <a href="simulators.html" class="mlab-drop-item"><div class="mlab-drop-icon">🧪</div><div><div class="mlab-drop-title">Virtual Simulators</div><div class="mlab-drop-sub">Interactive engines for Class 6-12</div></div></a>
+          <a href="experiments.html" class="mlab-drop-item"><div class="mlab-drop-icon">📔</div><div><div class="mlab-drop-title">Experiment Library</div><div class="mlab-drop-sub">NCERT guided practicals</div></div></a>
+          <a href="periodic-table.html" class="mlab-drop-item"><div class="mlab-drop-icon">🔢</div><div><div class="mlab-drop-title">Periodic Table</div><div class="mlab-drop-sub">Explore all 118 elements</div></div></a>
+          <a href="reaction.html" class="mlab-drop-item"><div class="mlab-drop-icon">⚗️</div><div><div class="mlab-drop-title">Reaction Balancer</div><div class="mlab-drop-sub">Balance chemical equations</div></div></a>
+          <a href="ai-tutor.html" class="mlab-drop-item"><div class="mlab-drop-icon">🤖</div><div><div class="mlab-drop-title">AI Chemistry Tutor</div><div class="mlab-drop-sub">Ask any doubt 24/7</div></div></a>
+        </div>
+      </li>
+      <li><a href="learn.html" class="active">Learn</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="quiz.html">Quiz</a></li>
+      <li><a href="dashboard.html">Progress</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div class="mlab-nav-right">
+      <a href="login.html" class="mlab-login-btn">Login</a>
+      <button class="mlab-theme-btn" id="mlabThemeBtn" title="Switch Theme">☀️</button>
+    </div>
+  </nav>
+  <script>
+    // Theme toggle & scroll handling
+    (function(){
+      var nav = document.getElementById('mlabNav');
+      var btn = document.getElementById('mlabThemeBtn');
+      if (nav && btn) {
+        if (localStorage.getItem('mlab-theme') === 'light') {
+          document.documentElement.classList.add('light-mode');
+          btn.textContent = '🌙';
+        }
+        btn.addEventListener('click', function(){
+          document.documentElement.classList.toggle('light-mode');
+          var isLight = document.documentElement.classList.contains('light-mode');
+          localStorage.setItem('mlab-theme', isLight ? 'light' : 'dark');
+          btn.textContent = isLight ? '🌙' : '☀️';
+        });
+        window.addEventListener('scroll', function(){
+          nav.classList.toggle('scrolled', window.scrollY > 50);
+        });
+      }
+    })();
+
+    // Live character counter
+    function updateCharCount() {
+      var textarea = document.getElementById('contactMsg');
+      var counter = document.getElementById('charCounter');
+      counter.textContent = textarea.value.length + " / 800 characters";
+    }
+
+    // Interactive FAQ Accordion
+    function toggleFaq(el) {
+      el.classList.toggle('open');
+    }
+
+    // Contact Form submission
+    function handleContactSubmit(e) {
+      e.preventDefault();
+      var btn = document.getElementById('submitBtn');
+      btn.innerHTML = '<span>⏳ Sending inquiry...</span>';
+      btn.disabled = true;
+
+      var name = document.getElementById('contactName').value;
+      var email = document.getElementById('contactEmail').value;
+      var role = document.getElementById('contactRole').value;
+      var category = document.getElementById('contactCategory').value;
+      var subject = document.getElementById('contactSubject').value;
+      var msg = document.getElementById('contactMsg').value;
+
+      var ticketNum = "ML-" + (new Date().getFullYear()) + "-" + Math.floor(1000 + Math.random() * 9000);
+
+      var inquiry = {
+        ticket: ticketNum,
+        name: name,
+        email: email,
+        role: role,
+        category: category,
+        subject: subject,
+        message: msg,
+        timestamp: new Date().toISOString()
+      };
+
+      try {
+        var existing = JSON.parse(localStorage.getItem('mlab_inquiries') || '[]');
+        existing.push(inquiry);
+        localStorage.setItem('mlab_inquiries', JSON.stringify(existing));
+      } catch(err) {}
+
+      setTimeout(function(){
+        btn.innerHTML = '<span>📨 Send Message</span>';
+        btn.disabled = false;
+        document.getElementById('ticketNumberDisplay').textContent = "REFERENCE TICKET: #" + ticketNum;
+        document.getElementById('successModal').style.display = 'flex';
+        document.getElementById('contactForm').reset();
+        updateCharCount();
+      }, 700);
+    }
+
+    function closeModal() {
+      document.getElementById('successModal').style.display = 'none';
+    }
+  </script>
+
+<div class="page-wrap">
+    <div class="page-hero">
+    <h1>📚 Learn <span>Chemistry</span></h1>
+    <p>Complete CBSE, ICSE &amp; State Boards Syllabus (Class 6–12) — Strictly Chemistry Only. From foundational matter and elements to advanced reaction kinetics, coordination complexes and organic mechanisms.</p>
+  </div>
+
+  <div class="controls">
+    <div class="search-box">
+      <span>🔍</span>
+      <input type="text" id="searchInput" placeholder="Search chapters, subtopics, concepts…"/>
+    </div>
+  </div>
+  <div class="filter-row" id="classFilter">
+    <button class="fc active" data-filter="all">All Classes</button>
+    <button class="fc" data-filter="6">Class 6</button>
+    <button class="fc" data-filter="7">Class 7</button>
+    <button class="fc" data-filter="8">Class 8</button>
+    <button class="fc" data-filter="9">Class 9</button>
+    <button class="fc" data-filter="10">Class 10</button>
+    <button class="fc" data-filter="11">Class 11</button>
+    <button class="fc" data-filter="12">Class 12</button>
+  </div>
+
+  <div class="topics-grid" id="topicsGrid">
+
+    <!-- ==================== CLASS 6 CHEMISTRY ==================== -->
+    <div class="tc" data-class="6">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">🧊</div>
+        <div class="tc-meta">
+          <div class="tc-title">Nature &amp; States of Matter</div>
+          <div class="tc-sub">Solid, Liquid, Gas — Particle arrangement, properties &amp; phase transitions</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 6</span><span class="badge-diff badge-easy">Easy</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Matter is anything that has mass and occupies space. It is composed of tiny particles that attract one another and are in constant movement.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics (NCERT/ICSE)</h4>
+          <ul class="st-list">
+            <li>Three fundamental states: Solids (definite shape &amp; volume), Liquids (definite volume, indefinite shape), Gases (indefinite shape &amp; volume)</li>
+            <li>Particle behavior: Intermolecular spaces and intermolecular forces of attraction</li>
+            <li>Phase changes: Melting, Freezing, Boiling, Evaporation, Condensation, and Sublimation</li>
+            <li>Effect of heat on particles — Kinetic energy increases as temperature rises</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Key Principle</strong><p>Intermolecular Force: Solid &gt; Liquid &gt; Gas | Intermolecular Space: Gas &gt; Liquid &gt; Solid</p></div>
+        <div class="formula-chips"><span class="fchip">Heat + Solid → Liquid (Melting)</span><span class="fchip">Heat + Liquid → Gas (Vaporisation)</span></div>
+        <a href="sim_particle.html" class="sim-link">🧪 Launch States of Matter Simulator</a>
+      </div>
+    </div>
+
+    <div class="tc" data-class="6">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">📦</div>
+        <div class="tc-meta">
+          <div class="tc-title">Materials Around Us &amp; Sorting</div>
+          <div class="tc-sub">Curiosity Ch 6 / NCERT — Classification by appearance, solubility, density &amp; transparency</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 6</span><span class="badge-diff badge-easy">Easy</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Scientific grouping and classification of objects based on observable chemical and physical properties.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Lustrous vs Non-lustrous materials (Metals vs Non-metals intro)</li>
+            <li>Hardness: Soft materials (can be scratched easily) vs Hard materials</li>
+            <li>Solubility in water: Soluble substances (sugar, salt) vs Insoluble substances (sand, chalk powder)</li>
+            <li>Miscibility: Miscible liquids (lemon juice) vs Immiscible liquids (mustard oil, kerosene)</li>
+            <li>Flotation &amp; Density: Objects that float (dry leaves, wax) vs sink (coins, stones) in water</li>
+            <li>Optical transparency: Transparent (clear glass), Translucent (butter paper), Opaque (cardboard, wood)</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Why Sort Materials?</strong><p>Sorting helps in systematic study of properties and observing patterns in material behavior.</p></div>
+      </div>
+    </div>
+
+    <div class="tc" data-class="6">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">🥣</div>
+        <div class="tc-meta">
+          <div class="tc-title">Separation of Substances &amp; Mixtures</div>
+          <div class="tc-sub">Curiosity Ch 9 / NCERT — Handpicking, Winnowing, Filtration, Decantation &amp; Evaporation</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 6</span><span class="badge-diff badge-easy">Easy</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Separation techniques allow extraction of pure chemical components and removal of non-useful impurities from mixtures.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Pure substance vs Mixture (Homogeneous and Heterogeneous mixtures)</li>
+            <li>Dry separation methods: Handpicking, Threshing, Winnowing, and Sieving</li>
+            <li>Solid-liquid separation: Sedimentation (settling), Decantation (pouring off top liquid), Filtration</li>
+            <li>Separation of soluble solids: Evaporation and Condensation (e.g., obtaining common salt from sea water)</li>
+            <li>Saturated solution &amp; Solubility: Maximum amount of solute dissolved at a given temperature; Effect of heating on solubility</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Laboratory Concept</strong><p>Solute (e.g., Salt) + Solvent (e.g., Water) = Solution | Saturated when no more solute dissolves at that temperature.</p></div>
+        <a href="sim_particle.html" class="sim-link">🧪 Launch Solution Simulator</a>
+      </div>
+    </div>
+
+    <div class="tc" data-class="6">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">💨</div>
+        <div class="tc-meta">
+          <div class="tc-title">Air &amp; Atmospheric Chemistry</div>
+          <div class="tc-sub">Composition of air, Oxygen supporting combustion, Nitrogen, CO₂ &amp; Water vapour</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 6</span><span class="badge-diff badge-easy">Easy</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Air is a colorless, odorless mixture of gases that surrounds our planet, forming Earth's atmosphere.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Percentage composition of air: Nitrogen (~78%), Oxygen (~21%), Carbon dioxide (~0.04%), Argon and other inert gases, Water vapour, Smoke and Dust</li>
+            <li>Role of Oxygen: Crucial for cellular respiration in living organisms and combustion (burning) of fuels</li>
+            <li>Role of Nitrogen: Dilutes atmospheric oxygen, regulates combustion rate, essential nutrient builder for plants</li>
+            <li>Carbon dioxide: Produced during respiration and burning; consumed by green plants during photosynthesis</li>
+            <li>Water vapour in air: Determines humidity; triggers precipitation and condensation in clouds</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Chemical Fact</strong><p>Burning requires Oxygen | Smothering a flame with a glass tumbler removes O₂, extinguishing combustion.</p></div>
+        <div class="formula-chips"><span class="fchip">N₂: 78%</span><span class="fchip">O₂: 21%</span><span class="fchip">CO₂ + Noble gases: ~1%</span></div>
+      </div>
+    </div>
+
+    <!-- ==================== CLASS 7 CHEMISTRY ==================== -->
+    <div class="tc" data-class="7">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">✨</div>
+        <div class="tc-meta">
+          <div class="tc-title">Physical &amp; Chemical Changes</div>
+          <div class="tc-sub">Reversibility, Chemical reactions, Rusting of iron, Crystallisation &amp; Energy changes</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 7</span><span class="badge-diff badge-easy">Easy</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Classification of transformations in matter based on molecular composition changes and energy exchange.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Physical Changes: Reversible change; no new substance formed; alterations in physical state, size, or shape (e.g., melting ice, stretching rubber)</li>
+            <li>Chemical Changes: Irreversible transformation; new chemical substances with distinct properties are created (e.g., burning magnesium ribbon, curdling of milk)</li>
+            <li>Evidence of Chemical Change: Evolution of gas, change in color, emission of heat/light, change in odor, formation of precipitate</li>
+            <li>Rusting of Iron: Reaction of iron with oxygen and water: 4Fe + 3O₂ + 2xH₂O → 2Fe₂O₃·xH₂O (Hydrated ferric oxide)</li>
+            <li>Prevention of Rusting: Galvanisation (zinc coating), painting, greasing, chrome plating, stainless steel alloying</li>
+            <li>Crystallisation: A physical purification technique to yield pure copper sulphate crystals from impure solution</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Classic Lab Reaction</strong><p>2Mg + O₂ → 2MgO (white ash) | MgO + H₂O → Mg(OH)₂ (Magnesium hydroxide turns red litmus blue)</p></div>
+        <div class="formula-chips"><span class="fchip">Fe + CuSO₄ (blue) → FeSO₄ (green) + Cu (red)</span></div>
+      </div>
+    </div>
+
+    <div class="tc" data-class="7">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">🧪</div>
+        <div class="tc-meta">
+          <div class="tc-title">Acids, Bases &amp; Salts</div>
+          <div class="tc-sub">Mineral vs organic acids, Natural indicators (Litmus, Turmeric, China Rose) &amp; Neutralisation</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 7</span><span class="badge-diff badge-easy">Easy</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Study of chemical substances categorized by their sour or bitter taste, ionic nature, and indicator color changes.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Acids: Sour in taste, turn blue litmus paper red. Organic acids (Acetic acid in vinegar, Citric acid in lemon, Lactic acid in curd, Tartaric acid in tamarind, Formic acid in ant sting) vs Mineral acids (HCl, H₂SO₄, HNO₃)</li>
+            <li>Bases &amp; Alkalis: Bitter in taste, soapy to touch, turn red litmus blue. Examples: Sodium hydroxide (NaOH), Calcium hydroxide (lime water), Ammonium hydroxide</li>
+            <li>Indicators: Natural substances showing distinct colors in acidic/basic media (Litmus from lichens, Turmeric turning reddish-brown in base, China rose petal indicator turning dark pink/magenta in acid and green in base)</li>
+            <li>Synthetic indicator: Phenolphthalein (Colorless in acid, bright pink in basic medium)</li>
+            <li>Neutralisation reaction: Acid + Base → Salt + Water + Heat (Exothermic reaction)</li>
+            <li>Neutralisation in daily life: Antacids for indigestion (Milk of Magnesia), Calamine lotion (Zinc carbonate) for ant stings, Agricultural soil treatment with slaked lime (Ca(OH)₂), Factory waste treatment before disposal</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Neutralisation Formula</strong><p>HCl (Hydrochloric acid) + NaOH (Sodium hydroxide) → NaCl (Sodium chloride) + H₂O + Heat</p></div>
+        <a href="sim_titration.html" class="sim-link">💧 Launch Titration / Indicator Lab</a>
+      </div>
+    </div>
+
+    <div class="tc" data-class="7">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">🔨</div>
+        <div class="tc-meta">
+          <div class="tc-title">The World of Metals &amp; Non-metals (Class 7)</div>
+          <div class="tc-sub">New Curiosity Syllabus Ch 4 / ICSE — Physical properties, malleability, ductility &amp; reactivity intro</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 7</span><span class="badge-diff badge-easy">Easy</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Foundation of chemical elements into metals and non-metals based on observable metallic luster, sonority, and electrical conductivities.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics (Curiosity Textbook)</h4>
+          <ul class="st-list">
+            <li>Physical properties of Metals: Malleability (beaten into thin sheets, e.g., gold, aluminium foil), Ductility (drawn into wires, e.g., copper), Sonority (ringing sound), Luster (shine), High thermal &amp; electrical conductivity</li>
+            <li>Physical properties of Non-metals: Brittle, dull appearance, non-sonorous, poor conductors of heat and electricity (insulators)</li>
+            <li>Notable exceptions: Mercury (liquid metal at room temp), Graphite (non-metal that conducts electricity), Iodine (lustrous non-metal), Diamond (hardest non-metal with high thermal conductivity)</li>
+            <li>Reaction with air and oxygen: Formation of basic metal oxides (e.g., Magnesium oxide) vs acidic non-metal oxides (e.g., Sulphur dioxide)</li>
+            <li>Everyday uses of metals (wiring, utensils, construction) and non-metals (oxygen for life, chlorine for water purification, nitrogen in fertilisers)</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Crucial Rule of Oxides</strong><p>Metal Oxides are BASIC (turn red litmus blue) | Non-metal Oxides are ACIDIC (turn blue litmus red)</p></div>
+        <a href="periodic-table.html" class="sim-link">📊 Explore Elements in Periodic Table</a>
+      </div>
+    </div>
+
+    <div class="tc" data-class="7">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">💧</div>
+        <div class="tc-meta">
+          <div class="tc-title">Water: Chemical Nature &amp; Wastewater Chemistry</div>
+          <div class="tc-sub">Water as universal solvent, hardness of water, sewage chemical purification</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 7</span><span class="badge-diff badge-easy">Easy</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Chemistry of water as the universal solvent, its anomalous expansion, dissolved mineral content, and chemical effluent purification.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Water as a universal solvent: Ability to dissolve large variety of polar substances and minerals</li>
+            <li>Chemical purification of drinking water: Chlorination (killing microorganisms with Cl₂ / bleaching powder), Aeration, Ozonisation, and UV treatment</li>
+            <li>Hard water vs Soft water: Presence of dissolved calcium (Ca²⁺) and magnesium (Mg²⁺) salts causing scum with soap</li>
+            <li>Chemical wastewater treatment: Coagulation with alum, chemical settling, disinfection of industrial effluents before discharge</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Chemical Disinfection</strong><p>Cl₂ + H₂O ⇌ HCl + HOCl (Hypochlorous acid — active germicide in chlorination)</p></div>
+      </div>
+    </div>
+
+    <!-- ==================== CLASS 8 CHEMISTRY ==================== -->
+    <div class="tc" data-class="8">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">⚛️</div>
+        <div class="tc-meta">
+          <div class="tc-title">Particulate Nature of Matter</div>
+          <div class="tc-sub">Curiosity Ch 7 / ICSE — Atoms, molecules, radicals, atomic symbols &amp; valency</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 8</span><span class="badge-diff badge-med">Medium</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Understanding the fundamental subatomic building blocks that constitute every chemical substance.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Atom: Smallest particle of an element that retains its chemical identity (Dalton's Atomic Theory overview)</li>
+            <li>Molecule: Smallest particle of an element or compound capable of independent existence</li>
+            <li>Chemical Symbols of elements: Berzelius notation based on English, Latin, and German names (e.g., Fe from Ferrum, Na from Natrium, Au from Aurum)</li>
+            <li>Valency &amp; Combining capacity: Electrons shared or transferred to complete octet</li>
+            <li>Polyatomic ions / Radicals: Nitrate (NO₃⁻), Sulphate (SO₄²⁻), Carbonate (CO₃²⁻), Ammonium (NH₄⁺), Hydroxide (OH⁻)</li>
+            <li>Criss-cross method for writing chemical formulas: e.g., Al³⁺ + O²⁻ → Al₂O₃</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Formula Building</strong><p>Cation charge + Anion charge must balance: Ca²⁺ + 2Cl⁻ → CaCl₂ | Na⁺ + OH⁻ → NaOH</p></div>
+        <a href="reaction.html" class="sim-link">⚗️ Open Reaction &amp; Formula Balancer</a>
+      </div>
+    </div>
+
+    <div class="tc" data-class="8">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">🧪</div>
+        <div class="tc-meta">
+          <div class="tc-title">Elements, Compounds &amp; Mixtures</div>
+          <div class="tc-sub">Curiosity Ch 8 / NCERT — Purity, chemical synthesis, fractional distillation &amp; chromatography</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 8</span><span class="badge-diff badge-med">Medium</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Rigorous distinction between chemically bonded compounds and physically combined mixtures.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Element: Pure substance made of one type of atom (Metals, Non-metals, Metalloids, Noble gases)</li>
+            <li>Compound: Pure substance made of two or more elements chemically combined in fixed proportion by mass (e.g., H₂O is always 1:8 hydrogen to oxygen by mass)</li>
+            <li>Differences: Mixtures retain constituent properties and can be separated physically; Compounds display entirely new chemical properties and require chemical methods to break down</li>
+            <li>Advanced Separation techniques: Fractional distillation (separation based on boiling point differences), Paper chromatography (separation by adsorption rate), Separating funnel for immiscible liquids</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Classic Comparison</strong><p>Fe + S powder = Mixture (Fe separated by magnet) | Fe + S heated = FeS compound (Non-magnetic, reacts with HCl to yield toxic H₂S gas)</p></div>
+      </div>
+    </div>
+
+    <div class="tc" data-class="8">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">🛢️</div>
+        <div class="tc-meta">
+          <div class="tc-title">Coal, Petroleum &amp; Fossil Fuels</div>
+          <div class="tc-sub">Carbonisation, Fractional distillation of crude oil, Petrochemicals &amp; Natural gas</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 8</span><span class="badge-diff badge-easy">Easy</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Chemistry of hydrocarbons stored in ancient organic matter and industrial processing of fossil resources.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Exhaustible vs Inexhaustible resources</li>
+            <li>Coal formation: Carbonisation of dead vegetation under high temperature and pressure over millions of years</li>
+            <li>Destructive distillation of coal: Products include Coke (almost pure carbon), Coal tar (source of aromatic compounds), Coal gas</li>
+            <li>Petroleum refining: Fractional distillation column separating fractions by boiling points (Petroleum gas/LPG, Petrol, Kerosene, Diesel, Lubricating oil, Paraffin wax, Bitumen)</li>
+            <li>Natural Gas (CNG): Compressed Methane (CH₄) — cleaner, high calorific value fuel</li>
+            <li>Environmental consequences: CO₂ greenhouse effect, acid rain from SO₂ and NO₂ emissions</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Chemical Insight</strong><p>Coke: ~98% Carbon reducing agent in metallurgy | LPG: Propane + Butane with Ethyl mercaptan odorant</p></div>
+      </div>
+    </div>
+
+    <div class="tc" data-class="8">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">🔥</div>
+        <div class="tc-meta">
+          <div class="tc-title">Combustion, Flame &amp; Fuels</div>
+          <div class="tc-sub">Ignition temperature, Fire triangle, Flame structure zones &amp; Calorific value</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 8</span><span class="badge-diff badge-easy">Easy</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Thermodynamic study of rapid oxidation reactions producing heat, light, and characteristic flame structures.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Combustion: Exothermic chemical reaction with oxygen releasing thermal and luminous energy</li>
+            <li>Combustible vs Non-combustible substances</li>
+            <li>Conditions necessary for combustion: Presence of combustible substance, Supply of oxygen (supporter of combustion), Attainment of Ignition Temperature</li>
+            <li>Types of combustion: Rapid combustion (gas stove burner), Spontaneous combustion (White phosphorus at room temp), Explosion (fireworks)</li>
+            <li>Structure of a candle flame: Dark innermost zone (unburnt wax vapors), Luminous middle zone (incomplete combustion, yellow, carbon particles), Non-luminous outermost zone (complete combustion, blue, hottest zone)</li>
+            <li>Calorific value of fuel (kJ/kg): Energy released on complete combustion of 1 kg fuel; Ideal fuel properties</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Calorific Values (kJ/kg)</strong><p>Hydrogen: 150,000 | LPG: 55,000 | Methane/CNG: 50,000 | Petrol/Diesel: 45,000 | Coal: 25,000–33,000 | Wood: 17,000</p></div>
+      </div>
+    </div>
+
+    <div class="tc" data-class="8">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">⚡</div>
+        <div class="tc-meta">
+          <div class="tc-title">Chemical Effects of Electric Current</div>
+          <div class="tc-sub">Electrolytes, Ions, Electrolysis of water, Electroplating &amp; Faraday intro</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 8</span><span class="badge-diff badge-med">Medium</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Electrical conductance through liquids leading to chemical decomposition and material deposition.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Conductors vs Insulators in liquids: Pure distilled water is poor conductor; addition of acids, bases, or salts provides mobile ions making it electrolytic</li>
+            <li>Electrolysis: Chemical decomposition of an electrolyte caused by passing direct electric current</li>
+            <li>Electrolysis of acidified water: Hydrogen gas collected at Cathode (-), Oxygen gas collected at Anode (+) in 2:1 volume ratio: 2H₂O → 2H₂↑ + O₂↑</li>
+            <li>Electroplating: Process of depositing a thin protective or decorative layer of desired metal on another substrate using electricity (e.g., Chromium plating on taps/rims, Gold plating on jewelry, Tin plating on iron cans)</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Electroplating Setup</strong><p>Cathode (-): Object to be plated | Anode (+): Pure coating metal | Electrolyte: Salt solution of coating metal (e.g., CuSO₄)</p></div>
+        <a href="sim_electro.html" class="sim-link">🔋 Launch Electrochemistry &amp; Cell Lab</a>
+      </div>
+    </div>
+
+    <!-- ==================== CLASS 9 CHEMISTRY ==================== -->
+    <div class="tc" data-class="9">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">🌀</div>
+        <div class="tc-meta">
+          <div class="tc-title">Matter in Our Surroundings</div>
+          <div class="tc-sub">CBSE Ch 1 / ICSE — Kinetic molecular theory, Latent heat of fusion &amp; vaporisation, Evaporation</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 9</span><span class="badge-diff badge-med">Medium</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Kinetic Molecular Theory explaining states of matter, thermal phase transitions, and intermolecular forces.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Characteristics of particles of matter: Negligible particle size, continuous random motion (Brownian motion), intermolecular spaces, intermolecular attractions</li>
+            <li>Temperature scales: Celsius (°C) and Kelvin (K): K = °C + 273.15</li>
+            <li>Latent Heat: Hidden heat that changes state without temperature change (Latent heat of fusion = 3.34×10⁵ J/kg for ice; Latent heat of vaporisation = 22.6×10⁵ J/kg for steam)</li>
+            <li>Sublimation and Deposition: Direct Solid ⇌ Gas transitions without liquid phase (Ammonium chloride, Iodine, Camphor, Dry ice / solid CO₂)</li>
+            <li>Evaporation vs Boiling: Surface phenomenon below boiling point vs Bulk phenomenon at constant boiling point</li>
+            <li>Factors affecting evaporation: Surface area (↑), Temperature (↑), Humidity (↓), Wind speed (↑); Cooling effect produced during evaporation</li>
+            <li>Plasma &amp; Bose-Einstein Condensate (BEC): 4th and 5th states of matter</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Thermal Constant</strong><p>Latent Heat of Vaporisation of steam produces more severe burns than boiling water at 100°C because of extra stored latent heat.</p></div>
+        <a href="sim_particle.html" class="sim-link">🧪 Launch Particle Engine &amp; Phase Lab</a>
+      </div>
+    </div>
+
+    <div class="tc" data-class="9">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">🔬</div>
+        <div class="tc-meta">
+          <div class="tc-title">Is Matter Around Us Pure?</div>
+          <div class="tc-sub">CBSE Ch 2 / ICSE — True solutions, Colloids, Suspensions, Tyndall Effect &amp; Separation</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 9</span><span class="badge-diff badge-med">Medium</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Chemical classification into pure elements, compounds, and heterogeneous systems based on particle size and scattering of light.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>True Solution: Homogeneous mixture; particle size &lt;1 nm; stable; passes filter paper; does not scatter light (No Tyndall effect)</li>
+            <li>Colloidal Solution: Heterogeneous mixture; particle size 1–100 nm; translucent; stable; shows Tyndall effect (light beam scattering) and Brownian motion</li>
+            <li>Components of colloid: Dispersed phase and Dispersion medium (Sols, Gels, Emulsions, Aerosols, Foams)</li>
+            <li>Suspension: Heterogeneous mixture; particle size &gt;100 nm; opaque; particles settle under gravity on standing</li>
+            <li>Concentration of solution: Mass % = (Mass of Solute / Mass of Solution) × 100; Volume % = (Vol of Solute / Vol of Solution) × 100</li>
+            <li>Separation of components: Centrifugation (blood/milk testing), Chromatography (dye separation, Rf factor), Fractional distillation</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>The Tyndall Effect</strong><p>Scattering of visible light beam by colloidal particles makes the path of light visible (e.g., sunlight through forest canopy or milk in water).</p></div>
+        <a href="sim_particle.html" class="sim-link">💡 Launch Tyndall Effect &amp; Colloid Lab</a>
+      </div>
+    </div>
+
+    <div class="tc" data-class="9">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">⚖️</div>
+        <div class="tc-meta">
+          <div class="tc-title">Atoms &amp; Molecules &amp; Mole Concept</div>
+          <div class="tc-sub">CBSE Ch 3 / ICSE — Laws of Chemical Combination, Dalton's theory, Atomic mass &amp; Avogadro's Mole</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 9</span><span class="badge-diff badge-hard">Hard</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Quantitative chemistry foundation: Mass conservation, constant proportions, and mole counting calculations.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Law of Conservation of Mass (Lavoisier): Total mass of reactants = Total mass of products</li>
+            <li>Law of Definite / Constant Proportions (Proust): Chemical compound always contains elements in fixed mass ratio</li>
+            <li>Atomic Mass Unit (u / unified amu): Defined as 1/12th the mass of an unbonded Carbon-12 atom</li>
+            <li>Molecules of elements (O₂, N₂, P₄, S₈) vs Molecules of compounds (H₂O, NH₃, CH₄)</li>
+            <li>Molecular Mass &amp; Formula Unit Mass calculations</li>
+            <li>The Mole Concept: 1 mole = 6.02214076 × 10²³ particles (Avogadro Constant NA)</li>
+            <li>Molar Mass: Mass of 1 mole of a substance expressed in grams (g/mol)</li>
+            <li>Mole calculations: Number of moles n = Given Mass (m) / Molar Mass (M) = Number of Particles (N) / NA</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Core Calculations</strong><p>n = m / M | N = n × 6.022×10²³ | 1 mole gas at STP occupies 22.4 L (Standard Temperature &amp; Pressure)</p></div>
+        <div class="formula-chips"><span class="fchip">H₂O = 18 g/mol</span><span class="fchip">CO₂ = 44 g/mol</span><span class="fchip">CaCO₃ = 100 g/mol</span></div>
+      </div>
+    </div>
+
+    <div class="tc" data-class="9">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">🎯</div>
+        <div class="tc-meta">
+          <div class="tc-title">Structure of the Atom</div>
+          <div class="tc-sub">CBSE Ch 4 / ICSE — Thomson, Rutherford, Bohr's models, Subatomic particles &amp; Isotopes</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 9</span><span class="badge-diff badge-hard">Hard</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Discovery of the subatomic architecture: Protons, Neutrons, Electrons, Nuclear scattering, and Shell energy levels.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Cathode Ray tube experiment (J.J. Thomson discovered electron; Plum Pudding model)</li>
+            <li>Canal Ray experiment (E. Goldstein discovered proton)</li>
+            <li>Chadwick discovered Neutron (1932): Neutral subatomic particle in nucleus with mass ~1 u</li>
+            <li>Rutherford's Alpha Particle Scattering Experiment: Discovery of dense, positively charged atomic nucleus; Mostly empty space</li>
+            <li>Bohr's Model of the Atom: Discrete circular orbits/shells (K, L, M, N); Electrons do not radiate energy while in permitted shells</li>
+            <li>Distribution of electrons (Bohr-Bury scheme): 2n² maximum capacity per shell (K=2, L=8, M=18, N=32); Outermost shell max 8 electrons</li>
+            <li>Atomic Number (Z = Number of Protons) and Mass Number (A = Protons + Neutrons)</li>
+            <li>Valence electrons and Valency determination for elements Z=1 to 20</li>
+            <li>Isotopes: Same Z, different A (Protium ¹H, Deuterium ²H, Tritium ³H; C-12, C-14; Cl-35 &amp; Cl-37 in 3:1 ratio giving average mass 35.5 u); Isobars: Same A, different Z (e.g., ⁴⁰Ar and ⁴⁰Ca)</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Bohr-Bury Rule</strong><p>Maximum electrons in shell n = 2n² | Octet Rule: Maximum 8 electrons in outermost valence shell.</p></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+          <a href="sim_atomverse.html" class="sim-link">⚛️ Launch AtomVerse (118 Elements Orbit Engine)</a>
+          <a href="sim_rutherford.html" class="sim-link" style="background:rgba(255,255,255,0.08);border:1px solid var(--border);color:var(--text)">🎯 Rutherford Scattering Lab</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="tc" data-class="9">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">📖</div>
+        <div class="tc-meta">
+          <div class="tc-title">The Language of Chemistry &amp; Gas Laws (ICSE)</div>
+          <div class="tc-sub">ICSE Class 9 Ch 1, 5, 7 — Chemical symbols, Valency, Balancing redox, Boyle's &amp; Charles' Laws</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 9</span><span class="badge-diff badge-hard">Hard</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Core ICSE curriculum: Chemical nomenclature, radicals, writing balanced stoichiometric equations, and quantitative gas laws.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics (ICSE Special)</h4>
+          <ul class="st-list">
+            <li>Chemical formula construction using electrovalent and covalent valencies</li>
+            <li>Variable valency metals: Iron (Fe²⁺ ferrous, Fe³⁺ ferric), Copper (Cu⁺ cuprous, Cu²⁺ cupric)</li>
+            <li>Balancing chemical equations by Hit-and-Trial and algebraic coefficient methods</li>
+            <li>Boyle's Law: Pressure is inversely proportional to Volume at constant temperature (P₁V₁ = P₂V₂)</li>
+            <li>Charles' Law: Volume is directly proportional to absolute Temperature at constant pressure (V₁/T₁ = V₂/T₂)</li>
+            <li>Combined Gas Equation: P₁V₁ / T₁ = P₂V₂ / T₂ | Standard Temperature and Pressure (STP = 273 K, 760 mmHg / 1 atm)</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Combined Gas Law</strong><p>(P₁ × V₁) / T₁ = (P₂ × V₂) / T₂ (Temperature MUST always be converted to Kelvin)</p></div>
+        <a href="sim_gaslaws.html" class="sim-link">🎈 Launch Ideal Gas Laws Simulator</a>
+      </div>
+    </div>
+
+    <!-- ==================== CLASS 10 CHEMISTRY ==================== -->
+    <div class="tc" data-class="10">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">⚡</div>
+        <div class="tc-meta">
+          <div class="tc-title">Chemical Reactions &amp; Equations</div>
+          <div class="tc-sub">CBSE Ch 1 / ICSE — Combination, Decomposition, Displacement, Redox, Rancidity &amp; Corrosion</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 10</span><span class="badge-diff badge-med">Medium</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Classification and stoichiometric balancing of chemical reactions based on thermodynamics and electron transfer.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Writing and balancing chemical equations (Conservation of atoms)</li>
+            <li>Combination reactions: CaO (quicklime) + H₂O → Ca(OH)₂ (slaked lime) + Heat (Exothermic)</li>
+            <li>Decomposition reactions: Thermal (2FeSO₄ → Fe₂O₃ + SO₂ + SO₃; CaCO₃ → CaO + CO₂), Electrolytic (2H₂O → 2H₂ + O₂), Photochemical (2AgCl → 2Ag + Cl₂ in sunlight used in black &amp; white photography)</li>
+            <li>Displacement reactions: More reactive metal replaces less reactive metal (Fe + CuSO₄ → FeSO₄ + Cu)</li>
+            <li>Double Displacement &amp; Precipitation: Na₂SO₄ + BaCl₂ → BaSO₄↓ (white ppt) + 2NaCl</li>
+            <li>Oxidation &amp; Reduction (Redox): Oxidation = Gain of O / Loss of H / Loss of e⁻; Reduction = Loss of O / Gain of H / Gain of e⁻</li>
+            <li>Oxidising and Reducing agents identification in live equations</li>
+            <li>Corrosion (rusting of iron, green patina on copper CuCO₃·Cu(OH)₂, black coating on silver Ag₂S) and Rancidity of fats/oils</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Classic Redox Reaction</strong><p>CuO + H₂ → Cu + H₂O (CuO is reduced to Cu; H₂ is oxidised to H₂O; CuO is the oxidising agent)</p></div>
+        <a href="reaction.html" class="sim-link">⚗️ Balance Equations in Live Balancer</a>
+      </div>
+    </div>
+
+    <div class="tc" data-class="10">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">🧪</div>
+        <div class="tc-meta">
+          <div class="tc-title">Acids, Bases &amp; Salts (Class 10)</div>
+          <div class="tc-sub">CBSE Ch 2 / ICSE — pH scale, H⁺/OH⁻ ions, Chlor-alkali process, Bleaching powder, Plaster of Paris</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 10</span><span class="badge-diff badge-hard">Hard</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Arrhenius concept of acids and bases, mathematical pH logarithmic scale, and industrial salt chemistry.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Chemical properties: Acid + Metal → Salt + H₂↑; Acid + Metal Carbonate → Salt + CO₂↑ + H₂O; Acid + Metal Oxide → Salt + H₂O</li>
+            <li>What all acids share in common: Generation of hydronium ions H₃O⁺ in aqueous solution; Pure dry HCl does not turn dry litmus red</li>
+            <li>pH Scale: Quantitative measure of hydrogen ion concentration: pH = -log₁₀[H⁺]; Acidic (&lt;7), Neutral (=7), Basic (&gt;7)</li>
+            <li>Importance of pH in daily life: Digestive system (HCl in stomach), Tooth decay (starts below pH 5.5), Self-defense by bee stings (Formic acid), Acid rain (pH &lt;5.6)</li>
+            <li>Chlor-alkali Process: Electrolysis of brine (NaCl solution) producing NaOH (caustic soda), Cl₂ gas at anode, H₂ gas at cathode</li>
+            <li>Bleaching Powder: Ca(OH)₂ + Cl₂ → CaOCl₂ + H₂O (Used as disinfectant and oxidizing agent)</li>
+            <li>Baking Soda: NaHCO₃ (Sodium hydrogen carbonate); Thermal decomposition yields CO₂ causing cakes to rise; Ingredient of antacids</li>
+            <li>Washing Soda: Na₂CO₃·10H₂O (Sodium carbonate decahydrate); Water softening agent</li>
+            <li>Plaster of Paris: CaSO₄·½H₂O (Calcium sulphate hemihydrate) prepared by heating Gypsum (CaSO₄·2H₂O) to 373 K</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Key Reactions to Memorize</strong><p>2NaHCO₃ + Heat → Na₂CO₃ + H₂O + CO₂↑ | CaSO₄·½H₂O + 1½H₂O → CaSO₄·2H₂O (Sets hard as Gypsum)</p></div>
+        <a href="sim_titration.html" class="sim-link">💧 Launch Acid-Base Titration Simulator</a>
+      </div>
+    </div>
+
+    <div class="tc" data-class="10">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">⚙️</div>
+        <div class="tc-meta">
+          <div class="tc-title">Metals &amp; Non-metals &amp; Metallurgy</div>
+          <div class="tc-sub">CBSE Ch 3 / ICSE Ch 7 — Reactivity series, Ionic bond, Extraction of metals, Roasting, Calcination &amp; Refining</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 10</span><span class="badge-diff badge-hard">Hard</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Chemical reactivity of metals, formation of ionic compounds, and chemical metallurgy from ores to pure metals.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Reactivity series: K &gt; Na &gt; Ca &gt; Mg &gt; Al &gt; Zn &gt; Fe &gt; Pb &gt; [H] &gt; Cu &gt; Hg &gt; Ag &gt; Au</li>
+            <li>Reaction with water and acids: K and Na react violently with cold water producing H₂ which catches fire; Mg reacts with hot water; Al, Fe, Zn react only with steam; Cu, Ag, Au do not react</li>
+            <li>Amphoteric oxides: Oxides that react with both acids and bases (Al₂O₃ + 6HCl → 2AlCl₃ + 3H₂O; Al₂O₃ + 2NaOH → 2NaAlO₂ + H₂O)</li>
+            <li>Formation and properties of Ionic Compounds (e.g., NaCl, MgCl₂): Electron transfer, high melting/boiling points, electrical conductance in molten/aqueous states due to mobile ions</li>
+            <li>Metallurgy &amp; Extraction: Concentration of ore; Roasting (heating sulphide ores in excess air: 2ZnS + 3O₂ → 2ZnO + 2SO₂) vs Calcination (heating carbonate ores in limited air: ZnCO₃ → ZnO + CO₂)</li>
+            <li>Thermite reaction: Fe₂O₃ + 2Al → 2Fe(l) + Al₂O₃ + Heat (Used to weld railway tracks)</li>
+            <li>Electrolytic refining of copper; Anode mud; Alloying (Brass: Cu+Zn, Bronze: Cu+Sn, Solder: Pb+Sn, Stainless steel: Fe+Cr+Ni)</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Reactivity Mnemonic</strong><p>Please Stop Calling Me A Careless Zebra Instead Try Learning How Copper Saves Gold (K, Na, Ca, Mg, Al, C, Zn, Fe, Sn, Pb, H, Cu, Ag, Au)</p></div>
+        <a href="sim_electro.html" class="sim-link">🔋 See Electrochemical Reactivity</a>
+      </div>
+    </div>
+
+    <div class="tc" data-class="10">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">🔮</div>
+        <div class="tc-meta">
+          <div class="tc-title">Carbon &amp; Its Compounds (Organic Chem Intro)</div>
+          <div class="tc-sub">CBSE Ch 4 / ICSE — Covalent bonding, Allotropes, Homologous series, IUPAC, Ethanol, Ethanoic acid &amp; Soaps</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 10</span><span class="badge-diff badge-hard">Hard</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Versatility of carbon tetravalency, catenation, hydrocarbon families, functional group chemistry, and detergents.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Covalent bonding: Sharing of electron pairs (Single bond in H₂, Double bond in O₂, Triple bond in N₂)</li>
+            <li>Versatile nature of carbon: Catenation (ability to form long chains and rings) and Tetravalency (4 valence electrons)</li>
+            <li>Allotropes of carbon: Diamond (rigid 3D network, sp³), Graphite (hexagonal layers held by weak van der Waals forces, sp², conducts electricity), Fullerenes (C₆₀ buckyball)</li>
+            <li>Saturated hydrocarbons (Alkanes CnH2n+2) vs Unsaturated (Alkenes CnH2n, Alkynes CnH2n-2)</li>
+            <li>Functional groups: Halo (-Cl, -Br), Alcohol (-OH), Aldehyde (-CHO), Ketone (-CO-), Carboxylic acid (-COOH)</li>
+            <li>Homologous Series: Consecutive members differ by -CH₂- unit and 14 u molecular mass</li>
+            <li>IUPAC Nomenclature for 1 to 5 carbon compounds</li>
+            <li>Chemical properties: Combustion (blue flame vs sooty flame), Oxidation with alkaline KMnO₄, Addition reactions (Hydrogenation of vegetable oils using Ni catalyst), Substitution reactions of methane with Cl₂</li>
+            <li>Ethanol (C₂H₅OH) &amp; Ethanoic Acid (CH₃COOH / Acetic acid): Esterification reaction (CH₃COOH + C₂H₅OH → CH₃COOC₂H₅ + H₂O with fruity smell), Saponification</li>
+            <li>Soaps and Detergents: Structure of soap molecule (hydrophilic ionic head + hydrophobic hydrocarbon tail); Mechanism of micelle formation and cleansing action in hard vs soft water</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Esterification &amp; Saponification</strong><p>Acid + Alcohol ⇌ Ester (fragrant) | Ester + NaOH → Soap (Sodium salt of fatty acid) + Alcohol (Saponification)</p></div>
+        <a href="sim_bonding.html" class="sim-link">⚛️ Launch 3D Molecular Bonding Lab</a>
+        <a href="nomenclature.html" class="sim-link" style="margin-top:8px; background:rgba(192,132,252,0.12); color:#c084fc; border-color:rgba(192,132,252,0.3);">🏷️ Launch IUPAC Nomenclature Engine</a>
+      </div>
+    </div>
+
+    <div class="tc" data-class="10">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">🏛️</div>
+        <div class="tc-meta">
+          <div class="tc-title">Study of Compounds: HCl, NH₃, HNO₃ &amp; H₂SO₄ (ICSE)</div>
+          <div class="tc-sub">ICSE Class 10 Ch 8 — Fountain experiment, Haber process, Ostwald process &amp; Contact process</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 10</span><span class="badge-diff badge-hard">Hard</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>In-depth industrial synthesis, laboratory preparation, and distinguishing chemical reactions of the four major commercial compounds.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics (ICSE Special)</h4>
+          <ul class="st-list">
+            <li>Hydrogen Chloride (HCl): Laboratory preparation from NaCl and concentrated H₂SO₄ below 200°C; Extreme solubility demonstrated by the Fountain Experiment; Inverted funnel arrangement preventing back-suction</li>
+            <li>Ammonia (NH₃): Laboratory prep from NH₄Cl and Ca(OH)₂; Industrial synthesis via the Haber Process (N₂ + 3H₂ ⇌ 2NH₃; Fe catalyst, Mo promoter, 450°C, 200 atm); Basic nature demonstrated by Red Fountain experiment; Catalytic oxidation to nitric oxide</li>
+            <li>Nitric Acid (HNO₃): Laboratory prep from KNO₃ and concentrated H₂SO₄ in all-glass apparatus; Ostwald Process (Ammonia oxidation → NO → NO₂ → HNO₃); Strong oxidizing action on metals (Cu + conc. HNO₃ → Cu(NO₃)₂ + 2NO₂ + 2H₂O); Brown Ring Test for nitrates</li>
+            <li>Sulphuric Acid (H₂SO₄): Industrial manufacture via the Contact Process (S → SO₂ → SO₃ using V₂O₅ catalyst at 450°C → Oleum H₂S₂O₇ → 98% H₂SO₄); Properties: Non-volatile acid, strong oxidizing agent, powerful dehydrating agent (charring of sugar: C₁₂H₂₂O₁₁ → 12C + 11H₂O)</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Brown Ring Test Formula</strong><p>FeSO₄ + NO → [Fe(H₂O)₅(NO)]SO₄ (Nitrosoferrous sulphate — dark brown ring at the junction of two liquids)</p></div>
+        <a href="periodic-table.html" class="sim-link">📊 Explore Element Properties</a>
+      </div>
+    </div>
+
+    <!-- ==================== CLASS 11 CHEMISTRY ==================== -->
+    <div class="tc" data-class="11">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">🌐</div>
+        <div class="tc-meta">
+          <div class="tc-title">Some Basic Concepts of Chemistry</div>
+          <div class="tc-sub">CBSE/ISC Unit 1 — Mole concept, Stoichiometry, Limiting reagent, Empirical &amp; Molecular formulas, Molarity</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 11</span><span class="badge-diff badge-hard">Hard</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Fundamental quantitative laws of chemical combinations, precision in measurement, and stoichiometric calculations.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Laws of Chemical Combination: Law of Conservation of Mass, Definite Proportions, Multiple Proportions (Dalton), Gay-Lussac's Law of Gaseous Volumes, Avogadro's Law</li>
+            <li>Atomic and molecular masses; Average atomic mass of isotopic mixtures</li>
+            <li>Mole Concept &amp; Molar Mass: Quantitative calculations involving grams, moles, and particle counts</li>
+            <li>Percentage composition; Determination of Empirical Formula (simplest ratio) and Molecular Formula (n = Molar Mass / Empirical Mass)</li>
+            <li>Chemical stoichiometry: Balanced stoichiometric equations and mass-mass / mass-volume calculations</li>
+            <li>Limiting Reagent: Identification of reactant that is completely consumed first, dictating total theoretical product yield</li>
+            <li>Concentration of solutions: Mass percent, Mole fraction (x), Molarity (M = moles of solute / volume of solution in L), Molality (m = moles of solute / mass of solvent in kg), Parts per million (ppm)</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Concentration Formulas</strong><p>M = n / V(L) | m = n / mass(kg) | xA = nA / (nA + nB) | M₁V₁ = M₂V₂ (Dilution Law)</p></div>
+        <div class="formula-chips"><span class="fchip">Avogadro: 6.022×10²³</span><span class="fchip">STP Vol: 22.7 L (IUPAC) / 22.4 L</span></div>
+      </div>
+    </div>
+
+    <div class="tc" data-class="11">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">🏗️</div>
+        <div class="tc-meta">
+          <div class="tc-title">Structure of Atom (Class 11)</div>
+          <div class="tc-sub">CBSE/ISC Unit 2 — de Broglie, Heisenberg principle, Quantum numbers, Aufbau, Hund's &amp; Pauli principles</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 11</span><span class="badge-diff badge-hard">Hard</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Quantum mechanical model of the atom, electronic dual nature, orbital wave functions, and electronic configurations.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Electromagnetic radiation, Planck's Quantum Theory (E = hν = hc/λ), Photoelectric effect (Einstein: hν = hν₀ + ½mv²)</li>
+            <li>Bohr's hydrogen model, Rydberg equation for spectral lines (Lyman, Balmer, Paschen, Brackett, Pfund)</li>
+            <li>Dual nature of matter: de Broglie wavelength λ = h / mv = h / p</li>
+            <li>Heisenberg's Uncertainty Principle: Δx · Δp ≥ h / 4π</li>
+            <li>Quantum Mechanical Model: Schrödinger wave equation (overview), wave function ψ and probability density |ψ|²</li>
+            <li>Quantum Numbers: Principal (n), Azimuthal / Orbital angular momentum (l = 0 to n-1), Magnetic (ml = -l to +l), Spin (ms = ±½)</li>
+            <li>Shapes of atomic orbitals: s (spherical), p (dumbbell with nodal plane), d (double dumbbell / cloverleaf)</li>
+            <li>Rules for filling orbitals: Aufbau Principle (energy order based on n+l rule), Pauli's Exclusion Principle (no two electrons can have identical 4 quantum numbers), Hund's Rule of Maximum Multiplicity</li>
+            <li>Stability of half-filled and completely filled subshells: Chromium [Ar] 3d⁵ 4s¹ and Copper [Ar] 3d¹⁰ 4s¹</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Rydberg Spectral Formula</strong><p>1/λ = RH × (1/n₁² - 1/n₂²) | Lyman (UV): n₁=1 | Balmer (Visible): n₁=2 | Paschen (IR): n₁=3</p></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+          <a href="sim_atomverse.html" class="sim-link">⚛️ Launch AtomVerse (3D Orbitals &amp; Quantum Validator)</a>
+          <a href="sim_rutherford.html" class="sim-link" style="background:rgba(255,255,255,0.08);border:1px solid var(--border);color:var(--text)">🎯 Rutherford Atomic Lab</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="tc" data-class="11">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">📊</div>
+        <div class="tc-meta">
+          <div class="tc-title">Classification of Elements &amp; Periodicity</div>
+          <div class="tc-sub">CBSE/ISC Unit 3 — Modern Periodic Law, s, p, d, f blocks &amp; Periodic trends (Radius, IE, EA, EN)</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 11</span><span class="badge-diff badge-med">Medium</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Moseley's modern periodic law, electronic configurations dictating group/period placement, and atomic property gradients.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Historical development: Dobereiner's Triads, Newlands' Octaves, Mendeleev's Periodic Table (anomalies and predictions)</li>
+            <li>Modern Periodic Law: Properties of elements are periodic functions of their atomic numbers (Moseley)</li>
+            <li>Division into blocks: s-block (alkali and alkaline earth metals), p-block (chalcogens, halogens, noble gases), d-block (transition metals), f-block (lanthanoids and actinoids)</li>
+            <li>Atomic Radius: Covalent radius, Metallic radius, van der Waals radius (Decreases across a period, increases down a group)</li>
+            <li>Ionization Enthalpy (IE): Energy needed to remove outermost electron from isolated gaseous atom (Increases across period, decreases down group; Anomalies: B &lt; Be and O &lt; N due to electronic stability)</li>
+            <li>Electron Gain Enthalpy (ΔegH): Tendency to gain an electron (Chlorine has more negative ΔegH than Fluorine due to compact 2p interelectronic repulsion)</li>
+            <li>Electronegativity (Pauling scale): F (4.0) &gt; O (3.5) &gt; N (3.0) ≈ Cl (3.0); Anomalous properties of second period elements due to small size and absence of d-orbitals</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Periodic Trends Vector</strong><p>Across Period (→): Atomic Size ↓ | IE ↑ | EN ↑ | Non-metallic character ↑<br/>Down Group (↓): Atomic Size ↑ | IE ↓ | EN ↓ | Metallic character ↑</p></div>
+        <a href="periodic-table.html" class="sim-link">📊 Open 3D Interactive Periodic Table</a>
+      </div>
+    </div>
+
+    <div class="tc" data-class="11">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">🔗</div>
+        <div class="tc-meta">
+          <div class="tc-title">Chemical Bonding &amp; Molecular Structure</div>
+          <div class="tc-sub">CBSE/ISC Unit 4 — VSEPR theory, Valence Bond Theory, Hybridisation (sp, sp², sp³, sp³d, sp³d²) &amp; Molecular Orbital Theory</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 11</span><span class="badge-diff badge-hard">Hard</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Theoretical framework of chemical bonding: Electrostatic attraction, orbital hybridization, directional geometries, and MO diagrams.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Lewis symbols, Octet rule and its limitations (Incomplete octet in BF₃, Odd-electron in NO, Expanded octet in PCl₅, SF₆)</li>
+            <li>Ionic bond: Lattice enthalpy, Born-Haber cycle, Fajan's Rules (Covalent character in ionic bonds: small cation, large anion, high charge)</li>
+            <li>Dipole Moment (μ = q × d in Debye units); Polar vs Non-polar molecules (CO₂ μ=0 linear, H₂O μ=1.85 D bent)</li>
+            <li>VSEPR Theory: Repulsion order: Lone Pair-Lone Pair &gt; Lone Pair-Bond Pair &gt; Bond Pair-Bond Pair; Geometries (Linear, Trigonal planar, Tetrahedral, Trigonal bipyramidal, Octahedral)</li>
+            <li>Valence Bond Theory (VBT): Orbital overlap (σ sigma bond via axial overlap vs π pi bond via lateral sideways overlap)</li>
+            <li>Hybridisation: sp (180°, BeCl₂), sp² (120°, BF₃), sp³ (109.5°, CH₄, NH₃ 107°, H₂O 104.5°), sp³d (PCl₅ with axial longer than equatorial), sp³d² (SF₆ 90°)</li>
+            <li>Molecular Orbital Theory (MOT): LCAO method, Bonding (σ, π) vs Antibonding (σ*, π*) orbitals; Electronic configuration of homonuclear diatomic molecules (O₂, N₂); Bond Order = ½(Nb - Na); Paramagnetism of O₂</li>
+            <li>Hydrogen Bonding: Intermolecular (H₂O, HF) vs Intramolecular (o-nitrophenol)</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Bond Order &amp; Stability</strong><p>Bond Order = ½(Nb - Na) | N₂ has B.O. = 3 (diamagnetic) | O₂ has B.O. = 2 with 2 unpaired electrons (paramagnetic)</p></div>
+        <a href="sim_bonding.html" class="sim-link">⚛️ Launch 3D VSEPR &amp; Bonding Simulator</a>
+      </div>
+    </div>
+
+    <div class="tc" data-class="11">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">🔥</div>
+        <div class="tc-meta">
+          <div class="tc-title">Chemical Thermodynamics</div>
+          <div class="tc-sub">CBSE/ISC Unit 5 — First law, Enthalpy (ΔH), Hess's Law, Entropy (ΔS), Gibbs Free Energy (ΔG) &amp; Spontaneity</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 11</span><span class="badge-diff badge-hard">Hard</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Energetics of chemical systems: Heat capacities, internal energy, thermodynamic state functions, entropy, and free energy driving force.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Thermodynamic systems: Open, Closed, Isolated systems; State functions vs Path functions; Extensive vs Intensive properties</li>
+            <li>First Law of Thermodynamics: ΔU = q + w (where w = -PextΔV for expansion work)</li>
+            <li>Enthalpy (H = U + PV): Enthalpy change ΔH = qp at constant pressure; Exothermic (ΔH &lt; 0) vs Endothermic (ΔH &gt; 0) reactions</li>
+            <li>Heat capacities: Cp - Cv = R for an ideal gas</li>
+            <li>Standard enthalpy of reactions: Enthalpy of formation (ΔfH°), combustion (ΔcH°), neutralization, atomization</li>
+            <li>Hess's Law of Constant Heat Summation: Total enthalpy change is independent of the pathway taken</li>
+            <li>Entropy (S): Thermodynamic measure of microscopic randomness/disorder; Second Law: ΔStotal = ΔSsystem + ΔSsurr &gt; 0 for spontaneous process</li>
+            <li>Gibbs Free Energy (G = H - TS): Criterion for spontaneity: ΔG = ΔH - TΔS &lt; 0 for a spontaneous reaction at constant T and P; Relationship with equilibrium: ΔG° = -RT ln K</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Spontaneity Master Table</strong><p>ΔH &lt; 0, ΔS &gt; 0 → ΔG always negative (Spontaneous at ALL temperatures)<br/>ΔH &gt; 0, ΔS &gt; 0 → Spontaneous only at HIGH temperatures (TΔS dominates)<br/>ΔH &lt; 0, ΔS &lt; 0 → Spontaneous only at LOW temperatures</p></div>
+        <div class="formula-chips"><span class="fchip">ΔG = ΔH - TΔS</span><span class="fchip">ΔG° = -2.303 RT log K</span><span class="fchip">Cp - Cv = R</span></div>
+        <a href="sim_calorimetry.html" class="sim-link">☕ Launch Calorimetry &amp; Enthalpy Lab</a>
+      </div>
+    </div>
+
+    <div class="tc" data-class="11">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">⚖️</div>
+        <div class="tc-meta">
+          <div class="tc-title">Equilibrium (Chemical &amp; Ionic)</div>
+          <div class="tc-sub">CBSE/ISC Unit 6 — Kc, Kp, Le Chatelier's Principle, pH, Buffer solutions, Solubility Product (Ksp)</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 11</span><span class="badge-diff badge-hard">Hard</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Dynamic reversible reactions, equilibrium constants, ionic dissociation of acids/bases, and precipitation equilibria.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Dynamic equilibrium: Rate of forward reaction = Rate of backward reaction</li>
+            <li>Law of Chemical Equilibrium: Kc = [Products]^coefficients / [Reactants]^coefficients; Kp = Kc(RT)^Δng for gas reactions</li>
+            <li>Le Chatelier's Principle: Effect of concentration, pressure, volume, temperature (exothermic reactions favor low T), and catalyst addition</li>
+            <li>Ionic Equilibrium: Strong vs Weak electrolytes; Ostwald's Dilution Law</li>
+            <li>Acid-Base Theories: Arrhenius, Bronsted-Lowry (conjugate acid-base pairs), Lewis (electron pair acceptor acid, donor base)</li>
+            <li>Ionization of water: Kw = [H⁺][OH⁻] = 1.0 × 10⁻¹⁴ at 298 K; pH + pOH = 14</li>
+            <li>Ionization constants of weak acids (Ka) and weak bases (Kb); Ka × Kb = Kw</li>
+            <li>Hydrolysis of salts: Salts of strong acid + weak base (acidic), weak acid + strong base (basic), weak acid + weak base</li>
+            <li>Buffer Solutions: Resisting pH changes on addition of small amounts of acid/base; Henderson-Hasselbalch equation: pH = pKa + log([Salt]/[Acid])</li>
+            <li>Solubility Product (Ksp) and Common Ion Effect: Precipitation occurs when Ionic Product (Qsp) &gt; Ksp</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Equilibrium Core Relations</strong><p>Kp = Kc(RT)^Δn | pH = -log[H⁺] | pH = pKa + log([Conjugate Base]/[Acid]) | Ksp = [Ag⁺][Cl⁻]</p></div>
+        <a href="sim_equilibrium.html" class="sim-link">⚖️ Launch Le Chatelier &amp; Haber Equilibrium Lab</a>
+        <a href="sim_titration.html" class="sim-link" style="background:rgba(255,255,255,0.08);border:1px solid var(--border);color:var(--text);margin-left:8px;">🧪 pH &amp; Titration</a>
+      </div>
+    </div>
+
+    <div class="tc" data-class="11">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">🔋</div>
+        <div class="tc-meta">
+          <div class="tc-title">Redox Reactions</div>
+          <div class="tc-sub">CBSE/ISC Unit 7 — Oxidation Number rules, Balancing by Ion-Electron method &amp; Electrochemical cells intro</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 11</span><span class="badge-diff badge-med">Medium</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Electron transfer reactions, oxidation number assignments, and balancing complex redox equations in acidic and basic media.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Classical vs Electronic concept of oxidation and reduction (OIL RIG)</li>
+            <li>Oxidation Number rules: Elements in free state = 0; Group 1 = +1; Group 2 = +2; Fluorine = -1; Oxygen = -2 (except peroxides -1, OF₂ +2); Hydrogen = +1 (except metal hydrides -1)</li>
+            <li>Fractional oxidation numbers and resonance structures</li>
+            <li>Types of redox reactions: Combination, Decomposition, Displacement, Disproportionation (same species oxidised and reduced, e.g., 2H₂O₂ → 2H₂O + O₂)</li>
+            <li>Balancing redox reactions: Oxidation Number method and Ion-Electron (Half-reaction) method in acidic and alkaline media</li>
+            <li>Redox titrations: Potassium permanganate (KMnO₄ as self-indicator) and Potassium dichromate (K₂Cr₂O₇) with Fe²⁺ / oxalic acid</li>
+            <li>Electrochemical cell foundation: Daniell cell, Zn anode oxidation, Cu cathode reduction</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Balancing Half-Reaction Strategy</strong><p>1. Balance atoms other than O and H<br/>2. Balance O by adding H₂O<br/>3. Balance H by adding H⁺ (for acidic) or OH⁻ (for basic)<br/>4. Balance charges by adding electrons e⁻</p></div>
+        <a href="sim_electro.html" class="sim-link">🔋 Launch Electrochemistry Cell Simulation</a>
+      </div>
+    </div>
+
+    <div class="tc" data-class="11">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">🧪</div>
+        <div class="tc-meta">
+          <div class="tc-title">Organic Chemistry: Principles &amp; Techniques</div>
+          <div class="tc-sub">CBSE/ISC Unit 8 — IUPAC nomenclature, Isomerism, Inductive, Electromeric, Resonance, Hyperconjugation &amp; Carbocations</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 11</span><span class="badge-diff badge-hard">Hard</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Foundation of organic reactions: Hybridization of carbon, systematic IUPAC nomenclature, electronic displacement effects, and reactive intermediates.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Tetravalence of carbon; Shapes of organic molecules (sp³, sp², sp); Bond-line structural representations</li>
+            <li>Classification of organic compounds: Acyclic, Alicyclic, Aromatic, Heterocyclic</li>
+            <li>IUPAC Nomenclature of organic compounds with polyfunctional groups and branched chains</li>
+            <li>Isomerism: Structural isomerism (Chain, Position, Functional group, Metamerism, Tautomerism) and Stereoisomerism (Geometrical cis/trans)</li>
+            <li>Fission of covalent bond: Homolytic fission (generates Free Radicals) vs Heterolytic fission (generates Carbocations R⁺ and Carbanions R⁻)</li>
+            <li>Electronic displacement effects: Inductive effect (+I and -I), Electromeric effect (±E), Resonance / Mesomeric effect (+R and -R), Hyperconjugation (no-bond resonance)</li>
+            <li>Stability of reaction intermediates: Carbocation stability (3° &gt; 2° &gt; 1° &gt; CH₃⁺ due to hyperconjugation &amp; +I); Free radicals (3° &gt; 2° &gt; 1°); Carbanion stability (CH₃⁻ &gt; 1° &gt; 2° &gt; 3°)</li>
+            <li>Electrophiles (Lewis acids, e.g., NO₂⁺, AlCl₃) and Nucleophiles (Lewis bases, e.g., OH⁻, CN⁻, NH₃)</li>
+            <li>Purification methods: Distillation, Sublimation, Crystallisation, Chromatography</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Carbocation Stability Rule</strong><p>Tertiary (3°) &gt; Secondary (2°) &gt; Primary (1°) &gt; Methyl<br/>Stabilised by +I electron releasing alkyl groups and hyperconjugation (more α-hydrogens = more stable).</p></div>
+        <a href="nomenclature.html" class="sim-link" style="margin-top:8px; background:rgba(192,132,252,0.12); color:#c084fc; border-color:rgba(192,132,252,0.3);">🏷️ Practice Systematic IUPAC Nomenclature</a>
+      </div>
+    </div>
+
+    <div class="tc" data-class="11">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">🛢️</div>
+        <div class="tc-meta">
+          <div class="tc-title">Hydrocarbons (Alkanes, Alkenes, Alkynes &amp; Aromatic)</div>
+          <div class="tc-sub">CBSE/ISC Unit 9 — Free radical halogenation, Markovnikov's rule, Ozonolysis, Friedel-Crafts &amp; Huckel's rule</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 11</span><span class="badge-diff badge-hard">Hard</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Syntheses and reaction mechanisms of aliphatic and aromatic hydrocarbons, electrophilic additions and aromatic substitution.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Alkanes: Preparation (Wurtz reaction 2RX + 2Na → R-R; Decarboxylation of sodium salts RCOONa + NaOH/CaO → RH); Free radical chlorination mechanism (Initiation, Propagation, Termination); Conformations of ethane (Sawhorse and Newman projections: Staggered is more stable than Eclipsed due to minimum torsional strain)</li>
+            <li>Alkenes: Preparation from alcohols and alkyl halides (dehydrohalogenation); Electrophilic addition reactions: Markovnikov's Rule (Negative part of addendum adds to carbon with fewer hydrogens: CH₃-CH=CH₂ + HBr → CH₃-CH(Br)-CH₃); Anti-Markovnikov's (Kharasch / Peroxide effect for HBr only); Ozonolysis of alkenes identifying double bond location; Polymerization</li>
+            <li>Alkynes: Acidity of terminal alkynes (HC≡CH + Na → HC≡CNa + ½H₂ due to 50% s-character of sp carbon); Addition reactions; Cyclic polymerization of ethyne over red-hot iron tube yielding Benzene</li>
+            <li>Aromatic Hydrocarbons (Arenes): Huckel's Rule of Aromaticity: Planar, conjugated ring with (4n + 2) π electrons (e.g., Benzene n=1, 6π electrons); Electrophilic Aromatic Substitution (EAS) mechanism: Nitration (HNO₃ + H₂SO₄), Halogenation (Cl₂ + FeCl₃), Sulphonation, Friedel-Crafts Alkylation (CH₃Cl + AlCl₃), Friedel-Crafts Acylation (CH₃COCl + AlCl₃); Directive influence of substituents (ortho/para directors vs meta directors)</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Markovnikov vs Anti-Markovnikov</strong><p>Propene + HBr → 2-Bromopropane (Major, Markovnikov via stable 2° carbocation)<br/>Propene + HBr + Peroxide → 1-Bromopropane (Major, Free-radical mechanism)</p></div>
+        <a href="sim_bonding.html" class="sim-link">⚛️ View 3D Hydrocarbon Geometries</a>
+      </div>
+    </div>
+
+    <!-- ==================== CLASS 12 CHEMISTRY ==================== -->
+    <div class="tc" data-class="12">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">💧</div>
+        <div class="tc-meta">
+          <div class="tc-title">Solutions</div>
+          <div class="tc-sub">CBSE/ISC Unit 1 — Raoult's Law, Henry's Law, Colligative properties &amp; van 't Hoff factor (i)</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 12</span><span class="badge-diff badge-hard">Hard</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Thermodynamics of binary liquid mixtures, vapor pressures of volatile components, and colligative properties of electrolytes.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Types of solutions; Henry's Law: p = KH · x (Solubility of gas in liquid is directly proportional to partial pressure; Application in scuba diving, soda bottles)</li>
+            <li>Raoult's Law: For solution of volatile liquids, partial vapour pressure p₁ = p₁° · x₁; Ideal solutions (ΔHmix = 0, ΔVmix = 0, obey Raoult's law at all concentrations, e.g., Benzene + Toluene)</li>
+            <li>Non-ideal solutions: Positive deviation (A-B interactions weaker than A-A and B-B, e.g., Ethanol + Acetone; Minimum boiling azeotropes) vs Negative deviation (A-B stronger e.g., Chloroform + Acetone; Maximum boiling azeotropes)</li>
+            <li>Colligative Properties (depend only on number of solute particles, not nature): Relative lowering of vapour pressure (Δp / p₁° = x₂); Elevation of boiling point (ΔTb = i · Kb · m); Depression of freezing point (ΔTf = i · Kf · m); Osmotic pressure (π = i · CRT)</li>
+            <li>Abnormal molar masses &amp; van 't Hoff factor (i): i = Normal molar mass / Observed molar mass = Total moles of particles after dissociation/association / Initial moles; Degree of dissociation α = (i - 1) / (n - 1); Degree of association β = (1 - i) / (1 - 1/n)</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Master Colligative Formulas</strong><p>ΔTb = i · Kb · m | ΔTf = i · Kf · m | π = i · CRT | i &gt; 1 for dissociation (NaCl i≈2) | i &lt; 1 for association (Acetic acid in benzene dimerises i≈0.5)</p></div>
+        <div class="formula-chips"><span class="fchip">Kf(water) = 1.86 K kg/mol</span><span class="fchip">Kb(water) = 0.512 K kg/mol</span></div>
+      </div>
+    </div>
+
+    <div class="tc" data-class="12">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">⚡</div>
+        <div class="tc-meta">
+          <div class="tc-title">Electrochemistry</div>
+          <div class="tc-sub">CBSE/ISC Unit 2 — Galvanic cells, Nernst Equation, Kohlrausch's law, Faraday's laws &amp; Batteries</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 12</span><span class="badge-diff badge-hard">Hard</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Interconversion of chemical and electrical energy, electrode kinetics, electrolytic conductance, and commercial storage cells.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Electrochemical cells (Galvanic / Voltaic): Daniell cell, Cell representation: Zn(s) | Zn²⁺(aq) || Cu²⁺(aq) | Cu(s); Standard Cell Potential: E°cell = E°cathode - E°anode</li>
+            <li>Standard Hydrogen Electrode (SHE): Assigned 0.00 V reference potential</li>
+            <li>Nernst Equation: Ecell = E°cell - (2.303 RT / nF) log Q = E°cell - (0.0591 / n) log [Anode]/[Cathode] at 298 K</li>
+            <li>Relationship between E°cell and Gibbs Free Energy: ΔrG° = -nFE°cell; Equilibrium constant: log Kc = nE°cell / 0.0591</li>
+            <li>Electrolytic Conductance: Resistance R, Resistivity ρ, Conductivity κ = 1/ρ = (1/R) · (l/A); Molar conductivity Λm = (κ × 1000) / Molarity</li>
+            <li>Variation of conductivity and molar conductivity with dilution; Debye-Hückel-Onsager equation for strong electrolytes</li>
+            <li>Kohlrausch's Law of Independent Migration of Ions: Λ°m for weak electrolytes; Calculation of degree of dissociation α = Λm / Λ°m and Ka</li>
+            <li>Faraday's Laws of Electrolysis: 1st Law: m = Z · I · t (where Z = Equivalent weight / 96500 C); 2nd Law: m₁/E₁ = m₂/E₂</li>
+            <li>Commercial Batteries: Primary (Dry cell, Mercury cell), Secondary (Lead storage battery: Pb + PbO₂ + 2H₂SO₄ ⇌ 2PbSO₄ + 2H₂O; Nickel-Cadmium cell), Fuel Cells (H₂-O₂ fuel cell with 70% high efficiency), Electrochemical mechanism of corrosion</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Nernst &amp; Free Energy</strong><p>Ecell = E°cell - (0.0591/n) log Q | ΔG° = -n F E°cell | 1 Faraday = 96,485 C/mol of e⁻</p></div>
+        <a href="sim_electro.html" class="sim-link">🔋 Launch Live Galvanic Cell Simulator</a>
+      </div>
+    </div>
+
+    <div class="tc" data-class="12">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">⏱️</div>
+        <div class="tc-meta">
+          <div class="tc-title">Chemical Kinetics</div>
+          <div class="tc-sub">CBSE/ISC Unit 3 — Rate law, Order &amp; Molecularity, Integrated rate equations, Arrhenius equation &amp; Catalysis</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 12</span><span class="badge-diff badge-hard">Hard</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Reaction rates, experimental rate equations, temperature dependence of rate constants, and collision theory.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Rate of reaction: Average rate (Δ[R]/Δt) vs Instantaneous rate (d[R]/dt); Factors affecting rate (concentration, temperature, catalyst, surface area)</li>
+            <li>Rate Law and Rate Constant (k): Rate = k [A]^x [B]^y; Order of reaction = x + y (can be 0, fractional, or integer, experimentally determined)</li>
+            <li>Molecularity of a reaction: Number of reacting species taking part in an elementary step (cannot be 0 or fractional, theoretical)</li>
+            <li>Integrated Rate Equations: Zero order: [R] = [R]₀ - kt; Half-life t½ = [R]₀ / 2k; First order: k = (2.303 / t) log ([R]₀ / [R]); Half-life t½ = 0.693 / k (independent of initial concentration)</li>
+            <li>Pseudo first-order reactions: Acid-catalysed hydrolysis of ethyl acetate (water is in large excess)</li>
+            <li>Temperature dependence: Arrhenius Equation: k = A · e^(-Ea / RT); Logarithmic form: log(k₂ / k₁) = (Ea / 2.303 R) · [(T₂ - T₁) / (T₁T₂)]</li>
+            <li>Activation Energy (Ea) and Activated Complex; Role of catalyst in lowering activation energy barrier without altering ΔG or equilibrium constant</li>
+            <li>Collision Theory: Collision frequency (Z) and effective collisions with proper orientation factor (P)</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>First Order Master Equations</strong><p>k = (2.303/t) log([A]₀/[A]t) | t½ = 0.693 / k | Arrhenius: log(k₂/k₁) = (Ea / 2.303R) × (T₂-T₁)/(T₁T₂)</p></div>
+        <div class="formula-chips"><span class="fchip">t½ (1st order) = 0.693 / k</span><span class="fchip">R = 8.314 J/mol K</span></div>
+        <a href="sim_halflife.html" class="sim-link">⏱️ Launch Radioactivity &amp; Half-Life Lab</a>
+      </div>
+    </div>
+
+    <div class="tc" data-class="12">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">💎</div>
+        <div class="tc-meta">
+          <div class="tc-title">d- and f-Block Elements</div>
+          <div class="tc-sub">CBSE/ISC Unit 4 — Transition metals, Lanthanoid contraction, Variable oxidation states, KMnO₄ &amp; K₂Cr₂O₇</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 12</span><span class="badge-diff badge-hard">Hard</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Electronic configuration of 3d, 4d, 5d series, catalytic properties, interstitial compounds, and lanthanoid chemistry.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Transition Elements: Incompletely filled d-subshells in ground or common oxidation states; General configuration (n-1)d¹⁻¹⁰ ns¹⁻² (Zn, Cd, Hg are not typical transition metals)</li>
+            <li>Physical &amp; Chemical trends: High enthalpies of atomization, high melting points due to d-electron participation in metallic bonding</li>
+            <li>Atomic and ionic radii: Lanthanoid contraction (steady decrease in size across 4f series due to poor shielding by f-electrons; Causes Zr and Hf to have nearly identical radii and properties)</li>
+            <li>Variable oxidation states: Mn exhibits states from +2 to +7; Stability of Fe³⁺ ([Ar] 3d⁵ half-filled) over Fe²⁺ ([Ar] 3d⁶)</li>
+            <li>Magnetic properties: Paramagnetism due to unpaired electrons; Spin-only magnetic moment μ = √(n(n+2)) Bohr Magnetons (BM)</li>
+            <li>Formation of colored ions (d-d transitions absorbing visible light), Catalytic properties (variable valency and surface area), Interstitial compounds, Alloy formation</li>
+            <li>Potassium Dichromate (K₂Cr₂O₇): Preparation from chromite ore FeCr₂O₄; Interconversion: 2CrO₄²⁻ (yellow) + 2H⁺ ⇌ Cr₂O₇²⁻ (orange) + H₂O; Powerful oxidizing agent</li>
+            <li>Potassium Permanganate (KMnO₄): Preparation from pyrolusite ore MnO₂; Powerful oxidant in acidic, neutral, and alkaline solutions</li>
+            <li>f-block elements (Lanthanoids and Actinoids): Electronic configurations, oxidation states (+3 predominant), comparison between lanthanoids and actinoids (actinoids exhibit wider range of oxidation states and are radioactive)</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Spin-Only Formula</strong><p>μ = √(n(n+2)) BM (where n = number of unpaired electrons) | Fe³⁺ (3d⁵, n=5): μ = √(5×7) = 5.92 BM</p></div>
+        <a href="sim_flametest.html" class="sim-link">🔥 Launch Metal Cation Flame Test Lab</a>
+        <a href="periodic-table.html" class="sim-link" style="background:rgba(255,255,255,0.08);border:1px solid var(--border);color:var(--text);margin-left:8px;">📊 Periodic Table</a>
+      </div>
+    </div>
+
+    <div class="tc" data-class="12">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">🏛️</div>
+        <div class="tc-meta">
+          <div class="tc-title">Coordination Compounds</div>
+          <div class="tc-sub">CBSE/ISC Unit 5 — Werner's theory, IUPAC nomenclature, Isomerism, Crystal Field Theory (CFT) &amp; Spectrochemical series</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 12</span><span class="badge-diff badge-hard">Hard</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Complex ions, Werner's primary and secondary valencies, crystal field splitting of d-orbitals, and ligand field stabilization.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Werner's Theory: Primary valency (ionisable, oxidation state) vs Secondary valency (non-ionisable, coordination number, directional geometry)</li>
+            <li>Coordination terminology: Central atom, Ligands (unidentate, bidentate, polydentate e.g., EDTA⁴⁻), Ambidentate ligands (NO₂⁻ / ONO⁻, SCN⁻ / NCS⁻), Chelate effect</li>
+            <li>IUPAC Nomenclature of coordination complexes: Cation named first; ligands in alphabetical order with prefixes; anionic complexes end in '-ate'</li>
+            <li>Isomerism: Structural (Ionisation, Solvate/Hydrate, Linkage, Coordination) and Stereoisomerism (Geometrical cis/trans in square planar and octahedral; Optical enantiomers in octahedral with bidentate ligands like [Co(en)₃]³⁺)</li>
+            <li>Valence Bond Theory (VBT): Inner orbital complex (d²sp³, low spin) vs Outer orbital complex (sp³d², high spin); Limitations of VBT</li>
+            <li>Crystal Field Theory (CFT): Crystal field splitting in octahedral (t2g lower, eg higher; energy gap Δo) and tetrahedral complexes (Δt = 4/9 Δo); Strong field ligands (large Δo &gt; P pairing energy, form low spin complexes, e.g., CN⁻, CO) vs Weak field ligands (Δo &lt; P, high spin, e.g., F⁻, Cl⁻, H₂O)</li>
+            <li>Spectrochemical Series: I⁻ &lt; Br⁻ &lt; S²⁻ &lt; Cl⁻ &lt; F⁻ &lt; OH⁻ &lt; C₂O₄²⁻ &lt; H₂O &lt; NCS⁻ &lt; edta⁴⁻ &lt; NH₃ &lt; en &lt; NO₂⁻ &lt; CN⁻ &lt; CO</li>
+            <li>Color and magnetic properties explained by CFT; Applications in metallurgy, water softening, and medicine (Cisplatin as anti-cancer drug)</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Octahedral CFT Splitting</strong><p>d-orbitals split into t2g (dxy, dyz, dzx, energy -0.4 Δo) and eg (dx²-y², dz², energy +0.6 Δo)<br/>If Δo &gt; P: Electrons pair up in t2g (Low spin / Strong field)<br/>If Δo &lt; P: Electrons occupy eg before pairing (High spin / Weak field)</p></div>
+      </div>
+    </div>
+
+    <div class="tc" data-class="12">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">🧪</div>
+        <div class="tc-meta">
+          <div class="tc-title">Haloalkanes and Haloarenes</div>
+          <div class="tc-sub">CBSE/ISC Unit 6 — SN1 vs SN2 mechanisms, Optical inversion, Ambident nucleophiles, Sandmeyer &amp; Chloroform</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 12</span><span class="badge-diff badge-hard">Hard</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Nucleophilic substitution kinetics, Walden inversion, carbocation rearrangements, and aromatic halogen reactivity.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Classification (mono, di, polyhalogen compounds; primary, secondary, tertiary; allylic, benzylic, vinylic, aryl halides)</li>
+            <li>Preparation of haloalkanes: From alcohols (using SOCl₂ thionyl chloride is best as by-products SO₂ and HCl are escapable gases), Free radical halogenation, Electrophilic addition of HX to alkenes, Halogen exchange (Finkelstein reaction R-Cl + NaI → R-I; Swarts reaction R-Br + AgF → R-F)</li>
+            <li>SN1 Mechanism (Substitution Nucleophilic Unimolecular): Two steps via Carbocation intermediate; Rate = k[R-X]; Order of reactivity: 3° &gt; 2° &gt; 1°; Causes Racemisation</li>
+            <li>SN2 Mechanism (Substitution Nucleophilic Bimolecular): Single concerted step via Pentacoordinated Transition State; Rate = k[R-X][Nu⁻]; Order of reactivity: CH₃X &gt; 1° &gt; 2° &gt; 3° (steric hindrance); Inversion of configuration (Walden Inversion)</li>
+            <li>Elimination reactions: Saytzeff's Rule (Dehydrohalogenation yields more highly substituted, stable alkene as major product)</li>
+            <li>Reactivity of Haloarenes: Extremely unreactive towards nucleophilic substitution due to resonance stabilization (partial double bond C-Cl character), sp² hybridised carbon, and repulsion by aromatic π-cloud</li>
+            <li>Electrophilic substitution in chlorobenzene: ortho-para directing due to +R effect overcoming -I effect</li>
+            <li>Sandmeyer reaction: Aniline + NaNO₂/HCl at 0–5°C → Benzene diazonium chloride; Reaction with Cu₂Cl₂/HCl yields Chlorobenzene</li>
+            <li>Polyhalogen compounds: Dichloromethane, Chloroform (CHCl₃ stored in dark bottles to prevent phosgene COCl₂ poison gas formation), Iodoform test, Freons (CFCs), DDT</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>SN1 vs SN2 Comparison</strong><p>SN1: Polar protic solvent | 2 steps via 3° carbocation | Racemisation | Rate ∝ [Substrate]<br/>SN2: Polar aprotic solvent | 1 step back-side attack on 1° halide | Complete Inversion | Rate ∝ [Substrate][Nucleophile]</p></div>
+      </div>
+    </div>
+
+    <div class="tc" data-class="12">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">🍷</div>
+        <div class="tc-meta">
+          <div class="tc-title">Alcohols, Phenols and Ethers</div>
+          <div class="tc-sub">CBSE/ISC Unit 7 — Hydroboration-oxidation, Lucas test, Kolbe's &amp; Reimer-Tiemann reactions, Williamson ether synthesis</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 12</span><span class="badge-diff badge-hard">Hard</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Oxygen-containing functional group chemistry: Acidity of phenols, electrophilic substitution of phenoxide, and ether cleavage mechanisms.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Alcohols: Preparation by hydration of alkenes, Hydroboration-Oxidation (anti-Markovnikov hydration), Reduction of aldehydes/ketones/esters, Grignard reagents (RMgX) with aldehydes/ketones</li>
+            <li>Physical properties: High boiling points due to intermolecular hydrogen bonding; Solubility decreases as alkyl chain size increases</li>
+            <li>Chemical properties: Cleavage of O-H bond (acidity: 1° &gt; 2° &gt; 3° alcohols; Esterification); Cleavage of C-O bond (reaction with HX, Lucas Test: conc. HCl + anhyd. ZnCl₂ distinguishes 3° immediate turbidity, 2° 5 mins, 1° no turbidity at room temp)</li>
+            <li>Dehydration of alcohols to alkenes: Acid-catalysed mechanism via carbocation; Oxidation (1° → aldehyde with PCC; 1° → carboxylic acid with CrO₃/KMnO₄; 2° → ketone)</li>
+            <li>Phenols: Acidic nature (Phenol is more acidic than alcohol because phenoxide ion is stabilized by resonance); Kolbe's Reaction (Phenol + NaOH + CO₂ → Salicylic acid → Aspirin); Reimer-Tiemann Reaction (Phenol + CHCl₃ + aq. NaOH → Salicylaldehyde); Reaction with Zinc dust (Phenol + Zn → Benzene)</li>
+            <li>Ethers: Preparation by Williamson Ether Synthesis: R-ONa + R'-X → R-O-R' + NaX (R'-X MUST be primary halide to prevent elimination); Cleavage of C-O bond by HI (Cleaves to alcohol and iodide via SN2 for 1°/2°, but via SN1 yielding 3° alkyl iodide for tertiary alkyl groups)</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Named Reactions of Phenol</strong><p>Kolbe's: Phenoxide + CO₂ (400 K, 4–7 atm) → Salicylic Acid (used to make Aspirin)<br/>Reimer-Tiemann: Phenol + CHCl₃ + 3NaOH → Salicylaldehyde (ortho-hydroxybenzaldehyde)</p></div>
+      </div>
+    </div>
+
+    <div class="tc" data-class="12">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">⚗️</div>
+        <div class="tc-meta">
+          <div class="tc-title">Aldehydes, Ketones &amp; Carboxylic Acids</div>
+          <div class="tc-sub">CBSE/ISC Unit 8 — Nucleophilic addition, Aldol condensation, Cannizzaro, Tollens' &amp; Fehling's tests, HVZ reaction</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 12</span><span class="badge-diff badge-hard">Hard</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Carbonyl chemistry: Nucleophilic additions across polarized C=O, enolate condensations, and carboxylic acid derivatives.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Carbonyl structure: Planar sp² hybridised carbon with polar C=O dipole</li>
+            <li>Preparation: Rosenmund reduction (RCOCl + H₂ / Pd-BaSO₄ → RCHO), Stephen reaction (RCN + SnCl₂/HCl → RCHO), Etard reaction (Toluene + CrO₂Cl₂ → Benzaldehyde), Ozonolysis, Hydration of alkynes</li>
+            <li>Nucleophilic Addition Reactions: Addition of HCN (cyanohydrins), NaHSO₃, Grignard reagents, Alcohols (acetals/ketals), Ammonia derivatives (oximes, hydrazones, 2,4-DNP derivatives)</li>
+            <li>Reactivity order: HCHO &gt; RCHO &gt; RCOR (aldehydes more reactive than ketones due to steric and inductive effects)</li>
+            <li>Distinguishing Tests: Tollens' Test (ammoniacal AgNO₃ forms Silver Mirror with aldehydes), Fehling's Test (forms red Cu₂O precipitate with aliphatic aldehydes), Iodoform Test (compounds with CH₃-C=O or CH₃-CH(OH)- form yellow CHI₃ precipitate with I₂ + NaOH)</li>
+            <li>Aldol Condensation: Aldehydes/ketones having α-hydrogen react with dilute alkali to yield β-hydroxy aldehydes, which on heating lose water to form α,β-unsaturated carbonyls; Cross-Aldol</li>
+            <li>Cannizzaro Reaction: Aldehydes lacking α-hydrogen (HCHO, C₆H₅CHO) undergo self redox with conc. KOH: 2HCHO + KOH → CH₃OH + HCOOK</li>
+            <li>Carboxylic Acids: Acidic strength (electron-withdrawing groups -NO₂, -Cl increase acidity; electron-donating groups decrease acidity; Formic acid &gt; Benzoic acid &gt; Acetic acid); Hell-Volhard-Zelinsky (HVZ) reaction: R-CH₂-COOH + Cl₂/Red P → R-CH(Cl)-COOH</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Aldol vs Cannizzaro Rule</strong><p>Has α-Hydrogen? → Undergoes ALDOL CONDENSATION (e.g., Acetaldehyde, Acetone)<br/>NO α-Hydrogen? → Undergoes CANNIZZARO REACTION (e.g., Formaldehyde, Benzaldehyde)</p></div>
+      </div>
+    </div>
+
+    <div class="tc" data-class="12">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">🧪</div>
+        <div class="tc-meta">
+          <div class="tc-title">Amines &amp; Nitrogen Compounds</div>
+          <div class="tc-sub">CBSE/ISC Unit 9 — Gabriel phthalimide, Hoffmann bromamide, Carbylamine test, Diazonium salts &amp; Azo coupling</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 12</span><span class="badge-diff badge-hard">Hard</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Organic nitrogen bases, amine nucleophilicity, synthetic versatility of arenediazonium salts, and azo dye synthesis.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Classification: 1°, 2°, 3° amines and quaternary ammonium salts</li>
+            <li>Preparations: Reduction of nitro compounds (R-NO₂ + Fe/HCl → R-NH₂), Ammonolysis of alkyl halides, Reduction of nitriles/amides with LiAlH₄</li>
+            <li>Gabriel Phthalimide Synthesis: Produces pure primary aliphatic amines without secondary/tertiary contamination (Aromatic amines cannot be prepared this way)</li>
+            <li>Hoffmann Bromamide Degradation: Primary amide + Br₂ + 4KOH → Primary amine with ONE LESS carbon atom: R-CONH₂ → R-NH₂</li>
+            <li>Basicity of Amines: Lone pair on nitrogen; Gas phase: 3° &gt; 2° &gt; 1° &gt; NH₃; Aqueous solution: Combined inductive, solvation, and steric factors (For methyl group: 2° &gt; 1° &gt; 3° &gt; NH₃; For ethyl group: 2° &gt; 3° &gt; 1° &gt; NH₃); Arylamines are less basic than ammonia due to resonance delocalization of lone pair into benzene ring</li>
+            <li>Carbylamine Test: Primary amine (aliphatic or aromatic) + CHCl₃ + 3KOH + Heat → Isocyanide (R-NC) with extremely foul, offensive odor (Specific test for 1° amines)</li>
+            <li>Hinsberg's Test: Benzenesulphonyl chloride distinguishes 1° (soluble in alkali), 2° (insoluble in alkali), and 3° amines (no reaction)</li>
+            <li>Diazonium Salts (Ar-N₂⁺ Cl⁻): Prepared by diazotisation of aniline with NaNO₂ + HCl at 273–278 K; Synthetic utility: Sandmeyer reaction (CuCl, CuBr, CuCN), Gattermann reaction, Balz-Schiemann reaction (fluorination), Azo coupling reactions with phenol (orange dye) and β-naphthol (scarlet dye)</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Carbylamine &amp; Hoffmann Highlights</strong><p>Hoffmann Degradation: R-CONH₂ + Br₂ + 4KOH → R-NH₂ + K₂CO₃ + 2KBr + 2H₂O (degrades carbon chain)<br/>Carbylamine: R-NH₂ + CHCl₃ + 3alc. KOH → R-NC (foul smelling isocyanide)</p></div>
+      </div>
+    </div>
+
+    <div class="tc" data-class="12">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div class="tc-icon">🧬</div>
+        <div class="tc-meta">
+          <div class="tc-title">Biomolecules (Biochemistry)</div>
+          <div class="tc-sub">CBSE/ISC Unit 10 — D/L Glucose structure, Haworth projections, Amino acids, Peptide bond, DNA/RNA double helix &amp; Denaturation</div>
+        </div>
+        <div class="tc-badges"><span class="badge-cls">Class 12</span><span class="badge-diff badge-hard">Hard</span></div>
+        <span class="tc-arrow">▶</span>
+      </div>
+      <div class="tc-body">
+        <p>Molecular chemistry of biological macromolecules: Stereochemistry of carbohydrates, amino acid zwitterions, protein structures, and nucleic acids.</p>
+        <div class="subtopics"><h4>Syllabus Subtopics</h4>
+          <ul class="st-list">
+            <li>Carbohydrates: Classification (Monosaccharides, Oligosaccharides, Polysaccharides; Reducing sugars with free aldehyde/ketone vs Non-reducing e.g., Sucrose)</li>
+            <li>Glucose (Aldohexose): Open-chain structure proofs (HI gives n-hexane, NH₂OH gives oxime, Br₂-water gives Gluconic acid, conc. HNO₃ gives Saccharic acid); Cyclic hemiacetal structure (α and β anomers differing at C1 anomeric carbon); Mutarotation; Haworth projections; Fructose (Ketohexose)</li>
+            <li>Disaccharides: Glycosidic linkage (Sucrose = α-D-glucose + β-D-fructose, Invert sugar; Maltose = two α-D-glucose; Lactose = β-D-galactose + β-D-glucose)</li>
+            <li>Polysaccharides: Starch (Amylose water-soluble unbranched + Amylopectin branched), Cellulose (unbranched β-D-glucose polymer with structural support in plant cell walls), Glycogen (animal starch)</li>
+            <li>Amino Acids: α-Amino carboxylic acids; Zwitterion structure (dipolar ion with neutral net charge at Isoelectric Point pI); Essential (must be taken in diet, e.g., Valine, Leucine) vs Non-essential amino acids</li>
+            <li>Proteins: Peptide bond (-CO-NH-); Structural levels: Primary (amino acid sequence), Secondary (α-Helix and β-Pleated sheets stabilized by H-bonding), Tertiary (3D folding with disulphide, ionic, hydrophobic interactions), Quaternary (multi-subunit assemblies); Fibrous vs Globular proteins; Denaturation of proteins (loss of biological activity on heating/pH change; secondary and tertiary destroyed, primary intact, e.g., curdling milk, boiling egg)</li>
+            <li>Enzymes: Biocatalysts, lock-and-key and induced fit mechanisms, high substrate specificity</li>
+            <li>Nucleic Acids: Nucleotides (Nitrogenous base + Pentose sugar + Phosphate); Purines (Adenine A, Guanine G) and Pyrimidines (Cytosine C, Thymine T in DNA, Uracil U in RNA); Watson-Crick Double Helix model of DNA (Complementary base pairing: A=T with 2 hydrogen bonds, G≡C with 3 hydrogen bonds); Biological functions: Replication and Protein synthesis (Transcription &amp; Translation)</li>
+            <li>Vitamins: Classification into Fat-soluble (A, D, E, K) and Water-soluble (B-complex, C); Specific deficiency diseases (Scurvy from Vitamin C, Rickets from Vitamin D, Beri-beri from Vitamin B1)</li>
+          </ul>
+        </div>
+        <div class="key-box"><strong>Biochemical Constants</strong><p>DNA: A=T (2 H-bonds) | G≡C (3 H-bonds) | Sugar is 2-deoxy-D-ribose<br/>RNA: A=U | G≡C | Sugar is D-ribose<br/>Peptide Linkage: -CO-NH- formed by condensation elimination of water between -COOH and -NH₂</p></div>
+      </div>
+    </div>
+
+  </div><!-- /topics-grid -->
+
+
+  <!-- GLOSSARY -->
+  <div class="glossary-section">
+    <h2>📖 Key Terms Glossary</h2>
+    <p>Quick reference for important science vocabulary across all classes.</p>
+    <div class="glossary-grid">
+      <div class="gitem"><div class="gterm">Sublimation</div><div class="gdef">Direct solid→gas conversion without passing through liquid state. Eg: camphor, iodine, dry ice (CO₂).</div></div>
+      <div class="gitem"><div class="gterm">Latent Heat</div><div class="gdef">Heat absorbed/released during phase change at constant temperature. Fusion (solid→liquid) and Vaporisation (liquid→gas).</div></div>
+      <div class="gitem"><div class="gterm">Tyndall Effect</div><div class="gdef">Scattering of a light beam by colloidal particles, making path of light visible. Not seen in true solutions.</div></div>
+      <div class="gitem"><div class="gterm">Diffusion</div><div class="gdef">Spontaneous movement of particles from high to low concentration region. Rate: gas &gt; liquid &gt; solid.</div></div>
+      <div class="gitem"><div class="gterm">Mole</div><div class="gdef">Amount of substance containing 6.022×10²³ particles (Avogadro's number). 1 mole of gas at STP = 22.4 L.</div></div>
+      <div class="gitem"><div class="gterm">Hybridisation</div><div class="gdef">Mixing of atomic orbitals to form new equivalent hybrid orbitals. sp = linear, sp² = trigonal planar, sp³ = tetrahedral.</div></div>
+      <div class="gitem"><div class="gterm">Le Chatelier's Principle</div><div class="gdef">When a system at equilibrium is disturbed, it shifts to counteract the disturbance and restore equilibrium.</div></div>
+      <div class="gitem"><div class="gterm">Activation Energy</div><div class="gdef">Minimum energy required for a chemical reaction to proceed. Catalysts lower Ea without being consumed.</div></div>
+      <div class="gitem"><div class="gterm">Nernst Equation</div><div class="gdef">E = E° - (0.0592/n)log Q. Gives cell potential at non-standard conditions. At equilibrium, E = 0.</div></div>
+      <div class="gitem"><div class="gterm">Osmosis</div><div class="gdef">Movement of solvent through semi-permeable membrane from low to high solute concentration. Osmotic pressure π = MRT.</div></div>
+      <div class="gitem"><div class="gterm">Gibbs Free Energy</div><div class="gdef">ΔG = ΔH - TΔS. ΔG &lt;0 → spontaneous. ΔG = 0 → equilibrium. ΔG &gt;0 → non-spontaneous.</div></div>
+      <div class="gitem"><div class="gterm">Colligative Properties</div><div class="gdef">Properties depending on number (not nature) of solute particles: vapour pressure lowering, BP elevation, FP depression, osmotic pressure.</div></div>
+      <div class="gitem"><div class="gterm">Faraday's Laws</div><div class="gdef">1st: mass ∝ charge. 2nd: same charge → mass ∝ equivalent mass. F = 96485 C/mol of electrons.</div></div>
+      <div class="gitem"><div class="gterm">Buffer Solution</div><div class="gdef">Resists pH change. Acidic buffer = weak acid + its salt (eg. CH₃COOH + CH₃COONa). pH = pKa + log([A⁻]/[HA]).</div></div>
+      <div class="gitem"><div class="gterm">van't Hoff Factor (i)</div><div class="gdef">Ratio of actual particles to formula units. For non-electrolytes i=1; for electrolytes i&gt;1 (dissociation).</div></div>
+      <div class="gitem"><div class="gterm">Crystal Field Theory</div><div class="gdef">Explains splitting of d-orbitals in coordination compounds. Strong field ligands → large Δ, low spin, more diamagnetic.</div></div>
+    </div>
+  </div>
+</div><!-- /page-wrap -->
+
+<footer style="text-align:center;padding:1.5rem;border-top:1px solid var(--border);font-size:0.78rem;color:var(--muted);">
+  Moleqyn | Complete Notes for Class 6–12 &nbsp;|&nbsp; <a href="about.html" style="color:var(--primary);text-decoration:none;">About</a>
+</footer>
+
+<script>
+  function toggleCard(head) {
+    const card = head.closest('.tc');
+    const wasOpen = card.classList.contains('open');
+    // Close all
+    document.querySelectorAll('.tc.open').forEach(c => c.classList.remove('open'));
+    if (!wasOpen) card.classList.add('open');
+  }
+
+  // Class filter
+  document.getElementById('classFilter').addEventListener('click', function(e) {
+    const btn = e.target.closest('.fc');
+    if (!btn) return;
+    document.querySelectorAll('.fc').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter = btn.dataset.filter;
+    document.querySelectorAll('.tc').forEach(card => {
+      const show = filter === 'all' || card.dataset.class === filter;
+      card.classList.toggle('hidden', !show);
+    });
+  });
+
+  // Search
+  document.getElementById('searchInput').addEventListener('input', function() {
+    const q = this.value.toLowerCase().trim();
+    document.querySelectorAll('.fc').forEach(b => b.classList.remove('active'));
+    document.querySelector('[data-filter="all"]').classList.add('active');
+    document.querySelectorAll('.tc').forEach(card => {
+      if (!q) { card.classList.remove('hidden'); return; }
+      const text = card.textContent.toLowerCase();
+      card.classList.toggle('hidden', !text.includes(q));
+    });
+  });
+
+  // Theme
+  var _tb = document.getElementById('themeBtn'); if (_tb) _tb.addEventListener('click', () => {
+    const t = document.documentElement.getAttribute('data-theme');
+    if (t === 'day') { document.documentElement.removeAttribute('data-theme'); document.getElementById('themeBtn').textContent = '☀️'; }
+    else { document.documentElement.setAttribute('data-theme', 'day'); document.getElementById('themeBtn').textContent = '🌙'; }
+  });
+</script>
+  <script src="js/shared-nav.js"></script>
+</body>
+</html>
+

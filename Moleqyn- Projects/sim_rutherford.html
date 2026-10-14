@@ -1,0 +1,585 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Moleqyn | Rutherford Gold Foil Alpha Scattering Experiment</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --bg:#07111f;--panel:#0f1e35;--border:rgba(255,255,255,0.1);
+      --primary:#00d4ff;--secondary:#ff00cc;--accent:#ffd700;--green:#4ade80;
+      --red:#fb7185;--orange:#fb923c;--text:#f0f4ff;--muted:#7a90b0;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden;}
+    
+    /* NAV */
+    nav{
+      background:rgba(7,17,31,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+      border-bottom:1px solid var(--border);padding:12px 28px;display:flex;align-items:center;
+      justify-content:space-between;position:sticky;top:0;z-index:100;
+    }
+    .nav-brand{font-family:'Space Grotesk',sans-serif;font-size:1.35rem;font-weight:700;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:6px;}
+    .nav-brand span{color:var(--primary);}
+    .nav-links{display:flex;align-items:center;gap:16px;}
+    .nav-back{color:var(--muted);text-decoration:none;font-size:0.86rem;padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:rgba(255,255,255,0.03);transition:all 0.2s;}
+    .nav-back:hover{color:var(--primary);border-color:var(--primary);background:rgba(0,212,255,0.08);}
+
+    .lab-layout{display:grid;grid-template-columns:1fr 340px;height:calc(100vh - 61px);}
+    .canvas-side{display:flex;flex-direction:column;padding:16px 20px;gap:12px;overflow:hidden;}
+    .lab-topbar{display:flex;justify-content:space-between;align-items:center;}
+    .lab-title{font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:700;}
+    .lab-title span{color:var(--accent);}
+    
+    .canvas-wrap{flex:1;background:radial-gradient(circle at 50% 50%, #0d1e38 0%, #050b16 80%);border-radius:16px;border:1px solid var(--border);overflow:hidden;position:relative;}
+    #labCanvas{display:block;width:100%;height:100%;}
+    
+    .stats-row{display:flex;gap:10px;}
+    .stat-box{flex:1;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:10px 12px;text-align:center;}
+    .stat-val{font-family:'JetBrains Mono',monospace;font-size:1.3rem;font-weight:700;}
+    .stat-label{font-size:0.68rem;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:0.5px;}
+    
+    /* CONTROL PANEL */
+    .ctrl-panel{background:var(--panel);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;}
+    .ctrl-section{padding:16px;border-bottom:1px solid var(--border);}
+    .ctrl-section h3{font-family:'Space Grotesk',sans-serif;font-size:0.76rem;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:12px;}
+    .ctrl-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+    .ctrl-label{font-size:0.8rem;color:var(--muted);}
+    .ctrl-val{font-family:'JetBrains Mono',monospace;font-size:0.85rem;font-weight:600;}
+    input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
+    .big-btn{width:100%;padding:11px;border-radius:10px;border:none;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;transition:all 0.2s;margin-top:6px;}
+    .btn-fire{background:var(--accent);color:#000;}
+    .btn-fire:hover{background:#ffe440;box-shadow:0 4px 15px rgba(255,215,0,0.4);}
+    .btn-reset{background:transparent;color:var(--red);border:1px solid var(--red);}
+    .btn-reset:hover{background:var(--red);color:#fff;}
+    
+    .aha-box{background:rgba(255,215,0,0.06);border:1px solid rgba(255,215,0,0.25);border-radius:10px;padding:12px;font-size:0.8rem;color:var(--muted);line-height:1.6;}
+    .aha-box strong{color:var(--accent);display:block;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;text-transform:uppercase;font-size:0.72rem;letter-spacing:0.5px;}
+    
+    .legend-item{display:flex;align-items:center;gap:8px;font-size:0.78rem;color:var(--muted);margin-bottom:6px;}
+    .leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+
+    @media (max-width: 900px){
+      .lab-layout{grid-template-columns:1fr;height:auto;}
+      .canvas-wrap{height:460px;}
+    }
+  </style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-brand">⚗️ Mole<span>qyn</span></a>
+  <div class="nav-links">
+    <button type="button" onclick="generateRutherfordReport()" style="background:linear-gradient(135deg,#00d4ff,#4ade80);color:#020b14;border:none;padding:7px 16px;border-radius:20px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:0.86rem;cursor:pointer;display:flex;align-items:center;gap:6px;transition:0.2s;box-shadow:0 0 15px rgba(0,212,255,0.3);">📄 Lab Report</button>
+    <a href="simulators.html" class="nav-back">← All Simulators</a>
+  </div>
+</nav>
+
+<div class="lab-layout">
+  <div class="canvas-side">
+    <div class="lab-topbar">
+      <div class="lab-title">🎯 Rutherford <span>Gold Foil α-Scattering Lab</span></div>
+      <div style="font-size:0.8rem;color:var(--muted);">Circular ZnS Detection Screen &amp; Scintillation Camera</div>
+    </div>
+    <div class="canvas-wrap">
+      <canvas id="labCanvas"></canvas>
+    </div>
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-val" id="totalFired" style="color:var(--primary);">0</div><div class="stat-label">α-Particles Fired</div></div>
+      <div class="stat-box"><div class="stat-val" id="passedThrough" style="color:var(--green);">0</div><div class="stat-label">Passed Undeviated</div></div>
+      <div class="stat-box"><div class="stat-val" id="deflected" style="color:var(--accent);">0</div><div class="stat-label">Deflected (&gt;5°)</div></div>
+      <div class="stat-box"><div class="stat-val" id="bounced" style="color:var(--red);">0</div><div class="stat-label">Backscatter (&gt;90°)</div></div>
+    </div>
+  </div>
+
+  <div class="ctrl-panel">
+    <div class="ctrl-section">
+      <h3>⚙️ Experimental Apparatus</h3>
+      <div class="ctrl-row"><span class="ctrl-label">Nucleus Charge (Z / Au=79)</span><span class="ctrl-val" id="chargeVal">79 (Gold)</span></div>
+      <input type="range" id="chargeSlider" min="20" max="100" step="1" value="79" oninput="updateSettings()"/>
+
+      <div class="ctrl-row" style="margin-top:10px;"><span class="ctrl-label">Effective Nuclear Radius</span><span class="ctrl-val" id="nucVal">1.0×</span></div>
+      <input type="range" id="nucSize" min="0.5" max="2.5" step="0.1" value="1.0" oninput="updateSettings()"/>
+
+      <div class="ctrl-row" style="margin-top:10px;"><span class="ctrl-label">Alpha Beam Rate</span><span class="ctrl-val" id="rateVal">4 / sec</span></div>
+      <input type="range" id="fireRate" min="1" max="15" step="1" value="4" oninput="updateSettings()"/>
+
+      <div class="ctrl-row" style="margin-top:10px;"><span class="ctrl-label">Collimator Beam Spread</span><span class="ctrl-val" id="spreadVal">Narrow</span></div>
+      <input type="range" id="beamSpread" min="1" max="3" step="1" value="1" oninput="updateSettings()"/>
+    </div>
+
+    <div class="ctrl-section">
+      <h3>🎮 Alpha Gun Controls</h3>
+      <button class="big-btn btn-fire" id="fireBtn" onclick="toggleFire()">▶ Start Firing Alpha Beam</button>
+      <button class="big-btn btn-reset" onclick="resetExp()">🔄 Reset Counts</button>
+      <button type="button" class="big-btn" onclick="generateRutherfordReport()" style="background:linear-gradient(135deg,#00d4ff,#4ade80);color:#020b14;margin-top:8px;">📄 Generate Experiment Report</button>
+    </div>
+
+    <div class="ctrl-section">
+      <h3>📊 Angular Statistical Distribution</h3>
+      <div class="ctrl-row"><span class="ctrl-label">Undeviated (θ &lt; 5°)</span><span class="ctrl-val" id="pctPass" style="color:var(--green);">—</span></div>
+      <div class="ctrl-row"><span class="ctrl-label">Deflected (5° &lt; θ &lt; 90°)</span><span class="ctrl-val" id="pctDefl" style="color:var(--accent);">—</span></div>
+      <div class="ctrl-row"><span class="ctrl-label">Large Angle Backscatter (θ &gt; 90°)</span><span class="ctrl-val" id="pctBack" style="color:var(--red);">—</span></div>
+    </div>
+
+    <div class="ctrl-section">
+      <h3>🔍 Experimental Elements</h3>
+      <div class="legend-item"><div class="leg-dot" style="background:#ffd700"></div><b>α-Particles</b>: Helium nuclei (He²⁺, mass=4u, charge=+2e)</div>
+      <div class="legend-item"><div class="leg-dot" style="background:#ff5533"></div><b>Gold Nuclei (Au)</b>: Concentrated +79e positive charge</div>
+      <div class="legend-item"><div class="leg-dot" style="background:#38ef7d"></div><b>Circular ZnS Screen</b>: Fluoresces green scintillation flashes on impact</div>
+    </div>
+
+    <div class="ctrl-section">
+      <h3>📖 Landmark Chemistry Discovery</h3>
+      <div class="aha-box" id="ahaBox">
+        <strong>Rutherford's 1911 Landmark Conclusion</strong>
+        1. Over 99% of α-particles pass straight through undeflected → <b>Atom is mostly empty space</b>.<br/>
+        2. A small fraction deflect at significant angles → <b>Positive charge is concentrated in a tiny central core (the Nucleus)</b>.<br/>
+        3. Only about 1 in 20,000 backscatters (&gt;90°) → <i>"It was as if you fired a 15-inch artillery shell at a piece of tissue paper and it came back and hit you."</i>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('labCanvas');
+const ctx = canvas.getContext('2d');
+let W, H;
+
+function resize() {
+  const wrap = canvas.parentElement;
+  W = canvas.width = wrap.clientWidth;
+  H = canvas.height = wrap.clientHeight;
+  buildGoldFoil();
+}
+window.addEventListener('resize', resize);
+setTimeout(resize, 80);
+
+let state = {
+  firing: false,
+  particles: [],
+  scintillations: [], // flashes on ZnS screen
+  goldAtoms: [],
+  total: 0, passed: 0, deflected: 0, bounced: 0,
+  fireRate: 4,
+  beamSpread: 1,
+  nuclearCharge: 79,
+  nucRadiusFactor: 1.0,
+  timer: null
+};
+
+function buildGoldFoil() {
+  state.goldAtoms = [];
+  const foilX = W * 0.50;
+  const numAtoms = 16;
+  const spacing = (H * 0.70) / (numAtoms - 1);
+  const startY = H * 0.15;
+
+  for (let i = 0; i < numAtoms; i++) {
+    // 2-3 layers of gold foil atoms
+    for (let layer = 0; layer < 2; layer++) {
+      state.goldAtoms.push({
+        x: foilX + (layer === 0 ? -12 : 12) + (Math.random() - 0.5) * 4,
+        y: startY + i * spacing + (layer === 1 ? spacing * 0.5 : 0),
+        r: 20,
+        nucR: 10 * state.nucRadiusFactor
+      });
+    }
+  }
+}
+
+function spawnParticle() {
+  const sourceX = W * 0.10;
+  const spread = state.beamSpread === 1 ? H * 0.12 : state.beamSpread === 2 ? H * 0.32 : H * 0.55;
+  const startY = H * 0.50 + (Math.random() - 0.5) * spread;
+
+  state.particles.push({
+    x: sourceX,
+    y: startY,
+    vx: 4.8,
+    vy: 0,
+    trail: [],
+    state: 'flying',
+    alpha: 1.0
+  });
+
+  state.total++;
+  updateStats();
+}
+
+function updateSettings() {
+  state.nuclearCharge = parseInt(document.getElementById('chargeSlider').value);
+  document.getElementById('chargeVal').textContent = `${state.nuclearCharge} (${state.nuclearCharge === 79 ? 'Gold' : 'Z=' + state.nuclearCharge})`;
+
+  state.nucRadiusFactor = parseFloat(document.getElementById('nucSize').value);
+  document.getElementById('nucVal').textContent = `${state.nucRadiusFactor.toFixed(1)}×`;
+
+  state.fireRate = parseInt(document.getElementById('fireRate').value);
+  document.getElementById('rateVal').textContent = `${state.fireRate} / sec`;
+
+  state.beamSpread = parseInt(document.getElementById('beamSpread').value);
+  document.getElementById('spreadVal').textContent = ['Narrow', 'Medium', 'Wide'][state.beamSpread - 1];
+
+  if (state.timer) {
+    clearInterval(state.timer);
+    state.timer = setInterval(spawnParticle, 1000 / state.fireRate);
+  }
+
+  buildGoldFoil();
+}
+
+function toggleFire() {
+  state.firing = !state.firing;
+  const btn = document.getElementById('fireBtn');
+  if (state.firing) {
+    btn.textContent = '⏸ Pause Alpha Beam';
+    btn.style.background = 'var(--red)';
+    btn.style.color = '#fff';
+    state.timer = setInterval(spawnParticle, 1000 / state.fireRate);
+  } else {
+    btn.textContent = '▶ Start Firing Alpha Beam';
+    btn.style.background = 'var(--accent)';
+    btn.style.color = '#000';
+    clearInterval(state.timer);
+    state.timer = null;
+  }
+}
+
+function resetExp() {
+  state.particles = [];
+  state.scintillations = [];
+  state.total = 0; state.passed = 0; state.deflected = 0; state.bounced = 0;
+  updateStats();
+}
+
+function updateStats() {
+  document.getElementById('totalFired').textContent = state.total;
+  document.getElementById('passedThrough').textContent = state.passed;
+  document.getElementById('deflected').textContent = state.deflected;
+  document.getElementById('bounced').textContent = state.bounced;
+
+  if (state.total > 0) {
+    document.getElementById('pctPass').textContent = ((state.passed / state.total) * 100).toFixed(1) + '%';
+    document.getElementById('pctDefl').textContent = ((state.deflected / state.total) * 100).toFixed(1) + '%';
+    document.getElementById('pctBack').textContent = ((state.bounced / state.total) * 100).toFixed(2) + '%';
+  }
+}
+
+function triggerScintillation(x, y) {
+  state.scintillations.push({
+    x, y,
+    r: 3,
+    maxR: 14,
+    alpha: 1.0
+  });
+}
+
+function physicsUpdate() {
+  const foilX = W * 0.50;
+  const screenCenterX = W * 0.50;
+  const screenCenterY = H * 0.50;
+  const screenR = Math.min(W * 0.42, H * 0.44);
+
+  state.particles.forEach(p => {
+    if (p.state === 'done') return;
+
+    p.trail.push({ x: p.x, y: p.y });
+    if (p.trail.length > 25) p.trail.shift();
+
+    // Coulomb Electrostatic Repulsion from all gold nuclei
+    for (const atom of state.goldAtoms) {
+      const dx = p.x - atom.x;
+      const dy = p.y - atom.y;
+      const distSq = dx * dx + dy * dy;
+      const dist = Math.sqrt(distSq);
+
+      // Check direct collision with dense nucleus (backscatter)
+      if (dist < atom.nucR && p.x < atom.x + 4 && p.vx > 0) {
+        // Direct head-on hit: bounces back!
+        p.vx = -Math.abs(p.vx) * 0.85;
+        p.vy += (dy / (dist + 0.1)) * 3.5;
+        if (p.state !== 'bounced') {
+          p.state = 'bounced';
+          state.bounced++;
+          updateStats();
+        }
+        break;
+      }
+
+      // Coulomb Repulsion: F ∝ Z / r^2
+      if (dist < atom.r * 2.8) {
+        const force = (state.nuclearCharge * 0.22) / (distSq * 0.02 + 1.2);
+        const fx = (dx / dist) * force;
+        const fy = (dy / dist) * force;
+
+        p.vx += fx * 0.25;
+        p.vy += fy * 0.25;
+
+        const deflectionAngle = Math.abs(Math.atan2(p.vy, p.vx));
+        if (deflectionAngle > 0.10 && p.state === 'flying') {
+          p.state = 'deflected';
+          state.deflected++;
+          updateStats();
+        }
+      }
+    }
+
+    p.x += p.vx;
+    p.y += p.vy;
+
+    // Check hit on circular ZnS fluorescent screen
+    const fromScreenDist = Math.hypot(p.x - screenCenterX, p.y - screenCenterY);
+    if (fromScreenDist >= screenR) {
+      triggerScintillation(p.x, p.y);
+      p.state = 'done';
+      if (p.x > foilX + 40 && Math.abs(p.y - screenCenterY) < screenR * 0.25) {
+        state.passed++;
+        updateStats();
+      }
+    }
+
+    // Out of bounds check
+    if (p.x < 10 || p.x > W + 20 || p.y < 10 || p.y > H + 20) {
+      p.state = 'done';
+    }
+  });
+
+  state.particles = state.particles.filter(p => p.state !== 'done');
+}
+
+function draw() {
+  if (!W || !H) { requestAnimationFrame(draw); return; }
+  ctx.clearRect(0, 0, W, H);
+
+  // Background
+  const bg = ctx.createRadialGradient(W * 0.50, H * 0.50, 40, W * 0.50, H * 0.50, W * 0.6);
+  bg.addColorStop(0, '#0a1a33');
+  bg.addColorStop(1, '#040914');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  const screenCenterX = W * 0.50;
+  const screenCenterY = H * 0.50;
+  const screenR = Math.min(W * 0.42, H * 0.44);
+
+  // 1. DRAW CIRCULAR ZnS FLUORESCENT SCREEN (with slit at left for alpha beam)
+  ctx.save();
+  ctx.strokeStyle = 'rgba(74, 222, 128, 0.45)';
+  ctx.lineWidth = 5;
+  ctx.shadowColor = 'rgba(74, 222, 128, 0.3)';
+  ctx.shadowBlur = 10;
+
+  // Arc leaving opening at left (-160 deg to +160 deg)
+  ctx.beginPath();
+  ctx.arc(screenCenterX, screenCenterY, screenR, -Math.PI * 0.88, Math.PI * 0.88);
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  ctx.font = '600 11px Space Grotesk';
+  ctx.fillStyle = 'rgba(74, 222, 128, 0.75)';
+  ctx.textAlign = 'center';
+  ctx.fillText('CIRCULAR ZnS FLUORESCENT SCREEN (Scintillation Detector)', screenCenterX, screenCenterY - screenR - 10);
+  ctx.restore();
+
+  // 2. DRAW LEAD SOURCE APPARATUS (Left)
+  ctx.save();
+  const srcX = W * 0.08, srcY = H * 0.50;
+  ctx.fillStyle = '#334155';
+  ctx.strokeStyle = '#64748b';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.roundRect(srcX - 35, srcY - 35, 45, 70, 6);
+  ctx.fill();
+  ctx.stroke();
+
+  // Polonium/Radium radioactive capsule cavity
+  ctx.fillStyle = '#ffd700';
+  ctx.shadowColor = '#ffd700';
+  ctx.shadowBlur = 12;
+  ctx.beginPath();
+  ctx.arc(srcX - 12, srcY, 8, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // Collimating lead slit
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(srcX - 4, srcY - 4, 18, 8);
+
+  ctx.font = 'bold 9px JetBrains Mono';
+  ctx.fillStyle = '#ffd700';
+  ctx.textAlign = 'center';
+  ctx.fillText('α (Po/Ra)', srcX - 12, srcY + 24);
+  ctx.fillText('Collimator', srcX + 2, srcY - 42);
+  ctx.restore();
+
+  // 3. DRAW GOLD FOIL STRIP & ATOMS
+  const foilX = W * 0.50;
+  ctx.save();
+  // Gold foil boundary ribbon
+  const fg = ctx.createLinearGradient(foilX - 22, 0, foilX + 22, 0);
+  fg.addColorStop(0, 'rgba(255, 215, 0, 0.04)');
+  fg.addColorStop(0.5, 'rgba(255, 215, 0, 0.15)');
+  fg.addColorStop(1, 'rgba(255, 215, 0, 0.04)');
+  ctx.fillStyle = fg;
+  ctx.fillRect(foilX - 24, H * 0.10, 48, H * 0.80);
+
+  ctx.strokeStyle = 'rgba(255, 215, 0, 0.4)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(foilX, H * 0.08);
+  ctx.lineTo(foilX, H * 0.92);
+  ctx.stroke();
+
+  ctx.font = 'bold 11px Space Grotesk';
+  ctx.fillStyle = 'rgba(255, 215, 0, 0.9)';
+  ctx.textAlign = 'center';
+  ctx.fillText('GOLD FOIL TARGET (100 nm thick, ~1000 atoms)', foilX, H * 0.07);
+
+  // Gold atoms & dense positive nuclei
+  state.goldAtoms.forEach(atom => {
+    // Atom electron shell outline
+    ctx.strokeStyle = 'rgba(255, 215, 0, 0.12)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(atom.x, atom.y, atom.r, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Dense Positive Nucleus (+79e)
+    const ng = ctx.createRadialGradient(atom.x, atom.y, 0, atom.x, atom.y, atom.nucR);
+    ng.addColorStop(0, '#ffffff');
+    ng.addColorStop(0.35, '#ff4d4d');
+    ng.addColorStop(1, 'rgba(255, 77, 77, 0.15)');
+
+    ctx.fillStyle = ng;
+    ctx.beginPath();
+    ctx.arc(atom.x, atom.y, atom.nucR, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  ctx.restore();
+
+  // 4. DRAW ALPHA PARTICLES & HYPERBOLIC TRAILS
+  state.particles.forEach(p => {
+    // Glowing trail
+    if (p.trail.length > 1) {
+      ctx.save();
+      for (let i = 1; i < p.trail.length; i++) {
+        const frac = i / p.trail.length;
+        ctx.beginPath();
+        ctx.moveTo(p.trail[i - 1].x, p.trail[i - 1].y);
+        ctx.lineTo(p.trail[i].x, p.trail[i].y);
+        ctx.strokeStyle = p.state === 'bounced' ? `rgba(251, 113, 133, ${frac * 0.7})` : `rgba(255, 215, 0, ${frac * 0.6})`;
+        ctx.lineWidth = 2 * frac;
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    // Alpha particle body (+2e)
+    const pg = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 5);
+    pg.addColorStop(0, '#ffffff');
+    pg.addColorStop(0.4, p.state === 'bounced' ? '#fb7185' : '#ffd700');
+    pg.addColorStop(1, 'transparent');
+
+    ctx.fillStyle = pg;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  // 5. DRAW GREEN SCINTILLATION FLASHES ON ZnS SCREEN
+  state.scintillations.forEach(sc => {
+    sc.r += 0.8;
+    sc.alpha -= 0.04;
+
+    ctx.save();
+    ctx.strokeStyle = `rgba(74, 222, 128, ${sc.alpha})`;
+    ctx.fillStyle = `rgba(180, 255, 200, ${sc.alpha * 0.6})`;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(sc.x, sc.y, sc.r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+  });
+  state.scintillations = state.scintillations.filter(sc => sc.alpha > 0);
+
+  physicsUpdate();
+  requestAnimationFrame(draw);
+}
+
+function generateRutherfordReport() {
+  let modal = document.getElementById('rutherfordReportModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'rutherfordReportModal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(2,6,18,0.85);backdrop-filter:blur(10px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+    document.body.appendChild(modal);
+  }
+
+  const currentUser = localStorage.getItem('Moleqyn_user') ? JSON.parse(localStorage.getItem('Moleqyn_user')).name : (localStorage.getItem('moleqyn_user') ? JSON.parse(localStorage.getItem('moleqyn_user')).name : 'Rahul Sharma (Student)');
+  const dateStr = new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' });
+
+  const total = state.fired || 1;
+  const pctPass = ((state.passed / total) * 100).toFixed(1);
+  const pctDefl = ((state.deflected / total) * 100).toFixed(1);
+  const pctBounce = ((state.bounced / total) * 100).toFixed(2);
+
+  modal.innerHTML = `
+    <div style="background:#0b192c;border:1px solid rgba(255,215,0,0.3);border-radius:16px;max-width:760px;width:100%;max-height:90vh;overflow-y:auto;padding:28px;color:#f0f4ff;box-shadow:0 25px 60px rgba(0,0,0,0.7);font-family:'Inter',sans-serif;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid rgba(255,255,255,0.12);padding-bottom:16px;margin-bottom:20px;">
+        <div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;color:#ffd700;">🎯 Rutherford Alpha Scattering Certificate</div>
+          <div style="font-size:0.82rem;color:#8ea3bf;margin-top:2px;">Nuclear Model of Atom & Coulomb Scattering Analysis</div>
+        </div>
+        <div style="text-align:right;">
+          <span style="display:inline-block;padding:4px 10px;background:rgba(255,215,0,0.15);color:#ffd700;border:1px solid #ffd700;border-radius:12px;font-size:0.75rem;font-weight:700;">NCERT VERIFIED</span>
+          <div style="font-size:0.75rem;color:#8ea3bf;margin-top:4px;">\${dateStr}</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:0.85rem;">
+        <div><strong>Student:</strong> <span style="color:#00d4ff;">\${currentUser}</span></div>
+        <div><strong>Target Foil:</strong> Gold Foil (Au, Z = \${state.charge})</div>
+        <div><strong>Projectile:</strong> α-Particle (He²⁺, mass = 4u, charge = +2e)</div>
+        <div><strong>Detection Method:</strong> Circular Zinc Sulphide (ZnS) Screen</div>
+      </div>
+
+      <div style="margin-bottom:18px;">
+        <h4 style="font-family:'Space Grotesk',sans-serif;color:#ffd700;font-size:0.92rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">1. Angular Scattering Statistical Count</h4>
+        <table style="width:100%;border-collapse:collapse;font-size:0.85rem;background:#071222;border-radius:8px;overflow:hidden;">
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#8ea3bf;">Total α-Particles Fired</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-weight:bold;color:#00d4ff;">\${state.fired}</td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#8ea3bf;">Undeviated Projectiles (θ &lt; 5°)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-weight:bold;color:#4ade80;">\${state.passed} (\${pctPass}%)</td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#8ea3bf;">Deflected Projectiles (5° &lt; θ &lt; 90°)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-weight:bold;color:#ffd700;">\${state.deflected} (\${pctDefl}%)</td></tr>
+          <tr><td style="padding:8px 12px;color:#8ea3bf;">Backscatter / Rebounded (θ &gt; 90°)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-weight:bold;color:#fb7185;">\${state.bounced} (\${pctBounce}%)</td></tr>
+        </table>
+      </div>
+
+      <div style="margin-bottom:18px;">
+        <h4 style="font-family:'Space Grotesk',sans-serif;color:#ffd700;font-size:0.92rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">2. Rutherford Scattering Law</h4>
+        <div style="background:#071222;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:0.88rem;color:#00d4ff;">
+          N(θ) ∝ [Z² · e⁴] / [E_k² · sin⁴(θ/2)]
+          <div style="font-size:0.8rem;color:#8ea3bf;margin-top:6px;font-family:'Inter',sans-serif;">Number of α-particles scattered at angle θ is inversely proportional to sin⁴(θ/2).</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:20px;padding:12px;background:rgba(255,215,0,0.06);border:1px solid rgba(255,215,0,0.25);border-radius:10px;font-size:0.84rem;line-height:1.6;">
+        <strong style="color:#ffd700;display:block;margin-bottom:4px;">Landmark Theoretical Inferences:</strong>
+        1. <b>Mostly Empty Space:</b> The overwhelming majority pass straight through without experiencing Coulomb repulsion.<br/>
+        2. <b>Dense Positive Nucleus:</b> The massive deflection of rare particles proves all positive charge and nearly all atomic mass is concentrated in a tiny core of radius ≈ 10⁻¹⁵ m.
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:10px;border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;">
+        <button type="button" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:8px 18px;border-radius:8px;cursor:pointer;font-weight:600;" onclick="document.getElementById('rutherfordReportModal').style.display='none'">✕ Close</button>
+        <button type="button" style="background:#ffd700;border:none;color:#000;padding:8px 18px;border-radius:8px;cursor:pointer;font-weight:bold;" onclick="window.print()">🖨️ Print / Save PDF</button>
+      </div>
+    </div>
+  `;
+  modal.style.display = 'flex';
+}
+
+buildGoldFoil();
+draw();
+</script>
+</body>
+</html>

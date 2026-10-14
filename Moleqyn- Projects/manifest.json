@@ -1,0 +1,24 @@
+{
+  "name": "Moleqyn – Virtual Chemistry Laboratory",
+  "short_name": "Moleqyn",
+  "description": "Interactive Virtual Chemistry Laboratory, Simulators, NCERT Notes & Board Prep for Class 6-12",
+  "start_url": "index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#070f1e",
+  "theme_color": "#00f0ff",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": [
+    "education",
+    "science",
+    "productivity"
+  ]
+}

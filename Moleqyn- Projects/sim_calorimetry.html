@@ -1,0 +1,498 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Moleqyn | Calorimetry & Enthalpy of Reaction Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #07111f; --panel: rgba(13, 26, 45, 0.95);
+      --border: rgba(255, 255, 255, 0.12); --primary: #00f0ff;
+      --secondary: #ff00aa; --accent: #ffd166; --green: #38ef7d;
+      --text: #f0f4ff; --muted: #8ea3bf;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    nav {
+      background: rgba(7, 17, 31, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .nav-brand { font-family: 'Space Grotesk', sans-serif; font-size: 1.3rem; font-weight: 700; color: var(--text); text-decoration: none; }
+    .nav-brand span { color: var(--primary); }
+    .nav-back { color: var(--muted); text-decoration: none; font-size: 0.88rem; transition: 0.2s; }
+    .nav-back:hover { color: var(--primary); }
+
+    .lab-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 340px 1fr 340px;
+      overflow: hidden;
+    }
+    @media (max-width: 1050px) {
+      .lab-grid { grid-template-columns: 300px 1fr; }
+      .analytics-panel { display: none; }
+    }
+
+    /* Left Controls */
+    .controls-panel {
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      overflow-y: auto;
+    }
+    .panel-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+    .reaction-select-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      text-align: left;
+      transition: 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .reaction-select-btn:hover, .reaction-select-btn.active {
+      background: rgba(0, 240, 255, 0.14);
+      border-color: var(--primary);
+      transform: translateX(4px);
+    }
+    .rxn-type { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+    .rxn-exo { color: #ff5376; }
+    .rxn-endo { color: #35ddff; }
+
+    .control-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .control-row label {
+      font-size: 0.82rem;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+    }
+    .control-row label span.val {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--primary);
+      font-weight: bold;
+    }
+    .slider {
+      width: 100%;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .btn-stir {
+      background: var(--primary);
+      border: none;
+      color: #030a16;
+      font-weight: 700;
+      padding: 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem;
+      transition: 0.2s;
+    }
+    .btn-stir:hover { background: #35ddff; box-shadow: 0 0 15px var(--primary-glow); }
+
+    /* Center Viewport */
+    .viewport {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at center, rgba(16, 32, 60, 0.5) 0%, #030814 100%);
+      position: relative;
+    }
+    #calorimeterCanvas { width: 100%; height: 100%; display: block; }
+
+    .hud-overlay {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(7, 17, 31, 0.85);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+    }
+    .hud-temp { font-size: 1.4rem; font-weight: 700; color: #ff5376; margin-top: 4px; }
+
+    /* Right Analytics */
+    .analytics-panel {
+      background: var(--panel);
+      border-left: 1px solid var(--border);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+    }
+    .stat-card {
+      background: rgba(4, 10, 22, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .stat-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.86rem;
+    }
+    .stat-key { color: var(--muted); }
+    .stat-val { font-family: 'JetBrains Mono', monospace; color: var(--accent); font-weight: 600; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-brand">⚗️ Mole<span>qyn</span> <span style="font-size:0.75rem; color:var(--primary); border:1px solid var(--primary); padding:2px 8px; border-radius:12px; margin-left:8px;">CALORIMETRY LAB</span></a>
+  <div style="display:flex; gap:16px; align-items:center;">
+    <button type="button" onclick="generateCalorimetryReport()" style="background:linear-gradient(135deg,#00f0ff,#38ef7d);color:#07111f;border:none;padding:6px 16px;border-radius:20px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:0.86rem;cursor:pointer;display:flex;align-items:center;gap:6px;transition:0.2s;box-shadow:0 0 15px rgba(0,240,255,0.3);">📄 Lab Report</button>
+    <a href="simulators.html" class="nav-back">⚛️ All Simulators</a>
+    <a href="index.html" class="nav-back">← Back to Home</a>
+  </div>
+</nav>
+
+<div class="lab-grid">
+
+  <!-- Left Controls -->
+  <aside class="controls-panel">
+    <div class="panel-title">1. Select Reaction Type</div>
+    
+    <button class="reaction-select-btn active" onclick="selectReaction('neutralization', this)">
+      <div style="font-weight:600;">HCl + NaOH Neutralization</div>
+      <div class="rxn-type rxn-exo">Exothermic • Strong Acid + Base</div>
+    </button>
+
+    <button class="reaction-select-btn" onclick="selectReaction('dissolution_cacl2', this)">
+      <div style="font-weight:600;">CaCl₂ Dissolution in Water</div>
+      <div class="rxn-type rxn-exo">Exothermic • Hot Pack Physics</div>
+    </button>
+
+    <button class="reaction-select-btn" onclick="selectReaction('dissolution_nh4no3', this)">
+      <div style="font-weight:600;">NH₄NO₃ Dissolution in Water</div>
+      <div class="rxn-type rxn-endo">Endothermic • Cold Pack Physics</div>
+    </button>
+
+    <div class="panel-title" style="margin-top:10px;">2. Experimental Variables</div>
+
+    <div class="control-row">
+      <label>Water Volume (Mass m): <span class="val" id="volVal">100 mL (100 g)</span></label>
+      <input type="range" class="slider" id="volSlider" min="50" max="250" value="100" oninput="updateVolume(this.value)">
+    </div>
+
+    <div class="control-row">
+      <label>Solute Mass: <span class="val" id="massVal">5.0 g</span></label>
+      <input type="range" class="slider" id="massSlider" min="1.0" max="15.0" step="0.5" value="5.0" oninput="updateMass(this.value)">
+    </div>
+
+    <button class="btn-stir" onclick="triggerReaction()">Mix &amp; Stir Solution 🌀</button>
+  </aside>
+
+  <!-- Center Viewport -->
+  <main class="viewport">
+    <div class="hud-overlay">
+      <div>Initial T: <span id="initT">25.0 °C</span> | Status: <span id="statusT" style="color:var(--green);">Ready</span></div>
+      <div class="hud-temp" id="currT">25.0 °C (298.15 K)</div>
+      <div style="font-size:0.75rem; color:var(--muted); margin-top:4px;" id="dhFormula">ΔH = -57.3 kJ/mol</div>
+    </div>
+
+    <canvas id="calorimeterCanvas"></canvas>
+  </main>
+
+  <!-- Right Analytics -->
+  <aside class="analytics-panel">
+    <div style="font-family:'Space Grotesk',sans-serif; font-size:1.1rem; font-weight:700;">Thermodynamic Math</div>
+
+    <div class="stat-card">
+      <div class="stat-item">
+        <span class="stat-key">Heat Released / Absorbed (q)</span>
+        <span class="stat-val" id="heatQ">0.00 J</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-key">Temperature Change (ΔT)</span>
+        <span class="stat-val" id="deltaT">0.00 °C</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-key">Specific Heat of Water (c)</span>
+        <span class="stat-val">4.184 J/(g·°C)</span>
+      </div>
+    </div>
+
+    <div style="padding:14px; background:rgba(0,240,255,0.05); border:1px solid rgba(0,240,255,0.2); border-radius:12px; font-size:0.85rem; line-height:1.6;">
+      <strong style="color:var(--primary);">Calorimetry Formula:</strong><br/>
+      <code style="color:var(--accent); font-family:'JetBrains Mono';">q = m · c · ΔT</code><br/>
+      <code style="color:var(--accent); font-family:'JetBrains Mono';">ΔH = -q / n</code><br/>
+      In an insulated coffee-cup calorimeter, all enthalpy produced by the reaction is transferred directly into the aqueous solution.
+    </div>
+
+    <button type="button" onclick="generateCalorimetryReport()" style="width:100%;margin-top:auto;background:linear-gradient(135deg,#00f0ff,#38ef7d);color:#07111f;border:none;padding:12px;border-radius:12px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;box-shadow:0 0 15px rgba(0,240,255,0.3);font-size:0.92rem;display:flex;align-items:center;justify-content:center;gap:8px;">📄 Generate Lab Certificate</button>
+  </aside>
+
+</div>
+
+<script>
+const REACTIONS = {
+  neutralization: {
+    name: 'HCl + NaOH',
+    deltaH_per_gram: 400, // J/g approximate
+    type: 'exo',
+    dhStr: 'ΔH_neut = -57.3 kJ/mol (Exothermic)'
+  },
+  dissolution_cacl2: {
+    name: 'CaCl₂ dissolution',
+    deltaH_per_gram: 740,
+    type: 'exo',
+    dhStr: 'ΔH_sol = -82.8 kJ/mol (Exothermic)'
+  },
+  dissolution_nh4no3: {
+    name: 'NH₄NO₃ dissolution',
+    deltaH_per_gram: -320,
+    type: 'endo',
+    dhStr: 'ΔH_sol = +25.7 kJ/mol (Endothermic)'
+  }
+};
+
+let currentRxn = REACTIONS.neutralization;
+let waterMass = 100; // grams
+let soluteMass = 5.0; // grams
+let currentTemp = 25.0;
+let targetTemp = 25.0;
+let isStirring = false;
+let stirAngle = 0;
+
+const canvas = document.getElementById('calorimeterCanvas');
+const ctx = canvas.getContext('2d');
+
+function resize() {
+  canvas.width = canvas.parentElement.clientWidth;
+  canvas.height = canvas.parentElement.clientHeight;
+}
+window.addEventListener('resize', resize);
+resize();
+
+function selectReaction(key, btn) {
+  currentRxn = REACTIONS[key];
+  document.querySelectorAll('.reaction-select-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('dhFormula').textContent = currentRxn.dhStr;
+  resetCalorimeter();
+}
+
+function updateVolume(val) {
+  waterMass = parseInt(val, 10);
+  document.getElementById('volVal').textContent = `${waterMass} mL (${waterMass} g)`;
+  resetCalorimeter();
+}
+
+function updateMass(val) {
+  soluteMass = parseFloat(val);
+  document.getElementById('massVal').textContent = `${soluteMass.toFixed(1)} g`;
+  resetCalorimeter();
+}
+
+function resetCalorimeter() {
+  currentTemp = 25.0;
+  targetTemp = 25.0;
+  isStirring = false;
+  document.getElementById('initT').textContent = '25.0 °C';
+  document.getElementById('currT').textContent = '25.0 °C (298.15 K)';
+  document.getElementById('currT').style.color = '#ff5376';
+  document.getElementById('statusT').textContent = 'Ready';
+  document.getElementById('statusT').style.color = 'var(--green)';
+  document.getElementById('heatQ').textContent = '0.00 J';
+  document.getElementById('deltaT').textContent = '0.00 °C';
+}
+
+function triggerReaction() {
+  isStirring = true;
+  document.getElementById('statusT').textContent = 'Reacting & Stirring...';
+  document.getElementById('statusT').style.color = 'var(--accent)';
+
+  // q = mass * deltaH
+  const totalHeat = soluteMass * currentRxn.deltaH_per_gram;
+  // deltaT = q / (m * c)
+  const c = 4.184;
+  const dT = totalHeat / (waterMass * c);
+
+  targetTemp = 25.0 + dT;
+
+  document.getElementById('heatQ').textContent = `${Math.abs(totalHeat).toFixed(1)} J`;
+  document.getElementById('deltaT').textContent = `${dT > 0 ? '+' : ''}${dT.toFixed(2)} °C`;
+  document.getElementById('currT').style.color = dT > 0 ? '#ff5376' : '#35ddff';
+}
+
+function render() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const cx = canvas.width / 2;
+  const cy = canvas.height / 2 + 30;
+
+  // Smooth temperature approach
+  if (Math.abs(targetTemp - currentTemp) > 0.05) {
+    currentTemp += (targetTemp - currentTemp) * 0.04;
+    document.getElementById('currT').textContent = `${currentTemp.toFixed(1)} °C (${(currentTemp + 273.15).toFixed(1)} K)`;
+  } else if (isStirring) {
+    isStirring = false;
+    document.getElementById('statusT').textContent = 'Thermal Equilibrium Reached';
+    document.getElementById('statusT').style.color = 'var(--green)';
+  }
+
+  // Draw Calorimeter Cup (Outer & Inner Insulation)
+  ctx.fillStyle = '#1e293b';
+  ctx.strokeStyle = '#475569';
+  ctx.lineWidth = 4;
+  // Outer Styrofoam cup
+  ctx.beginPath();
+  ctx.roundRect(cx - 100, cy - 90, 200, 180, [0, 0, 20, 20]);
+  ctx.fill();
+  ctx.stroke();
+
+  // Water level
+  const liquidHeight = Math.min(130, 40 + (waterMass / 250) * 80);
+  const liquidY = cy + 90 - liquidHeight;
+
+  ctx.beginPath();
+  ctx.rect(cx - 90, liquidY, 180, liquidHeight - 4);
+  const liquidColor = currentTemp > 25.5 ? 'rgba(255, 83, 118, 0.45)' : (currentTemp < 24.5 ? 'rgba(53, 221, 255, 0.45)' : 'rgba(56, 189, 248, 0.35)');
+  ctx.fillStyle = liquidColor;
+  ctx.fill();
+
+  // Draw Thermometer
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+  ctx.fillRect(cx + 40, cy - 180, 12, 230);
+  // Red mercury thread
+  const mercH = Math.min(190, Math.max(30, (currentTemp / 60) * 160));
+  ctx.fillStyle = '#ff0055';
+  ctx.fillRect(cx + 43, cy + 50 - mercH, 6, mercH);
+  ctx.beginPath();
+  ctx.arc(cx + 46, cy + 52, 9, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Draw Stirrer Rod
+  if (isStirring) stirAngle += 0.25;
+  const stirOffset = isStirring ? Math.sin(stirAngle) * 14 : 0;
+  ctx.strokeStyle = '#cbd5e1';
+  ctx.lineWidth = 6;
+  ctx.beginPath();
+  ctx.moveTo(cx - 40 + stirOffset, cy - 180);
+  ctx.lineTo(cx - 40 + stirOffset, cy + 50);
+  ctx.arc(cx - 40 + stirOffset, cy + 56, 12, 0, Math.PI);
+  ctx.stroke();
+
+  // Cup Lid
+  ctx.fillStyle = '#334155';
+  ctx.fillRect(cx - 110, cy - 100, 220, 14);
+
+  requestAnimationFrame(render);
+}
+function generateCalorimetryReport() {
+  let modal = document.getElementById('calorimetryReportModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'calorimetryReportModal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(2,6,18,0.85);backdrop-filter:blur(10px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+    document.body.appendChild(modal);
+  }
+
+  const currentUser = localStorage.getItem('Moleqyn_user') ? JSON.parse(localStorage.getItem('Moleqyn_user')).name : (localStorage.getItem('moleqyn_user') ? JSON.parse(localStorage.getItem('moleqyn_user')).name : 'Rahul Sharma (Student)');
+  const dateStr = new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' });
+
+  const deltaTemp = (currentTemp - 25.0).toFixed(2);
+  const heatJ = (waterMass * 4.184 * (currentTemp - 25.0)).toFixed(1);
+  const isExo = (currentTemp >= 25.0);
+
+  modal.innerHTML = `
+    <div style="background:#0b192c;border:1px solid rgba(0,240,255,0.3);border-radius:16px;max-width:760px;width:100%;max-height:90vh;overflow-y:auto;padding:28px;color:#f0f4ff;box-shadow:0 25px 60px rgba(0,0,0,0.7);font-family:'Inter',sans-serif;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid rgba(255,255,255,0.12);padding-bottom:16px;margin-bottom:20px;">
+        <div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;color:#00f0ff;">⚗️ Calorimetry & Enthalpy Lab Certificate</div>
+          <div style="font-size:0.82rem;color:#8ea3bf;margin-top:2px;">Coffee-Cup Calorimeter Thermochemical Analysis</div>
+        </div>
+        <div style="text-align:right;">
+          <span style="display:inline-block;padding:4px 10px;background:rgba(56,239,125,0.15);color:#38ef7d;border:1px solid #38ef7d;border-radius:12px;font-size:0.75rem;font-weight:700;">NCERT VERIFIED</span>
+          <div style="font-size:0.75rem;color:#8ea3bf;margin-top:4px;">\${dateStr}</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:0.85rem;">
+        <div><strong>Student:</strong> <span style="color:#00f0ff;">\${currentUser}</span></div>
+        <div><strong>Reaction Process:</strong> \${currentRxn.name}</div>
+        <div><strong>Water Mass (m):</strong> \${waterMass} g (\${waterMass} mL)</div>
+        <div><strong>Solute Mass:</strong> \${soluteMass} g</div>
+      </div>
+
+      <div style="margin-bottom:18px;">
+        <h4 style="font-family:'Space Grotesk',sans-serif;color:#ffd166;font-size:0.92rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">1. Temperature & Heat Measurements</h4>
+        <table style="width:100%;border-collapse:collapse;font-size:0.85rem;background:#071222;border-radius:8px;overflow:hidden;">
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#8ea3bf;">Initial Temperature (T₁)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;">25.0 °C (298.15 K)</td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#8ea3bf;">Final Temperature (T₂)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-weight:bold;color:#ff5376;">\${currentTemp.toFixed(1)} °C</td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#8ea3bf;">Temperature Shift (ΔT = T₂ − T₁)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-weight:bold;color:\${deltaTemp >= 0 ? '#38ef7d' : '#00f0ff'};">\${deltaTemp > 0 ? '+' : ''}\${deltaTemp} °C</td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#8ea3bf;">Specific Heat of Water (c)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;">4.184 J/(g·°C)</td></tr>
+          <tr><td style="padding:8px 12px;color:#8ea3bf;">Calculated Heat (q = m · c · ΔT)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-weight:bold;color:#ffd166;">\${heatJ} Joules (\${(heatJ/1000).toFixed(3)} kJ)</td></tr>
+        </table>
+      </div>
+
+      <div style="margin-bottom:18px;">
+        <h4 style="font-family:'Space Grotesk',sans-serif;color:#ffd166;font-size:0.92rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">2. Thermochemical Enthalpy Profile</h4>
+        <div style="background:#071222;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:0.88rem;">
+          <div style="color:\${isExo ? '#ff5376' : '#00f0ff'};font-weight:bold;margin-bottom:4px;">\${currentRxn.dhStr}</div>
+          <div style="font-size:0.8rem;color:#8ea3bf;">Thermodynamic Type: <strong>\${currentRxn.type === 'exo' ? 'Exothermic (Heat Released to Solution)' : 'Endothermic (Heat Absorbed from Solution)'}</strong></div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:20px;padding:12px;background:rgba(0,240,255,0.05);border:1px solid rgba(0,240,255,0.2);border-radius:10px;font-size:0.84rem;line-height:1.6;">
+        <strong style="color:#00f0ff;display:block;margin-bottom:4px;">CBSE / NCERT Theoretical Principle:</strong>
+        By First Law of Thermodynamics in an isolated calorimeter, q_reaction + q_calorimeter + q_solution = 0. Assuming negligible calorimeter heat capacity (C_cal ≈ 0), the enthalpy of reaction per mole is ΔH = -q_sol / n.
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:10px;border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;">
+        <button type="button" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:8px 18px;border-radius:8px;cursor:pointer;font-weight:600;" onclick="document.getElementById('calorimetryReportModal').style.display='none'">✕ Close</button>
+        <button type="button" style="background:#00f0ff;border:none;color:#000;padding:8px 18px;border-radius:8px;cursor:pointer;font-weight:bold;" onclick="window.print()">🖨️ Print / Save PDF</button>
+      </div>
+    </div>
+  `;
+  modal.style.display = 'flex';
+}
+
+render();
+</script>
+
+</body>
+</html>

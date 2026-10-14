@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Contact Moleqyn – Connect with the educational support team, request school pilot workshops, report simulation issues, or ask chemistry curriculum questions."/>
+  <title>Moleqyn | Contact & Support</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="css/pages.css"/>
+  <style>
+    :root {
+      --bg: #07111f; --panel: #0f1e35; --panel-sub: rgba(0,0,0,0.25); --border: rgba(255,255,255,0.1);
+      --primary: #00d4ff; --secondary: #ff00cc; --accent: #ffd700;
+      --text: #f0f4ff; --muted: #7a90b0; --green: #4ade80;
+    }
+    html.light-mode {
+      --bg: #f8fafc; --panel: #ffffff; --panel-sub: rgba(241,245,249,0.9); --border: rgba(0,0,0,0.08);
+      --primary: #0284c7; --primary-glow: rgba(2,132,199,0.15); --secondary: #db2777; --accent: #d97706;
+      --text: #0f172a; --muted: #64748b; --green: #16a34a;
+      --glass-bg: rgba(255,255,255,0.85); --nav-bg-scrolled: rgba(255,255,255,0.98); --glass-border: rgba(0,0,0,0.1); --btn-primary: #0284c7;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding-top: 105px;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    /* HERO */
+    .contact-hero {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 50px auto;
+      padding: 20px 20px 0;
+    }
+    .hero-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 30px;
+      background: rgba(0,212,255,0.08);
+      border: 1px solid rgba(0,212,255,0.25);
+      color: var(--primary);
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    .contact-hero h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.2rem, 5vw, 3.2rem);
+      font-weight: 700;
+      margin-bottom: 14px;
+      line-height: 1.2;
+    }
+    .contact-hero h1 span {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .contact-hero p {
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      max-width: 650px;
+      margin: 0 auto;
+    }
+
+    /* GRID LAYOUT */
+    .contact-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 32px;
+    }
+
+    @media (max-width: 950px) {
+      .contact-wrap {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* CONTACT FORM CARD */
+    .contact-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px 32px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+    }
+    .card-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-subtitle {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 24px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+    .form-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .form-input, .form-select, .form-textarea {
+      background: var(--panel-sub);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      padding: 12px 16px;
+      border-radius: 10px;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(0,212,255,0.15);
+    }
+    .form-textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .char-count {
+      text-align: right;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      background: var(--primary);
+      color: #000;
+      border: none;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 14px 24px;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.3s;
+    }
+    .submit-btn:hover {
+      background: #00e8ff;
+      box-shadow: 0 6px 20px rgba(0,212,255,0.35);
+      transform: translateY(-2px);
+    }
+
+    /* RIGHT INFO CARDS */
+    .info-column {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .channel-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      transition: all 0.3s;
+    }
+    .channel-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    .channel-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      background: rgba(0,212,255,0.08);
+      border: 1px solid var(--border);
+    }
+    .channel-info h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .channel-info p {
+      color: var(--muted);
+      font-size: 0.85rem;
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+    .channel-link {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .channel-link:hover {
+      text-decoration: underline;
+    }
+
+    /* FAQ ACCORDION */
+    .faq-section {
+      max-width: 1200px;
+      margin: 20px auto 70px auto;
+      padding: 0 20px;
+    }
+    .faq-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .faq-header h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .faq-list {
+      max-width: 850px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .faq-item {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+    .faq-question {
+      padding: 16px 20px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: none;
+    }
+    .faq-toggle {
+      font-size: 1.1rem;
+      transition: transform 0.3s;
+      color: var(--primary);
+    }
+    .faq-item.open .faq-toggle {
+      transform: rotate(45deg);
+    }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.6;
+      padding: 0 20px;
+    }
+    .faq-item.open .faq-answer {
+      max-height: 200px;
+      padding: 0 20px 18px;
+    }
+
+    /* SUCCESS MODAL / BANNER */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: 20px;
+    }
+    .modal-card {
+      background: var(--panel);
+      border: 1px solid var(--primary);
+      border-radius: 20px;
+      max-width: 480px;
+      width: 100%;
+      padding: 36px 28px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,212,255,0.25);
+      animation: modalPop 0.3s ease;
+    }
+    @keyframes modalPop {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .modal-icon {
+      font-size: 3.5rem;
+      margin-bottom: 14px;
+    }
+    .ticket-chip {
+      background: var(--panel-sub);
+      border: 1px dashed var(--primary);
+      padding: 6px 14px;
+      border-radius: 8px;
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--primary);
+      font-size: 0.88rem;
+      margin: 12px 0 20px;
+    }
+  </style>
+</head>
+<body class="page-body">
+
+  <!-- UNIFIED NAVBAR -->
+  <nav class="mlab-nav" id="mlabNav">
+    <a href="index.html" class="mlab-brand">⚗️ Mole<span>qyn</span></a>
+    <ul class="mlab-links">
+      <li><a href="index.html">Home</a></li>
+      <li class="mlab-dropdown">
+        <a class="mlab-dropbtn">Virtual Labs ▾</a>
+        <div class="mlab-dropdown-content">
+          <a href="simulators.html" class="mlab-drop-item"><div class="mlab-drop-icon">🧪</div><div><div class="mlab-drop-title">Virtual Simulators</div><div class="mlab-drop-sub">Interactive engines for Class 6-12</div></div></a>
+          <a href="experiments.html" class="mlab-drop-item"><div class="mlab-drop-icon">📔</div><div><div class="mlab-drop-title">Experiment Library</div><div class="mlab-drop-sub">NCERT guided practicals</div></div></a>
+          <a href="periodic-table.html" class="mlab-drop-item"><div class="mlab-drop-icon">🔢</div><div><div class="mlab-drop-title">Periodic Table</div><div class="mlab-drop-sub">Explore all 118 elements</div></div></a>
+          <a href="reaction.html" class="mlab-drop-item"><div class="mlab-drop-icon">⚗️</div><div><div class="mlab-drop-title">Reaction Balancer</div><div class="mlab-drop-sub">Balance chemical equations</div></div></a>
+          <a href="ai-tutor.html" class="mlab-drop-item"><div class="mlab-drop-icon">🤖</div><div><div class="mlab-drop-title">AI Chemistry Tutor</div><div class="mlab-drop-sub">Ask any doubt 24/7</div></div></a>
+        </div>
+      </li>
+      <li><a href="learn.html">Learn</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="quiz.html">Quiz</a></li>
+      <li><a href="dashboard.html">Progress</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html" class="active">Contact</a></li>
+    </ul>
+    <div class="mlab-nav-right">
+      <a href="login.html" class="mlab-login-btn">Login</a>
+      <button class="mlab-theme-btn" id="mlabThemeBtn" title="Switch Theme">☀️</button>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <div class="contact-hero fade-up">
+    <div class="hero-chip">💬 We are here to support your chemistry journey</div>
+    <h1>Connect with <span>Moleqyn</span></h1>
+    <p>Whether you are a student preparing for board exams, a chemistry teacher seeking interactive lab demonstrations, or an institution planning classroom pilots — we are glad to assist.</p>
+  </div>
+
+  <!-- MAIN CONTACT WRAPPER -->
+  <div class="contact-wrap">
+    
+    <!-- LEFT: INTERACTIVE CONTACT FORM -->
+    <div class="contact-card">
+      <div class="card-title">📝 Send Us a Message</div>
+      <div class="card-subtitle">Fill out the form below. We usually reply within 24 business hours.</div>
+
+      <form id="contactForm" onsubmit="handleContactSubmit(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label" for="contactName">Your Full Name *</label>
+            <input type="text" id="contactName" class="form-input" placeholder="e.g. Ananya Sen" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="contactEmail">Email Address *</label>
+            <input type="email" id="contactEmail" class="form-input" placeholder="ananya@school.edu" required />
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label" for="contactRole">I am a... *</label>
+            <select id="contactRole" class="form-select" required>
+              <option value="student">Student (Class 6 - 12)</option>
+              <option value="teacher">Chemistry Educator / Teacher</option>
+              <option value="school_admin">School Principal / Lab In-Charge</option>
+              <option value="parent">Parent</option>
+              <option value="other">STEM Researcher / Developer</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="contactCategory">Inquiry Type *</label>
+            <select id="contactCategory" class="form-select" required>
+              <option value="curriculum">NCERT / Board Curriculum Help</option>
+              <option value="simulator">Simulation Bug / Feature Request</option>
+              <option value="pilot">School Pilot &amp; Smart Board Setup</option>
+              <option value="teacher_training">Teacher Training Workshop</option>
+              <option value="general">General Feedback / Collaboration</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="contactSubject">Subject / Topic *</label>
+          <input type="text" id="contactSubject" class="form-input" placeholder="e.g. Requesting Titration Simulator worksheet for Class 10" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="contactMsg">Message / Details *</label>
+          <textarea id="contactMsg" class="form-textarea" placeholder="Tell us about your requirements, feedback, or any technical issue you encountered..." maxlength="800" oninput="updateCharCount()" required></textarea>
+          <div class="char-count" id="charCounter">0 / 800 characters</div>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">
+          <span>📨 Send Message</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- RIGHT: DIRECT CHANNELS & SCHOOL SUPPORT -->
+    <div class="info-column">
+      
+      <div class="channel-card">
+        <div class="channel-icon" style="color:var(--primary);">📧</div>
+        <div class="channel-info">
+          <h3>Direct Email Support</h3>
+          <p>For urgent academic inquiries, feedback, or simulator bug reports.</p>
+          <a href="mailto:support@moleqyn.education" class="channel-link">support@moleqyn.education →</a>
+        </div>
+      </div>
+
+      <div class="channel-card">
+        <div class="channel-icon" style="color:var(--secondary);">🏫</div>
+        <div class="channel-info">
+          <h3>School &amp; Institutional Pilots</h3>
+          <p>Bring Moleqyn to your computer lab or interactive flat panels (Smart Boards). No internet required for offline packs.</p>
+          <a href="mailto:schools@moleqyn.education" class="channel-link">schools@moleqyn.education →</a>
+        </div>
+      </div>
+
+      <div class="channel-card">
+        <div class="channel-icon" style="color:var(--green);">💬</div>
+        <div class="channel-info">
+          <h3>Student Chemistry Community</h3>
+          <p>Join over 12,000 students and chemistry mentors discussing board exam tips, viva questions, and reaction mechanics.</p>
+          <a href="https://discord.gg/moleqyn" target="_blank" class="channel-link">Join Student Forum →</a>
+        </div>
+      </div>
+
+      <div class="channel-card">
+        <div class="channel-icon" style="color:var(--accent);">📍</div>
+        <div class="channel-info">
+          <h3>Academic Innovation Lab</h3>
+          <p>Moleqyn Open STEM Initiative, Sector 62 Institutional Area, Noida / Bengaluru, India.</p>
+          <span style="font-size:0.8rem; color:var(--muted);">Mon – Sat, 9:00 AM – 6:00 PM IST</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- FAQ SECTION -->
+  <div class="faq-section">
+    <div class="faq-header">
+      <h2>Frequently Asked Questions</h2>
+      <p style="color:var(--muted); font-size:0.9rem;">Quick answers to common questions about using Moleqyn in schools.</p>
+    </div>
+
+    <div class="faq-list">
+      
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-question">
+          <span>Is Moleqyn free for schools and students?</span>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          Yes! Moleqyn is an open educational chemistry simulator suite built for Class 6–12 CBSE, ICSE, and State Board curriculums. All simulators, quizzes, and resources are 100% free to access without subscription walls.
+        </div>
+      </div>
+
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-question">
+          <span>Does it work on low-spec computer lab PCs without high-end GPUs?</span>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          Absolutely. Moleqyn is built using lightweight HTML5 Canvas 2D and pure JavaScript without heavy 3D rendering engines like WebGL or Unity. It runs smoothly at 60 FPS even on dual-core school PCs and mobile browsers.
+        </div>
+      </div>
+
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-question">
+          <span>Can teachers use this during Smart Board live classroom teaching?</span>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          Yes, each virtual simulator features touch-friendly controls, high-contrast dark/light modes, and a fullscreen shortcut (<kbd>F</kbd> key) optimized specifically for interactive classroom projectors and digital smart boards.
+        </div>
+      </div>
+
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-question">
+          <span>Are student progress and quiz results saved securely?</span>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          All student activity, XP, completed labs, and quiz mastery records are saved locally in the browser via HTML5 localStorage. No sensitive personal data or passwords are transmitted to third-party ad networks.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SUCCESS MODAL -->
+  <div class="modal-overlay" id="successModal">
+    <div class="modal-card">
+      <div class="modal-icon">✅</div>
+      <h2 style="font-family:'Space Grotesk',sans-serif; margin-bottom:8px; font-size:1.6rem;">Message Received!</h2>
+      <p style="color:var(--muted); font-size:0.9rem; line-height:1.6;">Thank you for reaching out to Moleqyn. Our curriculum &amp; support team will review your query and reply to your email shortly.</p>
+      
+      <div class="ticket-chip" id="ticketNumberDisplay">TICKET: #ML-2026-8491</div>
+
+      <button class="submit-btn" onclick="closeModal()">
+        <span>Back to Moleqyn</span>
+      </button>
+    </div>
+  </div>
+
+  <footer style="text-align:center; padding:2rem; border-top:1px solid var(--border); font-size:0.8rem; color:var(--muted);">
+    Moleqyn — Virtual Chemistry Laboratory &amp; Learning Platform &nbsp;|&nbsp; NCERT Class 6–12 Aligned &nbsp;|&nbsp; 
+    <a href="index.html" style="color:var(--primary); text-decoration:none;">Home</a> &bull; 
+    <a href="resources.html" style="color:var(--primary); text-decoration:none;">Resources</a> &bull; 
+    <a href="contact.html" style="color:var(--primary); text-decoration:none;">Contact</a>
+  </footer>
+
+  <script src="js/shared-nav.js"></script>
+  <script>
+    // Theme toggle & scroll handling
+    (function(){
+      var nav = document.getElementById('mlabNav');
+      var btn = document.getElementById('mlabThemeBtn');
+      if (nav && btn) {
+        if (localStorage.getItem('mlab-theme') === 'light') {
+          document.documentElement.classList.add('light-mode');
+          btn.textContent = '🌙';
+        }
+        btn.addEventListener('click', function(){
+          document.documentElement.classList.toggle('light-mode');
+          var isLight = document.documentElement.classList.contains('light-mode');
+          localStorage.setItem('mlab-theme', isLight ? 'light' : 'dark');
+          btn.textContent = isLight ? '🌙' : '☀️';
+        });
+        window.addEventListener('scroll', function(){
+          nav.classList.toggle('scrolled', window.scrollY > 50);
+        });
+      }
+    })();
+
+    // Live character counter
+    function updateCharCount() {
+      var textarea = document.getElementById('contactMsg');
+      var counter = document.getElementById('charCounter');
+      counter.textContent = textarea.value.length + " / 800 characters";
+    }
+
+    // Interactive FAQ Accordion
+    function toggleFaq(el) {
+      el.classList.toggle('open');
+    }
+
+    // Contact Form submission
+    function handleContactSubmit(e) {
+      e.preventDefault();
+      var btn = document.getElementById('submitBtn');
+      btn.innerHTML = '<span>⏳ Sending inquiry...</span>';
+      btn.disabled = true;
+
+      var name = document.getElementById('contactName').value;
+      var email = document.getElementById('contactEmail').value;
+      var role = document.getElementById('contactRole').value;
+      var category = document.getElementById('contactCategory').value;
+      var subject = document.getElementById('contactSubject').value;
+      var msg = document.getElementById('contactMsg').value;
+
+      var ticketNum = "ML-" + (new Date().getFullYear()) + "-" + Math.floor(1000 + Math.random() * 9000);
+
+      var inquiry = {
+        ticket: ticketNum,
+        name: name,
+        email: email,
+        role: role,
+        category: category,
+        subject: subject,
+        message: msg,
+        timestamp: new Date().toISOString()
+      };
+
+      try {
+        var existing = JSON.parse(localStorage.getItem('mlab_inquiries') || '[]');
+        existing.push(inquiry);
+        localStorage.setItem('mlab_inquiries', JSON.stringify(existing));
+      } catch(err) {}
+
+      setTimeout(function(){
+        btn.innerHTML = '<span>📨 Send Message</span>';
+        btn.disabled = false;
+        document.getElementById('ticketNumberDisplay').textContent = "REFERENCE TICKET: #" + ticketNum;
+        document.getElementById('successModal').style.display = 'flex';
+        document.getElementById('contactForm').reset();
+        updateCharCount();
+      }, 700);
+    }
+
+    function closeModal() {
+      document.getElementById('successModal').style.display = 'none';
+    }
+  </script>
+</body>
+</html>

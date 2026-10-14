@@ -1,0 +1,770 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Moleqyn | Chemical Equilibrium & Le Chatelier's Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #07111f; --panel: rgba(13, 26, 45, 0.95);
+      --border: rgba(255, 255, 255, 0.12); --primary: #00f0ff;
+      --secondary: #ff00aa; --accent: #ffd166; --green: #38ef7d;
+      --text: #f0f4ff; --muted: #8ea3bf;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    nav {
+      background: rgba(7, 17, 31, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .nav-brand {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .nav-brand span { color: var(--primary); }
+    .nav-back { color: var(--muted); text-decoration: none; font-size: 0.88rem; transition: 0.2s; }
+    .nav-back:hover { color: var(--primary); }
+
+    .sim-container {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 340px 1fr 340px;
+      overflow: hidden;
+    }
+    @media (max-width: 1000px) {
+      .sim-container { grid-template-columns: 300px 1fr; }
+      .right-panel { display: none; }
+    }
+
+    /* Controls Panel */
+    .controls-panel {
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      overflow-y: auto;
+    }
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .control-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+    }
+    .val-badge {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--primary);
+      font-weight: bold;
+    }
+    .slider {
+      width: 100%;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+    .btn-action {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .btn-action:hover, .btn-action.active {
+      background: rgba(0, 240, 255, 0.15);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Main Viewport */
+    .viewport {
+      display: flex;
+      flex-direction: column;
+      background: radial-gradient(circle at center, rgba(16, 32, 60, 0.5) 0%, #030814 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    #eqCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .hud-box {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(7, 17, 31, 0.8);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 20px;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .reaction-formula {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .reaction-formula span.reactants { color: #35ddff; }
+    .reaction-formula span.arrow { color: var(--accent); }
+    .reaction-formula span.products { color: #ff5376; }
+    .shift-alert {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--green);
+    }
+
+    /* Right Stats */
+    .right-panel {
+      background: var(--panel);
+      border-left: 1px solid var(--border);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      overflow-y: auto;
+    }
+    .stat-card {
+      background: rgba(4, 10, 22, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.88rem;
+    }
+    .bar-container {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
+      overflow: hidden;
+      display: flex;
+    }
+    .bar-reactants { height: 100%; background: #35ddff; transition: width 0.4s ease; }
+    .bar-products { height: 100%; background: #ff5376; transition: width 0.4s ease; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-brand">⚗️ Mole<span>qyn</span> <span style="font-size:0.75rem; color:var(--primary); border:1px solid var(--primary); padding:2px 8px; border-radius:12px; margin-left:8px;">LE CHATELIER LAB</span></a>
+  <div style="display: flex; gap: 15px;">
+    <a href="simulators.html" class="nav-back">⚛️ All Simulators</a>
+    <a href="index.html" class="nav-back">← Back to Home</a>
+  </div>
+</nav>
+
+<div class="sim-container">
+
+  <!-- Controls -->
+  <aside class="controls-panel">
+    <div style="font-family:'Space Grotesk',sans-serif; font-size:1.1rem; font-weight:700;">Equilibrium Controls</div>
+
+    <!-- REACTION SELECTOR -->
+    <div class="control-group">
+      <div class="control-label"><span>⚛️ Reversible Reaction System</span></div>
+      <select id="rxnSel" onchange="handleReactionChange()" style="background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:8px;font-size:0.8rem;width:100%;cursor:pointer;">
+        <option value="HABER" selected>Haber: N₂ + 3H₂ ⇌ 2NH₃ (ΔH = −92 kJ)</option>
+        <option value="NO2_DIMER">NO₂ [Brown] ⇌ N₂O₄ [Clear] (ΔH = −57 kJ)</option>
+        <option value="CONTACT">Contact: 2SO₂ + O₂ ⇌ 2SO₃ (ΔH = −198 kJ)</option>
+        <option value="HI">HI Synth: H₂ + I₂ ⇌ 2HI (ΔH = −9.6 kJ, Δng=0)</option>
+        <option value="PCL5">PCl₅ ⇌ PCl₃ + Cl₂ (ΔH = +88 kJ, Endothermic)</option>
+        <option value="CUSTOM_EQ">⚙️ Custom Reversible Reaction...</option>
+      </select>
+    </div>
+
+    <!-- CUSTOM EQUILIBRIUM BUILDER (Hidden by default) -->
+    <div id="customEqBox" style="display:none;background:rgba(0,240,255,0.06);border:1px dashed var(--primary);border-radius:10px;padding:10px;">
+      <div style="font-size:0.75rem;font-weight:700;color:var(--primary);margin-bottom:6px;">CUSTOM REACTION SETUP</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;">
+        <div>
+          <div style="font-size:0.7rem;color:var(--muted);">Reactant Moles (a)</div>
+          <input type="number" id="custMolesA" value="3" min="1" max="6" style="width:100%;padding:4px;background:rgba(0,0,0,0.3);border:1px solid var(--border);color:#fff;border-radius:6px;font-size:0.8rem;" oninput="applyCustomReaction()"/>
+        </div>
+        <div>
+          <div style="font-size:0.7rem;color:var(--muted);">Product Moles (b)</div>
+          <input type="number" id="custMolesB" value="1" min="1" max="6" style="width:100%;padding:4px;background:rgba(0,0,0,0.3);border:1px solid var(--border);color:#fff;border-radius:6px;font-size:0.8rem;" oninput="applyCustomReaction()"/>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:0.7rem;color:var(--muted);margin-bottom:2px;">Reaction Thermicity:</div>
+        <select id="custDeltaH" style="width:100%;padding:5px;background:rgba(0,0,0,0.3);border:1px solid var(--border);color:#fff;border-radius:6px;font-size:0.78rem;" onchange="applyCustomReaction()">
+          <option value="-60">Exothermic (ΔH < 0, Heat Released)</option>
+          <option value="60">Endothermic (ΔH > 0, Heat Absorbed)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <div class="control-label">
+        <span>🔥 Temperature (T)</span>
+        <span class="val-badge" id="tempDisp">400 K</span>
+      </div>
+      <input type="range" class="slider" id="tempSlider" min="250" max="750" value="400" oninput="updateTemp(this.value)">
+      <div style="font-size:0.74rem; color:var(--muted);" id="tempHint">Exothermic: High temp shifts reverse (←)</div>
+    </div>
+
+    <div class="control-group">
+      <div class="control-label">
+        <span>💨 Pressure (P)</span>
+        <span class="val-badge" id="pressDisp">1.0 atm</span>
+      </div>
+      <input type="range" class="slider" id="pressSlider" min="0.2" max="5.0" step="0.1" value="1.0" oninput="updatePressure(this.value)">
+      <div style="font-size:0.74rem; color:var(--muted);" id="pressHint">High pressure shifts to fewer gas moles (→)</div>
+    </div>
+
+    <div class="control-group">
+      <div class="control-label">
+        <span id="injLbl">🧪 Inject Reactants</span>
+      </div>
+      <button class="btn-action" onclick="injectReactants()" id="injBtn">Inject More Reactants (+Reactant Ions)</button>
+    </div>
+
+    <div class="control-group">
+      <div class="control-label">
+        <span id="remLbl">⚗️ Extract Products</span>
+      </div>
+      <button class="btn-action" onclick="removeProducts()" id="remBtn">Condense & Extract Products</button>
+    </div>
+
+    <!-- INERT GAS ADDITION -->
+    <div class="control-group">
+      <div class="control-label">
+        <span>🎈 Inert Gas (Ar / He)</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+        <button class="btn-action" style="font-size:0.75rem;padding:7px 8px;" onclick="addInertGas('constV')">+ Ar (Const Vol)</button>
+        <button class="btn-action" style="font-size:0.75rem;padding:7px 8px;" onclick="addInertGas('constP')">+ Ar (Const Press)</button>
+      </div>
+      <div style="font-size:0.72rem;color:var(--muted);line-height:1.3;">NCERT Rule: Const V = No shift; Const P = shifts towards more gas moles.</div>
+    </div>
+
+    <div class="control-group">
+      <div class="control-label">
+        <span>⚙️ Catalyst Action</span>
+      </div>
+      <button class="btn-action" id="btnCat" onclick="toggleCatalyst()">Add Catalyst (Accelerates Equilibrium)</button>
+    </div>
+
+    <div style="margin-top:6px;display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+      <button class="btn-action" style="background:rgba(255,255,255,0.06);" onclick="resetEquilibrium()">🔄 Reset</button>
+      <button class="btn-action" style="background:rgba(0,240,255,0.15);color:var(--primary);border-color:var(--primary);" onclick="generateEquilibriumReport()">📄 Lab Report</button>
+    </div>
+  </aside>
+
+  <!-- Viewport -->
+  <main class="viewport">
+    <div class="hud-box">
+      <div class="reaction-formula" id="rxnFormulaBox">
+        <span class="reactants" id="rxnReactants">N₂(g) + 3H₂(g)</span>
+        <span class="arrow"> ⇌ </span>
+        <span class="products" id="rxnProducts">2NH₃(g)</span>
+        <span style="font-size: 0.9rem; color: #ffd166; font-weight: normal; margin-left: 8px;" id="rxnDeltaH">(ΔH = −92 kJ)</span>
+      </div>
+      <div class="shift-alert" id="shiftStatus">System in Dynamic Equilibrium</div>
+    </div>
+
+    <canvas id="eqCanvas"></canvas>
+  </main>
+
+  <!-- Analytics -->
+  <aside class="right-panel">
+    <div style="font-family:'Space Grotesk',sans-serif; font-size:1.1rem; font-weight:700;">Equilibrium State</div>
+
+    <div class="stat-card">
+      <div class="stat-row">
+        <span style="color:var(--muted);">Equilibrium Constant (Kc)</span>
+        <span style="font-family:'JetBrains Mono',monospace; color:var(--primary); font-weight:bold;" id="kcVal">4.20</span>
+      </div>
+      <div class="stat-row">
+        <span style="color:var(--muted);">Reaction Quotient (Qc)</span>
+        <span style="font-family:'JetBrains Mono',monospace; color:var(--accent); font-weight:bold;" id="qcVal">4.20</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-row">
+        <span style="color:#35ddff; font-weight:600;">Reactants [N₂ + H₂]</span>
+        <span id="reactCount">60 particles</span>
+      </div>
+      <div class="stat-row">
+        <span style="color:#ff5376; font-weight:600;">Product [NH₃]</span>
+        <span id="prodCount">40 particles</span>
+      </div>
+      <div class="bar-container">
+        <div class="bar-reactants" id="barReact" style="width: 60%;"></div>
+        <div class="bar-products" id="barProd" style="width: 40%;"></div>
+      </div>
+    </div>
+
+    <div style="padding:14px; background:rgba(0,240,255,0.05); border:1px solid rgba(0,240,255,0.2); border-radius:12px; font-size:0.85rem; line-height:1.6;">
+      <strong style="color:var(--primary);">Le Chatelier's Principle:</strong> When external stress is applied, the dynamic reaction shifts to counteract that stress. High pressure favors Ammonia formation because 4 moles of gas turn into 2 moles.
+    </div>
+  </aside>
+
+</div>
+
+<script>
+const canvas = document.getElementById('eqCanvas');
+const ctx = canvas.getContext('2d');
+
+const SYSTEMS = {
+  HABER: {
+    name: "Haber's Synthesis of Ammonia",
+    reactants: 'N₂(g) + 3H₂(g)',
+    products: '2NH₃(g)',
+    molesA: 4,
+    molesB: 2,
+    deltaH: -92,
+    rColor: '#35ddff',
+    pColor: '#ff5376',
+    injText: 'Inject Reactants (+N₂ / +H₂)',
+    remText: 'Condense & Extract NH₃'
+  },
+  NO2_DIMER: {
+    name: "NO₂-N₂O₄ Color Shift Equilibrium",
+    reactants: '2NO₂(g) [Dark Brown]',
+    products: 'N₂O₄(g) [Colorless]',
+    molesA: 2,
+    molesB: 1,
+    deltaH: -57.2,
+    rColor: '#c2410c',
+    pColor: '#f8fafc',
+    injText: 'Inject NO₂ (+Brown Gas)',
+    remText: 'Cool & Liquefy N₂O₄'
+  },
+  CONTACT: {
+    name: "Contact Process for SO₃",
+    reactants: '2SO₂(g) + O₂(g)',
+    products: '2SO₃(g)',
+    molesA: 3,
+    molesB: 2,
+    deltaH: -198,
+    rColor: '#f59e0b',
+    pColor: '#a855f7',
+    injText: 'Inject SO₂ + O₂',
+    remText: 'Absorb SO₃ into H₂SO₄'
+  },
+  HI: {
+    name: "Hydrogen Iodide Synthesis (Δng = 0)",
+    reactants: 'H₂(g) + I₂(g)',
+    products: '2HI(g)',
+    molesA: 2,
+    molesB: 2,
+    deltaH: -9.6,
+    rColor: '#ec4899',
+    pColor: '#06b6d4',
+    injText: 'Inject H₂ / I₂ vapor',
+    remText: 'Extract HI Gas'
+  },
+  PCL5: {
+    name: "PCl₅ Thermal Dissociation (Endothermic)",
+    reactants: 'PCl₅(g)',
+    products: 'PCl₃(g) + Cl₂(g)',
+    molesA: 1,
+    molesB: 2,
+    deltaH: 87.9,
+    rColor: '#10b981',
+    pColor: '#eab308',
+    injText: 'Inject PCl₅ Vapor',
+    remText: 'Condense Cl₂ / PCl₃'
+  },
+  CUSTOM_EQ: {
+    name: "Custom Equilibrium System",
+    reactants: 'a A(g)',
+    products: 'b B(g)',
+    molesA: 3,
+    molesB: 1,
+    deltaH: -60,
+    rColor: '#00f0ff',
+    pColor: '#ff00aa',
+    injText: 'Inject Reactant A',
+    remText: 'Extract Product B'
+  }
+};
+
+let currentSysKey = 'HABER';
+let currentSys = SYSTEMS.HABER;
+let temperature = 400;
+let pressure = 1.0;
+let hasCatalyst = false;
+let particles = [];
+let targetReactantRatio = 0.6; // fraction of particles that are reactants
+
+function resizeCanvas() {
+  canvas.width = canvas.parentElement.clientWidth;
+  canvas.height = canvas.parentElement.clientHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+function handleReactionChange() {
+  currentSysKey = document.getElementById('rxnSel').value;
+  const isCustom = currentSysKey === 'CUSTOM_EQ';
+  document.getElementById('customEqBox').style.display = isCustom ? 'block' : 'none';
+
+  if (!isCustom) {
+    currentSys = SYSTEMS[currentSysKey];
+  } else {
+    applyCustomReaction();
+  }
+  updateSystemDisplay();
+  initParticles();
+  recalculateEquilibrium("System initialized to " + currentSys.name);
+}
+
+function applyCustomReaction() {
+  const mA = parseInt(document.getElementById('custMolesA').value, 10) || 2;
+  const mB = parseInt(document.getElementById('custMolesB').value, 10) || 1;
+  const dH = parseFloat(document.getElementById('custDeltaH').value) || -50;
+  SYSTEMS.CUSTOM_EQ.molesA = mA;
+  SYSTEMS.CUSTOM_EQ.molesB = mB;
+  SYSTEMS.CUSTOM_EQ.deltaH = dH;
+  SYSTEMS.CUSTOM_EQ.reactants = `${mA} A(g)`;
+  SYSTEMS.CUSTOM_EQ.products = `${mB} B(g)`;
+  currentSys = SYSTEMS.CUSTOM_EQ;
+  updateSystemDisplay();
+  recalculateEquilibrium("Custom system parameters updated");
+}
+
+function updateSystemDisplay() {
+  document.getElementById('rxnReactants').textContent = currentSys.reactants;
+  document.getElementById('rxnProducts').textContent = currentSys.products;
+  document.getElementById('rxnDeltaH').textContent = `(ΔH = ${currentSys.deltaH >= 0 ? '+' : ''}${currentSys.deltaH} kJ)`;
+  document.getElementById('rxnReactants').style.color = currentSys.rColor;
+  document.getElementById('rxnProducts').style.color = currentSys.pColor;
+  document.getElementById('injBtn').textContent = currentSys.injText;
+  document.getElementById('remBtn').textContent = currentSys.remText;
+
+  // Update hints
+  const isExo = currentSys.deltaH < 0;
+  document.getElementById('tempHint').textContent = isExo 
+    ? 'Exothermic: High temp shifts Reverse (←) to absorb heat' 
+    : 'Endothermic: High temp shifts Forward (→) to absorb heat';
+
+  const deltaNg = currentSys.molesB - currentSys.molesA;
+  if (deltaNg < 0) {
+    document.getElementById('pressHint').textContent = `High pressure shifts Forward (→) towards fewer gas moles (${currentSys.molesA} → ${currentSys.molesB})`;
+  } else if (deltaNg > 0) {
+    document.getElementById('pressHint').textContent = `High pressure shifts Reverse (←) towards fewer gas moles (${currentSys.molesB} → ${currentSys.molesA})`;
+  } else {
+    document.getElementById('pressHint').textContent = `Δng = 0 (${currentSys.molesA} = ${currentSys.molesB}): Pressure change causes NO SHIFT!`;
+  }
+}
+
+function initParticles() {
+  particles = [];
+  const total = 90;
+  for (let i = 0; i < total; i++) {
+    const isReactant = i < total * targetReactantRatio;
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 2.5,
+      vy: (Math.random() - 0.5) * 2.5,
+      type: isReactant ? 'reactant' : 'product',
+      r: isReactant ? 5 : 7,
+      color: isReactant ? currentSys.rColor : currentSys.pColor
+    });
+  }
+}
+
+function updateTemp(val) {
+  temperature = parseInt(val, 10);
+  document.getElementById('tempDisp').textContent = temperature + ' K';
+  recalculateEquilibrium("Temperature adjusted to " + temperature + " K");
+}
+
+function updatePressure(val) {
+  pressure = parseFloat(val);
+  document.getElementById('pressDisp').textContent = pressure.toFixed(1) + ' atm';
+  recalculateEquilibrium("Pressure adjusted to " + pressure.toFixed(1) + " atm");
+}
+
+function recalculateEquilibrium(cause) {
+  const isExo = currentSys.deltaH < 0;
+  const deltaNg = currentSys.molesB - currentSys.molesA;
+
+  // Temperature effect via Van 't Hoff
+  // For exothermic (dH < 0): higher T decreases K (more reactants)
+  // For endothermic (dH > 0): higher T increases K (more products)
+  let tShift = isExo ? (temperature - 400) / 1000 : -(temperature - 400) / 1000;
+
+  // Pressure effect: higher P shifts towards side with fewer gas moles
+  // if deltaNg < 0 (fewer moles on product side): higher P increases product ratio (decreases reactant ratio)
+  // if deltaNg > 0: higher P increases reactant ratio
+  // if deltaNg == 0: pressure effect is exactly 0
+  let pShift = 0;
+  if (deltaNg < 0) {
+    pShift = -(pressure - 1.0) * 0.08;
+  } else if (deltaNg > 0) {
+    pShift = +(pressure - 1.0) * 0.08;
+  }
+
+  let baselineRatio = 0.50;
+  targetReactantRatio = Math.max(0.12, Math.min(0.88, baselineRatio + tShift + pShift));
+
+  // Determine shift narrative
+  let shiftMsg = cause;
+  if (cause.includes("Temperature")) {
+    if (isExo) {
+      shiftMsg = temperature > 400 ? "High T favors Endothermic reverse (← Left)" : "Cooling favors Exothermic forward (→ Right)";
+    } else {
+      shiftMsg = temperature > 400 ? "High T favors Endothermic forward (→ Right)" : "Cooling favors Reverse (← Left)";
+    }
+  } else if (cause.includes("Pressure")) {
+    if (deltaNg === 0) {
+      shiftMsg = "Δng = 0: Pressure change has NO effect on equilibrium position!";
+    } else if (deltaNg < 0) {
+      shiftMsg = pressure > 1 ? `High P shifts Forward (→ Right, ${currentSys.molesA}mol → ${currentSys.molesB}mol)` : `Low P shifts Reverse (← Left)`;
+    } else {
+      shiftMsg = pressure > 1 ? `High P shifts Reverse (← Left, ${currentSys.molesB}mol → ${currentSys.molesA}mol)` : `Low P shifts Forward (→ Right)`;
+    }
+  }
+
+  updateEquilibriumMath(shiftMsg);
+}
+
+function injectReactants() {
+  targetReactantRatio = Math.min(0.88, targetReactantRatio + 0.15);
+  for (let i = 0; i < 20; i++) {
+    particles.push({
+      x: 40 + Math.random() * 120,
+      y: 40 + Math.random() * 120,
+      vx: (Math.random() - 0.5) * 3,
+      vy: (Math.random() - 0.5) * 3,
+      type: 'reactant',
+      r: 5,
+      color: currentSys.rColor
+    });
+  }
+  updateEquilibriumMath("Reactants injected: Qc < Kc. Equilibrium shifting Forward (→) to consume excess reactants!");
+}
+
+function removeProducts() {
+  particles = particles.filter(p => p.type === 'reactant' || Math.random() > 0.65);
+  while (particles.length < 65) {
+    particles.push({
+      x: 30 + Math.random() * (canvas.width - 60),
+      y: 30 + Math.random() * (canvas.height - 60),
+      vx: (Math.random() - 0.5) * 2.5,
+      vy: (Math.random() - 0.5) * 2.5,
+      type: 'reactant',
+      r: 5,
+      color: currentSys.rColor
+    });
+  }
+  targetReactantRatio = 0.35;
+  updateEquilibriumMath("Products extracted: Qc < Kc. Equilibrium shifts Forward (→) to replenish products!");
+}
+
+function addInertGas(condition) {
+  if (condition === 'constV') {
+    // Constant Volume: total pressure increases, but partial pressures remain unchanged -> NO SHIFT!
+    updateEquilibriumMath("Inert Argon added at Constant Volume: Partial pressures unchanged ⇒ NO SHIFT in equilibrium!");
+  } else {
+    // Constant Pressure: volume must expand, partial pressures decrease -> shifts towards side with more gas moles
+    const deltaNg = currentSys.molesB - currentSys.molesA;
+    if (deltaNg === 0) {
+      updateEquilibriumMath("Inert Gas at Const P: Δng = 0, so NO SHIFT occurs!");
+    } else if (deltaNg > 0) {
+      targetReactantRatio = Math.max(0.15, targetReactantRatio - 0.10);
+      updateEquilibriumMath("Inert Gas at Const P: Volume expands ⇒ shifts towards MORE gas moles (Forward → Right)");
+    } else {
+      targetReactantRatio = Math.min(0.85, targetReactantRatio + 0.10);
+      updateEquilibriumMath("Inert Gas at Const P: Volume expands ⇒ shifts towards MORE gas moles (Reverse ← Left)");
+    }
+  }
+}
+
+function toggleCatalyst() {
+  hasCatalyst = !hasCatalyst;
+  document.getElementById('btnCat').classList.toggle('active', hasCatalyst);
+  document.getElementById('btnCat').textContent = hasCatalyst ? "Catalyst Active (2x Collision Rate)" : "Add Catalyst (Accelerates Equilibrium)";
+  updateEquilibriumMath("Catalyst lowers activation energy equally for both forward and reverse paths: Rate increases, but Kc is UNCHANGED!");
+}
+
+function resetEquilibrium() {
+  temperature = 400;
+  pressure = 1.0;
+  hasCatalyst = false;
+  document.getElementById('tempSlider').value = 400;
+  document.getElementById('tempDisp').textContent = '400 K';
+  document.getElementById('pressSlider').value = 1.0;
+  document.getElementById('pressDisp').textContent = '1.0 atm';
+  document.getElementById('btnCat').classList.remove('active');
+  document.getElementById('btnCat').textContent = "Add Catalyst (Accelerates Equilibrium)";
+  recalculateEquilibrium("System reset to standard reference conditions");
+  initParticles();
+}
+
+function updateEquilibriumMath(statusText) {
+  document.getElementById('shiftStatus').textContent = statusText;
+  const kc = ((1 - targetReactantRatio) / Math.max(0.01, targetReactantRatio * 0.5)).toFixed(2);
+  document.getElementById('kcVal').textContent = kc;
+  document.getElementById('qcVal').textContent = (kc * (0.96 + Math.random() * 0.08)).toFixed(2);
+
+  const reactPct = Math.round(targetReactantRatio * 100);
+  const prodPct = 100 - reactPct;
+  document.getElementById('barReact').style.width = reactPct + '%';
+  document.getElementById('barProd').style.width = prodPct + '%';
+  document.getElementById('reactCount').textContent = reactPct + ' %';
+  document.getElementById('prodCount').textContent = prodPct + ' %';
+}
+
+function render() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Background tint for NO2 dimerization: reddish-brown when NO2 is high!
+  if (currentSysKey === 'NO2_DIMER') {
+    const brownAlpha = targetReactantRatio * 0.45;
+    ctx.fillStyle = `rgba(180, 83, 9, ${brownAlpha})`;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  const speedMult = (temperature / 350) * (hasCatalyst ? 1.6 : 1.0);
+
+  // Dynamic particle conversions toward target ratio
+  const currentReactants = particles.filter(p => p.type === 'reactant').length;
+  const currentRatio = particles.length > 0 ? currentReactants / particles.length : 0.5;
+
+  if (Math.random() < 0.06 && particles.length > 0) {
+    if (currentRatio < targetReactantRatio) {
+      // Turn product to reactant
+      const p = particles.find(pt => pt.type === 'product');
+      if (p) { p.type = 'reactant'; p.color = currentSys.rColor; p.r = 5; }
+    } else if (currentRatio > targetReactantRatio) {
+      // Turn reactant to product
+      const p = particles.find(pt => pt.type === 'reactant');
+      if (p) { p.type = 'product'; p.color = currentSys.pColor; p.r = 7; }
+    }
+  }
+
+  // Update & Draw Particles with strict boundary clamping
+  particles.forEach(p => {
+    p.x += p.vx * speedMult;
+    p.y += p.vy * speedMult;
+
+    if (p.x < 16) { p.x = 16; p.vx = Math.abs(p.vx); }
+    else if (p.x > canvas.width - 16) { p.x = canvas.width - 16; p.vx = -Math.abs(p.vx); }
+    if (p.y < 16) { p.y = 16; p.vy = Math.abs(p.vy); }
+    else if (p.y > canvas.height - 16) { p.y = canvas.height - 16; p.vy = -Math.abs(p.vy); }
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = p.color;
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = p.color;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  });
+
+  requestAnimationFrame(render);
+}
+
+function generateEquilibriumReport() {
+  let modal = document.getElementById('eqReportModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'eqReportModal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(2,6,18,0.85);backdrop-filter:blur(10px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+    document.body.appendChild(modal);
+  }
+
+  const currentUser = localStorage.getItem('Moleqyn_user') ? JSON.parse(localStorage.getItem('Moleqyn_user')).name : 'Rahul Sharma (Student)';
+  const dateStr = new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' });
+
+  modal.innerHTML = `
+    <div style="background:#0b192c;border:1px solid rgba(0,240,255,0.3);border-radius:16px;max-width:760px;width:100%;max-height:90vh;overflow-y:auto;padding:28px;color:#f0f4ff;box-shadow:0 25px 60px rgba(0,0,0,0.7);font-family:'Inter',sans-serif;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid rgba(255,255,255,0.12);padding-bottom:16px;margin-bottom:20px;">
+        <div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;color:#00f0ff;">⚗️ Chemical Equilibrium Lab Report</div>
+          <div style="font-size:0.82rem;color:#8ea3bf;margin-top:2px;">Le Chatelier's Principle & Thermodynamic Shift Record</div>
+        </div>
+        <div style="text-align:right;">
+          <span style="display:inline-block;padding:4px 10px;background:rgba(56,239,125,0.15);color:#38ef7d;border:1px solid #38ef7d;border-radius:12px;font-size:0.75rem;font-weight:700;">NCERT VERIFIED</span>
+          <div style="font-size:0.75rem;color:#8ea3bf;margin-top:4px;">${dateStr}</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:0.85rem;">
+        <div><strong>Student:</strong> <span style="color:#00f0ff;">${currentUser}</span></div>
+        <div><strong>Reaction System:</strong> ${currentSys.name}</div>
+        <div><strong>Temperature (T):</strong> ${temperature} K</div>
+        <div><strong>Pressure (P):</strong> ${pressure.toFixed(1)} atm</div>
+      </div>
+
+      <div style="margin-bottom:18px;">
+        <h4 style="font-family:'Space Grotesk',sans-serif;color:#ffd166;font-size:0.92rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">1. Chemical Equation & Thermodynamics</h4>
+        <div style="background:#071222;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:0.9rem;">
+          <span style="color:${currentSys.rColor};">${currentSys.reactants}</span> ⇌ <span style="color:${currentSys.pColor};">${currentSys.products}</span>
+          <span style="color:#ffd166;margin-left:10px;">(ΔH = ${currentSys.deltaH >= 0 ? '+' : ''}${currentSys.deltaH} kJ/mol)</span>
+        </div>
+      </div>
+
+      <div style="margin-bottom:18px;">
+        <h4 style="font-family:'Space Grotesk',sans-serif;color:#ffd166;font-size:0.92rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">2. Equilibrium Constant & Composition</h4>
+        <table style="width:100%;border-collapse:collapse;font-size:0.82rem;background:#071222;border-radius:8px;overflow:hidden;">
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#8ea3bf;">Equilibrium Constant (Kc)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-weight:bold;color:#00f0ff;">${document.getElementById('kcVal').textContent}</td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#8ea3bf;">Reaction Quotient (Qc)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-weight:bold;color:#ffd166;">${document.getElementById('qcVal').textContent}</td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#8ea3bf;">Reactant Fraction [%]</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;color:${currentSys.rColor};">${document.getElementById('reactCount').textContent}</td></tr>
+          <tr><td style="padding:8px 12px;color:#8ea3bf;">Product Fraction [%]</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;color:${currentSys.pColor};">${document.getElementById('prodCount').textContent}</td></tr>
+        </table>
+      </div>
+
+      <div style="margin-bottom:20px;padding:12px;background:rgba(0,240,255,0.05);border:1px solid rgba(0,240,255,0.2);border-radius:10px;font-size:0.84rem;line-height:1.6;">
+        <strong style="color:#00f0ff;display:block;margin-bottom:4px;">Conclusion & Le Chatelier Inference:</strong>
+        ${document.getElementById('shiftStatus').textContent}. In dynamic equilibrium, the forward and reverse reaction rates are equal ($r_f = r_r$). Addition of a catalyst lowers the activation energy of both pathways without altering Kc.
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:10px;border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;">
+        <button type="button" class="btn-action" onclick="document.getElementById('eqReportModal').style.display='none'">✕ Close</button>
+        <button type="button" class="btn-action" style="background:#00f0ff;color:#000;font-weight:bold;" onclick="window.print()">🖨️ Print / Save PDF</button>
+      </div>
+    </div>
+  `;
+  modal.style.display = 'flex';
+}
+
+initParticles();
+updateSystemDisplay();
+render();
+updateEquilibriumMath("System in Dynamic Equilibrium");
+</script>
+
+</body>
+</html>
