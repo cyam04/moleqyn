@@ -3,7 +3,7 @@
    Provides offline caching for school computer labs & slow networks
 ================================================================ */
 
-const CACHE_NAME = 'moleqyn-cache-v1';
+const CACHE_NAME = 'moleqyn-cache-v3';
 
 const STATIC_ASSETS = [
   './',
@@ -78,6 +78,9 @@ self.addEventListener('fetch', (event) => {
   // Only handle HTTP/HTTPS GET requests
   if (req.method !== 'GET') return;
 
+if (req.mode === 'navigate') return;
+
+   
   event.respondWith(
     caches.match(req).then((cachedResponse) => {
       // Fetch fresh from network in background
