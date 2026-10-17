@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -923,6 +923,15 @@
       to { transform: translateY(0); opacity: 1; }
     }
   </style>
+  <script>
+    (function () {
+      var saved = localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
+      if (saved === 'light') {
+        document.documentElement.setAttribute('data-theme', 'day');
+        document.documentElement.classList.add('light-mode');
+      }
+    })();
+  </script>
 </head>
 <body>
 
@@ -1644,16 +1653,26 @@
     (function(){
       const nav = document.getElementById('mlabNav');
       const btn = document.getElementById('mlabThemeBtn');
-      if (localStorage.getItem('mlab-theme') === 'light') {
+      const saved = localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
+      if (saved === 'light') {
         document.documentElement.classList.add('light-mode');
+        document.documentElement.setAttribute('data-theme', 'day');
         if (btn) btn.textContent = '🌙';
       }
       if (btn) {
         btn.addEventListener('click', function(){
-          document.documentElement.classList.toggle('light-mode');
-          const isLight = document.documentElement.classList.contains('light-mode');
-          localStorage.setItem('mlab-theme', isLight ? 'light' : 'dark');
-          btn.textContent = isLight ? '🌙' : '☀️';
+          const currentlyLight = document.documentElement.classList.contains('light-mode') || document.documentElement.getAttribute('data-theme') === 'day';
+          const willBeLight = !currentlyLight;
+          if (willBeLight) {
+            document.documentElement.classList.add('light-mode');
+            document.documentElement.setAttribute('data-theme', 'day');
+          } else {
+            document.documentElement.classList.remove('light-mode');
+            document.documentElement.removeAttribute('data-theme');
+          }
+          localStorage.setItem('mlab-theme', willBeLight ? 'light' : 'dark');
+          localStorage.setItem('ml-theme', willBeLight ? 'light' : 'dark');
+          btn.textContent = willBeLight ? '🌙' : '☀️';
         });
       }
       window.addEventListener('scroll', function(){

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -383,6 +383,15 @@
       font-size: 1rem;
     }
   </style>
+  <script>
+    (function () {
+      var saved = localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
+      if (saved === 'light') {
+        document.documentElement.setAttribute('data-theme', 'day');
+        document.documentElement.classList.add('light-mode');
+      }
+    })();
+  </script>
 </head>
 <body class="page-body">
 
@@ -666,315 +675,18 @@
   </footer>
 
   <script src="js/shared-nav.js"></script>
-  <script>
-    // Theme toggle & scroll handling
+    <script>
+    // Floating navbar scroll handling
     (function(){
       var nav = document.getElementById('mlabNav');
-      var btn = document.getElementById('mlabThemeBtn');
-      if (nav && btn) {
-        if (localStorage.getItem('mlab-theme') === 'light') {
-          document.documentElement.classList.add('light-mode');
-          btn.textContent = '🌙';
-        }
-        btn.addEventListener('click', function(){
-          document.documentElement.classList.toggle('light-mode');
-          var isLight = document.documentElement.classList.contains('light-mode');
-          localStorage.setItem('mlab-theme', isLight ? 'light' : 'dark');
-          btn.textContent = isLight ? '🌙' : '☀️';
-        });
+      if (nav) {
         window.addEventListener('scroll', function(){
           nav.classList.toggle('scrolled', window.scrollY > 50);
         });
       }
     })();
-
-    var currentCategory = 'all';
-
-    function setCategory(btn, cat) {
-      document.querySelectorAll('.filter-pills .pill-btn').forEach(function(b){ b.classList.remove('active'); });
-      btn.classList.add('active');
-      currentCategory = cat;
-      filterResources();
-    }
-
-    // Live search & category filtering
-    function filterResources() {
-      var query = document.getElementById('resourceSearch').value.toLowerCase().trim();
-      var selectedClass = document.getElementById('classFilter').value;
-      var cards = document.querySelectorAll('.resource-card');
-      var visibleCount = 0;
-
-      cards.forEach(function(card) {
-        var cardCat = card.getAttribute('data-cat');
-        var cardClasses = card.getAttribute('data-class').split(',');
-        var keywords = (card.getAttribute('data-keywords') + " " + card.innerText).toLowerCase();
-
-        var matchCategory = (currentCategory === 'all' || cardCat === currentCategory);
-        var matchClass = (selectedClass === 'all' || cardClasses.indexOf(selectedClass) !== -1);
-        var matchQuery = (query === '' || keywords.indexOf(query) !== -1);
-
-        if (matchCategory && matchClass && matchQuery) {
-          card.style.display = 'flex';
-          visibleCount++;
-        } else {
-          card.style.display = 'none';
-        }
-      });
-
-      // No results message
-      var grid = document.getElementById('resourcesGrid');
-      var noRes = document.getElementById('noResultsMsg');
-      if (visibleCount === 0) {
-        if (!noRes) {
-          noRes = document.createElement('div');
-          noRes.id = 'noResultsMsg';
-          noRes.className = 'no-results';
-          noRes.innerHTML = '🔍 No matching resources found. Try searching for "Titration", "Formula", "Safety", or clearing your filters.';
-          grid.appendChild(noRes);
-        }
-      } else if (noRes) {
-        noRes.remove();
-      }
-    }
-
-    // Rich Educational Documents for in-browser modal viewer
-    var resourceDocuments = {
-      titration: {
-        title: "📘 Acid-Base Titration: Standard Procedure & Viva Notes",
-        content: `
-          <h4>1. Aim of the Experiment</h4>
-          <p>To determine the molar concentration (molarity) of an unknown solution of Hydrochloric Acid (HCl) by titrating it against a standard 0.1 M Sodium Hydroxide (NaOH) solution using phenolphthalein indicator.</p>
-          
-          <h4>2. Principle &amp; Chemical Equation</h4>
-          <p>This is a neutralization reaction between a strong acid and a strong base:</p>
-          <div style="background:var(--panel-sub); padding:10px 14px; border-radius:8px; font-family:'JetBrains Mono',monospace; margin:8px 0;">
-            HCl(aq) + NaOH(aq) &rarr; NaCl(aq) + H<sub>2</sub>O(l)
-          </div>
-          <p>At the equivalence point, the moles of H<sup>+</sup> ions from the acid equal the moles of OH<sup>&minus;</sup> ions from the base.</p>
-
-          <h4>3. Indicator &amp; End-Point Color Shift</h4>
-          <table>
-            <thead><tr><th>Medium</th><th>pH Range</th><th>Phenolphthalein Color</th></tr></thead>
-            <tbody>
-              <tr><td>Acidic (HCl)</td><td>&lt; 8.2</td><td>Colorless</td></tr>
-              <tr><td>Equivalence Point</td><td>8.3 – 10.0</td><td>Permanent faint pink (lasting 30s)</td></tr>
-              <tr><td>Basic Excess (NaOH)</td><td>&gt; 10.0</td><td>Deep pink / magenta</td></tr>
-            </tbody>
-          </table>
-
-          <h4>4. Observation Table Template</h4>
-          <table>
-            <thead><tr><th>Trial #</th><th>Initial Burette (mL)</th><th>Final Burette (mL)</th><th>Titre Volume (mL)</th><th>Concordant Value</th></tr></thead>
-            <tbody>
-              <tr><td>1</td><td>0.00</td><td>10.40</td><td>10.40</td><td rowspan="3" style="vertical-align:middle; font-weight:bold; color:var(--primary);">10.10 mL</td></tr>
-              <tr><td>2</td><td>10.40</td><td>20.50</td><td>10.10</td></tr>
-              <tr><td>3</td><td>20.50</td><td>30.60</td><td>10.10</td></tr>
-            </tbody>
-          </table>
-
-          <h4>5. Calculations Formula</h4>
-          <p>Using the molarity equation: <strong>M<sub>1</sub>V<sub>1</sub> / n<sub>1</sub> = M<sub>2</sub>V<sub>2</sub> / n<sub>2</sub></strong></p>
-          <p>Molarity of HCl (M<sub>1</sub>) = (M<sub>NaOH</sub> &times; V<sub>NaOH</sub>) / V<sub>HCl</sub></p>
-        `
-      },
-      periodic: {
-        title: "🔢 IUPAC Periodic Table of Elements Reference Chart",
-        content: `
-          <h4>1. Modern Periodic Law</h4>
-          <p>The physical and chemical properties of elements are periodic functions of their <strong>atomic numbers (Z)</strong>, as formulated by Henry Moseley.</p>
-
-          <h4>2. Structural Organization</h4>
-          <ul>
-            <li><strong>Periods:</strong> 7 horizontal rows corresponding to principal energy levels (n = 1 to 7).</li>
-            <li><strong>Groups:</strong> 18 vertical columns containing elements with identical valence shell electron configurations.</li>
-            <li><strong>Blocks:</strong> Divided into <em>s-block</em> (Groups 1–2), <em>p-block</em> (Groups 13–18), <em>d-block</em> (Transition metals, Groups 3–12), and <em>f-block</em> (Lanthanides &amp; Actinides).</li>
-          </ul>
-
-          <h4>3. Periodic Trends Summary</h4>
-          <table>
-            <thead><tr><th>Periodic Property</th><th>Across a Period (&rarr;)</th><th>Down a Group (&darr;)</th><th>Key Reason</th></tr></thead>
-            <tbody>
-              <tr><td><strong>Atomic Radius</strong></td><td>Decreases</td><td>Increases</td><td>Effective nuclear charge increases (&rarr;) / New electron shells added (&darr;)</td></tr>
-              <tr><td><strong>Ionization Enthalpy</strong></td><td>Increases</td><td>Decreases</td><td>Electrons held more tightly by nucleus (&rarr;) / Distance from nucleus increases (&darr;)</td></tr>
-              <tr><td><strong>Electronegativity</strong></td><td>Increases (F = 3.98)</td><td>Decreases</td><td>Greater attraction for bonding pairs (&rarr;) / Shielding effect dominates (&darr;)</td></tr>
-              <tr><td><strong>Metallic Character</strong></td><td>Decreases</td><td>Increases</td><td>Tendency to lose valence electrons decreases (&rarr;) / increases (&darr;)</td></tr>
-            </tbody>
-          </table>
-        `
-      },
-      formula: {
-        title: "🧮 Chemical Formula & Valency Master Matrix",
-        content: `
-          <h4>1. The Criss-Cross Method for Writing Formulas</h4>
-          <p>Steps to write a chemical formula:</p>
-          <ol style="margin-left:20px; line-height:1.8;">
-            <li>Write symbols of cation and anion side by side (e.g., Al and SO<sub>4</sub>).</li>
-            <li>Write their valencies/charges below each symbol (Al = +3, SO<sub>4</sub> = &minus;2).</li>
-            <li>Criss-cross the numerical values (ignore signs): Al<sub>2</sub>(SO<sub>4</sub>)<sub>3</sub>.</li>
-          </ol>
-
-          <h4>2. Common Polyatomic Ions &amp; Valencies</h4>
-          <table>
-            <thead><tr><th>Ion Name</th><th>Formula</th><th>Valency / Charge</th><th>Example Salt</th></tr></thead>
-            <tbody>
-              <tr><td>Hydroxide</td><td>OH<sup>&minus;</sup></td><td>&minus;1</td><td>NaOH (Sodium hydroxide)</td></tr>
-              <tr><td>Nitrate</td><td>NO<sub>3</sub><sup>&minus;</sup></td><td>&minus;1</td><td>KNO<sub>3</sub> (Potassium nitrate)</td></tr>
-              <tr><td>Bicarbonate</td><td>HCO<sub>3</sub><sup>&minus;</sup></td><td>&minus;1</td><td>NaHCO<sub>3</sub> (Baking soda)</td></tr>
-              <tr><td>Sulfate</td><td>SO<sub>4</sub><sup>2&minus;</sup></td><td>&minus;2</td><td>CuSO<sub>4</sub> (Copper sulfate)</td></tr>
-              <tr><td>Carbonate</td><td>CO<sub>3</sub><sup>2&minus;</sup></td><td>&minus;2</td><td>CaCO<sub>3</sub> (Calcium carbonate)</td></tr>
-              <tr><td>Phosphate</td><td>PO<sub>4</sub><sup>3&minus;</sup></td><td>&minus;3</td><td>Ca<sub>3</sub>(PO<sub>4</sub>)<sub>2</sub> (Calcium phosphate)</td></tr>
-              <tr><td>Ammonium</td><td>NH<sub>4</sub><sup>+</sup></td><td>+1</td><td>NH<sub>4</sub>Cl (Ammonium chloride)</td></tr>
-            </tbody>
-          </table>
-        `
-      },
-      nomenclature: {
-        title: "🏷️ IUPAC Nomenclature Rules & Priority Sequence",
-        content: `
-          <h4>1. Systematic Organic Naming Anatomy</h4>
-          <p style="background:rgba(0,240,255,0.08); border-left:3px solid var(--primary); padding:10px 14px; border-radius:6px; font-family:'Space Grotesk',sans-serif; font-size:1.05rem; font-weight:700;">
-            [Secondary Prefix] + [Primary Prefix] + [Root Word] + [Primary Suffix] + [Secondary Suffix]
-          </p>
-          <ul>
-            <li><strong>Root Word:</strong> Determined by longest unbranched carbon chain (Meth=1, Eth=2, Prop=3, But=4, Pent=5, Hex=6).</li>
-            <li><strong>Primary Suffix:</strong> Indicates saturation (C-C = '-ane', C=C = '-ene', C≡C = '-yne').</li>
-            <li><strong>Secondary Suffix:</strong> Indicates principal functional group (-ol, -oic acid, -al, -one).</li>
-            <li><strong>Prefix:</strong> Substituents (methyl, chloro, bromo, nitro) arranged in strictly alphabetical order.</li>
-          </ul>
-
-          <h4>2. Decreasing Functional Group Priority</h4>
-          <p style="font-family:'JetBrains Mono',monospace; font-size:0.9rem; color:var(--primary); background:rgba(0,0,0,0.25); padding:10px; border-radius:8px;">
-            -COOH &gt; -SO₃H &gt; -COOR &gt; -COX &gt; -CONH₂ &gt; -CN &gt; -CHO &gt; &gt;C=O &gt; -OH &gt; -NH₂ &gt; C=C &gt; C≡C
-          </p>
-
-          <h4>3. Lowest Locant Rule</h4>
-          <p>Number the carbon backbone from the end that gives lower locant numbers to substituents or the principal functional group. In case of tie, alphabetical order determines priority.</p>
-          <div style="margin-top:16px;">
-            <a href="nomenclature.html" style="background:var(--primary); color:#000; font-weight:700; padding:8px 18px; border-radius:10px; text-decoration:none; display:inline-block;">Open Interactive 2D Nomenclature Builder →</a>
-          </div>
-        `
-      },
-      viva: {
-        title: "🎯 High-Yield Chemistry Board Exam Viva Voce Q&A",
-        content: `
-          <h4>Q1: Why is the lower meniscus read for colorless liquids in a burette?</h4>
-          <p><strong>Answer:</strong> Due to surface tension, liquids curve inside glass tubes. For colorless liquids, the lower curved boundary (lower meniscus) gives the true liquid volume without refraction distortion. For colored liquids (like KMnO<sub>4</sub>), the upper meniscus is observed.</p>
-
-          <h4>Q2: What is a standard solution and a primary standard?</h4>
-          <p><strong>Answer:</strong> A solution whose exact concentration is known. A primary standard substance (e.g., Oxalic acid, Sodium carbonate) must be obtainable in pure form, stable in air, and not hygroscopic (does not absorb moisture).</p>
-
-          <h4>Q3: Why should NaOH not be used as a primary standard?</h4>
-          <p><strong>Answer:</strong> NaOH is deliquescent (absorbs moisture from air) and reacts with atmospheric CO<sub>2</sub> to form sodium carbonate, so its weighed mass is never pure.</p>
-
-          <h4>Q4: What causes the characteristic lilac flame of Potassium in flame tests?</h4>
-          <p><strong>Answer:</strong> Potassium electrons absorb thermal energy from the Bunsen flame, get excited to higher orbitals, and release photons of wavelength ~766 nm (violet/lilac) upon returning to ground state.</p>
-        `
-      },
-      safety: {
-        title: "⚠️ Chemistry Laboratory Safety & Hazardous Material Code",
-        content: `
-          <h4>1. Golden Rule for Acid Dilution</h4>
-          <p style="background:rgba(239,68,68,0.1); border-left:3px solid #ef4444; padding:10px 14px; border-radius:6px; font-weight:600; color:#fca5a5;">
-            Always add ACID to WATER slowly with stirring. NEVER add water to concentrated acid!
-          </p>
-          <p>Dilution of strong acids (like H<sub>2</sub>SO<sub>4</sub>) is violently exothermic. Adding water causes localized boiling and acid splattering.</p>
-
-          <h4>2. Bunsen Burner Flame Zones</h4>
-          <ul>
-            <li><strong>Air Hole Closed (Luminous Flame):</strong> Yellow, sooty, unburnt carbon particles, temperature ~300°C. Do NOT use for heating.</li>
-            <li><strong>Air Hole Open (Non-luminous Blue Flame):</strong> Hottest zone (~1200°C at outer cone apex), complete combustion. Always used for laboratory heating.</li>
-          </ul>
-
-          <h4>3. Mandatory PPE Checklist</h4>
-          <table>
-            <thead><tr><th>Equipment</th><th>Purpose</th></tr></thead>
-            <tbody>
-              <tr><td>Safety Goggles</td><td>Protects eyes from explosive chemical splatters and flying glass</td></tr>
-              <tr><td>Cotton Lab Coat</td><td>Protects clothing and skin; cotton does not melt onto skin like polyester</td></tr>
-              <tr><td>Nitrile Gloves</td><td>Protects hands against corrosive acids, bases, and toxic heavy metals</td></tr>
-            </tbody>
-          </table>
-        `
-      },
-      gaslaws: {
-        title: "💨 Gas Laws & Thermodynamic Equations Reference",
-        content: `
-          <h4>1. Fundamental Gas Laws</h4>
-          <table>
-            <thead><tr><th>Law</th><th>Equation</th><th>Constant Variables</th><th>Physical Meaning</th></tr></thead>
-            <tbody>
-              <tr><td><strong>Boyle's Law</strong></td><td>P<sub>1</sub>V<sub>1</sub> = P<sub>2</sub>V<sub>2</sub></td><td>Temperature (T), mass (n)</td><td>Pressure is inversely proportional to Volume</td></tr>
-              <tr><td><strong>Charles's Law</strong></td><td>V<sub>1</sub> / T<sub>1</sub> = V<sub>2</sub> / T<sub>2</sub></td><td>Pressure (P), mass (n)</td><td>Volume expands linearly with absolute Temperature</td></tr>
-              <tr><td><strong>Gay-Lussac's Law</strong></td><td>P<sub>1</sub> / T<sub>1</sub> = P<sub>2</sub> / T<sub>2</sub></td><td>Volume (V), mass (n)</td><td>Rigid container pressure increases with Temperature</td></tr>
-              <tr><td><strong>Avogadro's Law</strong></td><td>V / n = constant</td><td>Pressure (P), Temperature (T)</td><td>Equal volumes of gases contain equal numbers of molecules</td></tr>
-            </tbody>
-          </table>
-
-          <h4>2. The Ideal Gas Equation</h4>
-          <p>Combining all four empirical laws yields: <strong>PV = nRT</strong></p>
-          <p>Universal Gas Constant (R) Values:</p>
-          <ul>
-            <li><strong>R = 8.314 J &bull; K<sup>&minus;1</sup> &bull; mol<sup>&minus;1</sup></strong> (SI Units: Pa &bull; m<sup>3</sup>)</li>
-            <li><strong>R = 0.0821 L &bull; atm &bull; K<sup>&minus;1</sup> &bull; mol<sup>&minus;1</sup></strong> (Atmospheric pressure calculations)</li>
-            <li><strong>R = 1.987 cal &bull; K<sup>&minus;1</sup> &bull; mol<sup>&minus;1</sup></strong> (Thermochemistry)</li>
-          </ul>
-        `
-      },
-      reactions: {
-        title: "⚖️ Chemical Equation Balancing & Stoichiometry Guide",
-        content: `
-          <h4>1. Law of Conservation of Mass (Antoine Lavoisier)</h4>
-          <p>Matter can neither be created nor destroyed in a chemical reaction. Therefore, the total number of atoms of each element on the reactant side must equal the product side.</p>
-
-          <h4>2. Worked Balancing Example</h4>
-          <p>Combustion of Propane:</p>
-          <div style="background:var(--panel-sub); padding:10px 14px; border-radius:8px; font-family:'JetBrains Mono',monospace; margin:8px 0;">
-            C<sub>3</sub>H<sub>8</sub>(g) + 5 O<sub>2</sub>(g) &rarr; 3 CO<sub>2</sub>(g) + 4 H<sub>2</sub>O(g)
-          </div>
-          <table>
-            <thead><tr><th>Element</th><th>Reactant Side</th><th>Product Side</th><th>Status</th></tr></thead>
-            <tbody>
-              <tr><td>Carbon (C)</td><td>3 atoms (in C<sub>3</sub>H<sub>8</sub>)</td><td>3 &times; 1 = 3 atoms (in 3 CO<sub>2</sub>)</td><td>Balanced &check;</td></tr>
-              <tr><td>Hydrogen (H)</td><td>8 atoms (in C<sub>3</sub>H<sub>8</sub>)</td><td>4 &times; 2 = 8 atoms (in 4 H<sub>2</sub>O)</td><td>Balanced &check;</td></tr>
-              <tr><td>Oxygen (O)</td><td>5 &times; 2 = 10 atoms (in 5 O<sub>2</sub>)</td><td>(3 &times; 2) + (4 &times; 1) = 10 atoms</td><td>Balanced &check;</td></tr>
-            </tbody>
-          </table>
-        `
-      },
-      teacher: {
-        title: "🧑‍🏫 45-Minute Chemistry Smart Board Lesson Template",
-        content: `
-          <h4>Lesson Title: States of Matter &amp; Kinetic Particle Theory</h4>
-          <p><strong>Grade Level:</strong> Class 9 (CBSE / ICSE) &nbsp;|&nbsp; <strong>Duration:</strong> 45 Minutes</p>
-
-          <h4>Lesson Timeline</h4>
-          <ul>
-            <li><strong>00:00 – 00:08 (Engage):</strong> Demonstration of ice melting on hot plate vs simulation preview. Ask students: <em>"Where does heat energy go while temperature remains at 0°C?"</em></li>
-            <li><strong>00:08 – 00:25 (Explore):</strong> Launch Moleqyn <em>sim_particle.html</em> on Smart Board. Have student volunteers adjust temperature slider from &minus;20°C to 120°C for Water and Iron.</li>
-            <li><strong>00:25 – 00:35 (Explain):</strong> Explain Latent Heat of Fusion and Vaporization using particle spacing and intermolecular force graphs.</li>
-            <li><strong>00:35 – 00:45 (Evaluate):</strong> Students take topic quiz on <em>quiz.html</em> using tablet/lab computers and log scores in dashboard.</li>
-          </ul>
-        `
-      }
-    };
-
-    function openResourceViewer(docId) {
-      var doc = resourceDocuments[docId];
-      if (!doc) return;
-      document.getElementById('modalTitle').textContent = doc.title;
-      document.getElementById('modalBody').innerHTML = doc.content;
-      document.getElementById('viewerModal').style.display = 'flex';
-    }
-
-    function closeViewer() {
-      document.getElementById('viewerModal').style.display = 'none';
-    }
-
-    function printResourceContent() {
-      var content = document.getElementById('modalBody').innerHTML;
-      var title = document.getElementById('modalTitle').textContent;
-      var printWin = window.open('', '', 'width=800,height=600');
-      printWin.document.write('<html><head><title>' + title + '</title><style>body{font-family:sans-serif;padding:30px;line-height:1.6;}table{width:100%;border-collapse:collapse;margin:15px 0;}th,td{border:1px solid #ccc;padding:8px;text-align:left;}th{background:#f4f4f4;}</style></head><body><h2>Moleqyn Chemistry Resource</h2><hr/>' + content + '</body></html>');
+  </script>
+</head><body><h2>Moleqyn Chemistry Resource</h2><hr/>' + content + '</body></html>');
       printWin.document.close();
       printWin.focus();
       printWin.print();

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -522,6 +522,15 @@
       font-size: 0.85rem;
     }
   </style>
+  <script>
+    (function () {
+      var saved = localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
+      if (saved === 'light') {
+        document.documentElement.setAttribute('data-theme', 'day');
+        document.documentElement.classList.add('light-mode');
+      }
+    })();
+  </script>
 </head>
 <body>
 
@@ -886,21 +895,10 @@
 
   <script src="js/shared-nav.js"></script>
   <script>
-    // Theme toggle & scroll handling
+        // Floating navbar scroll handling
     (function(){
       var nav = document.getElementById('mlabNav');
-      var btn = document.getElementById('mlabThemeBtn');
-      if (nav && btn) {
-        if (localStorage.getItem('mlab-theme') === 'light') {
-          document.documentElement.classList.add('light-mode');
-          btn.textContent = '🌙';
-        }
-        btn.addEventListener('click', function(){
-          document.documentElement.classList.toggle('light-mode');
-          var isLight = document.documentElement.classList.contains('light-mode');
-          localStorage.setItem('mlab-theme', isLight ? 'light' : 'dark');
-          btn.textContent = isLight ? '🌙' : '☀️';
-        });
+      if (nav) {
         window.addEventListener('scroll', function(){
           nav.classList.toggle('scrolled', window.scrollY > 50);
         });

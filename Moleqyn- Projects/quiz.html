@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -10,6 +10,15 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <script>
+    (function () {
+      var saved = localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
+      if (saved === 'light') {
+        document.documentElement.setAttribute('data-theme', 'day');
+        document.documentElement.classList.add('light-mode');
+      }
+    })();
+  </script>
 </head>
 <body class="page-body">
   <nav class="mlab-nav" id="mlabNav">
@@ -39,85 +48,15 @@
     </div>
   </nav>
   <script>
-    // Theme toggle & scroll handling
+    // Floating navbar scroll handling
     (function(){
       var nav = document.getElementById('mlabNav');
-      var btn = document.getElementById('mlabThemeBtn');
-      if (nav && btn) {
-        if (localStorage.getItem('mlab-theme') === 'light') {
-          document.documentElement.classList.add('light-mode');
-          btn.textContent = '🌙';
-        }
-        btn.addEventListener('click', function(){
-          document.documentElement.classList.toggle('light-mode');
-          var isLight = document.documentElement.classList.contains('light-mode');
-          localStorage.setItem('mlab-theme', isLight ? 'light' : 'dark');
-          btn.textContent = isLight ? '🌙' : '☀️';
-        });
+      if (nav) {
         window.addEventListener('scroll', function(){
           nav.classList.toggle('scrolled', window.scrollY > 50);
         });
       }
     })();
-
-    // Live character counter
-    function updateCharCount() {
-      var textarea = document.getElementById('contactMsg');
-      var counter = document.getElementById('charCounter');
-      counter.textContent = textarea.value.length + " / 800 characters";
-    }
-
-    // Interactive FAQ Accordion
-    function toggleFaq(el) {
-      el.classList.toggle('open');
-    }
-
-    // Contact Form submission
-    function handleContactSubmit(e) {
-      e.preventDefault();
-      var btn = document.getElementById('submitBtn');
-      btn.innerHTML = '<span>⏳ Sending inquiry...</span>';
-      btn.disabled = true;
-
-      var name = document.getElementById('contactName').value;
-      var email = document.getElementById('contactEmail').value;
-      var role = document.getElementById('contactRole').value;
-      var category = document.getElementById('contactCategory').value;
-      var subject = document.getElementById('contactSubject').value;
-      var msg = document.getElementById('contactMsg').value;
-
-      var ticketNum = "ML-" + (new Date().getFullYear()) + "-" + Math.floor(1000 + Math.random() * 9000);
-
-      var inquiry = {
-        ticket: ticketNum,
-        name: name,
-        email: email,
-        role: role,
-        category: category,
-        subject: subject,
-        message: msg,
-        timestamp: new Date().toISOString()
-      };
-
-      try {
-        var existing = JSON.parse(localStorage.getItem('mlab_inquiries') || '[]');
-        existing.push(inquiry);
-        localStorage.setItem('mlab_inquiries', JSON.stringify(existing));
-      } catch(err) {}
-
-      setTimeout(function(){
-        btn.innerHTML = '<span>📨 Send Message</span>';
-        btn.disabled = false;
-        document.getElementById('ticketNumberDisplay').textContent = "REFERENCE TICKET: #" + ticketNum;
-        document.getElementById('successModal').style.display = 'flex';
-        document.getElementById('contactForm').reset();
-        updateCharCount();
-      }, 700);
-    }
-
-    function closeModal() {
-      document.getElementById('successModal').style.display = 'none';
-    }
   </script>
 
 <main class="page-section fade-up">

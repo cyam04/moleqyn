@@ -78,9 +78,77 @@ self.addEventListener('fetch', (event) => {
   // Only handle HTTP/HTTPS GET requests
   if (req.method !== 'GET') return;
 
-if (req.mode === 'navigate') return;
+  // Network-first navigation handler: try network first; on network failure, return precached HTML
+  if (req.mode === 'navigate') {
+    event.respondWith(
+      fetch(req)
+        .then((networkResponse) => {
+          // Cache only valid successful (200 OK) HTML page responses
+          if (networkResponse && networkResponse.ok && networkResponse.status === 200) {
+            const contentType = networkResponse.headers ? (networkResponse.headers.get('content-type') || '') : '';
+            if (contentType.includes('text/html') || !contentType) {
+              const responseToCache = networkResponse.clone();
+              caches.open(CACHE_NAME).then((cache) => {
+                cache.put(req, responseToCache);
+              });
+            }
+          }
+          // Return non-OK responses (404, 500, etc.) directly without treating them as network failures
+          return networkResponse;
+        })
+        .catch(() => {
+          // Network failure (offline) – attempt offline cache resolution
+          return caches.match(req).then((cachedResponse) => {
+            if (cachedResponse) return cachedResponse;
 
-   
+            // Resolve relative to service worker scope while preserving nested paths
+            const reqUrl = new URL(req.url);
+            const scopeUrl = new URL(self.registration.scope);
+
+            let relPath = reqUrl.pathname.startsWith(scopeUrl.pathname)
+              ? reqUrl.pathname.slice(scopeUrl.pathname.length)
+              : reqUrl.pathname.replace(/^\/+/, '');
+
+            // Strip trailing slashes to handle paths like '/simulators/' properly
+            const cleanPath = relPath.replace(/\/+$/, '');
+
+            // Build prioritized list of candidate URLs to match in cache
+            const candidates = [];
+            if (!cleanPath) {
+              // Root navigation
+              candidates.push(new URL('index.html', self.registration.scope).toString());
+              candidates.push(new URL('./', self.registration.scope).toString());
+            } else if (cleanPath.endsWith('.html')) {
+              // Explicit .html path (preserving nested folders)
+              candidates.push(new URL(cleanPath, self.registration.scope).toString());
+            } else if (!cleanPath.includes('.')) {
+              // Clean extensionless path: first try path + '.html', then path + '/index.html'
+              candidates.push(new URL(cleanPath + '.html', self.registration.scope).toString());
+              candidates.push(new URL(cleanPath + '/index.html', self.registration.scope).toString());
+            } else {
+              // Other extension: try exact cleanPath
+              candidates.push(new URL(cleanPath, self.registration.scope).toString());
+            }
+
+            // Always ensure root index.html is the final fallback
+            const rootFallback = new URL('index.html', self.registration.scope).toString();
+            if (!candidates.includes(rootFallback)) {
+              candidates.push(rootFallback);
+            }
+
+            // Test candidate URLs sequentially against cache
+            return candidates.reduce((promise, candidate) => {
+              return promise.then((match) => {
+                if (match) return match;
+                return caches.match(candidate);
+              });
+            }, Promise.resolve(null));
+          });
+        })
+    );
+    return;
+  }
+
   event.respondWith(
     caches.match(req).then((cachedResponse) => {
       // Fetch fresh from network in background

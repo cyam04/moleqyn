@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -11,6 +11,15 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap"
         rel="stylesheet" />
+    <script>
+        (function () {
+            var saved = localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
+            if (saved === 'light') {
+                document.documentElement.setAttribute('data-theme', 'day');
+                document.documentElement.classList.add('light-mode');
+            }
+        })();
+    </script>
 
     <style>
         /* Default: SOFT BLACK THEME */
@@ -633,16 +642,27 @@
         // Theme Toggle Logic
         document.addEventListener("DOMContentLoaded", function () {
             const themeBtn = document.getElementById('themeBtn');
-            themeBtn.addEventListener('click', () => {
-                const currentTheme = document.documentElement.getAttribute('data-theme');
-                if (currentTheme === 'day') {
-                    document.documentElement.removeAttribute('data-theme');
-                    themeBtn.innerText = '☀️';
-                } else {
-                    document.documentElement.setAttribute('data-theme', 'day');
-                    themeBtn.innerText = '🌙';
-                }
-            });
+            if (themeBtn) {
+                const isLight = document.documentElement.getAttribute('data-theme') === 'day' || document.documentElement.classList.contains('light-mode');
+                themeBtn.innerText = isLight ? '🌙' : '☀️';
+                themeBtn.addEventListener('click', () => {
+                    const currentlyLight = document.documentElement.getAttribute('data-theme') === 'day' || document.documentElement.classList.contains('light-mode');
+                    const willBeLight = !currentlyLight;
+                    if (willBeLight) {
+                        document.documentElement.setAttribute('data-theme', 'day');
+                        document.documentElement.classList.add('light-mode');
+                        themeBtn.innerText = '🌙';
+                        localStorage.setItem('mlab-theme', 'light');
+                        localStorage.setItem('ml-theme', 'light');
+                    } else {
+                        document.documentElement.removeAttribute('data-theme');
+                        document.documentElement.classList.remove('light-mode');
+                        themeBtn.innerText = '☀️';
+                        localStorage.setItem('mlab-theme', 'dark');
+                        localStorage.setItem('ml-theme', 'dark');
+                    }
+                });
+            }
         });
 
         // ==========================================
