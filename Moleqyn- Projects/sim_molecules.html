@@ -1,11 +1,20 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Moleqyn | Universal 3D Molecular Engine & Chemical Search</title>
+  <title>Moleqyn | Universal 3D Molecular Engine &amp; Chemical Search</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <script>
+    (function(){
+      var saved = localStorage.getItem('mlab_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', saved);
+      if(saved === 'day' || saved === 'light') {
+        document.documentElement.classList.add('light-mode');
+      }
+    })();
+  </script>
   <style>
     :root {
       --bg-base: #07111f; --panel: rgba(13, 26, 45, 0.94);
@@ -13,6 +22,19 @@
       --primary: #00f0ff; --primary-glow: rgba(0, 240, 255, 0.3);
       --secondary: #ff00aa; --accent: #ffd166; --green: #38ef7d;
       --text: #f0f4ff; --muted: #8ea3bf;
+    }
+    :root[data-theme="day"], html.light-mode {
+      --bg-base: #f8fafc;
+      --panel: #ffffff;
+      --border: rgba(0, 0, 0, 0.08);
+      --border-glow: rgba(0, 180, 216, 0.2);
+      --primary: #0284c7;
+      --primary-glow: rgba(2, 132, 199, 0.2);
+      --secondary: #d946ef;
+      --accent: #ca8a04;
+      --green: #16a34a;
+      --text: #0f172a;
+      --muted: #475569;
     }
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
@@ -23,8 +45,15 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      padding-top: 65px;
       background-image: radial-gradient(circle at top right, rgba(0, 240, 255, 0.08), transparent 60%),
                         radial-gradient(circle at bottom left, rgba(255, 0, 170, 0.05), transparent 60%);
+    }
+    :root[data-theme="day"] body, html.light-mode body {
+      background: #f8fafc !important;
+      color: #0f172a !important;
+      background-image: radial-gradient(circle at top right, rgba(2, 132, 199, 0.05), transparent 60%),
+                        radial-gradient(circle at bottom left, rgba(217, 70, 239, 0.03), transparent 60%) !important;
     }
 
     /* Navbar */
@@ -341,25 +370,206 @@
       padding: 3px 8px;
       font-size: 0.74rem;
     }
-    .chip-dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
+    /* DAY MODE COMPONENT OVERRIDES FOR SIM_MOLECULES */
+    :root[data-theme="day"] .selector-panel, html.light-mode .selector-panel,
+    :root[data-theme="day"] .info-panel, html.light-mode .info-panel {
+      background: #ffffff !important;
+      border-color: rgba(0, 0, 0, 0.08) !important;
+    }
+    :root[data-theme="day"] .viewport-panel, html.light-mode .viewport-panel {
+      background: radial-gradient(circle at center, #f1f5f9 0%, #e2e8f0 100%) !important;
+    }
+    :root[data-theme="day"] .search-input-group, html.light-mode .search-input-group {
+      background: #f8fafc !important;
+      border-color: rgba(0,0,0,0.12) !important;
+    }
+    :root[data-theme="day"] .search-input, html.light-mode .search-input {
+      color: #0f172a !important;
+    }
+    :root[data-theme="day"] .cat-chip, html.light-mode .cat-chip {
+      background: #f1f5f9 !important;
+      border-color: rgba(0,0,0,0.08) !important;
+      color: #475569 !important;
+    }
+    :root[data-theme="day"] .cat-chip.active, html.light-mode .cat-chip.active {
+      background: rgba(2, 132, 199, 0.15) !important;
+      border-color: #0284c7 !important;
+      color: #0284c7 !important;
+    }
+    :root[data-theme="day"] .mol-btn, html.light-mode .mol-btn {
+      background: #ffffff !important;
+      border-color: rgba(0,0,0,0.08) !important;
+      color: #0f172a !important;
+    }
+    :root[data-theme="day"] .mol-btn:hover, html.light-mode .mol-btn:hover,
+    :root[data-theme="day"] .mol-btn.active, html.light-mode .mol-btn.active {
+      background: rgba(2, 132, 199, 0.08) !important;
+      border-color: #0284c7 !important;
+      color: #0284c7 !important;
+    }
+    :root[data-theme="day"] .mol-formula, html.light-mode .mol-formula {
+      background: #f1f5f9 !important;
+      color: #0284c7 !important;
+    }
+    :root[data-theme="day"] .prop-card, html.light-mode .prop-card {
+      background: #f8fafc !important;
+      border-color: rgba(0,0,0,0.08) !important;
+    }
+    :root[data-theme="day"] .orbital-box, html.light-mode .orbital-box {
+      background: rgba(2, 132, 199, 0.05) !important;
+      border-color: rgba(2, 132, 199, 0.2) !important;
+    }
+    :root[data-theme="day"] .viewport-hud, html.light-mode .viewport-hud {
+      background: rgba(255, 255, 255, 0.85) !important;
+      border-color: rgba(0,0,0,0.1) !important;
+      color: #0f172a !important;
+    }
+    :root[data-theme="day"] .render-toggles, html.light-mode .render-toggles {
+      background: rgba(255, 255, 255, 0.9) !important;
+      border-color: rgba(0,0,0,0.1) !important;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
+    }
+    :root[data-theme="day"] .toggle-pill, html.light-mode .toggle-pill {
+      color: #475569 !important;
+    }
+    :root[data-theme="day"] .toggle-pill.active, html.light-mode .toggle-pill.active {
+      background: #0284c7 !important;
+      color: #ffffff !important;
+    }
+    :root[data-theme="day"] .legend-chip, html.light-mode .legend-chip {
+      background: #f1f5f9 !important;
+      border-color: rgba(0,0,0,0.08) !important;
+      color: #334155 !important;
+    }
+    :root[data-theme="day"] .search-box-wrap {
+      background: rgba(2, 132, 199, 0.04) !important;
+      border-color: rgba(2, 132, 199, 0.15) !important;
+    }
+
+    /* FLOATING NAV */
+    .mlab-nav {
+      position: fixed; top: 12px; left: 50%; transform: translateX(-50%);
+      width: calc(100% - 32px); max-width: 1400px; z-index: 1000;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 20px; border-radius: 16px;
+      background: rgba(13, 26, 45, 0.78); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      transition: background 0.3s, border-color 0.3s;
+    }
+    :root[data-theme="day"] .mlab-nav, html.light-mode .mlab-nav {
+      background: rgba(255, 255, 255, 0.85) !important;
+      border-color: rgba(0,0,0,0.08) !important;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
+    }
+    .mlab-nav-left { display: flex; align-items: center; gap: 14px; }
+    .mlab-brand {
+      display: flex; align-items: center; gap: 8px; text-decoration: none;
+      font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 800; color: var(--text);
+    }
+    .mlab-brand-text span { color: var(--primary); }
+    .mlab-nav-badge {
+      font-size: 0.72rem; padding: 2px 8px; border-radius: 8px;
+      background: rgba(0, 240, 255, 0.15); border: 1px solid rgba(0, 240, 255, 0.3);
+      color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .mlab-nav-dropdown { position: relative; }
+    .mlab-dropdown-trigger {
+      display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 10px;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+      color: var(--text); font-family: 'Space Grotesk', sans-serif; font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .mlab-dropdown-trigger:hover { border-color: var(--primary); background: rgba(0, 240, 255, 0.1); }
+    .mlab-dropdown-menu {
+      position: absolute; top: calc(100% + 8px); left: 0; min-width: 260px;
+      background: rgba(13, 26, 45, 0.96); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border); border-radius: 14px; padding: 8px;
+      display: none; flex-direction: column; gap: 2px; box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+      z-index: 1001; max-height: 400px; overflow-y: auto;
+    }
+    :root[data-theme="day"] .mlab-dropdown-menu, html.light-mode .mlab-dropdown-menu {
+      background: rgba(255, 255, 255, 0.98) !important;
+      border-color: rgba(0,0,0,0.1) !important;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.12) !important;
+    }
+    .mlab-dropdown-menu.show { display: flex; }
+    .mlab-dropdown-header {
+      font-size: 0.7rem; color: var(--muted); text-transform: uppercase; font-weight: 700;
+      letter-spacing: 0.5px; padding: 6px 10px 4px;
+    }
+    .mlab-dropdown-item {
+      padding: 7px 10px; border-radius: 8px; font-size: 0.82rem; color: var(--text);
+      text-decoration: none; transition: background 0.15s; display: flex; align-items: center; gap: 8px;
+    }
+    .mlab-dropdown-item:hover { background: rgba(0, 240, 255, 0.12); color: var(--primary); }
+    .mlab-dropdown-item.active { background: rgba(0, 240, 255, 0.18); color: var(--primary); font-weight: 700; }
+    .mlab-dropdown-divider { height: 1px; background: var(--border); margin: 4px 0; }
+    .mlab-nav-right { display: flex; align-items: center; gap: 12px; }
+    .mlab-nav-link {
+      color: var(--muted); text-decoration: none; font-size: 0.85rem; font-weight: 600;
+      padding: 6px 12px; border-radius: 8px; transition: color 0.2s;
+    }
+    .mlab-nav-link:hover { color: var(--text); }
+    .mlab-theme-toggle {
+      width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05); color: var(--text); cursor: pointer;
+      display: flex; align-items: center; justify-content: center; font-size: 1.05rem;
+      transition: all 0.2s;
+    }
+    .mlab-theme-toggle:hover { border-color: var(--primary); transform: scale(1.05); }
+    .theme-icon-sun { display: none; }
+    .theme-icon-moon { display: inline-block; }
+    :root[data-theme="day"] .theme-icon-sun, html.light-mode .theme-icon-sun { display: inline-block; }
+    :root[data-theme="day"] .theme-icon-moon, html.light-mode .theme-icon-moon { display: none; }
+    @media (max-width: 768px) {
+      .mlab-nav { padding: 8px 14px; top: 8px; width: calc(100% - 16px); }
+      .mlab-nav-link { display: none; }
+      body { padding-top: 60px; }
     }
   </style>
 </head>
 <body>
 
-<nav class="nav">
-  <div style="display: flex; align-items: center; gap: 12px;">
-    <a href="index.html" class="nav-brand">⚗️ Mole<span>qyn</span></a>
-    <span class="nav-tag">Universal 3D ChemEngine</span>
+<nav class="mlab-nav" id="mlabNav">
+  <div class="mlab-nav-left">
+    <a href="index.html" class="mlab-brand">
+      <span class="mlab-brand-icon">⚗️</span>
+      <span class="mlab-brand-text">MOLE<span>QYN</span></span>
+    </a>
+    <div class="mlab-nav-badge">ChemEngine 3D</div>
+    <div class="mlab-nav-dropdown">
+      <button class="mlab-dropdown-trigger" id="mlabQuickSwitchBtn" aria-expanded="false" title="Switch Simulator">
+        <span>3D Molecule Visualizer</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </button>
+      <div class="mlab-dropdown-menu" id="mlabQuickSwitchMenu">
+        <div class="mlab-dropdown-header">Interactive Virtual Labs</div>
+        <a href="sim_molecules.html" class="mlab-dropdown-item active">🔮 3D Molecule Visualizer</a>
+        <a href="sim_bonding.html" class="mlab-dropdown-item">⚛️ Chemical Bonding &amp; VSEPR</a>
+        <a href="reaction.html" class="mlab-dropdown-item">⚖️ Chemical Reaction Balancer</a>
+        <a href="sim_titration.html" class="mlab-dropdown-item">🧪 Acid-Base Titration</a>
+        <a href="sim_electro.html" class="mlab-dropdown-item">⚡ Electrochemistry (Galvanic)</a>
+        <a href="sim_atomverse.html" class="mlab-dropdown-item">🪐 Atomverse (Bohr &amp; Quantum)</a>
+        <a href="sim_gaslaws.html" class="mlab-dropdown-item">🎈 Gas Laws &amp; Kinetic Theory</a>
+        <a href="sim_equilibrium.html" class="mlab-dropdown-item">🔄 Le Chatelier's Equilibrium</a>
+        <a href="sim_flametest.html" class="mlab-dropdown-item">🔥 Flame Test &amp; Emission</a>
+        <a href="sim_calorimetry.html" class="mlab-dropdown-item">🌡️ Thermochemistry &amp; Calorimetry</a>
+        <a href="sim_halflife.html" class="mlab-dropdown-item">☢️ Nuclear Half-Life Decay</a>
+        <a href="sim_rutherford.html" class="mlab-dropdown-item">🎯 Rutherford Gold Foil</a>
+        <a href="sim_particle.html" class="mlab-dropdown-item">🔬 Particle &amp; Brownian Motion</a>
+        <div class="mlab-dropdown-divider"></div>
+        <a href="simulators.html" class="mlab-dropdown-item">← All 11 Virtual Labs Hub</a>
+      </div>
+    </div>
   </div>
-  <div class="nav-links">
-    <a href="simulators.html" class="nav-link">Virtual Labs</a>
-    <a href="periodic-table.html" class="nav-link">118 Periodic Table</a>
-    <a href="ai-tutor.html" class="nav-link">AI Chem Tutor</a>
-    <a href="index.html" class="nav-link">← Back to Home</a>
+  <div class="mlab-nav-right">
+    <a href="simulators.html" class="mlab-nav-link">Virtual Labs</a>
+    <a href="experiments.html" class="mlab-nav-link">Experiments</a>
+    <a href="learn.html" class="mlab-nav-link">Study Hub</a>
+    <button class="mlab-theme-toggle" id="mlabThemeBtn" title="Toggle Light/Dark Theme" aria-label="Toggle theme">
+      <span class="theme-icon-sun">☀️</span>
+      <span class="theme-icon-moon">🌙</span>
+    </button>
   </div>
 </nav>
 
@@ -1084,5 +1294,6 @@ renderMolList();
 render();
 </script>
 
+<script src="js/shared-nav.js"></script>
 </body>
 </html>

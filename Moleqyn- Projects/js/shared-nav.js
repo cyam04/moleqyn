@@ -17,8 +17,8 @@
     }
   }
 
-  const savedTheme = localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
-  if (savedTheme === 'light') {
+  const savedTheme = localStorage.getItem('mlab_theme') || localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
+  if (savedTheme === 'light' || savedTheme === 'day') {
     applyTheme(true);
   }
 
@@ -37,6 +37,7 @@
         themeBtns.forEach(function (b) { b.textContent = willBeLight ? '🌙' : '☀️'; });
         localStorage.setItem('ml-theme', willBeLight ? 'light' : 'dark');
         localStorage.setItem('mlab-theme', willBeLight ? 'light' : 'dark');
+        localStorage.setItem('mlab_theme', willBeLight ? 'day' : 'dark');
       });
     });
   }
@@ -48,6 +49,24 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
+
+    /* Simulator Quick-Switch Dropdown */
+    const quickSwitchBtn = document.getElementById('mlabQuickSwitchBtn');
+    const quickSwitchMenu = document.getElementById('mlabQuickSwitchMenu');
+    if (quickSwitchBtn && quickSwitchMenu) {
+      quickSwitchBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        const isOpen = quickSwitchMenu.classList.contains('show');
+        quickSwitchMenu.classList.toggle('show');
+        quickSwitchBtn.setAttribute('aria-expanded', !isOpen);
+      });
+      document.addEventListener('click', function (e) {
+        if (!quickSwitchBtn.contains(e.target) && !quickSwitchMenu.contains(e.target)) {
+          quickSwitchMenu.classList.remove('show');
+          quickSwitchBtn.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
 
     /* Mobile hamburger */
     const ham = document.getElementById('hamburger');

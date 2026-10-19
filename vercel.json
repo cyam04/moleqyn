@@ -1,0 +1,7 @@
+﻿{
+  "cleanUrls": false,
+  "rewrites": [
+    { "source": "/", "destination": "/Moleqyn- Projects/index.html" },
+    { "source": "/:path*", "destination": "/Moleqyn- Projects/:path*" }
+  ]
+}

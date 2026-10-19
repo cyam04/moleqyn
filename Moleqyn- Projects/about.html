@@ -8,11 +8,11 @@
   <link rel="stylesheet" href="css/pages.css"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
-  <script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+    <script>
     (function () {
-      var saved = localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
-      if (saved === 'light') {
+      var saved = localStorage.getItem('mlab_theme') || localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
+      if (saved === 'day' || saved === 'light') {
         document.documentElement.setAttribute('data-theme', 'day');
         document.documentElement.classList.add('light-mode');
       }
@@ -181,4 +181,5 @@
   <script src="js/shared-nav.js"></script>
 </body>
 </html>
+
 

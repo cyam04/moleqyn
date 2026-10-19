@@ -1,11 +1,22 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Moleqyn AI Chemistry Assistant â€“ Instant solver for NCERT/CBSE/AP chemistry equations, stoichiometry, molar mass, and concepts."/>
   <title>Moleqyn | AI Chemistry Assistant & Solver</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <script>
+    (function () {
+      var saved = localStorage.getItem('mlab_theme') || localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
+      if (saved === 'day' || saved === 'light') {
+        document.documentElement.setAttribute('data-theme', 'day');
+        document.documentElement.classList.add('light-mode');
+      }
+    })();
+  </script>
   <style>
     :root {
       --bg: #07111f; --panel: #0d1a2d; --card-bg: rgba(15, 27, 48, 0.75); 
@@ -13,7 +24,37 @@
       --primary: #00f0ff; --primary-glow: rgba(0, 240, 255, 0.25);
       --secondary: #ff00aa; --accent: #ffd166; --green: #38ef7d;
       --text: #f0f4ff; --muted: #8ea3bf;
+      --glass-border: rgba(255, 255, 255, 0.1);
     }
+    :root[data-theme="day"], html.light-mode {
+      --bg: #f0f4f8; --panel: #ffffff; --card-bg: rgba(255, 255, 255, 0.95);
+      --border: rgba(0, 0, 0, 0.1); --border-glow: rgba(2, 132, 199, 0.25);
+      --primary: #0284c7; --primary-glow: rgba(2, 132, 199, 0.2);
+      --secondary: #db2777; --accent: #0284c7; --green: #059669;
+      --text: #0f172a; --muted: #64748b;
+      --glass-border: rgba(0, 0, 0, 0.1);
+    }
+    .nav-brand, .sidebar-title, .ai-header { font-family: 'Outfit', 'Space Grotesk', sans-serif; }
+    html.light-mode body, :root[data-theme="day"] body {
+      background-image: radial-gradient(circle at top right, rgba(2, 132, 199, 0.06), transparent 50%),
+                        radial-gradient(circle at bottom left, rgba(219, 39, 119, 0.04), transparent 50%);
+    }
+    html.light-mode nav, :root[data-theme="day"] nav { background: rgba(255, 255, 255, 0.95); border-bottom-color: rgba(0,0,0,0.1); }
+    html.light-mode .sidebar, :root[data-theme="day"] .sidebar { background: #ffffff; border-right-color: rgba(0,0,0,0.08); }
+    html.light-mode .tool-btn, :root[data-theme="day"] .tool-btn { background: #f8fafc; border-color: rgba(0,0,0,0.08); color: #0f172a; }
+    html.light-mode .tool-btn:hover, :root[data-theme="day"] .tool-btn:hover { background: rgba(2, 132, 199, 0.08); border-color: #0284c7; color: #0284c7; }
+    html.light-mode .msg-ai, :root[data-theme="day"] .msg-ai { background: #ffffff; border-color: rgba(0,0,0,0.1); color: #0f172a; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+    html.light-mode .msg-user, :root[data-theme="day"] .msg-user { background: linear-gradient(135deg, #0284c7, #0ea5e9); color: #ffffff; }
+    html.light-mode .solution-card, :root[data-theme="day"] .solution-card { background: #f8fafc; border-color: rgba(0,0,0,0.08); }
+    html.light-mode .solution-row, :root[data-theme="day"] .solution-row { border-bottom-color: rgba(0,0,0,0.05); }
+    html.light-mode .solution-key, :root[data-theme="day"] .solution-key { color: #64748b; }
+    html.light-mode .solution-val, :root[data-theme="day"] .solution-val { color: #0284c7; }
+    html.light-mode .sug-chip, :root[data-theme="day"] .sug-chip { background: #ffffff; border-color: rgba(0,0,0,0.1); color: #475569; }
+    html.light-mode .sug-chip:hover, :root[data-theme="day"] .sug-chip:hover { background: rgba(2, 132, 199, 0.08); border-color: #0284c7; color: #0284c7; }
+    html.light-mode .input-container, :root[data-theme="day"] .input-container { background: #ffffff; border-color: rgba(0,0,0,0.12); box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+    html.light-mode .action-icon-btn, :root[data-theme="day"] .action-icon-btn { background: #f1f5f9; border-color: rgba(0,0,0,0.1); color: #475569; }
+    .mlab-theme-btn{background:none;border:1px solid var(--border);color:var(--text);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all 0.3s;}
+    .mlab-theme-btn:hover{border-color:var(--primary);background:var(--primary-glow);}
     * { margin:0; padding:0; box-sizing:border-box; }
     body { 
       background: var(--bg); 
@@ -705,5 +746,7 @@ function sendMessage() {
 }
 </script>
 
+  <script src="js/shared-nav.js"></script>
 </body>
 </html>
+

@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
         rel="stylesheet" />
     <script>
         (function () {
@@ -22,55 +22,114 @@
     </script>
 
     <style>
-        /* Default: SOFT BLACK THEME */
+        /* =========================================
+           Moleqyn Simulators Hub — Luxury Modern Edition
+           ========================================= */
+
+        /* Default: ULTRA SLEEK DEEP DARK */
         :root {
-            --bg-base: #0f172a;
-            --glass-bg: rgba(30, 41, 59, 0.5);
-            --nav-bg-scrolled: rgba(15, 23, 42, 0.98);
-            --glass-border: rgba(255, 255, 255, 0.15);
+            --bg-base: #080c16;
+            --bg-surface: #0e1424;
+            --bg-card: #131b2e;
+            --bg-card-hover: #18223a;
+            --glass-bg: rgba(14, 20, 36, 0.72);
+            --glass-bg-hover: rgba(20, 30, 52, 0.85);
+            --nav-bg-scrolled: rgba(8, 12, 22, 0.94);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-border-hover: rgba(0, 240, 255, 0.45);
+            --glass-highlight: rgba(255, 255, 255, 0.06);
+
             --primary: #00f0ff;
+            --primary-rgb: 0, 240, 255;
             --primary-glow: rgba(0, 240, 255, 0.4);
-            --secondary: #ff00aa;
-            --text-main: #ffffff;
-            --text-muted: #cbd5e1;
-            --card-hover-shadow: rgba(0, 240, 255, 0.2);
-            --hero-gradient: #1e293b;
+            --secondary: #ec4899;
+            --secondary-glow: rgba(236, 72, 153, 0.35);
+            --accent-violet: #8b5cf6;
+            --accent-emerald: #10b981;
+            --accent-amber: #f59e0b;
+
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-dim: #64748b;
+
+            --card-hover-shadow: 0 20px 40px -15px rgba(0, 240, 255, 0.22);
+            --hero-gradient: #161536;
+
+            --font-display: 'Outfit', 'Space Grotesk', -apple-system, sans-serif;
+            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
 
             /* Dropdown Colors */
-            --drop-bg: rgba(15, 23, 42, 0.95);
-            --drop-hover: rgba(255, 255, 255, 0.05);
-            --drop-icon-bg: rgba(255, 255, 255, 0.03);
+            --drop-bg: rgba(11, 16, 30, 0.96);
+            --drop-hover: rgba(255, 255, 255, 0.06);
+            --drop-icon-bg: rgba(255, 255, 255, 0.04);
         }
 
         /* DAY THEME */
         :root[data-theme="day"] {
-            --bg-base: #f0f4f8;
-            --glass-bg: rgba(255, 255, 255, 0.7);
-            --nav-bg-scrolled: rgba(240, 244, 248, 0.98);
-            --glass-border: rgba(0, 0, 0, 0.15);
+            --bg-base: #f8fafc;
+            --bg-surface: #ffffff;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f1f5f9;
+            --glass-bg: rgba(255, 255, 255, 0.82);
+            --glass-bg-hover: rgba(255, 255, 255, 0.95);
+            --nav-bg-scrolled: rgba(255, 255, 255, 0.96);
+            --glass-border: rgba(15, 23, 42, 0.08);
+            --glass-border-hover: rgba(2, 132, 199, 0.45);
+            --glass-highlight: rgba(255, 255, 255, 0.8);
+
             --primary: #0284c7;
-            --primary-glow: rgba(2, 132, 199, 0.4);
+            --primary-rgb: 2, 132, 199;
+            --primary-glow: rgba(2, 132, 199, 0.25);
             --secondary: #db2777;
+            --secondary-glow: rgba(219, 39, 119, 0.25);
+            --accent-violet: #7c3aed;
+            --accent-emerald: #059669;
+            --accent-amber: #d97706;
+
             --text-main: #0f172a;
-            --text-muted: #334155;
-            --card-hover-shadow: rgba(2, 132, 199, 0.25);
+            --text-muted: #475569;
+            --text-dim: #94a3b8;
+
+            --card-hover-shadow: 0 20px 40px -15px rgba(2, 132, 199, 0.18);
             --hero-gradient: #e2e8f0;
 
             /* Dropdown Colors Day */
             --drop-bg: rgba(255, 255, 255, 0.98);
-            --drop-hover: rgba(0, 0, 0, 0.04);
-            --drop-icon-bg: rgba(0, 0, 0, 0.03);
+            --drop-hover: rgba(15, 23, 42, 0.04);
+            --drop-icon-bg: rgba(15, 23, 42, 0.03);
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        ::selection {
+            background: rgba(0, 240, 255, 0.35);
+            color: #ffffff;
         }
 
         body {
             margin: 0;
-            font-family: 'Inter', sans-serif;
+            font-family: var(--font-body);
             background-color: var(--bg-base);
-            background-image: radial-gradient(circle at top, var(--hero-gradient) 0%, transparent 60%);
+            background-image: 
+                radial-gradient(circle at 50% 120px, rgba(0, 240, 255, 0.08) 0%, transparent 60%),
+                radial-gradient(circle at 85% 450px, rgba(139, 92, 246, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 15% 800px, rgba(236, 72, 153, 0.05) 0%, transparent 50%);
             background-attachment: fixed;
             color: var(--text-main);
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
             transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        :root[data-theme="day"] body {
+            background-image: 
+                radial-gradient(circle at 50% 120px, rgba(2, 132, 199, 0.06) 0%, transparent 60%),
+                radial-gradient(circle at 85% 450px, rgba(124, 58, 237, 0.04) 0%, transparent 50%);
         }
 
         #particle-canvas {
@@ -80,8 +139,15 @@
             width: 100vw;
             height: 100vh;
             z-index: 1;
-            opacity: 0.85;
+            opacity: 0.65;
             pointer-events: none;
+            transition: opacity 0.35s ease, filter 0.35s ease;
+        }
+
+        :root[data-theme="day"] #particle-canvas,
+        html.light-mode #particle-canvas {
+            opacity: 0.16;
+            filter: saturate(0.65) brightness(0.95);
         }
 
         .content-wrapper {
@@ -89,11 +155,37 @@
             z-index: 10;
         }
 
+        /* Ambient Glow Aura */
+        .ambient-glow-aura {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 850px;
+            height: 420px;
+            background: radial-gradient(ellipse at center, rgba(0, 240, 255, 0.15) 0%, rgba(139, 92, 246, 0.09) 45%, transparent 70%);
+            filter: blur(85px);
+            pointer-events: none;
+            z-index: -1;
+            animation: ambientFloat 10s ease-in-out infinite alternate;
+        }
+
+        :root[data-theme="day"] .ambient-glow-aura {
+            background: radial-gradient(ellipse at center, rgba(2, 132, 199, 0.12) 0%, rgba(124, 58, 237, 0.06) 45%, transparent 70%);
+            filter: blur(95px);
+        }
+
+        @keyframes ambientFloat {
+            0% { transform: translateX(-50%) scale(1) translateY(0); opacity: 0.8; }
+            100% { transform: translateX(-50%) scale(1.08) translateY(15px); opacity: 1; }
+        }
+
         /* Scroll Reveal */
         .reveal {
             opacity: 0;
-            transform: translateY(40px);
-            transition: all 0.6s cubic-bezier(0.5, 0, 0, 1);
+            transform: translateY(35px);
+            transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity, transform;
         }
 
         .reveal.active {
@@ -101,57 +193,65 @@
             transform: translateY(0);
         }
 
-        .delay-1 {
-            transition-delay: 0.1s;
-        }
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.18s; }
+        .delay-3 { transition-delay: 0.26s; }
 
-        .delay-2 {
-            transition-delay: 0.2s;
-        }
-
-        .delay-3 {
-            transition-delay: 0.3s;
-        }
-
-        /* Navbar */
+        /* =========================================
+           FLOATING GLASS NAVBAR
+           ========================================= */
         .navbar {
             position: fixed;
-            top: 20px;
+            top: 18px;
             left: 50%;
             transform: translateX(-50%);
             width: 95%;
-            max-width: 1200px;
+            max-width: 1220px;
             background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 25px;
-            border-radius: 40px;
+            padding: 10px 24px;
+            border-radius: 999px;
             border: 1px solid var(--glass-border);
             z-index: 1000;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            transition: all 0.4s ease;
+            box-shadow: 0 10px 35px -10px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        :root[data-theme="day"] .navbar {
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9);
         }
 
         .navbar.scrolled {
-            top: 10px;
+            top: 12px;
             background: var(--nav-bg-scrolled);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-            border-color: var(--primary);
+            box-shadow: 0 16px 45px -10px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--primary-glow);
+            border-color: rgba(var(--primary-rgb), 0.3);
         }
 
         .brand {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 700;
+            font-family: var(--font-display);
+            font-size: 1.45rem;
+            font-weight: 800;
             color: var(--text-main);
             text-decoration: none;
+            letter-spacing: -0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: transform 0.25s ease;
+        }
+
+        .brand:hover {
+            transform: scale(1.02);
         }
 
         .brand span {
             color: var(--primary);
+            text-shadow: 0 0 20px var(--primary-glow);
         }
 
         .nav-links {
@@ -166,22 +266,35 @@
         .nav-links>li>a {
             color: var(--text-muted);
             text-decoration: none;
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             font-weight: 500;
-            transition: 0.3s;
+            transition: all 0.25s ease;
             display: flex;
             align-items: center;
             gap: 5px;
-            padding: 10px 0;
+            padding: 8px 6px;
+            position: relative;
         }
 
         .nav-links>li>a:hover,
         .nav-links>li>a.active {
-            color: var(--primary);
-            text-shadow: 0 0 10px var(--primary-glow);
+            color: var(--text-main);
         }
 
-        /* Pure Chemistry Dropdown */
+        .nav-links>li>a:hover::after,
+        .nav-links>li>a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 6px;
+            right: 6px;
+            height: 2px;
+            background: var(--primary);
+            border-radius: 2px;
+            box-shadow: 0 0 8px var(--primary);
+        }
+
+        /* Dropdown Menu */
         .dropdown {
             position: relative;
             display: inline-block;
@@ -191,108 +304,128 @@
             visibility: hidden;
             opacity: 0;
             position: absolute;
-            top: 100%;
-            left: -80px;
+            top: 115%;
+            left: -90px;
             background: var(--drop-bg);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            min-width: 380px;
-            border-radius: 16px;
+            backdrop-filter: blur(28px) saturate(180%);
+            -webkit-backdrop-filter: blur(28px) saturate(180%);
+            min-width: 420px;
+            border-radius: 20px;
             border: 1px solid var(--glass-border);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-            padding: 15px;
-            transform: translateY(15px);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            padding: 14px;
+            transform: translateY(12px) scale(0.98);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
             display: flex;
             flex-direction: column;
             gap: 5px;
             z-index: 2000;
+            max-height: 75vh;
+            overflow-y: auto;
+        }
+
+        .dropdown-content::-webkit-scrollbar {
+            width: 5px;
+        }
+        .dropdown-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
         }
 
         :root[data-theme="day"] .dropdown-content {
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9);
         }
 
         .dropdown:hover .dropdown-content {
             visibility: visible;
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
         }
 
         .drop-item {
             display: flex;
             align-items: flex-start;
-            gap: 15px;
-            padding: 12px 15px;
+            gap: 14px;
+            padding: 10px 14px;
             border-radius: 12px;
             text-decoration: none;
-            transition: 0.2s;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
             cursor: pointer;
+            border: 1px solid transparent;
         }
 
         .drop-item:hover {
             background: var(--drop-hover);
-            transform: translateX(5px);
+            border-color: rgba(var(--primary-rgb), 0.25);
+            transform: translateX(4px);
         }
 
         .drop-icon {
-            font-size: 1.3rem;
+            font-size: 1.25rem;
             background: var(--drop-icon-bg);
             color: var(--primary);
-            width: 42px;
-            height: 42px;
+            width: 40px;
+            height: 40px;
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
             border: 1px solid var(--glass-border);
+            transition: transform 0.2s ease;
+        }
+
+        .drop-item:hover .drop-icon {
+            transform: scale(1.08);
+            border-color: var(--primary);
+            background: rgba(var(--primary-rgb), 0.1);
         }
 
         .drop-text {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 3px;
         }
 
         .drop-title {
-            font-family: 'Inter', sans-serif;
+            font-family: var(--font-body);
             font-weight: 600;
             color: var(--text-main);
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .drop-sub {
             color: var(--text-muted);
-            font-size: 0.82rem;
-            line-height: 1.4;
+            font-size: 0.8rem;
+            line-height: 1.35;
         }
 
         .badge {
-            font-size: 0.6rem;
-            padding: 2px 8px;
-            border-radius: 12px;
+            font-size: 0.68rem;
+            padding: 3px 10px;
+            border-radius: 999px;
             font-weight: 700;
             letter-spacing: 0.5px;
+            font-family: var(--font-display);
         }
 
         .badge-class {
-            background: rgba(0, 240, 255, 0.1);
+            background: rgba(0, 240, 255, 0.12);
             color: var(--primary);
             border: 1px solid rgba(0, 240, 255, 0.3);
         }
 
         .theme-toggle {
-            background: rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--glass-border);
-            font-size: 1.2rem;
+            font-size: 1.05rem;
             cursor: pointer;
-            transition: 0.3s;
-            width: 40px;
-            height: 40px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             outline: none;
             display: flex;
@@ -303,119 +436,746 @@
 
         .theme-toggle:hover {
             transform: scale(1.1) rotate(15deg);
-            background: var(--primary-glow);
-            color: #fff;
+            background: rgba(var(--primary-rgb), 0.15);
             border-color: var(--primary);
+            box-shadow: 0 0 16px var(--primary-glow);
         }
 
         :root[data-theme="day"] .theme-toggle {
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(15, 23, 42, 0.05);
         }
 
-        /* Page Header */
+        /* =========================================
+           PAGE HEADER
+           ========================================= */
         .page-header {
-            padding: 130px 5% 50px 5%;
+            padding: 135px 5% 35px 5%;
             text-align: center;
+            position: relative;
+        }
+
+        .header-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.28);
+            padding: 6px 16px;
+            border-radius: 999px;
+            font-family: var(--font-display);
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--primary);
+            margin-bottom: 20px;
         }
 
         .page-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 3.5rem;
-            font-weight: 700;
-            margin: 0 0 15px 0;
-            letter-spacing: -1px;
+            font-family: var(--font-display);
+            font-size: clamp(2.8rem, 5vw, 4rem);
+            font-weight: 800;
+            margin: 0 0 18px 0;
+            letter-spacing: -1.2px;
+            line-height: 1.15;
         }
 
         .page-title span {
-            color: var(--primary);
+            background: linear-gradient(135deg, #00f0ff 0%, #38bdf8 30%, #a855f7 70%, #ec4899 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 25px rgba(0, 240, 255, 0.3));
+        }
+
+        :root[data-theme="day"] .page-title span {
+            background: linear-gradient(135deg, #0284c7 0%, #2563eb 45%, #7c3aed 90%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: none;
         }
 
         .page-subtitle {
             font-size: 1.15rem;
             color: var(--text-muted);
-            max-width: 650px;
+            max-width: 680px;
             margin: 0 auto;
             line-height: 1.7;
+            font-weight: 400;
         }
 
-        /* Simulators Grid */
+        /* =========================================
+           SEARCH & FILTER CONTROLS
+           ========================================= */
+        .hub-controls {
+            max-width: 1220px;
+            margin: 0 auto 45px auto;
+            padding: 0 5%;
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+
+        .search-box-wrapper {
+            position: relative;
+            max-width: 680px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .sim-search-input {
+            width: 100%;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 999px;
+            padding: 16px 85px 16px 52px;
+            font-family: var(--font-body);
+            font-size: 0.98rem;
+            color: var(--text-main);
+            outline: none;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        :root[data-theme="day"] .sim-search-input {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        }
+
+        .sim-search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 12px 35px rgba(0, 240, 255, 0.25), 0 0 0 2px var(--primary-glow);
+            background: var(--glass-bg-hover);
+        }
+
+        .search-kbd-hint {
+            position: absolute;
+            right: 48px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            padding: 2px 8px;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            pointer-events: none;
+        }
+
+        .clear-search-btn {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 50%;
+            display: none;
+            transition: color 0.2s;
+        }
+
+        .clear-search-btn:hover {
+            color: var(--primary);
+        }
+
+        .filter-tabs-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .filter-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 4px;
+            border-radius: 999px;
+            border: 1px solid var(--glass-border);
+        }
+
+        :root[data-theme="day"] .filter-tabs {
+            background: rgba(15, 23, 42, 0.04);
+        }
+
+        .filter-pill {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 8px 18px;
+            border-radius: 999px;
+            font-family: var(--font-display);
+            font-size: 0.86rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-pill:hover {
+            color: var(--text-main);
+        }
+
+        .filter-pill.active {
+            background: var(--primary);
+            color: #030a16;
+            font-weight: 700;
+            box-shadow: 0 4px 15px var(--primary-glow);
+        }
+
+        :root[data-theme="day"] .filter-pill.active {
+            color: #ffffff;
+        }
+
+        .pill-count {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1px 7px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+        }
+
+        .filter-pill.active .pill-count {
+            background: rgba(0, 0, 0, 0.25);
+            color: inherit;
+        }
+
+        .search-result-status {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-family: var(--font-display);
+        }
+
+        /* Empty State */
+        .no-results-box {
+            text-align: center;
+            padding: 60px 20px;
+            max-width: 520px;
+            margin: 20px auto 60px auto;
+            background: var(--glass-bg);
+            border: 1px dashed var(--glass-border);
+            border-radius: 24px;
+            backdrop-filter: blur(20px);
+        }
+
+        .no-results-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .no-results-box h3 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            margin: 0 0 10px 0;
+            color: var(--text-main);
+        }
+
+        .no-results-box p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin: 0 0 20px 0;
+            line-height: 1.5;
+        }
+
+        /* =========================================
+           SIMULATORS GRID & LUXURY THEMED CARDS
+           ========================================= */
         .sim-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 30px;
-            max-width: 1200px;
+            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+            gap: 28px;
+            max-width: 1220px;
             margin: 0 auto;
-            padding: 0 5% 100px 5%;
+            padding: 0 5% 60px 5%;
         }
 
         .sim-card {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 30px;
+            background: radial-gradient(circle at 50% 0%, rgba(var(--card-accent-rgb, 0, 240, 255), 0.12) 0%, var(--glass-bg) 70%);
+            border: 1px solid rgba(var(--card-accent-rgb, 255, 255, 255), 0.22);
+            border-radius: 22px;
+            padding: 32px 28px;
             display: flex;
             flex-direction: column;
-            transition: all 0.4s ease;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
             overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        :root[data-theme="day"] .sim-card,
+        html.light-mode .sim-card {
+            background: radial-gradient(circle at 50% 0%, rgba(var(--card-accent-rgb, 2, 132, 199), 0.08) 0%, var(--glass-bg) 75%);
+            border: 1px solid rgba(var(--card-accent-rgb, 15, 23, 42), 0.16);
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05), 0 2px 8px rgba(var(--card-accent-rgb, 2, 132, 199), 0.06);
+        }
+
+        .sim-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--card-gradient, linear-gradient(90deg, var(--primary), var(--secondary)));
+            opacity: 0.85;
+            transition: all 0.3s ease;
         }
 
         .sim-card:hover {
-            transform: translateY(-8px);
-            border-color: var(--primary);
-            box-shadow: 0 15px 40px var(--card-hover-shadow);
+            transform: translateY(-8px) scale(1.01);
+            border-color: var(--card-accent, var(--primary));
+            box-shadow: 0 20px 45px -10px rgba(var(--card-accent-rgb, 0, 240, 255), 0.32);
+        }
+
+        :root[data-theme="day"] .sim-card:hover,
+        html.light-mode .sim-card:hover {
+            box-shadow: 0 20px 40px -10px rgba(var(--card-accent-rgb, 2, 132, 199), 0.22), 0 4px 12px rgba(15, 23, 42, 0.06);
+        }
+
+        .sim-card:hover::before {
+            opacity: 1;
+            height: 4px;
+            box-shadow: 0 0 16px var(--card-accent, var(--primary));
         }
 
         .sim-card-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 20px;
+            margin-bottom: 22px;
+            gap: 12px;
         }
 
         .sim-icon {
-            font-size: 2.5rem;
-            background: var(--drop-icon-bg);
-            padding: 15px;
-            border-radius: 15px;
-            border: 1px solid var(--glass-border);
+            font-size: 2.1rem;
+            width: 58px;
+            height: 58px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(var(--card-accent-rgb, 0, 240, 255), 0.12);
+            border: 1px solid rgba(var(--card-accent-rgb, 0, 240, 255), 0.28);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            flex-shrink: 0;
+        }
+
+        :root[data-theme="day"] .sim-icon,
+        html.light-mode .sim-icon {
+            background: rgba(var(--card-accent-rgb, 2, 132, 199), 0.1);
+            border: 1px solid rgba(var(--card-accent-rgb, 2, 132, 199), 0.24);
+        }
+
+        .sim-card:hover .sim-icon {
+            transform: scale(1.1) rotate(4deg);
+            border-color: var(--card-accent, var(--primary));
+            background: rgba(var(--card-accent-rgb, 0, 240, 255), 0.22);
+            box-shadow: 0 0 20px rgba(var(--card-accent-rgb, 0, 240, 255), 0.3);
+        }
+
+        :root[data-theme="day"] .sim-card:hover .sim-icon,
+        html.light-mode .sim-card:hover .sim-icon {
+            background: rgba(var(--card-accent-rgb, 2, 132, 199), 0.18);
+            box-shadow: 0 0 20px rgba(var(--card-accent-rgb, 2, 132, 199), 0.25);
+        }
+
+        .badge-class {
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 0.74rem;
+            font-weight: 700;
+            font-family: var(--font-display);
+            letter-spacing: 0.5px;
+            background: rgba(var(--card-accent-rgb, 0, 240, 255), 0.14);
+            color: var(--card-accent, var(--primary));
+            border: 1px solid rgba(var(--card-accent-rgb, 0, 240, 255), 0.3);
+            white-space: nowrap;
+            transition: all 0.25s ease;
+        }
+
+        :root[data-theme="day"] .badge-class,
+        html.light-mode .badge-class {
+            background: rgba(var(--card-accent-rgb, 2, 132, 199), 0.1);
+            color: var(--card-accent, var(--primary));
+            border: 1px solid rgba(var(--card-accent-rgb, 2, 132, 199), 0.25);
         }
 
         .sim-card h3 {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.4rem;
+            font-family: var(--font-display);
+            font-size: 1.35rem;
+            font-weight: 700;
             color: var(--text-main);
-            margin: 0 0 10px 0;
+            margin: 0 0 12px 0;
+            letter-spacing: -0.4px;
+            line-height: 1.3;
         }
 
         .sim-card p {
             color: var(--text-muted);
-            font-size: 0.95rem;
-            line-height: 1.6;
-            margin: 0 0 25px 0;
+            font-size: 0.93rem;
+            line-height: 1.65;
+            margin: 0 0 24px 0;
             flex-grow: 1;
         }
 
         .launch-btn {
             width: 100%;
-            padding: 12px;
-            background: transparent;
-            color: var(--primary);
-            border: 1px solid var(--primary);
-            border-radius: 10px;
-            font-weight: 600;
-            font-family: 'Space Grotesk', sans-serif;
+            padding: 13px 18px;
+            background: rgba(var(--card-accent-rgb, 0, 240, 255), 0.08);
+            color: var(--card-accent, var(--primary));
+            border: 1px solid rgba(var(--card-accent-rgb, 0, 240, 255), 0.28);
+            border-radius: 12px;
+            font-weight: 700;
+            font-family: var(--font-display);
             cursor: pointer;
-            transition: 0.3s;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
             text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 0.9rem;
+            letter-spacing: 0.8px;
+            font-size: 0.84rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: auto;
         }
 
+        :root[data-theme="day"] .launch-btn,
+        html.light-mode .launch-btn {
+            background: rgba(var(--card-accent-rgb, 2, 132, 199), 0.07);
+            color: var(--card-accent, var(--primary));
+            border: 1px solid rgba(var(--card-accent-rgb, 2, 132, 199), 0.25);
+        }
+
+        .launch-btn:hover,
         .sim-card:hover .launch-btn {
-            background: var(--primary);
-            color: #fff;
-            box-shadow: 0 5px 15px var(--primary-glow);
+            background: var(--card-gradient, linear-gradient(135deg, var(--primary), var(--secondary)));
+            color: #ffffff !important;
+            border-color: transparent;
+            box-shadow: 0 8px 24px rgba(var(--card-accent-rgb, 0, 240, 255), 0.38);
+            transform: translateY(-2px);
+        }
+
+        /* ── Individual Card Domain Color Themes ── */
+        .card-atomverse {
+            --card-accent: #00f0ff;
+            --card-accent-rgb: 0, 240, 255;
+            --card-gradient: linear-gradient(135deg, #00f0ff, #0ea5e9);
+        }
+        :root[data-theme="day"] .card-atomverse,
+        html.light-mode .card-atomverse {
+            --card-accent: #0284c7;
+            --card-accent-rgb: 2, 132, 199;
+            --card-gradient: linear-gradient(135deg, #0284c7, #0369a1);
+        }
+
+        .card-reaction {
+            --card-accent: #4ade80;
+            --card-accent-rgb: 74, 222, 128;
+            --card-gradient: linear-gradient(135deg, #4ade80, #22c55e);
+        }
+        :root[data-theme="day"] .card-reaction,
+        html.light-mode .card-reaction {
+            --card-accent: #16a34a;
+            --card-accent-rgb: 22, 163, 74;
+            --card-gradient: linear-gradient(135deg, #16a34a, #15803d);
+        }
+
+        .card-particle {
+            --card-accent: #38bdf8;
+            --card-accent-rgb: 56, 189, 248;
+            --card-gradient: linear-gradient(135deg, #38bdf8, #0284c7);
+        }
+        :root[data-theme="day"] .card-particle,
+        html.light-mode .card-particle {
+            --card-accent: #0284c7;
+            --card-accent-rgb: 2, 132, 199;
+            --card-gradient: linear-gradient(135deg, #0284c7, #0369a1);
+        }
+
+        .card-titration {
+            --card-accent: #06b6d4;
+            --card-accent-rgb: 6, 182, 212;
+            --card-gradient: linear-gradient(135deg, #06b6d4, #0891b2);
+        }
+        :root[data-theme="day"] .card-titration,
+        html.light-mode .card-titration {
+            --card-accent: #0891b2;
+            --card-accent-rgb: 8, 145, 178;
+            --card-gradient: linear-gradient(135deg, #0891b2, #0e7490);
+        }
+
+        .card-bonding {
+            --card-accent: #c084fc;
+            --card-accent-rgb: 192, 132, 252;
+            --card-gradient: linear-gradient(135deg, #c084fc, #9333ea);
+        }
+        :root[data-theme="day"] .card-bonding,
+        html.light-mode .card-bonding {
+            --card-accent: #9333ea;
+            --card-accent-rgb: 147, 51, 234;
+            --card-gradient: linear-gradient(135deg, #9333ea, #7e22ce);
+        }
+
+        .card-rutherford {
+            --card-accent: #f59e0b;
+            --card-accent-rgb: 245, 158, 11;
+            --card-gradient: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+        :root[data-theme="day"] .card-rutherford,
+        html.light-mode .card-rutherford {
+            --card-accent: #d97706;
+            --card-accent-rgb: 217, 119, 6;
+            --card-gradient: linear-gradient(135deg, #d97706, #b45309);
+        }
+
+        .card-gaslaws {
+            --card-accent: #fb7185;
+            --card-accent-rgb: 251, 113, 133;
+            --card-gradient: linear-gradient(135deg, #fb7185, #e11d48);
+        }
+        :root[data-theme="day"] .card-gaslaws,
+        html.light-mode .card-gaslaws {
+            --card-accent: #e11d48;
+            --card-accent-rgb: 225, 29, 72;
+            --card-gradient: linear-gradient(135deg, #e11d48, #be123c);
+        }
+
+        .card-electro {
+            --card-accent: #eab308;
+            --card-accent-rgb: 234, 179, 8;
+            --card-gradient: linear-gradient(135deg, #eab308, #ca8a04);
+        }
+        :root[data-theme="day"] .card-electro,
+        html.light-mode .card-electro {
+            --card-accent: #ca8a04;
+            --card-accent-rgb: 202, 138, 4;
+            --card-gradient: linear-gradient(135deg, #ca8a04, #a16207);
+        }
+
+        .card-molecules {
+            --card-accent: #818cf8;
+            --card-accent-rgb: 129, 140, 248;
+            --card-gradient: linear-gradient(135deg, #818cf8, #4f46e5);
+        }
+        :root[data-theme="day"] .card-molecules,
+        html.light-mode .card-molecules {
+            --card-accent: #4f46e5;
+            --card-accent-rgb: 79, 70, 229;
+            --card-gradient: linear-gradient(135deg, #4f46e5, #4338ca);
+        }
+
+        .card-equilibrium {
+            --card-accent: #facc15;
+            --card-accent-rgb: 250, 204, 21;
+            --card-gradient: linear-gradient(135deg, #facc15, #ca8a04);
+        }
+        :root[data-theme="day"] .card-equilibrium,
+        html.light-mode .card-equilibrium {
+            --card-accent: #ca8a04;
+            --card-accent-rgb: 202, 138, 4;
+            --card-gradient: linear-gradient(135deg, #ca8a04, #a16207);
+        }
+
+        .card-flametest {
+            --card-accent: #ff6b4a;
+            --card-accent-rgb: 255, 107, 74;
+            --card-gradient: linear-gradient(135deg, #ff6b4a, #ea580c);
+        }
+        :root[data-theme="day"] .card-flametest,
+        html.light-mode .card-flametest {
+            --card-accent: #ea580c;
+            --card-accent-rgb: 234, 88, 12;
+            --card-gradient: linear-gradient(135deg, #ea580c, #c2410c);
+        }
+
+        .card-calorimetry {
+            --card-accent: #f43f5e;
+            --card-accent-rgb: 244, 63, 94;
+            --card-gradient: linear-gradient(135deg, #f43f5e, #be123c);
+        }
+        :root[data-theme="day"] .card-calorimetry,
+        html.light-mode .card-calorimetry {
+            --card-accent: #e11d48;
+            --card-accent-rgb: 225, 29, 72;
+            --card-gradient: linear-gradient(135deg, #e11d48, #be123c);
+        }
+
+        .card-halflife {
+            --card-accent: #22d3ee;
+            --card-accent-rgb: 34, 211, 238;
+            --card-gradient: linear-gradient(135deg, #22d3ee, #0891b2);
+        }
+        :root[data-theme="day"] .card-halflife,
+        html.light-mode .card-halflife {
+            --card-accent: #0891b2;
+            --card-accent-rgb: 8, 145, 178;
+            --card-gradient: linear-gradient(135deg, #0891b2, #0e7490);
+        }
+
+        .card-nomenclature {
+            --card-accent: #c084fc;
+            --card-accent-rgb: 192, 132, 252;
+            --card-gradient: linear-gradient(135deg, #c084fc, #9333ea);
+        }
+        :root[data-theme="day"] .card-nomenclature,
+        html.light-mode .card-nomenclature {
+            --card-accent: #9333ea;
+            --card-accent-rgb: 147, 51, 234;
+            --card-gradient: linear-gradient(135deg, #9333ea, #7e22ce);
+        }
+
+        /* =========================================
+           MULTI-COLUMN COMPREHENSIVE FOOTER
+           ========================================= */
+        footer.rich-footer {
+            border-top: 1px solid var(--glass-border);
+            background: rgba(8, 12, 22, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 80px 5% 40px 5%;
+            color: var(--text-muted);
+            font-family: var(--font-body);
+            margin-top: 50px;
+            position: relative;
+            z-index: 10;
+        }
+
+        :root[data-theme="day"] footer.rich-footer,
+        html.light-mode footer.rich-footer {
+            background: rgba(248, 250, 252, 0.88);
+            border-top: 1px solid rgba(15, 23, 42, 0.08);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1.8fr 1fr 1fr 1.2fr;
+            gap: 45px;
+            max-width: 1220px;
+            margin: 0 auto 55px auto;
+        }
+
+        @media (max-width: 900px) {
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 35px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .footer-brand h3 {
+            font-family: var(--font-display);
+            font-size: 1.85rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin: 0 0 16px 0;
+            letter-spacing: -0.5px;
+        }
+
+        .footer-brand h3 span {
+            color: var(--primary);
+        }
+
+        .footer-brand p {
+            line-height: 1.7;
+            font-size: 0.92rem;
+            margin-bottom: 22px;
+            max-width: 360px;
+            color: var(--text-muted);
+        }
+
+        .footer-col h4 {
+            font-family: var(--font-display);
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 0 0 20px 0;
+            letter-spacing: 0.3px;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 11px;
+        }
+
+        .footer-links li a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .footer-links li a:hover {
+            color: var(--primary);
+            transform: translateX(4px);
+        }
+
+        .footer-bottom {
+            max-width: 1220px;
+            margin: 0 auto;
+            padding-top: 30px;
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        :root[data-theme="day"] .footer-bottom,
+        html.light-mode .footer-bottom {
+            border-top: 1px solid rgba(15, 23, 42, 0.08);
+        }
+
+        .footer-bottom-links {
+            display: flex;
+            gap: 22px;
+        }
+
+        .footer-bottom-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .footer-bottom-links a:hover {
+            color: var(--primary);
         }
     </style>
 </head>
@@ -540,173 +1300,270 @@
 
         <!-- Page Header -->
         <header class="page-header reveal active">
+            <div class="header-pill">
+                <span>⚡</span> 14 Interactive Engines Available
+            </div>
             <h1 class="page-title">Chemistry <span>Simulators</span></h1>
-            <p class="page-subtitle">Select a module below to launch the interactive particle engine. Designed
-                specifically to visualize NCERT and CBSE concepts for Class 6 to 12.</p>
+            <p class="page-subtitle">Explore real-time particle engines, quantum orbital visualizers, and NCERT-aligned virtual experiments designed for Class 6 to 12 &amp; competitive exams.</p>
         </header>
 
-        <!-- Simulators Grid -->
-        <div class="sim-grid">
+        <!-- Interactive Search & Filter Controls -->
+        <div class="hub-controls reveal active">
+            <div class="search-box-wrapper">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="simSearchInput" class="sim-search-input" placeholder="Search by topic, law, or element (e.g. Bohr, Titration, Gas, IUPAC, Le Chatelier)..." autocomplete="off" spellcheck="false">
+                <span class="search-kbd-hint">/</span>
+                <button type="button" id="searchClearBtn" class="search-clear-btn" style="display:none;" title="Clear search">✕</button>
+            </div>
 
-            <!-- Featured Card 0: AtomVerse -->
-            <div class="sim-card reveal delay-1" style="border:1px solid rgba(53,221,255,0.45);background:radial-gradient(circle at 50% 0%,rgba(53,221,255,0.15),rgba(15,30,53,0.95));box-shadow:0 0 25px rgba(0,212,255,0.15)">
+            <div class="filter-pills" id="filterPills">
+                <button class="filter-pill active" data-filter="all">All Simulators <span class="pill-count">14</span></button>
+                <button class="filter-pill" data-filter="quantum">⚛️ Quantum &amp; Atomic <span class="pill-count">4</span></button>
+                <button class="filter-pill" data-filter="physical">🌡️ Physical Chemistry <span class="pill-count">8</span></button>
+                <button class="filter-pill" data-filter="organic">🧪 Organic &amp; 3D <span class="pill-count">3</span></button>
+                <button class="filter-pill" data-filter="board">📋 Board Practicals <span class="pill-count">4</span></button>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; max-width:1220px; margin: 0 auto; width:100%; padding:0 4px;">
+                <span class="search-result-status" id="resultStatus">Showing all 14 interactive simulators</span>
+                <button id="resetFiltersBtn" style="display:none; background:none; border:none; color:var(--primary); font-size:0.85rem; font-weight:600; cursor:pointer; text-decoration:underline;">Reset filters</button>
+            </div>
+        </div>
+
+        <!-- Simulators Grid -->
+        <div class="sim-grid" id="simGrid">
+
+            <!-- Card 0: AtomVerse Quantum Lab -->
+            <div class="sim-card card-atomverse reveal delay-1" data-category="quantum atomic" data-classes="class-9 class-10 class-11 class-12">
                 <div class="sim-card-header">
                     <div class="sim-icon">⚛️</div>
-                    <span class="badge badge-class" style="background:rgba(53,221,255,0.2);color:#35ddff">Class 9 - 12 &amp; Competitive</span>
+                    <span class="badge badge-class">Class 9 - 12 &amp; Competitive</span>
                 </div>
                 <h3>AtomVerse: Atomic Structure &amp; Quantum Lab</h3>
                 <p>Interactive 118-element Bohr model, revolving electron orbits, 3D s/p/d/f orbitals, quantum numbers, emission spectra &amp; Hund/Pauli practice.</p>
-                <button class="launch-btn" style="background:linear-gradient(135deg,#00d4ff,#0ea5e9);color:#020812;font-weight:700" onclick="window.location.href='sim_atomverse.html'">Launch AtomVerse ▶</button>
+                <button class="launch-btn" onclick="window.location.href='sim_atomverse.html'">Launch AtomVerse ▶</button>
             </div>
-            <!-- Featured Card: Universal Chemical Reaction Lab & AI Predictor -->
-            <div class="sim-card reveal delay-2" style="border:1px solid rgba(74,222,128,0.45);background:radial-gradient(circle at 50% 0%,rgba(74,222,128,0.12),rgba(15,30,53,0.95));box-shadow:0 0 25px rgba(74,222,128,0.15)">
+
+            <!-- Card 1: Universal Chemical Reaction Lab & AI Predictor -->
+            <div class="sim-card card-reaction reveal delay-2" data-category="physical organic reactions" data-classes="class-10 class-11 class-12">
                 <div class="sim-card-header">
                     <div class="sim-icon">⚗️</div>
-                    <span class="badge badge-class" style="background:rgba(74,222,128,0.2);color:#4ade80">Universal Sandbox • Class 10 to 12</span>
+                    <span class="badge badge-class">Universal Sandbox • Class 10 to 12</span>
                 </div>
                 <h3>Universal Chemical Reaction Lab &amp; AI Predictor</h3>
                 <p>Input ANY custom chemical reaction or reactants from your mind! Predict products, precipitate colors, gas effervescence (H₂, CO₂), virtual beaker mixing, and exact algebraic stoichiometric balancing.</p>
-                <button class="launch-btn" style="background:linear-gradient(135deg,#4ade80,#22c55e);color:#020812;font-weight:700" onclick="window.location.href='reaction.html'">Launch Reaction Lab ▶</button>
+                <button class="launch-btn" onclick="window.location.href='reaction.html'">Launch Reaction Lab ▶</button>
             </div>
 
-            <!-- Card 1: States of Matter & Universal Particle Simulator -->
-            <div class="sim-card reveal delay-1">
+            <!-- Card 2: States of Matter & Universal Particle Simulator -->
+            <div class="sim-card card-particle reveal delay-1" data-category="physical states matter" data-classes="class-9 class-10 class-11">
                 <div class="sim-card-header">
                     <div class="sim-icon">❄️</div>
                     <span class="badge badge-class">Class 9 - 11</span>
                 </div>
                 <h3>States of Matter &amp; Universal Particles</h3>
                 <p>Control temperature and test custom substances or elements (Water, Oxygen, Iron, Ethanol, Mercury, or ANY custom compound) with real thermodynamic phase transitions.</p>
-                <button class="launch-btn" onclick="window.location.href='sim_particle.html'">Launch Lab</button>
+                <button class="launch-btn" onclick="window.location.href='sim_particle.html'">Launch Particle Engine ▶</button>
             </div>
 
-            <!-- Card 2 -->
-            <div class="sim-card reveal delay-2">
+            <!-- Card 3: Acid-Base Titration -->
+            <div class="sim-card card-titration reveal delay-2" data-category="physical board titration" data-classes="class-10 class-11 class-12">
                 <div class="sim-card-header">
                     <div class="sim-icon">💧</div>
                     <span class="badge badge-class">Class 10 - 12</span>
                 </div>
                 <h3>Acid-Base Titration</h3>
-                <p>Perform precise virtual titrations. Monitor pH changes, use indicators, and find equivalence points
-                    safely.</p>
-                <button class="launch-btn" onclick="window.location.href='sim_titration.html'">Launch Lab</button>
+                <p>Perform precise virtual titrations. Monitor pH changes, use indicators, and find equivalence points safely.</p>
+                <button class="launch-btn" onclick="window.location.href='sim_titration.html'">Launch Titration Lab ▶</button>
             </div>
 
-            <!-- Card 3 -->
-            <div class="sim-card reveal delay-3">
+            <!-- Card 4: Chemical Bonding -->
+            <div class="sim-card card-bonding reveal delay-3" data-category="quantum physical bonding" data-classes="class-11">
                 <div class="sim-card-header">
                     <div class="sim-icon">⚛️</div>
                     <span class="badge badge-class">Class 11</span>
                 </div>
                 <h3>Chemical Bonding</h3>
-                <p>Explore VSEPR theory. Build 3D molecules, understand bond angles, polarity, and molecular geometry.
-                </p>
-                <button class="launch-btn" onclick="window.location.href='sim_bonding.html'">Launch Lab</button>
+                <p>Explore VSEPR theory. Build 3D molecules, understand bond angles, polarity, and molecular geometry.</p>
+                <button class="launch-btn" onclick="window.location.href='sim_bonding.html'">Launch Bonding Lab ▶</button>
             </div>
 
-            <!-- Card 4 -->
-            <div class="sim-card reveal delay-1">
+            <!-- Card 5: Rutherford's Model -->
+            <div class="sim-card card-rutherford reveal delay-1" data-category="quantum atomic" data-classes="class-9 class-11">
                 <div class="sim-card-header">
                     <div class="sim-icon">🎯</div>
-                    <span class="badge badge-class">Class 9 & 11</span>
+                    <span class="badge badge-class">Class 9 &amp; 11</span>
                 </div>
                 <h3>Rutherford's Model</h3>
-                <p>Recreate the famous Gold Foil experiment. Fire alpha particles and observe atomic nuclei deflection.
-                </p>
-                <button class="launch-btn" onclick="window.location.href='sim_rutherford.html'">Launch Lab</button>
+                <p>Recreate the famous Gold Foil experiment. Fire alpha particles and observe atomic nuclei deflection.</p>
+                <button class="launch-btn" onclick="window.location.href='sim_rutherford.html'">Launch Rutherford Lab ▶</button>
             </div>
 
-            <!-- Card 5 -->
-            <div class="sim-card reveal delay-2">
+            <!-- Card 6: Ideal Gas Laws -->
+            <div class="sim-card card-gaslaws reveal delay-2" data-category="physical thermodynamics" data-classes="class-11">
                 <div class="sim-card-header">
                     <div class="sim-icon">🎈</div>
                     <span class="badge badge-class">Class 11</span>
                 </div>
                 <h3>Ideal Gas Laws</h3>
-                <p>Experiment with Boyle's, Charles', and Gay-Lussac's laws. Alter volume, pressure, and temperature
-                    interactively.</p>
-                <button class="launch-btn" onclick="window.location.href='sim_gaslaws.html'">Launch Lab</button>
+                <p>Experiment with Boyle's, Charles', and Gay-Lussac's laws. Alter volume, pressure, and temperature interactively.</p>
+                <button class="launch-btn" onclick="window.location.href='sim_gaslaws.html'">Launch Gas Laws Lab ▶</button>
             </div>
 
-            <!-- Card 6 -->
-            <div class="sim-card reveal delay-3">
+            <!-- Card 7: Electrochemistry -->
+            <div class="sim-card card-electro reveal delay-3" data-category="physical board electrochemistry" data-classes="class-12">
                 <div class="sim-card-header">
                     <div class="sim-icon">🔋</div>
                     <span class="badge badge-class">Class 12</span>
                 </div>
                 <h3>Electrochemistry</h3>
-                <p>Construct Galvanic and Electrolytic cells. Choose electrodes, salt bridges, and measure cell
-                    potentials.</p>
-                <button class="launch-btn" onclick="window.location.href='sim_electro.html'">Launch Lab</button>
+                <p>Construct Galvanic and Electrolytic cells. Choose electrodes, salt bridges, and measure cell potentials.</p>
+                <button class="launch-btn" onclick="window.location.href='sim_electro.html'">Launch Electro Lab ▶</button>
             </div>
 
-            <!-- Card 7: 3D Molecular Geometry -->
-            <div class="sim-card reveal delay-1" style="border-color: rgba(0, 240, 255, 0.35);">
+            <!-- Card 8: 3D Molecule & Hybridization Viewer -->
+            <div class="sim-card card-molecules reveal delay-1" data-category="organic quantum bonding" data-classes="class-11 class-12">
                 <div class="sim-card-header">
                     <div class="sim-icon">🔮</div>
-                    <span class="badge badge-class" style="background: rgba(0,240,255,0.15); color: #00f0ff;">Class 11 &amp; 12</span>
+                    <span class="badge badge-class">Class 11 &amp; 12</span>
                 </div>
                 <h3>3D Molecule &amp; Hybridization Viewer</h3>
                 <p>Interactive 3D ball-and-stick models for Water, Methane, Benzene, Ethanol. Inspect bond angles, sp/sp²/sp³ hybridization &amp; net dipole vectors.</p>
-                <button class="launch-btn" onclick="window.location.href='sim_molecules.html'">Launch 3D Lab</button>
+                <button class="launch-btn" onclick="window.location.href='sim_molecules.html'">Launch 3D Lab ▶</button>
             </div>
 
-            <!-- Card 8: Chemical Equilibrium -->
-            <div class="sim-card reveal delay-2" style="border-color: rgba(255, 209, 102, 0.35);">
+            <!-- Card 9: Chemical Equilibrium & Le Chatelier Lab -->
+            <div class="sim-card card-equilibrium reveal delay-2" data-category="physical equilibrium" data-classes="class-11">
                 <div class="sim-card-header">
                     <div class="sim-icon">🔄</div>
-                    <span class="badge badge-class" style="background: rgba(255,209,102,0.15); color: #ffd166;">Class 11 &amp; Competitive</span>
+                    <span class="badge badge-class">Class 11 &amp; Competitive</span>
                 </div>
                 <h3>Chemical Equilibrium &amp; Le Chatelier Lab</h3>
                 <p>Haber process (N₂ + 3H₂ ⇌ 2NH₃). Test real-time temperature, pressure, concentration shifts, and catalyst dynamics on Kc/Qc.</p>
-                <button class="launch-btn" onclick="window.location.href='sim_equilibrium.html'">Launch Lab</button>
+                <button class="launch-btn" onclick="window.location.href='sim_equilibrium.html'">Launch Equilibrium Lab ▶</button>
             </div>
 
-            <!-- Card 9: Flame Test & Salt Analysis -->
-            <div class="sim-card reveal delay-3" style="border-color: rgba(56, 239, 125, 0.35);">
+            <!-- Card 10: Flame Test & Qualitative Salt Analysis -->
+            <div class="sim-card card-flametest reveal delay-3" data-category="board practicals qualitative" data-classes="class-9 class-10 class-11 class-12">
                 <div class="sim-card-header">
                     <div class="sim-icon">🔥</div>
-                    <span class="badge badge-class" style="background: rgba(56,239,125,0.15); color: #38ef7d;">Class 9 to 12 Practicals</span>
+                    <span class="badge badge-class">Class 9 to 12 Practicals</span>
                 </div>
                 <h3>Flame Test &amp; Qualitative Salt Analysis</h3>
                 <p>Perform Bunsen burner excitation tests for Cu²⁺, Na⁺, Sr²⁺, K⁺, Ba²⁺, Li⁺. Observe characteristic visible spectral wavelengths and Planck photon theory.</p>
-                <button class="launch-btn" onclick="window.location.href='sim_flametest.html'">Launch Lab</button>
+                <button class="launch-btn" onclick="window.location.href='sim_flametest.html'">Launch Flame Test Lab ▶</button>
             </div>
 
-            <!-- Card 10: Calorimetry & Enthalpy -->
-            <div class="sim-card reveal delay-1" style="border-color: rgba(255, 83, 118, 0.35);">
+            <!-- Card 11: Calorimetry & Enthalpy of Reaction -->
+            <div class="sim-card card-calorimetry reveal delay-1" data-category="physical thermodynamics" data-classes="class-11">
                 <div class="sim-card-header">
                     <div class="sim-icon">🌡️</div>
-                    <span class="badge badge-class" style="background: rgba(255,83,118,0.15); color: #ff5376;">Class 11 Physical Chem</span>
+                    <span class="badge badge-class">Class 11 Physical Chem</span>
                 </div>
                 <h3>Calorimetry &amp; Enthalpy of Reaction</h3>
                 <p>Insulated coffee-cup calorimeter. Test exothermic neutralization (HCl + NaOH) and endothermic cold-pack salts (NH₄NO₃) with live q = mcΔT thermodynamics.</p>
-                <button class="launch-btn" onclick="window.location.href='sim_calorimetry.html'">Launch Lab</button>
+                <button class="launch-btn" onclick="window.location.href='sim_calorimetry.html'">Launch Calorimetry Lab ▶</button>
             </div>
 
-            <!-- Card 11: Radioactive Decay -->
-            <div class="sim-card reveal delay-2" style="border-color: rgba(0, 240, 255, 0.35);">
+            <!-- Card 12: Radioactive Decay & Half-Life Simulator -->
+            <div class="sim-card card-halflife reveal delay-2" data-category="quantum physical kinetics" data-classes="class-12">
                 <div class="sim-card-header">
                     <div class="sim-icon">☢️</div>
-                    <span class="badge badge-class" style="background: rgba(0,240,255,0.15); color: #00f0ff;">Class 12 &amp; Competitive</span>
+                    <span class="badge badge-class">Class 12 &amp; Competitive</span>
                 </div>
                 <h3>Radioactive Decay &amp; Half-Life Simulator</h3>
                 <p>Track 400 probabilistic parent-daughter nuclei for Carbon-14, Uranium-238, and Iodine-131. Real-time first-order kinetics N(t) = N₀e^(-λt).</p>
-                <button class="launch-btn" onclick="window.location.href='sim_halflife.html'">Launch Lab</button>
-            <!-- Card 12: IUPAC Nomenclature Engine -->
-            <div class="sim-card reveal delay-3" style="border-color: rgba(192, 132, 252, 0.45); background: radial-gradient(circle at 50% 0%, rgba(192, 132, 252, 0.12), rgba(15, 30, 53, 0.95));">
+                <button class="launch-btn" onclick="window.location.href='sim_halflife.html'">Launch Half-Life Lab ▶</button>
+            </div>
+
+            <!-- Card 13: IUPAC Nomenclature Engine -->
+            <div class="sim-card card-nomenclature reveal delay-3" data-category="organic board" data-classes="class-10 class-11 class-12">
                 <div class="sim-card-header">
                     <div class="sim-icon">🏷️</div>
-                    <span class="badge badge-class" style="background: rgba(192, 132, 252, 0.2); color: #c084fc;">Class 10 to 12 &amp; Competitive</span>
+                    <span class="badge badge-class">Class 10 to 12 &amp; Competitive</span>
                 </div>
                 <h3>IUPAC Nomenclature Engine</h3>
                 <p>Interactive 2D carbon backbone builder. Apply longest chain, lowest locant rule, functional group priority order, and Class 12 coordination complexes naming.</p>
-                <button class="launch-btn" style="background: linear-gradient(135deg, #c084fc, #9333ea); color: #fff; font-weight: 700;" onclick="window.location.href='nomenclature.html'">Launch Nomenclature Lab</button>
+                <button class="launch-btn" onclick="window.location.href='nomenclature.html'">Launch Nomenclature Lab ▶</button>
             </div>
 
         </div>
 
+        <!-- Empty State Container -->
+        <div id="noResultsBox" class="no-results-box" style="display: none;">
+            <div class="no-results-icon">🔬</div>
+            <h3>No Simulators Found</h3>
+            <p>We couldn't find any simulation matching your query. Try a different search term or clear filters.</p>
+            <button class="launch-btn" id="emptyStateResetBtn" style="margin: 0 auto; display: inline-flex;">Reset Search &amp; Filters</button>
+        </div>
+
     </div>
+
+    <!-- Multi-Column Comprehensive Footer -->
+    <footer class="rich-footer">
+        <div class="footer-grid">
+            <!-- Brand Info -->
+            <div class="footer-brand">
+                <h3>⚗️ Mole<span>qyn</span></h3>
+                <p>
+                    The dedicated interactive chemistry laboratory ecosystem designed for students, teachers, and competitive exam aspirants across CBSE, ICSE, and State Boards.
+                </p>
+                <div style="display: flex; gap: 10px; font-size: 0.85rem; color: var(--primary);">
+                    <span>Pure Chemistry Focus</span> • <span>Class 6 to 12</span> • <span>Free &amp; Open</span>
+                </div>
+            </div>
+
+            <!-- Column 1: Labs & Simulators -->
+            <div class="footer-col">
+                <h4>Virtual Labs</h4>
+                <ul class="footer-links">
+                    <li><a href="sim_atomverse.html">⚛️ AtomVerse 3D</a></li>
+                    <li><a href="sim_particle.html">❄️ States of Matter</a></li>
+                    <li><a href="sim_titration.html">🧪 Acid-Base Titration</a></li>
+                    <li><a href="sim_gaslaws.html">🎈 Gas Laws Engine</a></li>
+                    <li><a href="sim_bonding.html">🔗 Chemical Bonding</a></li>
+                    <li><a href="sim_electro.html">🔋 Electrochemistry</a></li>
+                </ul>
+            </div>
+
+            <!-- Column 2: Tools & Study -->
+            <div class="footer-col">
+                <h4>Tools &amp; Study</h4>
+                <ul class="footer-links">
+                    <li><a href="periodic-table.html">🔢 118 Periodic Table</a></li>
+                    <li><a href="reaction.html">⚖️ Reaction Balancer</a></li>
+                    <li><a href="learn.html">📚 NCERT Class 6–12 Notes</a></li>
+                    <li><a href="experiments.html">🔬 Guided Practicals</a></li>
+                    <li><a href="quiz.html">🎯 Concept Quizzes</a></li>
+                    <li><a href="ai-tutor.html">🤖 AI Chemistry Tutor</a></li>
+                </ul>
+            </div>
+
+            <!-- Column 3: Platform & Portal -->
+            <div class="footer-col">
+                <h4>Platform</h4>
+                <ul class="footer-links">
+                    <li><a href="about.html">About Moleqyn</a></li>
+                    <li><a href="dashboard.html">Student Portal</a></li>
+                    <li><a href="login.html">Login / Register</a></li>
+                    <li><a href="resources.html">Teacher &amp; Lab Resources</a></li>
+                    <li><a href="contact.html">Contact &amp; Support</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Footer Bottom Bar -->
+        <div class="footer-bottom">
+            <div>
+                © 2026 Moleqyn Interactive. Developed for the love of Chemistry &amp; Pure Science.
+            </div>
+            <div class="footer-bottom-links">
+                <a href="learn.html">Curriculum</a>
+                <a href="simulators.html">All Simulators</a>
+                <a href="about.html">Mission</a>
+            </div>
+        </div>
+    </footer>
 
     <!-- Javascripts -->
     <script>
@@ -744,6 +1601,114 @@
                     nav.classList.remove('scrolled');
                 }
             });
+
+            // Live Search & Category Filter
+            const searchInput = document.getElementById('simSearchInput');
+            const clearBtn = document.getElementById('searchClearBtn');
+            const filterBtns = document.querySelectorAll('.filter-pill');
+            const simCards = document.querySelectorAll('.sim-grid .sim-card');
+            const resultStatus = document.getElementById('resultStatus');
+            const resetBtn = document.getElementById('resetFiltersBtn');
+            const noResultsBox = document.getElementById('noResultsBox');
+            const emptyResetBtn = document.getElementById('emptyStateResetBtn');
+            let activeFilter = 'all';
+
+            // Calculate live pill counts accurately
+            filterBtns.forEach(btn => {
+                const filter = btn.getAttribute('data-filter');
+                const badge = btn.querySelector('.pill-count');
+                if (badge) {
+                    if (filter === 'all') {
+                        badge.innerText = simCards.length;
+                    } else {
+                        const count = Array.from(simCards).filter(c => (c.getAttribute('data-category') || '').includes(filter)).length;
+                        badge.innerText = count;
+                    }
+                }
+            });
+
+            function filterCards() {
+                const query = (searchInput ? searchInput.value : '').trim().toLowerCase();
+                if (clearBtn) clearBtn.style.display = query ? 'block' : 'none';
+
+                let visibleCount = 0;
+                simCards.forEach(card => {
+                    const category = card.getAttribute('data-category') || '';
+                    const title = (card.querySelector('h3') ? card.querySelector('h3').innerText : '').toLowerCase();
+                    const desc = (card.querySelector('p') ? card.querySelector('p').innerText : '').toLowerCase();
+                    const badge = (card.querySelector('.badge') ? card.querySelector('.badge').innerText : '').toLowerCase();
+                    const content = `${title} ${desc} ${badge} ${category}`;
+
+                    const matchesCategory = activeFilter === 'all' || category.includes(activeFilter);
+                    const matchesSearch = !query || content.includes(query);
+
+                    if (matchesCategory && matchesSearch) {
+                        card.style.display = '';
+                        visibleCount++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                if (resultStatus) {
+                    if (query || activeFilter !== 'all') {
+                        resultStatus.innerText = `Found ${visibleCount} simulator${visibleCount === 1 ? '' : 's'} matching criteria`;
+                        if (resetBtn) resetBtn.style.display = 'inline-block';
+                    } else {
+                        resultStatus.innerText = `Showing all ${simCards.length} interactive simulators`;
+                        if (resetBtn) resetBtn.style.display = 'none';
+                    }
+                }
+
+                if (noResultsBox) {
+                    noResultsBox.style.display = visibleCount === 0 ? 'block' : 'none';
+                }
+            }
+
+            if (searchInput) {
+                searchInput.addEventListener('input', filterCards);
+                // '/' hotkey to quickly focus search
+                window.addEventListener('keydown', (e) => {
+                    if (e.key === '/' && document.activeElement !== searchInput && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+                        e.preventDefault();
+                        searchInput.focus();
+                    } else if (e.key === 'Escape' && document.activeElement === searchInput) {
+                        searchInput.value = '';
+                        filterCards();
+                        searchInput.blur();
+                    }
+                });
+            }
+
+            if (clearBtn) {
+                clearBtn.addEventListener('click', () => {
+                    if (searchInput) searchInput.value = '';
+                    filterCards();
+                    if (searchInput) searchInput.focus();
+                });
+            }
+
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    activeFilter = btn.getAttribute('data-filter') || 'all';
+                    filterCards();
+                });
+            });
+
+            function resetAll() {
+                if (searchInput) searchInput.value = '';
+                activeFilter = 'all';
+                filterBtns.forEach(b => {
+                    if (b.getAttribute('data-filter') === 'all') b.classList.add('active');
+                    else b.classList.remove('active');
+                });
+                filterCards();
+            }
+
+            if (resetBtn) resetBtn.addEventListener('click', resetAll);
+            if (emptyResetBtn) emptyResetBtn.addEventListener('click', resetAll);
 
             // Scroll Reveal
             function reveal() {
@@ -825,6 +1790,7 @@
         }
         animate();
     </script>
+    <script src="js/shared-nav.js" defer></script>
 </body>
 
 </html>

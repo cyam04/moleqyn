@@ -7,7 +7,7 @@
   <title>Moleqyn | Board Exam & AP Chemistry Prep</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
   <style>
     :root {
       --bg: #070f1e;
@@ -26,7 +26,7 @@
       --danger: #ef4444;
     }
 
-    html.light-mode {
+    html.light-mode, :root[data-theme="day"] {
       --bg: #f4f8fc;
       --panel: #ffffff;
       --panel-sub: #edf3f8;
@@ -44,6 +44,7 @@
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
+        .hero-title, .module-title, .drill-title, .drill-q-title { font-family: 'Outfit', 'Space Grotesk', sans-serif; }
     body {
       background: var(--bg);
       color: var(--text);
@@ -446,8 +447,8 @@
   </style>
   <script>
     (function () {
-      var saved = localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
-      if (saved === 'light') {
+      var saved = localStorage.getItem('mlab_theme') || localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
+      if (saved === 'day' || saved === 'light') {
         document.documentElement.setAttribute('data-theme', 'day');
         document.documentElement.classList.add('light-mode');
       }
@@ -1244,3 +1245,4 @@
   </script>
 </body>
 </html>
+

@@ -72,7 +72,7 @@
    v4.6 FIX: CSS variables + direct overrides with !important
    Dono approach use ki gayi taaki 100% work kare
 */
-html.light-mode {
+html.light-mode, :root[data-theme="day"] {
   --bg-base:       #eef2f7;
   --bg-surface:    #f8fafc;
   --bg-card:       #ffffff;

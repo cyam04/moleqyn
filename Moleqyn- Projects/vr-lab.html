@@ -5,9 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="description" content="Moleqyn 3D VR Lab — Immersive 3D chemistry apparatus simulator, rotating molecular geometries, and Bunsen burner thermodynamics."/>
   <title>Moleqyn | 3D Virtual Reality Chemistry Lab</title>
+  <script>
+    (function () {
+      var saved = localStorage.getItem('mlab_theme') || localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
+      if (saved === 'day' || saved === 'light') {
+        document.documentElement.setAttribute('data-theme', 'day');
+        document.documentElement.classList.add('light-mode');
+      }
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
   <style>
     :root {
       --bg: #040914;
@@ -25,7 +34,7 @@
       --gold: #f59e0b;
     }
 
-    html.light-mode {
+    html.light-mode, :root[data-theme="day"] {
       --bg: #f0f4f9;
       --panel: #ffffff;
       --panel-sub: #eef3f8;
@@ -871,3 +880,4 @@
   </script>
 </body>
 </html>
+

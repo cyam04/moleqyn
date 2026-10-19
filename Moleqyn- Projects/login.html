@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!-- MOLEQYN DEMO LOGIN — All authentication flows are CLIENT-SIDE SIMULATIONS only.
      No server, no real credentials, no OTP delivery. See audit report for details. -->
 <html lang="en">
@@ -7,10 +7,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Moleqyn | Student Authentication &amp; Batch Login (Demo)</title>
+  <script>
+    (function () {
+      var saved = localStorage.getItem('mlab_theme') || localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
+      if (saved === 'day' || saved === 'light') {
+        document.documentElement.setAttribute('data-theme', 'day');
+        document.documentElement.classList.add('light-mode');
+      }
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
     rel="stylesheet" />
   <style>
     :root {
@@ -30,6 +39,36 @@
       --pw-yellow: #f59e0b;
       --pw-blue: #0284c7;
     }
+    :root[data-theme="day"], html.light-mode {
+      --bg: #f0f4f9;
+      --bg-card: rgba(255, 255, 255, 0.95);
+      --bg-card-solid: #ffffff;
+      --border: rgba(2, 132, 199, 0.18);
+      --border-focus: #0284c7;
+      --primary: #0284c7;
+      --primary-glow: rgba(2, 132, 199, 0.25);
+      --secondary: #db2777;
+      --accent: #d97706;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --text: #0f172a;
+      --muted: #64748b;
+      --pw-yellow: #d97706;
+      --pw-blue: #0284c7;
+    }
+    html.light-mode body, :root[data-theme="day"] body {
+      background-image:
+        radial-gradient(circle at 15% 20%, rgba(2, 132, 199, 0.08), transparent 45%),
+        radial-gradient(circle at 85% 80%, rgba(219, 39, 119, 0.06), transparent 50%),
+        radial-gradient(circle at 50% 50%, #ffffff, #f0f4f9);
+    }
+    html.light-mode .input-box input, :root[data-theme="day"] .input-box input {
+      color: #0f172a;
+    }
+    html.light-mode .tab-btn, :root[data-theme="day"] .tab-btn {
+      color: #64748b;
+    }
+    .brand-logo, .auth-title { font-family: 'Outfit', 'Space Grotesk', sans-serif; }
 
     * {
       margin: 0;
@@ -778,6 +817,12 @@
 </head>
 
 <body>
+  <div style="position:fixed;top:18px;left:50%;transform:translateX(-50%);width:92%;max-width:500px;display:flex;justify-content:space-between;align-items:center;z-index:100;">
+    <a href="index.html" style="color:var(--text);text-decoration:none;font-weight:700;display:flex;align-items:center;gap:6px;font-size:0.9rem;padding:8px 16px;border-radius:20px;background:var(--bg-card);border:1px solid var(--border);">
+      â† Return to Moleqyn
+    </a>
+    <button class="mlab-theme-btn" id="mlabThemeBtn" title="Switch Theme" style="background:var(--bg-card);border:1px solid var(--border);color:var(--text);width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;">â˜€ï¸</button>
+  </div>
 
   <div class="bg-grid"></div>
 
@@ -1648,6 +1693,8 @@
       }, 450);
     }
   </script>
+  <script src="js/shared-nav.js"></script>
 </body>
 
 </html>
+

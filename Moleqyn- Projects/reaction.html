@@ -5,44 +5,234 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Moleqyn | Universal Chemical Reaction Lab &amp; AI Predictor</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"/>
+
+  <script>
+    (function () {
+      var saved = localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
+      if (saved === 'light') {
+        document.documentElement.setAttribute('data-theme', 'day');
+        document.documentElement.classList.add('light-mode');
+      }
+    })();
+  </script>
+
   <style>
     :root {
-      --bg: #07111f; --panel: #0d1d33; --panel2: #132742; --border: rgba(255,255,255,0.12); 
-      --primary: #00d4ff; --secondary: #ff00cc; --accent: #ffd700; 
-      --text: #f0f4ff; --muted: #8ea3bf; --green: #4ade80; --red: #fb7185; --orange: #fb923c;
-      --purple: #c084fc; --card-glow: rgba(0, 212, 255, 0.15);
+      --bg: #080c16; --panel: #0e1626; --panel2: #142036; --border: rgba(255,255,255,0.09); 
+      --primary: #00d4ff; --primary-rgb: 0, 240, 255; --secondary: #a855f7; --accent: #ffd700; 
+      --text: #f8fafc; --muted: #94a3b8; --green: #4ade80; --red: #fb7185; --orange: #fb923c;
+      --purple: #c084fc; --card-glow: rgba(0, 240, 255, 0.15);
+      --font-display: 'Outfit', sans-serif;
+      --glass-bg: rgba(14, 22, 38, 0.78);
+      --nav-bg-scrolled: rgba(10, 16, 28, 0.96);
+      --glass-border: rgba(255, 255, 255, 0.08);
     }
+
+    /* DAY THEME TOKENS */
+    :root[data-theme="day"],
+    html.light-mode {
+      --bg: #f8fafc; --panel: #ffffff; --panel2: #f1f5f9; --border: rgba(15, 23, 42, 0.09);
+      --primary: #0284c7; --primary-rgb: 2, 132, 199; --secondary: #7c3aed; --accent: #d97706;
+      --text: #0f172a; --muted: #64748b; --green: #16a34a; --red: #dc2626; --orange: #ea580c;
+      --purple: #9333ea; --card-glow: rgba(2, 132, 199, 0.12);
+      --glass-bg: rgba(255, 255, 255, 0.88);
+      --nav-bg-scrolled: rgba(255, 255, 255, 0.98);
+      --glass-border: rgba(15, 23, 42, 0.1);
+    }
+
     * { margin:0; padding:0; box-sizing:border-box; }
     body { 
       background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; 
       min-height:100vh; overflow-x:hidden;
-      background-image: radial-gradient(circle at top right, rgba(0,212,255,0.08), transparent 60%),
-                        radial-gradient(circle at bottom left, rgba(255,0,204,0.06), transparent 60%);
+      background-image: radial-gradient(circle at top right, rgba(0,212,255,0.06), transparent 60%),
+                        radial-gradient(circle at bottom left, rgba(168,85,247,0.05), transparent 60%);
+      transition: background 0.3s ease, color 0.3s ease;
+      padding-top: 75px;
+    }
+
+    :root[data-theme="day"] body,
+    html.light-mode body {
+      background-image: radial-gradient(circle at top right, rgba(2,132,199,0.05), transparent 60%),
+                        radial-gradient(circle at bottom left, rgba(124,58,237,0.04), transparent 60%);
     }
     
-    /* NAV */
-    nav {
-      background:rgba(7,17,31,0.92); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
-      border-bottom:1px solid var(--border); padding:12px 28px; display:flex; align-items:center;
-      justify-content:space-between; position:sticky; top:0; z-index:100;
+    /* ===== UNIFIED Moleqyn FLOATING NAVBAR ===== */
+    .mlab-nav {
+      position: fixed;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 95%;
+      max-width: 1250px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 22px;
+      border-radius: 40px;
+      border: 1px solid var(--glass-border);
+      z-index: 1000;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      transition: all 0.3s ease;
     }
-    .nav-brand { 
-      font-family:'Space Grotesk',sans-serif; font-size:1.35rem; font-weight:700; 
-      color:var(--text); text-decoration:none; display:flex; align-items:center; gap:8px; 
+    .mlab-nav.scrolled {
+      top: 6px;
+      background: var(--nav-bg-scrolled);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+      border-color: var(--primary);
     }
-    .nav-brand span { color:var(--primary); }
-    .nav-tag {
-      font-size: 0.72rem; background: rgba(0,212,255,0.15); border: 1px solid rgba(0,212,255,0.3);
-      color: var(--primary); padding: 2px 8px; border-radius: 12px; font-weight: 600; text-transform: uppercase;
+    .mlab-brand {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
-    .nav-links { display:flex; align-items:center; gap:12px; }
-    .nav-btn { 
-      color:var(--muted); text-decoration:none; font-size:0.86rem; padding:6px 14px; 
-      border-radius:20px; border:1px solid var(--border); background:rgba(255,255,255,0.03); 
-      transition:all 0.2s; display:flex; align-items:center; gap:6px;
+    .mlab-brand span { color: var(--primary); }
+    .mlab-links {
+      display: flex;
+      list-style: none;
+      align-items: center;
+      gap: 0.3rem;
+      margin: 0;
+      padding: 0;
     }
-    .nav-btn:hover { color:var(--primary); border-color:var(--primary); background:rgba(0,212,255,0.08); }
+    .mlab-links > li > a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.86rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 20px;
+      transition: all 0.2s;
+      display: block;
+    }
+    .mlab-links > li > a:hover,
+    .mlab-links > li > a.active {
+      color: var(--primary);
+      background: rgba(var(--primary-rgb), 0.1);
+    }
+    .mlab-dropdown { position: relative; }
+    .mlab-dropbtn {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.86rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+    .mlab-dropbtn:hover, .mlab-dropbtn.active {
+      color: var(--primary);
+      background: rgba(var(--primary-rgb), 0.1);
+    }
+    .mlab-dropdown-content {
+      display: none;
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--nav-bg-scrolled);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 8px;
+      min-width: 270px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+      z-index: 2000;
+      backdrop-filter: blur(20px);
+    }
+    .mlab-dropdown:hover .mlab-dropdown-content {
+      display: block;
+      animation: navFadeIn 0.2s ease;
+    }
+    @keyframes navFadeIn {
+      from { opacity: 0; transform: translateX(-50%) translateY(-6px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+    .mlab-drop-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      text-decoration: none;
+      color: var(--muted);
+      transition: all 0.2s;
+    }
+    .mlab-drop-item:hover {
+      background: rgba(var(--primary-rgb), 0.1);
+      color: var(--primary);
+    }
+    .mlab-drop-icon { font-size: 1.1rem; width: 28px; text-align: center; }
+    .mlab-drop-title { font-size: 0.82rem; font-weight: 600; color: var(--text); }
+    .mlab-drop-sub { font-size: 0.70rem; color: var(--muted); margin-top: 1px; }
+    .mlab-drop-item:hover .mlab-drop-title { color: var(--primary); }
+    
+    .mlab-nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .mlab-back-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      color: var(--primary);
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .mlab-back-btn:hover {
+      background: var(--primary);
+      color: #000;
+      border-color: var(--primary);
+    }
+    :root[data-theme="day"] .mlab-back-btn, html.light-mode .mlab-back-btn {
+      background: rgba(15, 23, 42, 0.05);
+      border-color: #cbd5e1;
+      color: #0284c7;
+    }
+    :root[data-theme="day"] .mlab-back-btn:hover, html.light-mode .mlab-back-btn:hover {
+      background: #0284c7;
+      color: #fff;
+    }
+    .mlab-theme-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.05rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .mlab-theme-btn:hover {
+      border-color: var(--primary);
+      transform: scale(1.1) rotate(15deg);
+      box-shadow: 0 0 14px var(--primary-glow);
+    }
+    :root[data-theme="day"] .mlab-theme-btn, html.light-mode .mlab-theme-btn {
+      background: rgba(15, 23, 42, 0.05);
+      border-color: #cbd5e1;
+      color: #0f172a;
+    }
 
     .page-wrap { max-width: 1240px; margin: 0 auto; padding: 24px 20px; }
     
@@ -307,9 +497,87 @@
       background: rgba(0,212,255,0.05); border: 1px solid rgba(0,212,255,0.2); border-radius: 14px;
       padding: 20px 24px; font-size: 0.88rem; color: var(--muted); line-height: 1.6;
     }
-    .concept-card strong { color: var(--primary); font-family: 'Space Grotesk', sans-serif; display: block; margin-bottom: 6px; font-size: 1rem; }
+    /* DAY THEME OVERRIDES */
+    :root[data-theme="day"] .custom-bar,
+    html.light-mode .custom-bar,
+    :root[data-theme="day"] .visual-canvas-card,
+    html.light-mode .visual-canvas-card,
+    :root[data-theme="day"] .scale-box,
+    html.light-mode .scale-box,
+    :root[data-theme="day"] .equation-container,
+    html.light-mode .equation-container,
+    :root[data-theme="day"] .beaker-card,
+    html.light-mode .beaker-card {
+      background: #ffffff;
+      border-color: #e2e8f0;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    }
+
+    :root[data-theme="day"] .custom-input,
+    html.light-mode .custom-input {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      color: #0f172a;
+    }
+
+    :root[data-theme="day"] .mode-tab,
+    html.light-mode .mode-tab {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+      color: #475569;
+    }
+
+    :root[data-theme="day"] .mode-tab.active,
+    html.light-mode .mode-tab.active {
+      background: rgba(2, 132, 199, 0.12);
+      color: #0284c7;
+      border-color: #0284c7;
+      box-shadow: 0 0 20px rgba(2, 132, 199, 0.2);
+    }
+
+    :root[data-theme="day"] .eq-part,
+    html.light-mode .eq-part,
+    :root[data-theme="day"] .atom-row,
+    html.light-mode .atom-row {
+      background: #f8fafc;
+      border-color: #e2e8f0;
+    }
+
+    :root[data-theme="day"] .molecule-name,
+    html.light-mode .molecule-name {
+      color: #0f172a;
+    }
+
+    :root[data-theme="day"] .visual-canvas,
+    html.light-mode .visual-canvas,
+    :root[data-theme="day"] .beaker-stage,
+    html.light-mode .beaker-stage {
+      background: radial-gradient(circle at 50% 50%, #f1f5f9 0%, #e2e8f0 85%);
+      border-color: #cbd5e1;
+    }
+
+    :root[data-theme="day"] .concept-card,
+    html.light-mode .concept-card {
+      background: rgba(2, 132, 199, 0.05);
+      border-color: rgba(2, 132, 199, 0.2);
+      color: #475569;
+    }
+
+    :root[data-theme="day"] .custom-bar-title,
+    html.light-mode .custom-bar-title {
+      color: #0f172a;
+    }
+
+    :root[data-theme="day"] .quick-pill,
+    html.light-mode .quick-pill {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+      color: #334155;
+    }
 
     @media (max-width: 768px) {
+      .mlab-links { display: none; }
+      body { padding-top: 65px; }
       .scales-container { grid-template-columns: 1fr; }
       .equation-container { flex-direction: column; padding-top: 60px; }
       .status-badge { top: 12px; right: 50%; transform: translateX(50%); }
@@ -318,12 +586,80 @@
 </head>
 <body>
 
-<nav>
-  <a href="index.html" class="nav-brand">⚗️ Mole<span>qyn</span> <span class="nav-tag">Universal Lab</span></a>
-  <div class="nav-links">
-    <a href="sim_molecules.html" class="nav-btn">🔮 3D Molecules</a>
-    <a href="sim_particle.html" class="nav-btn">❄️ States of Matter</a>
-    <a href="simulators.html" class="nav-btn">← All Simulators</a>
+<!-- UNIFIED FLOATING NAVBAR -->
+<nav class="mlab-nav" id="mlabNav">
+  <a href="index.html" class="mlab-brand">⚗️ Mole<span>qyn</span></a>
+  <ul class="mlab-links">
+    <li><a href="index.html">Home</a></li>
+    <li class="mlab-dropdown">
+      <a class="mlab-dropbtn active" href="simulators.html">Virtual Labs ▾</a>
+      <div class="mlab-dropdown-content">
+        <a href="simulators.html" class="mlab-drop-item">
+          <div class="mlab-drop-icon">🧪</div>
+          <div>
+            <div class="mlab-drop-title">Virtual Simulators Hub</div>
+            <div class="mlab-drop-sub">14 interactive engines for Class 6-12</div>
+          </div>
+        </a>
+        <a href="sim_atomverse.html" class="mlab-drop-item">
+          <div class="mlab-drop-icon">⚛️</div>
+          <div>
+            <div class="mlab-drop-title">AtomVerse Quantum Lab</div>
+            <div class="mlab-drop-sub">118 elements live electron orbits</div>
+          </div>
+        </a>
+        <a href="sim_titration.html" class="mlab-drop-item">
+          <div class="mlab-drop-icon">💧</div>
+          <div>
+            <div class="mlab-drop-title">Acid-Base Titration Lab</div>
+            <div class="mlab-drop-sub">Volumetric analysis &amp; pH curve</div>
+          </div>
+        </a>
+        <a href="sim_electro.html" class="mlab-drop-item">
+          <div class="mlab-drop-icon">🔋</div>
+          <div>
+            <div class="mlab-drop-title">Electrochemistry Lab</div>
+            <div class="mlab-drop-sub">Galvanic cell &amp; Nernst EMF</div>
+          </div>
+        </a>
+        <a href="reaction.html" class="mlab-drop-item" style="background:var(--primary-glow)">
+          <div class="mlab-drop-icon">⚗️</div>
+          <div>
+            <div class="mlab-drop-title" style="color:var(--primary)">Reaction Balancer &amp; Lab</div>
+            <div class="mlab-drop-sub">Balance &amp; predict chemical equations</div>
+          </div>
+        </a>
+        <a href="experiments.html" class="mlab-drop-item">
+          <div class="mlab-drop-icon">📔</div>
+          <div>
+            <div class="mlab-drop-title">Experiment Library</div>
+            <div class="mlab-drop-sub">NCERT guided practicals</div>
+          </div>
+        </a>
+        <a href="periodic-table.html" class="mlab-drop-item">
+          <div class="mlab-drop-icon">🔢</div>
+          <div>
+            <div class="mlab-drop-title">Periodic Table</div>
+            <div class="mlab-drop-sub">Explore all 118 elements</div>
+          </div>
+        </a>
+        <a href="ai-tutor.html" class="mlab-drop-item">
+          <div class="mlab-drop-icon">🤖</div>
+          <div>
+            <div class="mlab-drop-title">AI Chemistry Tutor</div>
+            <div class="mlab-drop-sub">Ask any doubt 24/7</div>
+          </div>
+        </a>
+      </div>
+    </li>
+    <li><a href="learn.html">Learn</a></li>
+    <li><a href="quiz.html">Quiz</a></li>
+    <li><a href="dashboard.html">Student Portal</a></li>
+    <li><a href="about.html">About us</a></li>
+  </ul>
+  <div class="mlab-nav-right">
+    <a href="simulators.html" class="mlab-back-btn">← Back to Labs</a>
+    <button class="mlab-theme-btn" id="mlabThemeBtn" title="Switch Theme">☀️</button>
   </div>
 </nav>
 
@@ -1748,6 +2084,6 @@ cyclePreset();
 drawCanvas();
 drawBeaker();
 </script>
-
+<script src="js/shared-nav.js"></script>
 </body>
 </html>

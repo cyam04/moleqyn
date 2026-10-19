@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -7,11 +7,11 @@
   <title>Moleqyn | Learn – Class 6 to 12</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
   <script>
     (function () {
-      var saved = localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
-      if (saved === 'light') {
+      var saved = localStorage.getItem('mlab_theme') || localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
+      if (saved === 'day' || saved === 'light') {
         document.documentElement.setAttribute('data-theme', 'day');
         document.documentElement.classList.add('light-mode');
       }
@@ -95,9 +95,19 @@
     /* ===== UNIFIED MATTERLAB FLOATING NAVBAR ===== */
     :root{--glass-bg:rgba(15,23,42,0.7);--nav-bg-scrolled:rgba(15,23,42,0.98);--glass-border:rgba(255,255,255,0.08);--btn-primary:#0ea5e9;}
     html.light-mode{--bg:#f0f9ff;--bg2:#ffffff;--glass:rgba(0,0,0,0.04);--border:rgba(0,0,0,0.12);--text:#0f172a;--muted:#64748b;--primary:#0284c7;--primary-glow:rgba(2,132,199,0.2);--secondary:#db2777;--glass-bg:rgba(255,255,255,0.85);--nav-bg-scrolled:rgba(255,255,255,0.98);--glass-border:rgba(0,0,0,0.1);--btn-primary:#0284c7;}
+    .page-hero h1, .tc-title, .class-section-heading, .glossary-section h2, .gterm { font-family: 'Outfit', 'Space Grotesk', sans-serif; }
     html.light-mode .tc, :root[data-theme="day"] .tc { background: #ffffff; border-color: rgba(0,0,0,0.1); box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
     html.light-mode .tc-icon, :root[data-theme="day"] .tc-icon { background: rgba(2,132,199,0.08); border-color: rgba(0,0,0,0.08); }
-    html.light-mode .gitem, :root[data-theme="day"] .gitem { background: #ffffff; border-color: rgba(0,0,0,0.1); }
+    html.light-mode .gitem, :root[data-theme="day"] .gitem { background: #ffffff; border-color: rgba(0,0,0,0.1); box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+    html.light-mode .search-box, :root[data-theme="day"] .search-box { background: #ffffff; border-color: rgba(0,0,0,0.12); box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
+    html.light-mode .fc, :root[data-theme="day"] .fc { background: #ffffff; border-color: rgba(0,0,0,0.12); color: #475569; }
+    html.light-mode .fc:hover, :root[data-theme="day"] .fc:hover { border-color: var(--primary); color: var(--primary); }
+    html.light-mode .fc.active, :root[data-theme="day"] .fc.active { background: var(--primary); color: #ffffff; border-color: var(--primary); box-shadow: 0 4px 15px rgba(2,132,199,0.25); }
+    html.light-mode .st-list li, :root[data-theme="day"] .st-list li { background: #f8fafc; border-color: rgba(0,0,0,0.08); color: #334155; }
+    html.light-mode .key-box, :root[data-theme="day"] .key-box { background: rgba(2,132,199,0.06); border-color: rgba(2,132,199,0.2); }
+    html.light-mode .key-box p, :root[data-theme="day"] .key-box p { color: #334155; }
+    html.light-mode .fchip, :root[data-theme="day"] .fchip { background: rgba(219,39,119,0.08); border-color: rgba(219,39,119,0.2); color: #db2777; }
+    html.light-mode .badge-cls, :root[data-theme="day"] .badge-cls { background: rgba(2,132,199,0.12); color: #0284c7; border-color: rgba(2,132,199,0.25); }
     .mlab-nav{position:fixed;top:20px;left:50%;transform:translateX(-50%);width:95%;max-width:1200px;background:var(--glass-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;justify-content:space-between;align-items:center;padding:12px 25px;border-radius:40px;border:1px solid var(--glass-border);z-index:1000;box-shadow:0 10px 30px rgba(0,0,0,0.1);transition:all 0.4s ease;}
     .mlab-nav.scrolled{top:10px;background:var(--nav-bg-scrolled);box-shadow:0 15px 40px rgba(0,0,0,0.15);border-color:var(--primary);}
     .mlab-brand{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;color:var(--text);text-decoration:none;}

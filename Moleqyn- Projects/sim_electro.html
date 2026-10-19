@@ -6,25 +6,69 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Moleqyn | Electrochemistry Virtual Lab</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
     rel="stylesheet" />
+
+  <script>
+    (function () {
+      var saved = localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
+      if (saved === 'light') {
+        document.documentElement.setAttribute('data-theme', 'day');
+        document.documentElement.classList.add('light-mode');
+      }
+    })();
+  </script>
+
   <style>
     :root {
-      --bg: #06101e;
-      --panel: #0d1a2e;
-      --panel2: #13233c;
-      --border: rgba(255, 255, 255, 0.1);
+      --bg: #080c16;
+      --panel: #0e1626;
+      --panel2: #142036;
+      --border: rgba(255, 255, 255, 0.09);
+      --border-hover: rgba(0, 240, 255, 0.35);
       --primary: #00d4ff;
-      --secondary: #ff00cc;
+      --primary-rgb: 0, 240, 255;
+      --primary-glow: rgba(0, 240, 255, 0.25);
+      --secondary: #a855f7;
       --accent: #ffd700;
       --green: #4ade80;
+      --green-glow: rgba(74, 222, 128, 0.25);
       --red: #fb7185;
       --orange: #fb923c;
-      --text: #f0f4ff;
-      --muted: #7a90b0;
-      --glass-bg: rgba(13, 26, 46, 0.85);
-      --glass-border: rgba(255, 255, 255, 0.12);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --font-display: 'Outfit', sans-serif;
+      --glass-bg: rgba(14, 22, 38, 0.78);
+      --nav-bg-scrolled: rgba(10, 16, 28, 0.96);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    }
+
+    /* DAY THEME TOKENS */
+    :root[data-theme="day"],
+    html.light-mode {
+      --bg: #f8fafc;
+      --panel: #ffffff;
+      --panel2: #f1f5f9;
+      --border: rgba(15, 23, 42, 0.09);
+      --border-hover: rgba(2, 132, 199, 0.35);
+      --primary: #0284c7;
+      --primary-rgb: 2, 132, 199;
+      --primary-glow: rgba(2, 132, 199, 0.18);
+      --secondary: #7c3aed;
+      --accent: #d97706;
+      --green: #16a34a;
+      --green-glow: rgba(22, 163, 74, 0.2);
+      --red: #dc2626;
+      --orange: #ea580c;
+      --text: #0f172a;
+      --muted: #64748b;
+      --glass-bg: rgba(255, 255, 255, 0.88);
+      --nav-bg-scrolled: rgba(255, 255, 255, 0.98);
+      --glass-border: rgba(15, 23, 42, 0.1);
+      --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
     }
 
     * {
@@ -39,68 +83,190 @@
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
       overflow-x: hidden;
+      transition: background 0.3s ease, color 0.3s ease;
+      padding-top: 75px;
     }
 
-    /* NAV */
-    nav {
-      background: rgba(6, 16, 30, 0.92);
+    /* ===== UNIFIED Moleqyn FLOATING NAVBAR ===== */
+    .mlab-nav {
+      position: fixed;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 95%;
+      max-width: 1250px;
+      background: var(--glass-bg);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
-      padding: 12px 28px;
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      align-items: center;
+      padding: 8px 22px;
+      border-radius: 40px;
+      border: 1px solid var(--glass-border);
+      z-index: 1000;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      transition: all 0.3s ease;
     }
-
-    .nav-brand {
-      font-family: 'Space Grotesk', sans-serif;
+    .mlab-nav.scrolled {
+      top: 6px;
+      background: var(--nav-bg-scrolled);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+      border-color: var(--primary);
+    }
+    .mlab-brand {
+      font-family: var(--font-display);
       font-size: 1.35rem;
-      font-weight: 700;
+      font-weight: 800;
       color: var(--text);
       text-decoration: none;
       display: flex;
       align-items: center;
       gap: 6px;
     }
-
-    .nav-brand span {
-      color: var(--primary);
-    }
-
-    .nav-links {
+    .mlab-brand span { color: var(--primary); }
+    .mlab-links {
       display: flex;
+      list-style: none;
       align-items: center;
-      gap: 16px;
+      gap: 0.3rem;
+      margin: 0;
+      padding: 0;
     }
-
-    .nav-back {
+    .mlab-links > li > a {
       color: var(--muted);
       text-decoration: none;
       font-size: 0.86rem;
-      padding: 6px 14px;
+      font-weight: 500;
+      padding: 6px 12px;
       border-radius: 20px;
-      border: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.03);
       transition: all 0.2s;
+      display: block;
+    }
+    .mlab-links > li > a:hover,
+    .mlab-links > li > a.active {
+      color: var(--primary);
+      background: rgba(var(--primary-rgb), 0.1);
+    }
+    .mlab-dropdown { position: relative; }
+    .mlab-dropbtn {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.86rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
+      transition: all 0.2s;
     }
-
-    .nav-back:hover {
+    .mlab-dropbtn:hover, .mlab-dropbtn.active {
       color: var(--primary);
+      background: rgba(var(--primary-rgb), 0.1);
+    }
+    .mlab-dropdown-content {
+      display: none;
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--nav-bg-scrolled);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 8px;
+      min-width: 270px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+      z-index: 2000;
+      backdrop-filter: blur(20px);
+    }
+    .mlab-dropdown:hover .mlab-dropdown-content {
+      display: block;
+      animation: navFadeIn 0.2s ease;
+    }
+    @keyframes navFadeIn {
+      from { opacity: 0; transform: translateX(-50%) translateY(-6px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+    .mlab-drop-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      text-decoration: none;
+      color: var(--muted);
+      transition: all 0.2s;
+    }
+    .mlab-drop-item:hover {
+      background: rgba(var(--primary-rgb), 0.1);
+      color: var(--primary);
+    }
+    .mlab-drop-icon { font-size: 1.1rem; width: 28px; text-align: center; }
+    .mlab-drop-title { font-size: 0.82rem; font-weight: 600; color: var(--text); }
+    .mlab-drop-sub { font-size: 0.70rem; color: var(--muted); margin-top: 1px; }
+    .mlab-drop-item:hover .mlab-drop-title { color: var(--primary); }
+    
+    .mlab-nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .mlab-back-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      color: var(--primary);
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .mlab-back-btn:hover {
+      background: var(--primary);
+      color: #000;
       border-color: var(--primary);
-      background: rgba(0, 212, 255, 0.08);
+    }
+    :root[data-theme="day"] .mlab-back-btn, html.light-mode .mlab-back-btn {
+      background: rgba(15, 23, 42, 0.05);
+      border-color: #cbd5e1;
+      color: #0284c7;
+    }
+    :root[data-theme="day"] .mlab-back-btn:hover, html.light-mode .mlab-back-btn:hover {
+      background: #0284c7;
+      color: #fff;
+    }
+    .mlab-theme-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.05rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .mlab-theme-btn:hover {
+      border-color: var(--primary);
+      transform: scale(1.1) rotate(15deg);
+      box-shadow: 0 0 14px var(--primary-glow);
+    }
+    :root[data-theme="day"] .mlab-theme-btn, html.light-mode .mlab-theme-btn {
+      background: rgba(15, 23, 42, 0.05);
+      border-color: #cbd5e1;
+      color: #0f172a;
     }
 
     .lab-layout {
       display: grid;
-      grid-template-columns: 1fr 340px;
-      height: calc(100vh - 61px);
+      grid-template-columns: 1fr 360px;
+      height: calc(100vh - 75px);
     }
 
     .canvas-side {
@@ -396,7 +562,100 @@
       border: 1px solid var(--green);
     }
 
+    /* DAY THEME OVERRIDES */
+    :root[data-theme="day"] .canvas-wrap,
+    html.light-mode .canvas-wrap {
+      background: radial-gradient(circle at 50% 30%, #f1f5f9 0%, #e2e8f0 70%);
+      border-color: #cbd5e1;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    }
+
+    :root[data-theme="day"] .ctrl-panel,
+    html.light-mode .ctrl-panel {
+      background: #f8fafc;
+      border-left-color: #e2e8f0;
+    }
+
+    :root[data-theme="day"] .ctrl-section,
+    html.light-mode .ctrl-section {
+      border-bottom-color: #e2e8f0;
+      background: #ffffff;
+      margin-bottom: 8px;
+      border-radius: 12px;
+      margin-left: 10px;
+      margin-right: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    }
+
+    :root[data-theme="day"] .stat,
+    html.light-mode .stat {
+      background: #ffffff;
+      border-color: #e2e8f0;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+    }
+
+    :root[data-theme="day"] .stat-val,
+    html.light-mode .stat-val {
+      color: #0f172a;
+    }
+
+    :root[data-theme="day"] .m-tab,
+    html.light-mode .m-tab {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+      color: #475569;
+    }
+
+    :root[data-theme="day"] .m-tab.active,
+    html.light-mode .m-tab.active {
+      background: #16a34a;
+      color: #ffffff;
+      border-color: #16a34a;
+      box-shadow: 0 0 15px rgba(22, 163, 74, 0.25);
+    }
+
+    :root[data-theme="day"] select,
+    html.light-mode select,
+    :root[data-theme="day"] input[type=number],
+    html.light-mode input[type=number] {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+      color: #0f172a;
+    }
+
+    :root[data-theme="day"] select option,
+    html.light-mode select option {
+      background: #ffffff;
+      color: #0f172a;
+    }
+
+    :root[data-theme="day"] .data-table td,
+    html.light-mode .data-table td {
+      border-bottom-color: #e2e8f0;
+      color: #334155;
+    }
+
+    :root[data-theme="day"] .data-table th,
+    html.light-mode .data-table th {
+      background: rgba(22, 163, 74, 0.08);
+      color: #16a34a;
+    }
+
+    :root[data-theme="day"] .aha-box,
+    html.light-mode .aha-box {
+      background: rgba(2, 132, 199, 0.06);
+      border-color: rgba(2, 132, 199, 0.25);
+      color: #475569;
+    }
+
+    :root[data-theme="day"] .big-btn.btn-run,
+    html.light-mode .big-btn.btn-run {
+      color: #ffffff;
+    }
+
     @media (max-width: 900px) {
+      .mlab-links { display: none; }
+      body { padding-top: 65px; }
       .lab-layout {
         grid-template-columns: 1fr;
         height: auto;
@@ -410,10 +669,82 @@
 </head>
 
 <body>
-  <nav>
-    <a href="index.html" class="nav-brand">⚗️ Mole<span>qyn</span></a>
-    <div class="nav-links">
-      <a href="simulators.html" class="nav-back">← All Simulators</a>
+  <!-- UNIFIED FLOATING NAVBAR -->
+  <nav class="mlab-nav" id="mlabNav">
+    <a href="index.html" class="mlab-brand">⚗️ Mole<span>qyn</span></a>
+    
+    <ul class="mlab-links">
+      <li><a href="index.html">Home</a></li>
+      <li class="mlab-dropdown">
+        <a class="mlab-dropbtn active" href="simulators.html">Virtual Labs ▾</a>
+        <div class="mlab-dropdown-content">
+          <a href="simulators.html" class="mlab-drop-item">
+            <div class="mlab-drop-icon">🧪</div>
+            <div>
+              <div class="mlab-drop-title">Virtual Simulators Hub</div>
+              <div class="mlab-drop-sub">14 interactive engines for Class 6-12</div>
+            </div>
+          </a>
+          <a href="sim_atomverse.html" class="mlab-drop-item">
+            <div class="mlab-drop-icon">⚛️</div>
+            <div>
+              <div class="mlab-drop-title">AtomVerse Quantum Lab</div>
+              <div class="mlab-drop-sub">118 elements live electron orbits</div>
+            </div>
+          </a>
+          <a href="sim_titration.html" class="mlab-drop-item">
+            <div class="mlab-drop-icon">💧</div>
+            <div>
+              <div class="mlab-drop-title">Acid-Base Titration Lab</div>
+              <div class="mlab-drop-sub">Volumetric analysis &amp; pH curve</div>
+            </div>
+          </a>
+          <a href="sim_electro.html" class="mlab-drop-item" style="background:var(--primary-glow)">
+            <div class="mlab-drop-icon">🔋</div>
+            <div>
+              <div class="mlab-drop-title" style="color:var(--primary)">Electrochemistry Lab</div>
+              <div class="mlab-drop-sub">Galvanic cell &amp; Nernst EMF</div>
+            </div>
+          </a>
+          <a href="experiments.html" class="mlab-drop-item">
+            <div class="mlab-drop-icon">📔</div>
+            <div>
+              <div class="mlab-drop-title">Experiment Library</div>
+              <div class="mlab-drop-sub">NCERT guided practicals</div>
+            </div>
+          </a>
+          <a href="periodic-table.html" class="mlab-drop-item">
+            <div class="mlab-drop-icon">🔢</div>
+            <div>
+              <div class="mlab-drop-title">Periodic Table</div>
+              <div class="mlab-drop-sub">Explore all 118 elements</div>
+            </div>
+          </a>
+          <a href="reaction.html" class="mlab-drop-item">
+            <div class="mlab-drop-icon">⚗️</div>
+            <div>
+              <div class="mlab-drop-title">Reaction Balancer</div>
+              <div class="mlab-drop-sub">Balance chemical equations</div>
+            </div>
+          </a>
+          <a href="ai-tutor.html" class="mlab-drop-item">
+            <div class="mlab-drop-icon">🤖</div>
+            <div>
+              <div class="mlab-drop-title">AI Chemistry Tutor</div>
+              <div class="mlab-drop-sub">Ask any doubt 24/7</div>
+            </div>
+          </a>
+        </div>
+      </li>
+      <li><a href="learn.html">Learn</a></li>
+      <li><a href="quiz.html">Quiz</a></li>
+      <li><a href="dashboard.html">Student Portal</a></li>
+      <li><a href="about.html">About us</a></li>
+    </ul>
+
+    <div class="mlab-nav-right">
+      <a href="simulators.html" class="mlab-back-btn">← Back to Labs</a>
+      <button class="mlab-theme-btn" id="mlabThemeBtn" title="Switch Theme">☀️</button>
     </div>
   </nav>
 
@@ -1642,6 +1973,7 @@
     updateCell();
     draw();
   </script>
+  <script src="js/shared-nav.js"></script>
 </body>
 
 </html>
