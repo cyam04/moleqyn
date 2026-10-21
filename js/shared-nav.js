@@ -88,55 +88,153 @@
 
       // 2. Class-based mlab-nav floating navigation support
       const mlabNavs = document.querySelectorAll('.mlab-nav');
-      mlabNavs.forEach(function (nav) {
-        let btn = nav.querySelector('.mlab-hamburger');
-        if (!btn) {
-          btn = document.createElement('button');
-          btn.className = 'mlab-hamburger';
-          btn.setAttribute('aria-label', 'Toggle Navigation Menu');
-          btn.innerHTML = '<span></span><span></span><span></span>';
-          nav.appendChild(btn);
+      if (mlabNavs.length > 0) {
+        // Inject essential mobile styles if not already present in page
+        if (!document.getElementById('mlab-mobile-nav-styles')) {
+          var style = document.createElement('style');
+          style.id = 'mlab-mobile-nav-styles';
+          style.textContent = `
+            .mlab-hamburger {
+              display: none;
+              background: none;
+              border: none;
+              cursor: pointer;
+              padding: 8px;
+              flex-direction: column;
+              gap: 5px;
+              z-index: 1001;
+            }
+            .mlab-hamburger span {
+              display: block;
+              width: 22px;
+              height: 2px;
+              background: currentColor;
+              border-radius: 2px;
+              transition: all 0.3s ease;
+            }
+            .mlab-hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+            .mlab-hamburger.open span:nth-child(2) { opacity: 0; }
+            .mlab-hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+            .mlab-mobile-menu {
+              display: none !important;
+              position: fixed;
+              top: 75px;
+              left: 14px;
+              right: 14px;
+              background: rgba(12, 27, 51, 0.96);
+              backdrop-filter: blur(24px);
+              -webkit-backdrop-filter: blur(24px);
+              border: 1px solid rgba(0, 240, 255, 0.25);
+              border-radius: 18px;
+              padding: 16px;
+              z-index: 99999;
+              flex-direction: column;
+              gap: 6px;
+              box-shadow: 0 15px 45px rgba(0,0,0,0.5);
+              max-height: 80vh;
+              overflow-y: auto;
+            }
+            :root[data-theme="day"] .mlab-mobile-menu,
+            html.light-mode .mlab-mobile-menu {
+              background: rgba(255, 255, 255, 0.98);
+              border-color: rgba(2, 132, 199, 0.25);
+              box-shadow: 0 15px 45px rgba(0,0,0,0.12);
+              color: #0f172a;
+            }
+            .mlab-mobile-menu.open {
+              display: flex !important;
+            }
+            .mlab-mobile-menu a {
+              text-decoration: none;
+              color: inherit;
+              font-size: 0.92rem;
+              font-weight: 600;
+              padding: 10px 14px;
+              border-radius: 12px;
+              display: flex;
+              align-items: center;
+              gap: 12px;
+              transition: all 0.2s ease;
+            }
+            .mlab-mobile-menu a:hover {
+              background: rgba(0, 240, 255, 0.12);
+              color: #00f0ff;
+            }
+            :root[data-theme="day"] .mlab-mobile-menu a:hover,
+            html.light-mode .mlab-mobile-menu a:hover {
+              background: rgba(2, 132, 199, 0.1);
+              color: #0284c7;
+            }
+            @media (max-width: 900px) {
+              .mlab-nav .mlab-links, .navbar .nav-links { display: none !important; }
+              .mlab-hamburger { display: flex !important; }
+            }
+          `;
+          document.head.appendChild(style);
         }
 
-        let mMenu = document.querySelector('.mlab-mobile-menu');
-        if (!mMenu) {
-          mMenu = document.createElement('div');
-          mMenu.className = 'mlab-mobile-menu';
-          var links = nav.querySelectorAll('.mlab-links > li > a, .mlab-dropdown-content a');
-          var seen = {};
-          links.forEach(function (link) {
-            var href = link.getAttribute('href');
-            if (href && !seen[href] && href !== '#' && !link.classList.contains('mlab-theme-btn')) {
-              seen[href] = true;
-              var a = document.createElement('a');
-              a.href = href;
-              a.innerHTML = link.innerHTML;
-              mMenu.appendChild(a);
+        mlabNavs.forEach(function (nav) {
+          let btn = nav.querySelector('.mlab-hamburger');
+          if (!btn) {
+            btn = document.createElement('button');
+            btn.className = 'mlab-hamburger';
+            btn.setAttribute('aria-label', 'Toggle Navigation Menu');
+            btn.innerHTML = '<span></span><span></span><span></span>';
+            nav.appendChild(btn);
+          }
+
+          let mMenu = document.querySelector('.mlab-mobile-menu');
+          if (!mMenu) {
+            mMenu = document.createElement('div');
+            mMenu.className = 'mlab-mobile-menu';
+            mMenu.style.display = 'none'; // Guaranteed hidden on desktop
+            var links = nav.querySelectorAll('.mlab-links > li > a, .mlab-dropdown-content a');
+            var seen = {};
+            links.forEach(function (link) {
+              var href = link.getAttribute('href');
+              if (href && !seen[href] && href !== '#' && !link.classList.contains('mlab-theme-btn')) {
+                seen[href] = true;
+                var a = document.createElement('a');
+                a.href = href;
+                // Get clean title text without overflowing subtitle
+                var titleEl = link.querySelector('.mlab-drop-title, .drop-title');
+                var iconEl = link.querySelector('.mlab-drop-icon, .drop-icon');
+                if (titleEl) {
+                  a.innerHTML = (iconEl ? iconEl.outerHTML + ' ' : '') + '<span>' + titleEl.textContent.trim() + '</span>';
+                } else {
+                  a.innerHTML = link.innerHTML;
+                }
+                mMenu.appendChild(a);
+              }
+            });
+            document.body.appendChild(mMenu);
+          }
+
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var isOpen = mMenu.classList.toggle('open');
+            btn.classList.toggle('open', isOpen);
+            mMenu.style.display = isOpen ? 'flex' : 'none';
+          });
+
+          mMenu.querySelectorAll('a').forEach(function (a) {
+            a.addEventListener('click', function () {
+              btn.classList.remove('open');
+              mMenu.classList.remove('open');
+              mMenu.style.display = 'none';
+            });
+          });
+
+          document.addEventListener('click', function (e) {
+            if (!nav.contains(e.target) && !mMenu.contains(e.target)) {
+              btn.classList.remove('open');
+              mMenu.classList.remove('open');
+              mMenu.style.display = 'none';
             }
           });
-          document.body.appendChild(mMenu);
-        }
-
-        btn.addEventListener('click', function (e) {
-          e.stopPropagation();
-          btn.classList.toggle('open');
-          mMenu.classList.toggle('open');
         });
-
-        mMenu.querySelectorAll('a').forEach(function (a) {
-          a.addEventListener('click', function () {
-            btn.classList.remove('open');
-            mMenu.classList.remove('open');
-          });
-        });
-
-        document.addEventListener('click', function (e) {
-          if (!nav.contains(e.target) && !mMenu.contains(e.target)) {
-            btn.classList.remove('open');
-            mMenu.classList.remove('open');
-          }
-        });
-      });
+      }
     })();
 
     /* Student progress helpers (localStorage) */
