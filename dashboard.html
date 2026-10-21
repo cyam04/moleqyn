@@ -1625,30 +1625,46 @@
   <script>
     let currentChosenAvatar = "👨‍🔬";
 
-    // AUDIO SOUND EFFECTS (Web Audio API)
+    // AUDIO SOUND EFFECTS (Web Audio API - Non-blocking async zero-INP)
+    let _sharedAudioCtx = null;
+    function getAudioCtx() {
+      if (!_sharedAudioCtx && (window.AudioContext || window.webkitAudioContext)) {
+        try {
+          _sharedAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) { }
+      }
+      return _sharedAudioCtx;
+    }
+
     function playBeep(type) {
-      try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        
-        if (type === 'success') {
-          osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
-          osc.frequency.exponentialRampToValueAtTime(783.99, audioCtx.currentTime + 0.15);
-          gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
-          osc.start();
-          osc.stop(audioCtx.currentTime + 0.25);
-        } else if (type === 'click') {
-          osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-          gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
-          osc.start();
-          osc.stop(audioCtx.currentTime + 0.05);
-        }
-      } catch(e) {}
+      setTimeout(() => {
+        try {
+          const audioCtx = getAudioCtx();
+          if (!audioCtx) return;
+          if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+          }
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+
+          if (type === 'success') {
+            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(783.99, audioCtx.currentTime + 0.15);
+            gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.25);
+          } else if (type === 'click') {
+            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.05);
+          }
+        } catch (e) { }
+      }, 0);
     }
 
     function showToast(msg) {
