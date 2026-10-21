@@ -422,6 +422,7 @@
   <div class="nav-links-right">
     <a href="simulators.html" class="nav-back">⚛️ Virtual Labs</a>
     <a href="learn.html" class="nav-back">📚 NCERT Notes</a>
+    <button onclick="clearChatHistory()" class="nav-back" style="background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3); color:#f87171; cursor:pointer;" title="Clear conversation history">🗑️ Clear Chat</button>
     <a href="index.html" class="nav-back">← Back to Home</a>
   </div>
 </nav>
@@ -532,186 +533,476 @@
 </div>
 
 <script>
-// Atomic Mass Table for live calculations
+// Expanded Atomic Mass Table (60+ common elements)
 const ATOMIC_MASSES = {
   H: 1.008, He: 4.003, Li: 6.941, Be: 9.012, B: 10.81, C: 12.011, N: 14.007, O: 15.999,
   F: 18.998, Ne: 20.180, Na: 22.990, Mg: 24.305, Al: 26.982, Si: 28.085, P: 30.974,
-  S: 32.065, Cl: 35.453, K: 39.098, Ar: 39.948, Ca: 40.078, Cr: 51.996, Mn: 54.938,
-  Fe: 55.845, Cu: 63.546, Zn: 65.38, Br: 79.904, Ag: 107.868, I: 126.904, Ba: 137.327,
-  Pb: 207.2, U: 238.029
+  S: 32.065, Cl: 35.453, K: 39.098, Ar: 39.948, Ca: 40.078, Sc: 44.956, Ti: 47.867,
+  V: 50.942, Cr: 51.996, Mn: 54.938, Fe: 55.845, Co: 58.933, Ni: 58.693, Cu: 63.546,
+  Zn: 65.38, Ga: 69.723, Ge: 72.630, As: 74.922, Se: 78.960, Br: 79.904, Kr: 83.798,
+  Rb: 85.468, Sr: 87.620, Y: 88.906, Zr: 91.224, Nb: 92.906, Mo: 95.95, Ag: 107.868,
+  Cd: 112.411, In: 114.818, Sn: 118.710, Sb: 121.760, Te: 127.60, I: 126.904, Xe: 131.293,
+  Cs: 132.905, Ba: 137.327, Pt: 195.084, Au: 196.967, Hg: 200.592, Pb: 207.2, Bi: 208.980,
+  Ra: 226.025, Th: 232.038, U: 238.029
 };
 
+// Storage key for tutor chat
+const CHAT_STORAGE_KEY = 'moleqyn_ai_tutor_history';
+
 function quickFill(text) {
-  document.getElementById('userInput').value = text;
-  document.getElementById('userInput').focus();
+  const input = document.getElementById('userInput');
+  input.value = text;
+  input.focus();
 }
 
 function handleEnter(e) {
   if (e.key === 'Enter') sendMessage();
 }
 
+// Voice Input & Synthesis
 let isRecording = false;
 function toggleVoice() {
   const btn = document.getElementById('voiceBtn');
-  isRecording = !isRecording;
-  if (isRecording) {
-    btn.classList.add('recording');
-    btn.title = "Listening... Speak your chemistry doubt";
-    const prompts = [
-      "Explain the difference between sigma and pi bonds",
-      "Calculate oxidation state of Manganese in KMnO4",
-      "Why is water a bent molecule?"
-    ];
-    setTimeout(() => {
-      document.getElementById('userInput').value = prompts[Math.floor(Math.random() * prompts.length)];
-      toggleVoice();
-    }, 2200);
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    // Fallback simulation
+    isRecording = !isRecording;
+    if (isRecording) {
+      btn.classList.add('recording');
+      btn.title = "Listening...";
+      const sampleQueries = [
+        "Explain the difference between sigma and pi bonds",
+        "Calculate molar mass of CaCO3",
+        "Explain Le Chatelier's Principle in Haber process",
+        "Calculate pH of 0.05 M H2SO4",
+        "What is Markovnikov's rule with mechanism?"
+      ];
+      setTimeout(() => {
+        document.getElementById('userInput').value = sampleQueries[Math.floor(Math.random() * sampleQueries.length)];
+        toggleVoice();
+      }, 1800);
+    } else {
+      btn.classList.remove('recording');
+      btn.title = "Voice Input";
+    }
+    return;
+  }
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!window.chemRecognizer) {
+    window.chemRecognizer = new SpeechRecognition();
+    window.chemRecognizer.continuous = false;
+    window.chemRecognizer.interimResults = false;
+    window.chemRecognizer.lang = 'en-IN';
+
+    window.chemRecognizer.onresult = function(event) {
+      const transcript = event.results[0][0].transcript;
+      document.getElementById('userInput').value = transcript;
+      btn.classList.remove('recording');
+      isRecording = false;
+    };
+    window.chemRecognizer.onerror = function() {
+      btn.classList.remove('recording');
+      isRecording = false;
+    };
+    window.chemRecognizer.onend = function() {
+      btn.classList.remove('recording');
+      isRecording = false;
+    };
+  }
+
+  if (!isRecording) {
+    try {
+      window.chemRecognizer.start();
+      isRecording = true;
+      btn.classList.add('recording');
+    } catch(err) {
+      btn.classList.remove('recording');
+      isRecording = false;
+    }
   } else {
+    window.chemRecognizer.stop();
+    isRecording = false;
     btn.classList.remove('recording');
-    btn.title = "Voice Input";
+  }
+}
+
+function speakText(text) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const cleanText = text.replace(/<[^>]*>/g, '').replace(/&[a-z]+;/g, ' ');
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.rate = 1.0;
+    utterance.pitch = 1.0;
+    window.speechSynthesis.speak(utterance);
   }
 }
 
 function handleImageSelected(input) {
   if (input.files && input.files[0]) {
     document.getElementById('uploadPreview').style.display = 'flex';
-    document.getElementById('userInput').placeholder = "Image loaded! Add any question prompt or press Send...";
+    document.getElementById('userInput').placeholder = "Question sheet attached! Add prompt or press Send...";
   }
 }
 
 function cancelUpload() {
   document.getElementById('uploadPreview').style.display = 'none';
   document.getElementById('imageInput').value = '';
+  document.getElementById('userInput').placeholder = "Ask any chemistry doubt, paste reaction, or calculate formula...";
 }
 
-// Client-Side Intelligent Chemistry Answer Generator
+// ── Chemical Formula Parser ──────────────────────────────────────────
+function parseChemicalFormula(formula) {
+  const clean = formula.replace(/\s+/g, '');
+  const stack = [{}];
+  let i = 0;
+
+  while (i < clean.length) {
+    const ch = clean[i];
+    if (ch === '(' || ch === '[') {
+      stack.push({});
+      i++;
+    } else if (ch === ')' || ch === ']') {
+      i++;
+      let multStr = '';
+      while (i < clean.length && /\d/.test(clean[i])) {
+        multStr += clean[i];
+        i++;
+      }
+      const mult = multStr ? parseInt(multStr, 10) : 1;
+      const top = stack.pop();
+      const curr = stack[stack.length - 1];
+      for (const elem in top) {
+        curr[elem] = (curr[elem] || 0) + top[elem] * mult;
+      }
+    } else if (/[A-Z]/.test(ch)) {
+      let elem = clean[i++];
+      if (i < clean.length && /[a-z]/.test(clean[i])) {
+        elem += clean[i++];
+      }
+      let countStr = '';
+      while (i < clean.length && /\d/.test(clean[i])) {
+        countStr += clean[i++];
+      }
+      const count = countStr ? parseInt(countStr, 10) : 1;
+      const curr = stack[stack.length - 1];
+      curr[elem] = (curr[elem] || 0) + count;
+    } else {
+      i++;
+    }
+  }
+
+  const result = stack[0];
+  let totalMass = 0;
+  const breakdown = [];
+  let valid = true;
+
+  for (const elem in result) {
+    const mass = ATOMIC_MASSES[elem];
+    if (!mass) {
+      valid = false;
+      break;
+    }
+    const count = result[elem];
+    const elemTotal = count * mass;
+    totalMass += elemTotal;
+    breakdown.push({ elem, count, mass, elemTotal });
+  }
+
+  if (!valid || breakdown.length === 0) return null;
+  return { formula, totalMass, breakdown };
+}
+
+// ── Client-Side Intelligent Chemistry Knowledge Engine ──────────────
 function generateChemResponse(query) {
   const q = query.trim();
   const lower = q.toLowerCase();
 
-  // 1. Equation Balancing
-  if (lower.includes('balance') || lower.includes('->') || lower.includes('<=>')) {
+  // 1. DYNAMIC FORMULA DETECTION & MOLAR MASS CALCULATION
+  const formulaMatch = q.match(/\b([A-Z][a-z]?\d*(?:\([A-Z][a-z]?\d*\)\d*)*[A-Z][a-z]?\d*)\b/);
+  const isExplicitMolar = lower.includes('molar mass') || lower.includes('molecular mass') || lower.includes('molecular weight');
+
+  if (formulaMatch && (isExplicitMolar || !lower.includes(' '))) {
+    const candidate = formulaMatch[1];
+    const parsed = parseChemicalFormula(candidate);
+    if (parsed) {
+      const cardRows = [
+        { key: "Formula", val: candidate },
+        { key: "Total Molar Mass", val: `${parsed.totalMass.toFixed(3)} g/mol` }
+      ];
+      parsed.breakdown.forEach(b => {
+        const pct = ((b.elemTotal / parsed.totalMass) * 100).toFixed(2);
+        cardRows.push({
+          key: `${b.elem} (${b.count} × ${b.mass.toFixed(3)})`,
+          val: `${b.elemTotal.toFixed(3)} g/mol (${pct}%)`
+        });
+      });
+      return {
+        text: `Calculated Molar Mass & Elemental Composition for <strong>${candidate}</strong>:`,
+        card: cardRows,
+        extra: `<strong>Note:</strong> Standard atomic weights based on IUPAC commission values.`
+      };
+    }
+  }
+
+  // 2. CHEMICAL EQUATIONS & BALANCING
+  if (lower.includes('balance') || lower.includes('->') || lower.includes('reaction') || lower.includes('<=>') || lower.includes('⇌')) {
+    // KMnO4 + HCl
     if (lower.includes('kmno4') && lower.includes('hcl')) {
       return {
-        text: `Here is the balanced redox reaction with step-by-step oxidation state analysis:`,
+        text: `Balanced Redox Reaction in Acidic Medium:`,
         card: [
           { key: "Unbalanced", val: "KMnO₄ + HCl → KCl + MnCl₂ + H₂O + Cl₂" },
-          { key: "Balanced Equation", val: "2 KMnO₄ + 16 HCl → 2 KCl + 2 MnCl₂ + 8 H₂O + 5 Cl₂" },
-          { key: "Oxidation", val: "2 Cl⁻ → Cl₂ + 2e⁻ (Oxidation state: -1 to 0)" },
-          { key: "Reduction", val: "Mn⁺⁷ + 5e⁻ → Mn⁺² (Reduced in acidic medium)" },
-          { key: "Stoichiometry Ratio", val: "2 : 16 : 2 : 2 : 8 : 5" }
+          { key: "Balanced Reaction", val: "2 KMnO₄ + 16 HCl → 2 KCl + 2 MnCl₂ + 8 H₂O + 5 Cl₂" },
+          { key: "Oxidation Half", val: "2 Cl⁻ → Cl₂ + 2e⁻ (Oxidation state: -1 → 0)" },
+          { key: "Reduction Half", val: "MnO₄⁻ + 8H⁺ + 5e⁻ → Mn²⁺ + 4H₂O (Mn: +7 → +2)" },
+          { key: "Stoichiometry Ratio", val: "2 : 16 → 2 : 2 : 8 : 5" }
         ],
-        extra: `<strong>NCERT Note:</strong> Potassium permanganate acts as a powerful self-indicating oxidizing agent in acidic medium.`
+        extra: `<strong>NCERT Crux:</strong> KMnO₄ acts as a self-indicator; pink colour disappears at equivalence point.`
       };
     }
+    // Fe + H2O
     if (lower.includes('fe') && lower.includes('h2o')) {
       return {
-        text: `Here is the balanced reaction for heated iron reacting with steam:`,
+        text: `Action of Steam on Red-Hot Iron:`,
         card: [
-          { key: "Balanced Equation", val: "3 Fe(s) + 4 H₂O(g) → Fe₃O₄(s) + 4 H₂(g)" },
-          { key: "Product Formed", val: "Magnetic Iron Oxide (Magnetite, Fe₃O₄) + Hydrogen Gas" },
-          { key: "Reaction Type", val: "Metal displacement with steam (High temperature)" }
+          { key: "Balanced Reaction", val: "3 Fe(s) + 4 H₂O(g) → Fe₃O₄(s) + 4 H₂(g)" },
+          { key: "Product", val: "Triferric tetraoxide (Magnetite, FeO·Fe₂O₃)" },
+          { key: "Reaction Conditions", val: "Strictly steam required (Fe does not react with liquid water)" }
         ],
-        extra: `<strong>Board Tip:</strong> Fe does not react with cold or hot water; it strictly requires steam to form mixed oxide (FeO·Fe₂O₃).`
+        extra: `<strong>Board Question:</strong> Fe₃O₄ is a mixed oxide composed of ferrous oxide (FeO) and ferric oxide (Fe₂O₃).`
       };
     }
-    return {
-      text: `Balanced Chemical Equation Analysis for <strong>${escapeHtml(q)}</strong>:`,
-      card: [
-        { key: "Conservation Law", val: "Mass and charge strictly conserved" },
-        { key: "Balanced Coefficients", val: "Calculated via Matrix Stoichiometry" }
-      ],
-      extra: `Always verify that atoms of each element on reactant side equal the product side.`
-    };
-  }
-
-  // 2. Molar Mass Calculation
-  if (lower.includes('molar mass') || lower.includes('molecular weight') || lower.includes('c6h12o6') || lower.includes('h2so4')) {
-    if (lower.includes('c6h12o6') || lower.includes('glucose')) {
+    // CH4 / Hydrocarbon combustion
+    if (lower.includes('ch4') || lower.includes('methane') && lower.includes('o2')) {
       return {
-        text: `Molar Mass and Elemental Mass Percentage breakdown for <strong>Glucose (C₆H₁₂O₆)</strong>:`,
+        text: `Complete Combustion of Methane:`,
         card: [
-          { key: "Formula", val: "C₆H₁₂O₆" },
-          { key: "Carbon (6 × 12.011)", val: "72.066 g/mol (40.00%)" },
-          { key: "Hydrogen (12 × 1.008)", val: "12.096 g/mol (6.71%)" },
-          { key: "Oxygen (6 × 15.999)", val: "95.994 g/mol (53.29%)" },
-          { key: "Total Molar Mass", val: "180.156 g/mol" }
+          { key: "Balanced Equation", val: "CH₄(g) + 2 O₂(g) → CO₂(g) + 2 H₂O(g) + 890.3 kJ" },
+          { key: "Reaction Type", val: "Exothermic Combustion (ΔH = -890.3 kJ/mol)" },
+          { key: "Mole Ratio", val: "1 mole CH₄ requires 2 moles O₂ producing 1 mole CO₂ and 2 moles H₂O" }
         ],
-        extra: `<strong>Empirical Formula:</strong> CH₂O with empirical formula mass = 30.03 g/mol.`
+        extra: `In limited oxygen supply, incomplete combustion yields poisonous CO(g) or soot C(s).`
       };
     }
-    if (lower.includes('h2so4') || lower.includes('sulfuric') || lower.includes('sulphuric')) {
+    // Haber Process
+    if (lower.includes('haber') || (lower.includes('n2') && lower.includes('h2'))) {
       return {
-        text: `Molar Mass breakdown for <strong>Sulfuric Acid (H₂SO₄)</strong>:`,
+        text: `Industrial Synthesis of Ammonia (Haber-Bosch Process):`,
         card: [
-          { key: "Hydrogen (2 × 1.008)", val: "2.016 g/mol (2.05%)" },
-          { key: "Sulfur (1 × 32.065)", val: "32.065 g/mol (32.69%)" },
-          { key: "Oxygen (4 × 15.999)", val: "63.996 g/mol (65.25%)" },
-          { key: "Total Molar Mass", val: "98.079 g/mol" },
-          { key: "Basicity", val: "Dibasic Acid (2 replaceable H⁺ ions)" }
+          { key: "Balanced Equilibrium", val: "N₂(g) + 3 H₂(g) ⇌ 2 NH₃(g) + 92.4 kJ" },
+          { key: "Optimal Temperature", val: "450°C – 500°C (Compromise temperature)" },
+          { key: "Optimal Pressure", val: "200 atm (Shifts equilibrium toward products)" },
+          { key: "Catalyst & Promoter", val: "Finely divided Fe with Mo / Al₂O₃ promoter" }
         ],
-        extra: `<strong>Equivalent Weight:</strong> Molar Mass / 2 = 49.04 g/eq.`
+        extra: `Applying Le Chatelier's Principle: High pressure and continuous removal of NH₃ maximizes product yield.`
+      };
+    }
+    // Photosynthesis
+    if (lower.includes('photosynthesis') || (lower.includes('co2') && lower.includes('glucose'))) {
+      return {
+        text: `Biochemical Photosynthesis Reaction:`,
+        card: [
+          { key: "Balanced Equation", val: "6 CO₂(g) + 6 H₂O(l) + Light → C₆H₁₂O₆(aq) + 6 O₂(g)" },
+          { key: "Energy Balance", val: "Endothermic photochemical reaction" },
+          { key: "Site of Reaction", val: "Chloroplasts (Chlorophyll pigment)" }
+        ],
+        extra: `Water provides the electrons and protons for reduction while releasing O₂ gas as a byproduct.`
+      };
+    }
+    // Generic equation solver fallback
+    return {
+      text: `Chemical Stoichiometry and Conservation Analysis for <strong>${escapeHtml(q)}</strong>:`,
+      card: [
+        { key: "Conservation of Mass", val: "Total reactant atoms must equal product atoms" },
+        { key: "Oxidation States", val: "Total electrons gained = Total electrons lost" },
+        { key: "Inspection Rule", val: "Balance metals first, non-metals second, H & O last" }
+      ],
+      extra: `Tip: You can also use our specialized <a href="reaction.html" style="color:var(--primary); font-weight:600;">Reaction Balancer & Solver</a> for interactive step-by-step balancing!`
+    };
+  }
+
+  // 3. ORGANIC MECHANISMS & NAMED REACTIONS
+  if (lower.includes('cannizzaro') || lower.includes('aldol') || lower.includes('markovnikov') || lower.includes('sn1') || lower.includes('sn2') || lower.includes('reimer') || lower.includes('kolbe')) {
+    if (lower.includes('cannizzaro')) {
+      return {
+        text: `<strong>Cannizzaro Reaction (Disproportionation):</strong> Aldehydes lacking α-hydrogen (e.g. Formaldehyde, Benzaldehyde) undergo self-oxidation and reduction when treated with concentrated alkali.`,
+        card: [
+          { key: "Reactants", val: "2 HCHO + Conc. 50% NaOH" },
+          { key: "Products", val: "CH₃OH (Methanol, reduced) + HCOONa (Sodium formate, oxidized)" },
+          { key: "Key Requirement", val: "No α-hydrogens on carbonyl carbon" },
+          { key: "Mechanism Step", val: "Nucleophilic attack of OH⁻ followed by hydride (:H⁻) shift" }
+        ],
+        extra: `<strong>Crossed Cannizzaro:</strong> Benzaldehyde + Formaldehyde yields Benzyl alcohol + Formic acid salt (Formaldehyde is more readily oxidized).`
+      };
+    }
+    if (lower.includes('aldol')) {
+      return {
+        text: `<strong>Aldol Condensation:</strong> Aldehydes and ketones possessing at least one α-hydrogen react in presence of dilute alkali to form β-hydroxyaldehydes (aldol) which eliminate water on heating to form α,β-unsaturated carbonyls.`,
+        card: [
+          { key: "Example", val: "2 CH₃CHO (Ethanal) —(dil. NaOH)→ CH₃-CH(OH)-CH₂-CHO (3-hydroxybutanal)" },
+          { key: "Dehydration Step", val: "Heat → CH₃-CH=CH-CHO (But-2-enal / Crotonaldehyde) + H₂O" },
+          { key: "Enolate Intermediary", val: "Carbanion/enolate generated by α-deprotonation" }
+        ],
+        extra: `<strong>Board Crux:</strong> Requires α-hydrogen. Compounds like Benzaldehyde and Formaldehyde do NOT give simple self-aldol.`
+      };
+    }
+    if (lower.includes('markovnikov')) {
+      return {
+        text: `<strong>Markovnikov's Rule & Anti-Markovnikov (Peroxide Effect):</strong>`,
+        card: [
+          { key: "Markovnikov's Rule", val: "Electrophile (H⁺) adds to the carbon with more hydrogens, generating the more stable carbocation (3° > 2° > 1°)" },
+          { key: "Example", val: "CH₃-CH=CH₂ + HBr → CH₃-CH(Br)-CH₃ (2-Bromopropane, Major)" },
+          { key: "Peroxide Effect (Kharasch)", val: "CH₃-CH=CH₂ + HBr —(Peroxide)→ CH₃-CH₂-CH₂Br (1-Bromopropane, Free radical mechanism)" },
+          { key: "Exception Note", val: "Peroxide effect occurs exclusively with HBr (not HCl or HI due to thermodynamics)" }
+        ],
+        extra: `Hyperconjugation and inductive effect stabilize the secondary carbocation over the primary carbocation.`
+      };
+    }
+    if (lower.includes('sn1') || lower.includes('sn2')) {
+      return {
+        text: `<strong>Nucleophilic Substitution Mechanism Comparison (SN1 vs SN2):</strong>`,
+        card: [
+          { key: "Kinetics", val: "SN1: Unimolecular (Rate = k[R-X]) | SN2: Bimolecular (Rate = k[R-X][Nu⁻])" },
+          { key: "Steps & Intermediate", val: "SN1: 2 steps via Carbocation | SN2: 1 step via Pentacoordinate Transition State" },
+          { key: "Substrate Reactivity", val: "SN1: 3° > 2° > 1° > methyl | SN2: Methyl > 1° > 2° > 3° (Steric hindrance)" },
+          { key: "Stereochemistry", val: "SN1: Racemization (Retention + Inversion) | SN2: 100% Walden Inversion" },
+          { key: "Solvent Preference", val: "SN1: Polar Protic (H₂O, EtOH) | SN2: Polar Aprotic (Acetone, DMSO, DMF)" }
+        ],
+        extra: `Tertiary alkyl halides react via SN1; primary alkyl halides react via SN2.`
       };
     }
   }
 
-  // 3. pH / pOH Calculation
-  if (lower.includes('ph') || lower.includes('poh') || lower.includes('acid') && lower.includes('base')) {
+  // 4. THERMODYNAMICS, EQUILIBRIUM & PHYSICAL CHEMISTRY
+  if (lower.includes('ph') || lower.includes('poh') || lower.includes('buffer') || lower.includes('henderson')) {
     return {
-      text: `Step-by-step pH and [H⁺] ion concentration calculation:`,
+      text: `<strong>Acid-Base Equilibrium & pH / pOH Calculation:</strong>`,
       card: [
-        { key: "Formula Used", val: "pH = -log₁₀[H⁺], pOH = -log₁₀[OH⁻]" },
-        { key: "Ionic Product (298 K)", val: "pH + pOH = 14 (Kw = 1.0 × 10⁻¹⁴)" },
-        { key: "Sample Solution (0.025 M HCl)", val: "pH = -log(2.5 × 10⁻²) = 1.60 (Strongly Acidic)" },
-        { key: "Sample Solution (0.01 M NaOH)", val: "pOH = 2.00 → pH = 12.00 (Strongly Alkaline)" }
+        { key: "Fundamental Formulas", val: "pH = -log₁₀[H⁺], pOH = -log₁₀[OH⁻], pH + pOH = 14 (at 298 K)" },
+        { key: "Ionic Product (Kw)", val: "Kw = [H⁺][OH⁻] = 1.0 × 10⁻¹⁴ mol²/L² at 25°C" },
+        { key: "Buffer Solution (Acidic)", val: "Henderson-Hasselbalch: pH = pKa + log([Conjugate Base] / [Weak Acid])" },
+        { key: "Buffer Solution (Basic)", val: "pOH = pKb + log([Conjugate Acid] / [Weak Base])" }
       ],
-      extra: `Remember that pure water at 298 K has pH = 7.0 (Neutral, where [H⁺] = [OH⁻] = 10⁻⁷ M).`
+      extra: `Pure neutral water at 25°C has [H⁺] = 10⁻⁷ M (pH = 7.00). If temperature rises, Kw increases and neutral pH drops slightly below 7.`
     };
   }
 
-  // 4. Equilibrium / Le Chatelier
-  if (lower.includes('le chatelier') || lower.includes('haber') || lower.includes('equilibrium')) {
+  if (lower.includes('gibbs') || lower.includes('spontaneity') || lower.includes('entropy') || lower.includes('enthalpy')) {
     return {
-      text: `<strong>Le Chatelier's Principle</strong> states that if an external constraint (temperature, pressure, concentration) is applied to a chemical system in dynamic equilibrium, the equilibrium shifts in a direction that tends to counteract that constraint.`,
+      text: `<strong>Gibbs Free Energy & Spontaneous Thermodynamics:</strong>`,
       card: [
-        { key: "Example Reaction", val: "N₂(g) + 3 H₂(g) ⇌ 2 NH₃(g) + 92.4 kJ (Exothermic)" },
-        { key: "Increase Pressure", val: "Shifts RIGHT (Fewer moles of gas: 4 moles → 2 moles)" },
-        { key: "Decrease Temperature", val: "Shifts RIGHT (Exothermic reaction releases heat)" },
-        { key: "Add Reactants (N₂ / H₂)", val: "Shifts RIGHT (Consumes added reactants)" },
-        { key: "Add Catalyst (Iron)", val: "NO SHIFT (Increases rate of both forward and reverse equally)" }
+        { key: "Fundamental Relation", val: "ΔG = ΔH - TΔS" },
+        { key: "Condition for Spontaneity", val: "ΔG < 0 (Spontaneous process at constant T and P)" },
+        { key: "Equilibrium Condition", val: "ΔG = 0 (System at dynamic equilibrium, ΔG° = -RT ln K)" },
+        { key: "High Temperature Spontaneity", val: "If ΔH > 0 and ΔS > 0, reaction becomes spontaneous at T > ΔH/ΔS" }
       ],
-      extra: `<strong>Optimum Industrial Conditions:</strong> ~200 atm pressure, 450°C temperature, and Fe catalyst with Mo promoter.`
+      extra: `Exothermic reactions with increasing entropy (ΔH < 0, ΔS > 0) are unconditionally spontaneous at all temperatures.`
     };
   }
 
-  // 5. Quantum Numbers & Atomic Structure
-  if (lower.includes('quantum') || lower.includes('orbital') || lower.includes('sodium') || lower.includes('bohr')) {
+  if (lower.includes('nernst') || lower.includes('cell potential') || lower.includes('emf') || lower.includes('electrochemistry')) {
     return {
-      text: `Quantum Number Breakdown for the valence electron of <strong>Sodium (Na, Z=11)</strong>:`,
+      text: `<strong>Nernst Equation & Electrochemical Cell EMF:</strong>`,
       card: [
-        { key: "Electronic Config", val: "1s² 2s² 2p⁶ 3s¹" },
-        { key: "Principal (n)", val: "n = 3 (Third energy shell)" },
-        { key: "Azimuthal (l)", val: "l = 0 (s-orbital, spherical shape)" },
-        { key: "Magnetic (m_l)", val: "m_l = 0 (Only one spatial orientation)" },
-        { key: "Spin (m_s)", val: "m_s = +1/2 (Clockwise electron spin)" }
+        { key: "Nernst Equation (298 K)", val: "E_cell = E°_cell - (0.0591 / n) log₁₀ Q" },
+        { key: "Standard Cell EMF", val: "E°_cell = E°_cathode - E°_anode (Reduction potentials)" },
+        { key: "Equilibrium Constant Relation", val: "E°_cell = (0.0591 / n) log₁₀ K_c" },
+        { key: "Gibbs Energy Relation", val: "ΔG° = -n F E°_cell (F = 96485 C/mol)" }
       ],
-      extra: `<strong>Rule Followed:</strong> Aufbau Principle (lowest energy orbital filled first) & Pauli Exclusion Principle (no two electrons share all 4 quantum numbers).`
+      extra: `A positive standard cell potential (E°_cell > 0) implies a negative ΔG° and a thermodynamically favorable galvanic cell.`
     };
   }
 
-  // 6. General / Fallback NCERT Concepts
+  if (lower.includes('half life') || lower.includes('kinetics') || lower.includes('arrhenius') || lower.includes('rate constant')) {
+    return {
+      text: `<strong>Chemical Kinetics & Reaction Rates:</strong>`,
+      card: [
+        { key: "First-Order Rate Law", val: "k = (2.303 / t) log₁₀( [A]₀ / [A] )" },
+        { key: "First-Order Half-Life", val: "t₁/₂ = 0.693 / k (Independent of initial concentration)" },
+        { key: "Zero-Order Half-Life", val: "t₁/₂ = [A]₀ / (2k) (Directly proportional to [A]₀)" },
+        { key: "Arrhenius Equation", val: "k = A · e^(-Ea / RT) ⇒ log(k₂/k₁) = (Ea / 2.303R) · [(T₂ - T₁) / (T₁T₂)]" }
+      ],
+      extra: `For every 10°C rise in temperature, reaction rate almost doubles because the fraction of effective collisions increases exponentially.`
+    };
+  }
+
+  // 5. ATOMIC STRUCTURE & QUANTUM NUMBERS
+  if (lower.includes('quantum') || lower.includes('orbital') || lower.includes('aufbau') || lower.includes('hund') || lower.includes('pauli')) {
+    return {
+      text: `<strong>Quantum Numbers & Electron Configuration Rules:</strong>`,
+      card: [
+        { key: "Principal (n)", val: "Main shell / size / energy level (n = 1, 2, 3...)" },
+        { key: "Azimuthal (l)", val: "Orbital shape / subshell: l = 0 (s), 1 (p), 2 (d), 3 (f)" },
+        { key: "Magnetic (m_l)", val: "Spatial orientation: -l to +l (Total 2l + 1 orientations)" },
+        { key: "Spin (m_s)", val: "Intrinsic spin direction: +1/2 (↑) or -1/2 (↓)" },
+        { key: "Aufbau Principle", val: "Electrons occupy orbitals in order of increasing (n + l) energy" },
+        { key: "Hund's Rule", val: "Degenerate orbitals are singly occupied before pairing occurs" }
+      ],
+      extra: `Pauli Exclusion Principle: No two electrons in the same atom can possess identical sets of all four quantum numbers.`
+    };
+  }
+
+  // 6. DEFAULT INTELLIGENT NCERT SOLUTION FALLBACK
   return {
-    text: `NCERT Chemistry Concept Explanation for <strong>"${escapeHtml(q)}"</strong>:`,
+    text: `NCERT Chemistry Analysis for <strong>"${escapeHtml(q)}"</strong>:`,
     card: [
-      { key: "Core Definition", val: "Aligned with CBSE & ICSE secondary/senior syllabus" },
-      { key: "Visual Experiment", val: "Inspect in Moleqyn Virtual Simulators" }
+      { key: "Core Curriculum", val: "CBSE & ICSE Senior Secondary aligned" },
+      { key: "Key Strategy", val: "Identify reactants, oxidation states, and thermochemical balance" },
+      { key: "Recommended Simulator", val: "Explore in Moleqyn Virtual Labs" }
     ],
-    extra: `You can also launch our <a href="sim_atomverse.html" style="color:var(--primary); font-weight:600;">AtomVerse 3D Quantum Lab</a> or <a href="sim_titration.html" style="color:var(--primary); font-weight:600;">Titration Simulator</a> to test this concept interactively!`
+    extra: `You can test this concept visually in our <a href="simulators.html" style="color:var(--primary); font-weight:600;">Interactive Chemistry Simulators</a> or check <a href="learn.html" style="color:var(--primary); font-weight:600;">NCERT Chapter Guides</a>.`
   };
 }
 
 function escapeHtml(str) {
   return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function copySolutionText(btn) {
+  const card = btn.closest('.msg-ai');
+  if (!card) return;
+  const clone = card.cloneNode(true);
+  const btns = clone.querySelectorAll('button');
+  btns.forEach(b => b.remove());
+  const text = clone.innerText.trim();
+  navigator.clipboard.writeText(text).then(() => {
+    btn.innerHTML = '✓ Copied!';
+    setTimeout(() => { btn.innerHTML = '📋 Copy Solution'; }, 2000);
+  });
+}
+
+function saveChatToStorage() {
+  const chatBox = document.getElementById('chatBox');
+  try {
+    sessionStorage.setItem(CHAT_STORAGE_KEY, chatBox.innerHTML);
+  } catch(e) {}
+}
+
+function loadSavedChat() {
+  const saved = sessionStorage.getItem(CHAT_STORAGE_KEY);
+  if (saved) {
+    const chatBox = document.getElementById('chatBox');
+    chatBox.innerHTML = saved;
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+}
+
+function clearChatHistory() {
+  if (confirm("Clear conversation history and restart chemistry solver?")) {
+    sessionStorage.removeItem(CHAT_STORAGE_KEY);
+    const chatBox = document.getElementById('chatBox');
+    chatBox.innerHTML = `
+      <div class="msg msg-ai">
+        <div class="ai-header">
+          <span>🤖 MOLEQYN CHEM-ENGINE</span> • <span>ONLINE</span>
+        </div>
+        Hello! I'm your dedicated <strong>Chemistry AI Assistant</strong>. I can balance equations, calculate molar mass, solve pH values, trace organic reaction mechanisms, and explain NCERT concepts step-by-step.
+        <div style="margin-top:10px; font-size:0.88rem; color:var(--muted);">
+          Try typing a formula (e.g., <code>H2SO4</code>), a reaction (e.g., <code>Fe + O2 -> Fe2O3</code>), or upload an image of your question!
+        </div>
+      </div>
+    `;
+  }
 }
 
 function sendMessage() {
@@ -769,11 +1060,20 @@ function sendMessage() {
       html += `<div style="margin-top:10px; font-size:0.88rem;">${response.extra}</div>`;
     }
 
+    html += `<div style="display:flex; gap:8px; margin-top:12px;">
+      <button class="sug-chip" style="font-size:0.75rem; padding:4px 10px; cursor:pointer;" onclick="copySolutionText(this)">📋 Copy Solution</button>
+      <button class="sug-chip" style="font-size:0.75rem; padding:4px 10px; cursor:pointer;" onclick="speakText(this.parentElement.previousElementSibling ? this.parentElement.previousElementSibling.innerText : '')">🔊 Read Aloud</button>
+    </div>`;
+
     aiDiv.innerHTML = html;
     chatBox.appendChild(aiDiv);
     chatBox.scrollTop = chatBox.scrollHeight;
-  }, 650);
+    saveChatToStorage();
+  }, 450);
 }
+
+// Restore saved conversation on load
+window.addEventListener('DOMContentLoaded', loadSavedChat);
 </script>
 
   <script src="js/shared-nav.js"></script>
