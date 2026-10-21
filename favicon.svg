@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" fill="none">
+  <defs>
+    <linearGradient id="mqGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00f0ff"/>
+      <stop offset="50%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#a855f7"/>
+    </linearGradient>
+    <linearGradient id="mqGlowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#a855f7" stop-opacity="0.06"/>
+    </linearGradient>
+    <filter id="mqGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Hexagonal Benzene Ring Geometry -->
+  <polygon points="24,4 41,14 41,34 24,44 7,34 7,14" 
+           stroke="url(#mqGrad)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" 
+           fill="url(#mqGlowGrad)" />
+
+  <!-- Quantum Orbital Ellipse -->
+  <ellipse cx="24" cy="24" rx="16" ry="6.5" 
+           transform="rotate(-28 24 24)" 
+           stroke="url(#mqGrad)" stroke-width="1.8" stroke-linecap="round" opacity="0.85"/>
+
+  <!-- Molecular Bond Lines -->
+  <line x1="24" y1="24" x2="35" y2="17.5" stroke="#00f0ff" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+  <line x1="24" y1="24" x2="13" y2="30.5" stroke="#a855f7" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+  <line x1="24" y1="24" x2="24" y2="11" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round" opacity="0.75"/>
+
+  <!-- Satellite Atoms -->
+  <circle cx="35" cy="17.5" r="2.8" fill="#00f0ff" filter="url(#mqGlow)"/>
+  <circle cx="13" cy="30.5" r="2.8" fill="#a855f7" filter="url(#mqGlow)"/>
+  <circle cx="24" cy="11" r="2.4" fill="#38bdf8"/>
+
+  <!-- Central Atomic Nucleus -->
+  <circle cx="24" cy="24" r="4.5" fill="url(#mqGrad)" filter="url(#mqGlow)"/>
+  <circle cx="24" cy="24" r="2.2" fill="#ffffff"/>
+</svg>

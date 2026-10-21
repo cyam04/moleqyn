@@ -1,0 +1,1320 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Moleqyn | AtomVerse – Atomic Structure & Quantum Simulator</title>
+<meta name="description" content="Moleqyn AtomVerse: Interactive 118-element periodic table, live Bohr electron orbits, quantum numbers, orbitals, isotopes, spectra and Hund/Pauli practice.">
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"/>
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
+    if (saved === 'light') {
+      document.documentElement.setAttribute('data-theme', 'day');
+      document.documentElement.classList.add('light-mode');
+    }
+  })();
+</script>
+
+<style>
+:root{
+  --bg:#020812;--panel:#071522;--panel2:#0b1f32;--line:#173b55;
+  --cyan:#35ddff;--blue:#63a9ff;--violet:#b36cff;--green:#42e6a4;
+  --red:#ff685d;--text:#ecf8ff;--muted:#89a8bc;
+  --glass-bg:rgba(15,23,42,0.75);--nav-bg-scrolled:rgba(15,23,42,0.98);--glass-border:rgba(255,255,255,0.08);--btn-primary:#0ea5e9;--primary:#00d4ff;--primary-glow:rgba(0,212,255,0.2);
+  --font-display:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+
+/* DAY THEME TOKENS */
+:root[data-theme="day"],
+html.light-mode {
+  --bg: #f8fafc;
+  --panel: #ffffff;
+  --panel2: #f1f5f9;
+  --line: #cbd5e1;
+  --cyan: #0284c7;
+  --blue: #2563eb;
+  --violet: #7c3aed;
+  --green: #16a34a;
+  --red: #dc2626;
+  --text: #0f172a;
+  --muted: #64748b;
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --nav-bg-scrolled: rgba(255, 255, 255, 0.98);
+  --glass-border: rgba(15, 23, 42, 0.1);
+  --btn-primary: #0284c7;
+  --primary: #0284c7;
+  --primary-glow: rgba(2, 132, 199, 0.2);
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(circle at 50% 20%,#0d2943 0,#030b15 50%,#01040a 100%);color:var(--text);font:14px 'Inter',system-ui,sans-serif;padding-top:85px;min-height:100vh;transition:background 0.3s ease, color 0.3s ease;}
+
+:root[data-theme="day"] body,
+html.light-mode body {
+  background: radial-gradient(circle at 50% 15%, #f8fafc 0%, #e2e8f0 60%, #cbd5e1 100%);
+  color: var(--text);
+}
+
+button,input,select{font:inherit}button{cursor:pointer}
+
+/* ===== UNIFIED Moleqyn FLOATING NAVBAR ===== */
+.mlab-nav{position:fixed;top:15px;left:50%;transform:translateX(-50%);width:95%;max-width:1250px;background:var(--glass-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;justify-content:space-between;align-items:center;padding:10px 22px;border-radius:40px;border:1px solid var(--glass-border);z-index:1000;box-shadow:0 10px 30px rgba(0,0,0,0.2);transition:all 0.3s ease;}
+.mlab-nav.scrolled{top:8px;background:var(--nav-bg-scrolled);box-shadow:0 15px 40px rgba(0,0,0,0.3);border-color:var(--primary);}
+.mlab-brand{font-family:var(--font-display);font-size:1.4rem;font-weight:800;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:6px}
+.mlab-brand span{color:var(--primary);}
+.mlab-links{display:flex;list-style:none;align-items:center;gap:0.3rem;margin:0;padding:0}
+.mlab-links>li>a{color:var(--muted);text-decoration:none;font-size:0.86rem;font-weight:500;padding:6px 12px;border-radius:20px;transition:all 0.2s;display:block;}
+.mlab-links>li>a:hover,.mlab-links>li>a.active{color:var(--primary);background:var(--primary-glow);}
+.mlab-dropdown{position:relative;}
+.mlab-dropbtn{color:var(--muted);text-decoration:none;font-size:0.86rem;font-weight:500;padding:6px 12px;border-radius:20px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all 0.2s;}
+.mlab-dropbtn:hover,.mlab-dropbtn.active{color:var(--primary);background:var(--primary-glow);}
+.mlab-dropdown-content{display:none;position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--nav-bg-scrolled);border:1px solid var(--glass-border);border-radius:16px;padding:8px;min-width:270px;box-shadow:0 20px 50px rgba(0,0,0,0.4);z-index:2000;backdrop-filter:blur(20px);}
+.mlab-dropdown:hover .mlab-dropdown-content{display:block;animation:navFadeIn 0.2s ease;}
+@keyframes navFadeIn{from{opacity:0;transform:translateX(-50%) translateY(-6px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+.mlab-drop-item{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:10px;text-decoration:none;color:var(--muted);transition:all 0.2s;}
+.mlab-drop-item:hover{background:var(--primary-glow);color:var(--primary);}
+.mlab-drop-icon{font-size:1.1rem;width:28px;text-align:center;}
+.mlab-drop-title{font-size:0.82rem;font-weight:600;color:var(--text);}
+.mlab-drop-sub{font-size:0.70rem;color:var(--muted);margin-top:1px;}
+.mlab-drop-item:hover .mlab-drop-title{color:var(--primary);}
+.mlab-nav-right{display:flex;align-items:center;gap:10px;}
+.mlab-back-btn{background:rgba(255,255,255,0.06);border:1px solid var(--line);color:var(--cyan);text-decoration:none;padding:6px 14px;border-radius:20px;font-size:0.82rem;font-weight:600;transition:all 0.2s;}
+.mlab-back-btn:hover{background:var(--primary);color:#000;border-color:var(--primary)}
+:root[data-theme="day"] .mlab-back-btn, html.light-mode .mlab-back-btn{background:rgba(15,23,42,0.05);border-color:#cbd5e1;color:#0284c7;}
+:root[data-theme="day"] .mlab-back-btn:hover, html.light-mode .mlab-back-btn:hover{background:#0284c7;color:#fff;}
+
+.mlab-theme-btn{background:rgba(255,255,255,0.06);border:1px solid var(--line);color:var(--text);width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:1.05rem;display:flex;align-items:center;justify-content:center;transition:all 0.3s cubic-bezier(0.16,1,0.3,1);}
+.mlab-theme-btn:hover{border-color:var(--cyan);transform:scale(1.1) rotate(15deg);box-shadow:0 0 14px var(--primary-glow);}
+:root[data-theme="day"] .mlab-theme-btn, html.light-mode .mlab-theme-btn{background:rgba(15,23,42,0.05);border-color:#cbd5e1;color:#0f172a;}
+
+/* Subheader / Tabs Bar */
+.sub-bar{max-width:1900px;margin:0 auto 10px;padding:8px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:rgba(7,21,34,0.6);border-bottom:1px solid var(--line);border-radius:12px}
+:root[data-theme="day"] .sub-bar, html.light-mode .sub-bar{background:rgba(255,255,255,0.85);border-bottom-color:#cbd5e1;box-shadow:0 4px 15px rgba(0,0,0,0.04);}
+.tab-nav{display:flex;gap:4px;flex:1;overflow-x:auto;align-items:center}
+.tab-btn{background:transparent;border:1px solid transparent;color:#93adbf;padding:6px 11px;border-radius:8px;white-space:nowrap;font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:5px;cursor:pointer;transition:all 0.18s;font-family:var(--font-display);}
+.tab-btn.active,.tab-btn:hover{color:#fff;background:#0b2941;border-color:#205574}
+.tab-btn.active{color:var(--cyan);border-color:var(--cyan)}
+:root[data-theme="day"] .tab-btn, html.light-mode .tab-btn{color:#475569;}
+:root[data-theme="day"] .tab-btn.active, html.light-mode .tab-btn.active{background:rgba(2,132,199,0.1);color:#0284c7;border-color:#0284c7;}
+:root[data-theme="day"] .tab-btn:hover, html.light-mode .tab-btn:hover{background:rgba(0,0,0,0.04);color:#0f172a;}
+
+.search{display:flex;align-items:center;border:1px solid #27506a;background:#061725;border-radius:9px;min-width:210px}
+:root[data-theme="day"] .search, html.light-mode .search{background:#ffffff;border-color:#cbd5e1;}
+.search span{padding:0 7px;color:var(--cyan)}.search input{width:100%;background:transparent;border:0;outline:0;color:#fff;padding:6px 8px;font-size:12px}
+:root[data-theme="day"] .search input, html.light-mode .search input{color:#0f172a;}
+.gate{display:flex;align-items:center;gap:6px;color:#9ab3c3;white-space:nowrap;cursor:pointer;user-select:none;font-size:12px;font-family:var(--font-display);font-weight:600}
+:root[data-theme="day"] .gate, html.light-mode .gate{color:#475569;}
+.switch{width:36px;height:18px;background:#173247;border-radius:20px;position:relative}.switch i{position:absolute;left:2px;top:2px;width:14px;height:14px;background:#8ba5b5;border-radius:50%;transition:.2s}.switch.on{background:#087c9f}.switch.on i{left:19px;background:#dffaff}
+
+.gateBanner{max-width:1900px;margin:0 auto 10px;padding:0 14px;display:none}
+.gateBanner.show{display:block}
+.gateBannerInner{background:linear-gradient(90deg,rgba(8,124,159,.25),rgba(179,108,255,.16));border:1px solid #2a7699;border-radius:10px;padding:8px 14px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-size:12px}
+:root[data-theme="day"] .gateBannerInner, html.light-mode .gateBannerInner{background:linear-gradient(90deg,rgba(2,132,199,0.08),rgba(124,58,237,0.06));border-color:#bae6fd;color:#1e293b;}
+.gateBannerInner b{color:var(--cyan)}
+
+.layout{max-width:1900px;margin:auto;padding:10px 14px;display:grid;grid-template-columns:310px minmax(500px,1fr) 330px;gap:12px}
+.panel{background:linear-gradient(180deg,rgba(8,23,37,.98),rgba(3,13,23,.98));border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:0 15px 45px rgba(0,0,0,.22)}
+:root[data-theme="day"] .panel, html.light-mode .panel{background:#ffffff;border-color:#e2e8f0;box-shadow:0 10px 30px rgba(0,0,0,0.05);}
+.head{padding:10px 12px;border-bottom:1px solid #15334a;font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-family:var(--font-display)}
+:root[data-theme="day"] .head, html.light-mode .head{border-bottom-color:#e2e8f0;color:#0f172a;}
+.body{padding:11px}.muted{color:var(--muted);font-size:12px}
+
+.filters{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px}.filters button,.mini{background:#081a2a;border:1px solid #1c4058;color:#9fb9c9;padding:5px 9px;border-radius:7px;font-size:11px}.filters button.on,.mini.on{border-color:var(--cyan);color:#fff;background:#0a3047}
+:root[data-theme="day"] .filters button, html.light-mode .filters button, :root[data-theme="day"] .mini, html.light-mode .mini{background:#f1f5f9;border-color:#cbd5e1;color:#475569;}
+:root[data-theme="day"] .filters button.on, html.light-mode .filters button.on, :root[data-theme="day"] .mini.on, html.light-mode .mini.on{background:#0284c7;color:#fff;border-color:#0284c7;}
+
+.pt-wrap{overflow-x:auto;padding-bottom:3px}.pt{display:grid;grid-template-columns:repeat(18,minmax(23px,1fr));grid-template-rows:repeat(7,32px);gap:3px;min-width:490px}
+.el{height:32px;min-width:0;border-radius:5px;background:#091d2e;border:1px solid #193d55;color:#b7cddd;position:relative;font-size:10px;padding:0}
+.el:hover{border-color:var(--cyan);color:#fff;transform:translateY(-1px)}.el.sel{background:#08718e;border-color:#6ceaff;box-shadow:0 0 12px rgba(53,221,255,.3)}
+:root[data-theme="day"] .el, html.light-mode .el{background:#f8fafc;border-color:#e2e8f0;color:#1e293b;}
+:root[data-theme="day"] .el:hover, html.light-mode .el:hover{border-color:#0284c7;color:#0284c7;background:#f0f9ff;}
+:root[data-theme="day"] .el.sel, html.light-mode .el.sel{background:#0284c7;color:#fff;border-color:#0369a1;box-shadow:0 0 10px rgba(2,132,199,0.35);}
+.el .num{position:absolute;top:2px;left:3px;font-size:7px}.el .sym{display:block;padding-top:9px;font-weight:800;font-size:11px}
+.el.s{border-color:#295c41}.el.p{border-color:#5a3761}.el.d{border-color:#38526b}.el.f{border-color:#69502a}
+.pt-f{margin-top:7px;display:grid;grid-template-columns:repeat(18,minmax(23px,1fr));gap:3px;min-width:490px}
+.f-label{grid-column:1 / span 2;display:flex;align-items:center;justify-content:center;color:#86a8bb;font-size:10px;border:1px dashed #21445a;border-radius:5px}
+.f-gap{grid-column:3 / span 2}
+
+.elementCard{margin-top:10px;background:linear-gradient(135deg,#08263d,#061522);border:1px solid #205b78;border-radius:11px;padding:11px}
+:root[data-theme="day"] .elementCard, html.light-mode .elementCard{background:#ffffff;border-color:#cbd5e1;box-shadow:0 8px 24px rgba(0,0,0,0.06);}
+.ecTop{display:flex;gap:11px}.symbol{width:72px;height:72px;border:1px solid var(--cyan);border-radius:10px;display:grid;place-items:center;font-size:35px;font-weight:900;text-shadow:0 0 16px var(--cyan);font-family:var(--font-display)}
+:root[data-theme="day"] .symbol, html.light-mode .symbol{border-color:#0284c7;color:#0284c7;text-shadow:none;}
+.ename{font-size:18px;font-weight:700;font-family:var(--font-display)}.tag{display:inline-block;font-size:10px;padding:3px 6px;border:1px solid #31556d;border-radius:10px;margin:5px 3px 0 0;color:#a8bfce}
+:root[data-theme="day"] .ename, html.light-mode .ename{color:#0f172a;}
+:root[data-theme="day"] .tag, html.light-mode .tag{background:#f1f5f9;border-color:#cbd5e1;color:#475569;}
+.facts{display:grid;gap:6px;margin-top:10px}.fact{display:flex;justify-content:space-between;color:#9db8c8}.fact b{color:#fff}
+:root[data-theme="day"] .fact, html.light-mode .fact{color:#64748b;}
+:root[data-theme="day"] .fact b, html.light-mode .fact b{color:#0f172a;}
+.actions{display:grid;gap:6px;margin-top:10px}.action{background:#081d2f;border:1px solid #214b64;color:#d9f1fb;padding:8px;border-radius:7px;text-align:left;font-weight:600;font-family:var(--font-display)}.action:hover{border-color:var(--cyan);background:#0b2c45}
+:root[data-theme="day"] .action, html.light-mode .action{background:#f0f9ff;border-color:#bae6fd;color:#0284c7;}
+:root[data-theme="day"] .action:hover, html.light-mode .action:hover{background:#0284c7;color:#ffffff;}
+
+.stage{height:580px;position:relative;overflow:hidden;background:radial-gradient(circle at 50% 52%,#123b5a 0,#071827 34%,#020710 74%);border-radius:12px}
+:root[data-theme="day"] .stage, html.light-mode .stage{background:radial-gradient(circle at 50% 52%,#1e293b 0,#0f172a 50%,#020617 100%);box-shadow:inset 0 0 50px rgba(0,0,0,0.5);}
+.stars{position:absolute;inset:0;opacity:.15;background-image:radial-gradient(#fff 1px,transparent 1px);background-size:67px 67px}
+.atom{position:absolute;width:540px;height:540px;left:50%;top:52%;transform:translate(-50%,-50%)}
+.ring{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border:1px solid rgba(99,197,238,.4);border-radius:50%;box-shadow:0 0 12px rgba(53,221,255,.05)}
+.r1{width:134px;height:134px}.r2{width:188px;height:188px}.r3{width:242px;height:242px}.r4{width:296px;height:296px}
+.r5{width:350px;height:350px}.r6{width:404px;height:404px}.r7{width:458px;height:458px}
+.nucleus{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:96px;height:96px;border-radius:50%;display:flex;flex-wrap:wrap;justify-content:center;align-content:center;gap:4px;padding:12px;background:radial-gradient(circle at 42% 38%,#ffc08e 0%,#d8584d 38%,#711f2b 68%,#32121a 100%);box-shadow:0 0 26px rgba(255,94,73,.75),0 0 65px rgba(255,75,55,.22),inset 0 0 18px rgba(255,220,170,.16);z-index:5;overflow:hidden}
+.nucleus::before{content:"";position:absolute;inset:6px;border:1px solid rgba(255,224,198,.22);border-radius:50%;pointer-events:none}
+.np,.nn{width:10px;height:10px;border-radius:50%;display:block;flex:0 0 auto;box-shadow:inset 1px 1px 2px rgba(255,255,255,.28),0 1px 4px rgba(0,0,0,.28);font-size:0}
+.np{background:radial-gradient(circle at 35% 30%,#ffb0a5,#f05b55 58%,#a52e35)}
+.nn{background:radial-gradient(circle at 35% 30%,#f1f5f8,#b9c6cf 58%,#71808b)}
+.nucleusInfo{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:2px;z-index:7;pointer-events:none;white-space:nowrap}
+.nucleusInfo .coreTitle{font-size:8px;letter-spacing:.11em;text-transform:uppercase;color:#fff4e9;text-shadow:0 1px 4px #351018;font-weight:700}
+.nucleusInfo .coreCounts{display:flex;gap:3px}
+.nucleusInfo span{font-size:8px;font-weight:700;padding:1px 4px;border-radius:6px;background:rgba(20,10,15,.6);border:1px solid rgba(255,255,255,.16);color:#fff}
+.nucleusInfo .pCount{color:#ffd2cc}.nucleusInfo .nCount{color:#e5edf2}
+.nucleus.representative .np,.nucleus.representative .nn{width:9px;height:9px}
+.nucleus.representative{gap:3px}
+.electron{position:absolute;width:15px;height:15px;border:2px solid #eaffff;border-radius:50%;background:#5fdcff;box-shadow:0 0 14px #2bd4ff,0 0 28px rgba(43,212,255,.5);z-index:8;cursor:pointer;transition:transform .15s}
+.electron:hover{transform:scale(1.55)}
+.orbitLabel{position:absolute;left:50%;transform:translateX(-50%);background:#061522dd;border:1px solid #254d67;color:#a6c8db;padding:2px 6px;border-radius:10px;font-size:9px;z-index:6;pointer-events:none}
+.l1{top:calc(50% - 67px)}.l2{top:calc(50% - 94px)}.l3{top:calc(50% - 121px)}.l4{top:calc(50% - 148px)}
+.l5{top:calc(50% - 175px)}.l6{top:calc(50% - 202px)}.l7{top:calc(50% - 229px)}
+.legend{position:absolute;left:11px;top:11px;background:#061421c9;border:1px solid #1b4058;border-radius:8px;padding:8px;line-height:1.7;color:#aac2d1;z-index:20;font-size:11px}
+.stageStatus{position:absolute;right:11px;top:11px;background:#061421c9;border:1px solid #1b4058;border-radius:8px;padding:7px 9px;color:#8fdfff;z-index:20;font-size:11px;font-family:var(--font-display)}
+.stageControls{position:absolute;left:50%;bottom:11px;transform:translateX(-50%);display:flex;gap:6px;background:#061421dd;border:1px solid #20455d;border-radius:9px;padding:6px;z-index:20}
+.stageControls button{background:#091f31;border:1px solid #24506a;color:#d9f4ff;border-radius:7px;padding:7px 9px;font-size:11px;font-weight:600}.stageControls button:hover{border-color:var(--cyan);background:#0b2c45}
+
+.section{margin-top:10px}.config{font-size:16px;font-family:'JetBrains Mono',monospace;background:#061421;border:1px solid #183c54;border-radius:8px;padding:12px;white-space:nowrap;overflow:auto}.config sup{font-size:12px;color:var(--cyan)}
+:root[data-theme="day"] .config, html.light-mode .config{background:#f8fafc;border-color:#e2e8f0;color:#0f172a;}
+.orbgrid{display:grid;grid-template-columns:repeat(8,1fr);gap:5px;margin-top:8px}.orb{background:#061522;border:1px solid #183d55;border-radius:7px;text-align:center;padding:5px;min-width:0}.orb small{color:#7ea2b7;font-size:10px}.arrows{font-size:16px;white-space:nowrap;color:#bfeeff;font-family:'JetBrains Mono',monospace}
+:root[data-theme="day"] .orb, html.light-mode .orb{background:#f8fafc;border-color:#e2e8f0;}
+
+.rightgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.stat{background:#071a2a;border:1px solid #173c54;border-radius:8px;padding:9px}.stat small{display:block;color:#7899ad;font-size:11px}.stat strong{font-size:18px;display:block;margin-top:2px;word-break:break-word;font-family:var(--font-display)}
+:root[data-theme="day"] .stat, html.light-mode .stat{background:#f8fafc;border-color:#e2e8f0;}
+:root[data-theme="day"] .stat strong, html.light-mode .stat strong{color:#0f172a;}
+.qgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.q{background:#061522;border:1px solid #173b52;border-radius:7px;text-align:center;padding:8px}.q b{display:block;color:#70b6d4;font-size:11px}.q span{font-size:18px;font-family:var(--font-display)}
+:root[data-theme="day"] .q, html.light-mode .q{background:#f8fafc;border-color:#e2e8f0;}
+:root[data-theme="day"] .q span, html.light-mode .q span{color:#0f172a;}
+.orbitalView{height:165px;border:1px solid #173a52;border-radius:8px;background:#030b14;position:relative;display:grid;place-items:center;overflow:hidden}
+.shape{width:92px;height:92px;border-radius:50%;background:radial-gradient(circle,#5ee9ff,#174e93 48%,transparent 72%);filter:drop-shadow(0 0 13px #2edcff);transition:.25s ease}
+.shape.p{width:46px;height:126px;border-radius:50%;background:radial-gradient(ellipse,#5ee9ff,#174e93 48%,transparent 72%)}
+.shape.d{width:112px;height:56px;border-radius:50%;background:radial-gradient(ellipse,#b36cff,#52208c 52%,transparent 72%);transform:rotate(-18deg);filter:drop-shadow(0 0 13px #a95eff)}
+.shape.f{width:124px;height:70px;border-radius:50%;background:radial-gradient(ellipse,#ff74e8,#5a258f 50%,transparent 72%);transform:rotate(25deg);filter:drop-shadow(0 0 14px #ff74e8)}
+.axis{position:absolute;width:140px;height:1px;background:#55778c}.axis.v{transform:rotate(90deg)}
+.quiz{display:grid;gap:9px}.qitem{border-top:1px solid #17354c;padding-top:8px}.qitem button{display:block;width:100%;margin-top:5px;text-align:left;background:#071b2c;border:1px solid #21465e;color:#d8eff9;padding:7px;border-radius:6px}
+:root[data-theme="day"] .quiz .qitem button, html.light-mode .quiz .qitem button{background:#ffffff;border-color:#cbd5e1;color:#1e293b;}
+.correct{border-color:var(--green)!important;background:#073225!important}.wrong{border-color:var(--red)!important;background:#351719!important}
+.score{padding:9px;border:1px solid #24506a;background:#071d2e;border-radius:8px;color:#9fe9ff;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+:root[data-theme="day"] .score, html.light-mode .score{background:#ffffff;border-color:#cbd5e1;color:#0284c7;}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:8px}.compare select,.ctrlSelect,.ctrlInput{width:100%;background:#071b2b;border:1px solid #214b63;color:#fff;padding:8px 10px;border-radius:7px}
+:root[data-theme="day"] .compare select, html.light-mode .compare select, :root[data-theme="day"] .ctrlSelect, html.light-mode .ctrlSelect, :root[data-theme="day"] .ctrlInput, html.light-mode .ctrlInput{background:#ffffff;border-color:#cbd5e1;color:#0f172a;}
+.compareBox{margin-top:8px;background:#061522;border:1px solid #173b52;border-radius:8px;padding:12px}
+:root[data-theme="day"] .compareBox, html.light-mode .compareBox{background:#ffffff;border-color:#cbd5e1;}
+.spectrum{height:190px;border-radius:8px;background:#000;border:1px solid #173b52;position:relative;overflow:hidden}.spectrum:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#ff3030 0 10%,#ff8a28 15%,#ffe84a 30%,#46ff83 45%,#3eeaff 60%,#4c6cff 75%,#a946ff 90%,#ef35ff 100%);opacity:.12}.line{position:absolute;top:15px;bottom:15px;width:2px;box-shadow:0 0 9px currentColor}
+.moduleGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.moduleCard{background:#061522;border:1px solid #173b52;border-radius:8px;padding:10px}.moduleCard h3{margin:0 0 5px;font-size:13px;font-family:var(--font-display)}.moduleCard p{margin:0;color:#89a8bc;font-size:12px;line-height:1.5}
+:root[data-theme="day"] .moduleCard, html.light-mode .moduleCard{background:#f8fafc;border-color:#e2e8f0;}
+:root[data-theme="day"] .moduleCard h3, html.light-mode .moduleCard h3{color:#0f172a;}
+.livebar{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:7px;color:#76a0b6;font-size:11px}
+.footer{max-width:1900px;margin:20px auto 10px;padding:14px 16px;color:#63869a;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;border-top:1px solid var(--line)}.hidden{display:none!important}
+.toast{position:fixed;right:16px;bottom:16px;background:#071d2d;border:1px solid #2a607b;color:#dff9ff;padding:10px 13px;border-radius:8px;box-shadow:0 12px 30px rgba(0,0,0,.35);z-index:300;opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:none}
+
+.isoNotation{display:inline-flex;align-items:center;gap:4px;font-size:26px;font-weight:800;padding:6px 14px;border:1px solid #245774;border-radius:10px;background:#071c2d;font-family:var(--font-display)}
+:root[data-theme="day"] .isoNotation, html.light-mode .isoNotation{background:#ffffff;border-color:#cbd5e1;color:#0f172a;}
+.isoNotation .supSub{display:flex;flex-direction:column;font-size:13px;line-height:1.15;text-align:right;color:var(--cyan)}
+.badgeOk{display:inline-block;padding:4px 10px;border-radius:6px;background:rgba(66,230,164,.15);border:1px solid var(--green);color:var(--green);font-weight:700}
+.badgeErr{display:inline-block;padding:4px 10px;border-radius:6px;background:rgba(255,104,93,.15);border:1px solid var(--red);color:var(--red);font-weight:700}
+.toolbarRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px;padding:12px;background:var(--panel2,#0b1f32);border:1px solid var(--line,#173b55);border-radius:10px}
+:root[data-theme="day"] .toolbarRow, html.light-mode .toolbarRow{background:#ffffff;border-color:#cbd5e1;}
+.toolbarRow label{font-size:12px;color:var(--muted);font-weight:600}
+
+/* GATE Rule Lab */
+.rule-lab{margin-top:14px;padding:16px;border:1px solid var(--line,rgba(255,255,255,.14));border-radius:16px;background:linear-gradient(145deg,rgba(99,230,255,.06),rgba(255,255,255,.025));box-shadow:0 12px 35px rgba(0,0,0,.14)}
+.rule-lab-title{font-size:17px;font-weight:800;font-family:var(--font-display)}.rule-lab-sub{font-size:12px;opacity:.7;margin-top:4px}
+.rule-tabs,.rule-action-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.rule-tab,.rule-download{border:1px solid var(--line,rgba(255,255,255,.16));background:var(--panel,rgba(255,255,255,.04));color:inherit;border-radius:10px;padding:8px 12px;font-weight:700;cursor:pointer;font-size:12px}
+.rule-tab.active,.rule-download{border-color:#63e6ff;box-shadow:0 0 0 2px rgba(99,230,255,.08) inset}
+:root[data-theme="day"] .rule-tab.active, html.light-mode .rule-tab.active{border-color:#0284c7;color:#0284c7;}
+.rule-panel{margin-top:12px;padding:14px;border-radius:14px;background:var(--panel2,rgba(0,0,0,.16));line-height:1.55}
+:root[data-theme="day"] .rule-panel, html.light-mode .rule-panel{background:#f8fafc;color:#1e293b;}
+.rule-panel h4{margin:0 0 8px;font-family:var(--font-display)}.rule-formula{font-family:'JetBrains Mono',monospace;font-weight:700;margin:8px 0;color:var(--cyan)}
+.rule-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-top:12px}
+.rule-card{padding:10px;border-radius:10px;border:1px solid var(--line,rgba(255,255,255,.12));background:rgba(255,255,255,.025);font-size:12px}
+:root[data-theme="day"] .rule-card, html.light-mode .rule-card{background:#ffffff;border-color:#e2e8f0;color:#334155;}
+.rule-card b{display:block;margin-bottom:4px;color:var(--cyan)}.rule-orbitals{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.orb-box{width:40px;height:40px;border:1px solid var(--line,rgba(255,255,255,.2));border-radius:8px;display:grid;place-items:center;font-weight:800;font-family:'JetBrains Mono',monospace}
+.rule-quiz{margin-top:12px;padding:12px;border-radius:12px;border:1px dashed rgba(99,230,255,.4)}
+
+/* Integrated Practice module */
+.practice-divider{display:flex;align-items:center;gap:10px;margin:18px 0 10px;font-size:12px;font-weight:900;letter-spacing:.2px;color:var(--text,#dff7ff)}
+.practice-divider::before,.practice-divider::after{content:"";height:1px;flex:1;background:var(--line,#23465a)}
+.practice-divider span{padding:5px 10px;border-radius:999px;border:1px solid var(--line,#23465a);background:var(--panel2,rgba(255,255,255,.03))}
+.practice-quiz{display:grid;gap:9px}
+.practice-quiz .qitem{border-top:1px solid var(--line,#23465a);padding-top:10px}
+.practice-quiz .qitem:first-of-type{border-top:0;padding-top:0}
+.practice-quiz .qitem button{display:block;width:100%;margin-top:6px;text-align:left;background:var(--panel2,#071b2c);border:1px solid var(--line,#21465e);color:var(--text,#d8eff9);padding:8px;border-radius:8px;cursor:pointer}
+:root[data-theme="day"] .practice-quiz .qitem button, html.light-mode .practice-quiz .qitem button{background:#ffffff;border-color:#cbd5e1;color:#1e293b;}
+.practice-quiz .qitem button:hover{border-color:#63e6ff}
+.practice-quiz .qitem button.correct{border-color:#2ed573;background:rgba(46,213,115,.16)!important}
+.practice-quiz .qitem button.wrong{border-color:#ff6b6b;background:rgba(255,107,107,.16)!important}
+
+.focus-intro{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.focus-card{background:var(--panel2,#071b2c);border:1px solid var(--line,#23465a);border-radius:10px;padding:12px}
+:root[data-theme="day"] .focus-card, html.light-mode .focus-card{background:#f8fafc;border-color:#e2e8f0;}
+.focus-card h3{margin:0 0 5px;font-size:13px;font-family:var(--font-display)}.focus-card p{margin:0;color:var(--muted);line-height:1.5;font-size:12px}
+:root[data-theme="day"] .focus-card h3, html.light-mode .focus-card h3{color:#0f172a;}
+
+@media(max-width:1300px){
+  .layout{grid-template-columns:280px 1fr}
+  .right{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  .stage{height:540px}
+}
+@media(max-width:900px){
+  .layout,.right,.focus-intro,.moduleGrid,.compare{grid-template-columns:1fr}
+  .stage{height:480px}.atom{transform:translate(-50%,-50%) scale(.75)}
+  .orbgrid{grid-template-columns:repeat(4,1fr)}
+}
+</style>
+</head>
+<body data-page="atom">
+
+<!-- UNIFIED FLOATING NAVBAR -->
+<nav class="mlab-nav" id="mlabNav">
+  <a href="index.html" class="mlab-brand" aria-label="Moleqyn Home"><img src="favicon.svg" alt="Moleqyn Logo" class="brand-logo" width="28" height="28"><span class="mlab-brand-text">Moleqyn</span></a>
+  <ul class="mlab-links">
+    <li><a href="index.html">Home</a></li>
+    <li class="mlab-dropdown">
+      <a class="mlab-dropbtn active">Virtual Labs ▾</a>
+      <div class="mlab-dropdown-content">
+        <a href="simulators.html" class="mlab-drop-item"><div class="mlab-drop-icon">🧪</div><div><div class="mlab-drop-title">Virtual Simulators Hub</div><div class="mlab-drop-sub">14 interactive engines for Class 6-12</div></div></a>
+        <a href="sim_atomverse.html" class="mlab-drop-item" style="background:var(--primary-glow)"><div class="mlab-drop-icon">⚛️</div><div><div class="mlab-drop-title" style="color:var(--primary)">AtomVerse Quantum Lab</div><div class="mlab-drop-sub">118 elements live electron orbits</div></div></a>
+        <a href="experiments.html" class="mlab-drop-item"><div class="mlab-drop-icon">📔</div><div><div class="mlab-drop-title">Experiment Library</div><div class="mlab-drop-sub">NCERT guided practicals</div></div></a>
+        <a href="periodic-table.html" class="mlab-drop-item"><div class="mlab-drop-icon">🔢</div><div><div class="mlab-drop-title">Periodic Table</div><div class="mlab-drop-sub">Explore all 118 elements</div></div></a>
+        <a href="reaction.html" class="mlab-drop-item"><div class="mlab-drop-icon">⚗️</div><div><div class="mlab-drop-title">Reaction Balancer</div><div class="mlab-drop-sub">Balance chemical equations</div></div></a>
+        <a href="ai-tutor.html" class="mlab-drop-item"><div class="mlab-drop-icon">🤖</div><div><div class="mlab-drop-title">AI Chemistry Tutor</div><div class="mlab-drop-sub">Ask any doubt 24/7</div></div></a>
+      </div>
+    </li>
+    <li><a href="learn.html">Learn</a></li>
+    <li><a href="quiz.html">Quiz</a></li>
+    <li><a href="dashboard.html">Progress</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+  <div class="mlab-nav-right">
+    <a href="simulators.html" class="mlab-back-btn">← Back to Labs</a>
+    <button class="mlab-theme-btn" id="mlabThemeBtn" title="Switch Theme">☀️</button>
+  </div>
+</nav>
+
+/* Subheader / Tabs Bar */
+.sub-bar{max-width:1900px;margin:0 auto 10px;padding:8px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:rgba(7,21,34,0.6);border-bottom:1px solid var(--line);border-radius:12px}
+.tab-nav{display:flex;gap:4px;flex:1;overflow-x:auto;align-items:center}
+.tab-btn{background:transparent;border:1px solid transparent;color:#93adbf;padding:6px 11px;border-radius:8px;white-space:nowrap;font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:5px;cursor:pointer;transition:all 0.18s}
+.tab-btn.active,.tab-btn:hover{color:#fff;background:#0b2941;border-color:#205574}
+.tab-btn.active{color:var(--cyan);border-color:var(--cyan)}
+.search{display:flex;align-items:center;border:1px solid #27506a;background:#061725;border-radius:9px;min-width:210px}
+.search span{padding:0 7px;color:var(--cyan)}.search input{width:100%;background:transparent;border:0;outline:0;color:#fff;padding:6px 8px;font-size:12px}
+.gate{display:flex;align-items:center;gap:6px;color:#9ab3c3;white-space:nowrap;cursor:pointer;user-select:none;font-size:12px}.switch{width:36px;height:18px;background:#173247;border-radius:20px;position:relative}.switch i{position:absolute;left:2px;top:2px;width:14px;height:14px;background:#8ba5b5;border-radius:50%;transition:.2s}.switch.on{background:#087c9f}.switch.on i{left:19px;background:#dffaff}
+
+.gateBanner{max-width:1900px;margin:0 auto 10px;padding:0 14px;display:none}
+.gateBanner.show{display:block}
+.gateBannerInner{background:linear-gradient(90deg,rgba(8,124,159,.25),rgba(179,108,255,.16));border:1px solid #2a7699;border-radius:10px;padding:8px 14px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-size:12px}
+.gateBannerInner b{color:var(--cyan)}
+
+.layout{max-width:1900px;margin:auto;padding:10px 14px;display:grid;grid-template-columns:310px minmax(500px,1fr) 330px;gap:12px}
+.panel{background:linear-gradient(180deg,rgba(8,23,37,.98),rgba(3,13,23,.98));border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:0 15px 45px rgba(0,0,0,.22)}
+.head{padding:10px 12px;border-bottom:1px solid #15334a;font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-family:'Space Grotesk',sans-serif}
+.body{padding:11px}.muted{color:var(--muted);font-size:12px}
+
+.filters{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px}.filters button,.mini{background:#081a2a;border:1px solid #1c4058;color:#9fb9c9;padding:5px 9px;border-radius:7px;font-size:11px}.filters button.on,.mini.on{border-color:var(--cyan);color:#fff;background:#0a3047}
+
+.pt-wrap{overflow-x:auto;padding-bottom:3px}.pt{display:grid;grid-template-columns:repeat(18,minmax(23px,1fr));grid-template-rows:repeat(7,32px);gap:3px;min-width:490px}
+.el{height:32px;min-width:0;border-radius:5px;background:#091d2e;border:1px solid #193d55;color:#b7cddd;position:relative;font-size:10px;padding:0}
+.el:hover{border-color:var(--cyan);color:#fff;transform:translateY(-1px)}.el.sel{background:#08718e;border-color:#6ceaff;box-shadow:0 0 12px rgba(53,221,255,.3)}
+.el .num{position:absolute;top:2px;left:3px;font-size:7px}.el .sym{display:block;padding-top:9px;font-weight:800;font-size:11px}
+.el.s{border-color:#295c41}.el.p{border-color:#5a3761}.el.d{border-color:#38526b}.el.f{border-color:#69502a}
+.pt-f{margin-top:7px;display:grid;grid-template-columns:repeat(18,minmax(23px,1fr));gap:3px;min-width:490px}
+.f-label{grid-column:1 / span 2;display:flex;align-items:center;justify-content:center;color:#86a8bb;font-size:10px;border:1px dashed #21445a;border-radius:5px}
+.f-gap{grid-column:3 / span 2}
+.elementCard{margin-top:10px;background:linear-gradient(135deg,#08263d,#061522);border:1px solid #205b78;border-radius:11px;padding:11px}
+.ecTop{display:flex;gap:11px}.symbol{width:72px;height:72px;border:1px solid var(--cyan);border-radius:10px;display:grid;place-items:center;font-size:35px;font-weight:900;text-shadow:0 0 16px var(--cyan);font-family:'Space Grotesk',sans-serif}
+.ename{font-size:18px;font-weight:700;font-family:'Space Grotesk',sans-serif}.tag{display:inline-block;font-size:10px;padding:3px 6px;border:1px solid #31556d;border-radius:10px;margin:5px 3px 0 0;color:#a8bfce}
+.facts{display:grid;gap:6px;margin-top:10px}.fact{display:flex;justify-content:space-between;color:#9db8c8}.fact b{color:#fff}
+.actions{display:grid;gap:6px;margin-top:10px}.action{background:#081d2f;border:1px solid #214b64;color:#d9f1fb;padding:8px;border-radius:7px;text-align:left;font-weight:600}.action:hover{border-color:var(--cyan);background:#0b2c45}
+
+.stage{height:580px;position:relative;overflow:hidden;background:radial-gradient(circle at 50% 52%,#123b5a 0,#071827 34%,#020710 74%);border-radius:12px}
+.stars{position:absolute;inset:0;opacity:.15;background-image:radial-gradient(#fff 1px,transparent 1px);background-size:67px 67px}
+.atom{position:absolute;width:540px;height:540px;left:50%;top:52%;transform:translate(-50%,-50%)}
+.ring{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border:1px solid rgba(99,197,238,.4);border-radius:50%;box-shadow:0 0 12px rgba(53,221,255,.05)}
+.r1{width:134px;height:134px}.r2{width:188px;height:188px}.r3{width:242px;height:242px}.r4{width:296px;height:296px}
+.r5{width:350px;height:350px}.r6{width:404px;height:404px}.r7{width:458px;height:458px}
+.nucleus{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:96px;height:96px;border-radius:50%;display:flex;flex-wrap:wrap;justify-content:center;align-content:center;gap:4px;padding:12px;background:radial-gradient(circle at 42% 38%,#ffc08e 0%,#d8584d 38%,#711f2b 68%,#32121a 100%);box-shadow:0 0 26px rgba(255,94,73,.75),0 0 65px rgba(255,75,55,.22),inset 0 0 18px rgba(255,220,170,.16);z-index:5;overflow:hidden}
+.nucleus::before{content:"";position:absolute;inset:6px;border:1px solid rgba(255,224,198,.22);border-radius:50%;pointer-events:none}
+.np,.nn{width:10px;height:10px;border-radius:50%;display:block;flex:0 0 auto;box-shadow:inset 1px 1px 2px rgba(255,255,255,.28),0 1px 4px rgba(0,0,0,.28);font-size:0}
+.np{background:radial-gradient(circle at 35% 30%,#ffb0a5,#f05b55 58%,#a52e35)}
+.nn{background:radial-gradient(circle at 35% 30%,#f1f5f8,#b9c6cf 58%,#71808b)}
+.nucleusInfo{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:2px;z-index:7;pointer-events:none;white-space:nowrap}
+.nucleusInfo .coreTitle{font-size:8px;letter-spacing:.11em;text-transform:uppercase;color:#fff4e9;text-shadow:0 1px 4px #351018;font-weight:700}
+.nucleusInfo .coreCounts{display:flex;gap:3px}
+.nucleusInfo span{font-size:8px;font-weight:700;padding:1px 4px;border-radius:6px;background:rgba(20,10,15,.6);border:1px solid rgba(255,255,255,.16);color:#fff}
+.nucleusInfo .pCount{color:#ffd2cc}.nucleusInfo .nCount{color:#e5edf2}
+.nucleus.representative .np,.nucleus.representative .nn{width:9px;height:9px}
+.nucleus.representative{gap:3px}
+.electron{position:absolute;width:15px;height:15px;border:2px solid #eaffff;border-radius:50%;background:#5fdcff;box-shadow:0 0 14px #2bd4ff,0 0 28px rgba(43,212,255,.5);z-index:8;cursor:pointer;transition:transform .15s}
+.electron:hover{transform:scale(1.55)}
+.orbitLabel{position:absolute;left:50%;transform:translateX(-50%);background:#061522dd;border:1px solid #254d67;color:#a6c8db;padding:2px 6px;border-radius:10px;font-size:9px;z-index:6;pointer-events:none}
+.l1{top:calc(50% - 67px)}.l2{top:calc(50% - 94px)}.l3{top:calc(50% - 121px)}.l4{top:calc(50% - 148px)}
+.l5{top:calc(50% - 175px)}.l6{top:calc(50% - 202px)}.l7{top:calc(50% - 229px)}
+.legend{position:absolute;left:11px;top:11px;background:#061421c9;border:1px solid #1b4058;border-radius:8px;padding:8px;line-height:1.7;color:#aac2d1;z-index:20;font-size:11px}
+.stageStatus{position:absolute;right:11px;top:11px;background:#061421c9;border:1px solid #1b4058;border-radius:8px;padding:7px 9px;color:#8fdfff;z-index:20;font-size:11px;font-family:'Space Grotesk',sans-serif}
+.stageControls{position:absolute;left:50%;bottom:11px;transform:translateX(-50%);display:flex;gap:6px;background:#061421dd;border:1px solid #20455d;border-radius:9px;padding:6px;z-index:20}
+.stageControls button{background:#091f31;border:1px solid #24506a;color:#d9f4ff;border-radius:7px;padding:7px 9px;font-size:11px;font-weight:600}.stageControls button:hover{border-color:var(--cyan);background:#0b2c45}
+
+.section{margin-top:10px}.config{font-size:16px;font-family:'JetBrains Mono',monospace;background:#061421;border:1px solid #183c54;border-radius:8px;padding:12px;white-space:nowrap;overflow:auto}.config sup{font-size:12px;color:var(--cyan)}
+.orbgrid{display:grid;grid-template-columns:repeat(8,1fr);gap:5px;margin-top:8px}.orb{background:#061522;border:1px solid #183d55;border-radius:7px;text-align:center;padding:5px;min-width:0}.orb small{color:#7ea2b7;font-size:10px}.arrows{font-size:16px;white-space:nowrap;color:#bfeeff;font-family:'JetBrains Mono',monospace}
+
+.rightgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.stat{background:#071a2a;border:1px solid #173c54;border-radius:8px;padding:9px}.stat small{display:block;color:#7899ad;font-size:11px}.stat strong{font-size:18px;display:block;margin-top:2px;word-break:break-word;font-family:'Space Grotesk',sans-serif}
+.qgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.q{background:#061522;border:1px solid #173b52;border-radius:7px;text-align:center;padding:8px}.q b{display:block;color:#70b6d4;font-size:11px}.q span{font-size:18px;font-family:'Space Grotesk',sans-serif}
+.orbitalView{height:165px;border:1px solid #173a52;border-radius:8px;background:#030b14;position:relative;display:grid;place-items:center;overflow:hidden}
+.shape{width:92px;height:92px;border-radius:50%;background:radial-gradient(circle,#5ee9ff,#174e93 48%,transparent 72%);filter:drop-shadow(0 0 13px #2edcff);transition:.25s ease}
+.shape.p{width:46px;height:126px;border-radius:50%;background:radial-gradient(ellipse,#5ee9ff,#174e93 48%,transparent 72%)}
+.shape.d{width:112px;height:56px;border-radius:50%;background:radial-gradient(ellipse,#b36cff,#52208c 52%,transparent 72%);transform:rotate(-18deg);filter:drop-shadow(0 0 13px #a95eff)}
+.shape.f{width:124px;height:70px;border-radius:50%;background:radial-gradient(ellipse,#ff74e8,#5a258f 50%,transparent 72%);transform:rotate(25deg);filter:drop-shadow(0 0 14px #ff74e8)}
+.axis{position:absolute;width:140px;height:1px;background:#55778c}.axis.v{transform:rotate(90deg)}
+.quiz{display:grid;gap:9px}.qitem{border-top:1px solid #17354c;padding-top:8px}.qitem button{display:block;width:100%;margin-top:5px;text-align:left;background:#071b2c;border:1px solid #21465e;color:#d8eff9;padding:7px;border-radius:6px}
+.correct{border-color:var(--green)!important;background:#073225!important}.wrong{border-color:var(--red)!important;background:#351719!important}
+.score{padding:9px;border:1px solid #24506a;background:#071d2e;border-radius:8px;color:#9fe9ff;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:8px}.compare select,.ctrlSelect,.ctrlInput{width:100%;background:#071b2b;border:1px solid #214b63;color:#fff;padding:8px 10px;border-radius:7px}
+.compareBox{margin-top:8px;background:#061522;border:1px solid #173b52;border-radius:8px;padding:12px}
+.spectrum{height:190px;border-radius:8px;background:#000;border:1px solid #173b52;position:relative;overflow:hidden}.spectrum:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#ff3030 0 10%,#ff8a28 15%,#ffe84a 30%,#46ff83 45%,#3eeaff 60%,#4c6cff 75%,#a946ff 90%,#ef35ff 100%);opacity:.12}.line{position:absolute;top:15px;bottom:15px;width:2px;box-shadow:0 0 9px currentColor}
+.moduleGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.moduleCard{background:#061522;border:1px solid #173b52;border-radius:8px;padding:10px}.moduleCard h3{margin:0 0 5px;font-size:13px;font-family:'Space Grotesk',sans-serif}.moduleCard p{margin:0;color:#89a8bc;font-size:12px;line-height:1.5}
+.livebar{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:7px;color:#76a0b6;font-size:11px}
+.footer{max-width:1900px;margin:20px auto 10px;padding:14px 16px;color:#63869a;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;border-top:1px solid var(--line)}.hidden{display:none!important}
+.toast{position:fixed;right:16px;bottom:16px;background:#071d2d;border:1px solid #2a607b;color:#dff9ff;padding:10px 13px;border-radius:8px;box-shadow:0 12px 30px rgba(0,0,0,.35);z-index:300;opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:none}
+
+.isoNotation{display:inline-flex;align-items:center;gap:4px;font-size:26px;font-weight:800;padding:6px 14px;border:1px solid #245774;border-radius:10px;background:#071c2d;font-family:'Space Grotesk',sans-serif}
+.isoNotation .supSub{display:flex;flex-direction:column;font-size:13px;line-height:1.15;text-align:right;color:var(--cyan)}
+.badgeOk{display:inline-block;padding:4px 10px;border-radius:6px;background:rgba(66,230,164,.15);border:1px solid var(--green);color:var(--green);font-weight:700}
+.badgeErr{display:inline-block;padding:4px 10px;border-radius:6px;background:rgba(255,104,93,.15);border:1px solid var(--red);color:var(--red);font-weight:700}
+.toolbarRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px;padding:12px;background:var(--panel2,#0b1f32);border:1px solid var(--line,#173b55);border-radius:10px}
+.toolbarRow label{font-size:12px;color:var(--muted);font-weight:600}
+
+/* GATE Rule Lab */
+.rule-lab{margin-top:14px;padding:16px;border:1px solid var(--line,rgba(255,255,255,.14));border-radius:16px;background:linear-gradient(145deg,rgba(99,230,255,.06),rgba(255,255,255,.025));box-shadow:0 12px 35px rgba(0,0,0,.14)}
+.rule-lab-title{font-size:17px;font-weight:800;font-family:'Space Grotesk',sans-serif}.rule-lab-sub{font-size:12px;opacity:.7;margin-top:4px}
+.rule-tabs,.rule-action-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.rule-tab,.rule-download{border:1px solid var(--line,rgba(255,255,255,.16));background:var(--panel,rgba(255,255,255,.04));color:inherit;border-radius:10px;padding:8px 12px;font-weight:700;cursor:pointer;font-size:12px}
+.rule-tab.active,.rule-download{border-color:#63e6ff;box-shadow:0 0 0 2px rgba(99,230,255,.08) inset}
+.rule-panel{margin-top:12px;padding:14px;border-radius:14px;background:var(--panel2,rgba(0,0,0,.16));line-height:1.55}
+.rule-panel h4{margin:0 0 8px;font-family:'Space Grotesk',sans-serif}.rule-formula{font-family:'JetBrains Mono',monospace;font-weight:700;margin:8px 0;color:var(--cyan)}
+.rule-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-top:12px}
+.rule-card{padding:10px;border-radius:10px;border:1px solid var(--line,rgba(255,255,255,.12));background:rgba(255,255,255,.025);font-size:12px}
+.rule-card b{display:block;margin-bottom:4px;color:var(--cyan)}.rule-orbitals{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.orb-box{width:40px;height:40px;border:1px solid var(--line,rgba(255,255,255,.2));border-radius:8px;display:grid;place-items:center;font-weight:800;font-family:'JetBrains Mono',monospace}
+.rule-quiz{margin-top:12px;padding:12px;border-radius:12px;border:1px dashed rgba(99,230,255,.4)}
+
+/* Integrated Practice module */
+.practice-divider{display:flex;align-items:center;gap:10px;margin:18px 0 10px;font-size:12px;font-weight:900;letter-spacing:.2px;color:var(--text,#dff7ff)}
+.practice-divider::before,.practice-divider::after{content:"";height:1px;flex:1;background:var(--line,#23465a)}
+.practice-divider span{padding:5px 10px;border-radius:999px;border:1px solid var(--line,#23465a);background:var(--panel2,rgba(255,255,255,.03))}
+.practice-quiz{display:grid;gap:9px}
+.practice-quiz .qitem{border-top:1px solid var(--line,#23465a);padding-top:10px}
+.practice-quiz .qitem:first-of-type{border-top:0;padding-top:0}
+.practice-quiz .qitem button{display:block;width:100%;margin-top:6px;text-align:left;background:var(--panel2,#071b2c);border:1px solid var(--line,#21465e);color:var(--text,#d8eff9);padding:8px;border-radius:8px;cursor:pointer}
+.practice-quiz .qitem button:hover{border-color:#63e6ff}
+.practice-quiz .qitem button.correct{border-color:#2ed573;background:rgba(46,213,115,.16)!important}
+.practice-quiz .qitem button.wrong{border-color:#ff6b6b;background:rgba(255,107,107,.16)!important}
+
+.focus-intro{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.focus-card{background:var(--panel2,#071b2c);border:1px solid var(--line,#23465a);border-radius:10px;padding:12px}
+.focus-card h3{margin:0 0 5px;font-size:13px;font-family:'Space Grotesk',sans-serif}.focus-card p{margin:0;color:var(--muted);line-height:1.5;font-size:12px}
+
+@media(max-width:1300px){
+  .layout{grid-template-columns:280px 1fr}
+  .right{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  .stage{height:540px}
+}
+@media(max-width:900px){
+  .layout,.right,.focus-intro,.moduleGrid,.compare{grid-template-columns:1fr}
+  .stage{height:480px}.atom{transform:translate(-50%,-50%) scale(.75)}
+  .orbgrid{grid-template-columns:repeat(4,1fr)}
+}
+</style>
+</head>
+<body data-page="atom">
+
+<!-- UNIFIED FLOATING NAVBAR -->
+<nav class="mlab-nav" id="mlabNav">
+  <a href="index.html" class="mlab-brand" aria-label="Moleqyn Home"><img src="favicon.svg" alt="Moleqyn Logo" class="brand-logo" width="28" height="28"><span class="mlab-brand-text">Moleqyn</span></a>
+  <ul class="mlab-links">
+    <li><a href="index.html">Home</a></li>
+    <li class="mlab-dropdown">
+      <a class="mlab-dropbtn active">Virtual Labs ▾</a>
+      <div class="mlab-dropdown-content">
+        <a href="simulators.html" class="mlab-drop-item"><div class="mlab-drop-icon">🧪</div><div><div class="mlab-drop-title">Virtual Simulators</div><div class="mlab-drop-sub">Interactive engines for Class 6-12</div></div></a>
+        <a href="sim_atomverse.html" class="mlab-drop-item" style="background:var(--primary-glow)"><div class="mlab-drop-icon">⚛️</div><div><div class="mlab-drop-title" style="color:var(--primary)">AtomVerse Quantum Lab</div><div class="mlab-drop-sub">118 elements live electron orbits</div></div></a>
+        <a href="experiments.html" class="mlab-drop-item"><div class="mlab-drop-icon">📔</div><div><div class="mlab-drop-title">Experiment Library</div><div class="mlab-drop-sub">NCERT guided practicals</div></div></a>
+        <a href="periodic-table.html" class="mlab-drop-item"><div class="mlab-drop-icon">🔢</div><div><div class="mlab-drop-title">Periodic Table</div><div class="mlab-drop-sub">Explore all 118 elements</div></div></a>
+        <a href="reaction.html" class="mlab-drop-item"><div class="mlab-drop-icon">⚗️</div><div><div class="mlab-drop-title">Reaction Balancer</div><div class="mlab-drop-sub">Balance chemical equations</div></div></a>
+        <a href="ai-tutor.html" class="mlab-drop-item"><div class="mlab-drop-icon">🤖</div><div><div class="mlab-drop-title">AI Chemistry Tutor</div><div class="mlab-drop-sub">Ask any doubt 24/7</div></div></a>
+      </div>
+    </li>
+    <li><a href="learn.html">Learn</a></li>
+    <li><a href="quiz.html">Quiz</a></li>
+    <li><a href="dashboard.html">Progress</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+  <div class="mlab-nav-right">
+    <a href="simulators.html" class="mlab-back-btn">← Back to Labs</a>
+  </div>
+</nav>
+
+<!-- SUB-HEADER / TAB NAVIGATION -->
+<div class="sub-bar">
+  <div class="tab-nav">
+    <button class="tab-btn active" data-view="atom" onclick="switchView('atom')">⚛ Atom Orbit</button>
+    <button class="tab-btn" data-view="orbitals" onclick="switchView('orbitals')">◉ 3D Orbitals</button>
+    <button class="tab-btn" data-view="quantum" onclick="switchView('quantum')">✦ Quantum Numbers</button>
+    <button class="tab-btn" data-view="isotopes" onclick="switchView('isotopes')">◇ Isotopes</button>
+    <button class="tab-btn" data-view="spectra" onclick="switchView('spectra')">▥ Emission Spectra</button>
+    <button class="tab-btn" data-view="compare" onclick="switchView('compare')">⇄ Compare Elements</button>
+    <button class="tab-btn" data-view="practice" onclick="switchView('practice')">◆ Rules & Quiz</button>
+  </div>
+  <div class="search"><span>⌕</span><input id="search" placeholder="Search Fe, 26, Iron..."></div>
+  <div class="gate" id="gateWrap" title="Toggle Competitive & Board Exam Mode">Exam Mode <div id="gateSwitch" class="switch"><i></i></div></div>
+</div>
+
+<div id="gateBanner" class="gateBanner">
+  <div class="gateBannerInner">
+    <div id="gateBannerText"><b>Exam Mode Active:</b> Focus on Aufbau anomalies (Cr, Cu, Mo, Pd, Ag, Pt, Au), node formulas (n−l−1), and spin multiplicity.</div>
+    <button class="mini" type="button" onclick="switchView('practice')">Open Practice Quiz →</button>
+  </div>
+</div>
+
+<div class="layout">
+<aside id="leftAside">
+  <div class="panel">
+    <div class="head">Periodic Table <span class="muted">118 elements</span></div>
+    <div class="body">
+      <div class="filters" id="filters">
+        <button class="on" data-filter="all">All</button><button data-filter="s">s</button><button data-filter="p">p</button><button data-filter="d">d</button><button data-filter="f">f</button>
+      </div>
+      <div class="pt-wrap"><div id="pt" class="pt"></div><div id="ptf" class="pt-f"></div></div>
+      <div class="livebar"><span>● 118 Elements • CIAAW weights</span><span id="clock">--:--:--</span></div>
+    </div>
+  </div>
+
+  <div class="elementCard">
+    <div class="ecTop"><div id="symbol" class="symbol">Fe</div><div><div id="ename" class="ename">Iron</div><span class="tag" id="etag">26</span><span class="tag" id="blocktag">d-block</span><span class="tag" id="unpairedTag">4 unpaired e⁻</span></div></div>
+    <div class="facts">
+      <div class="fact">Atomic weight / isotope <b id="weight">55.845 u</b></div>
+      <div class="fact">Shells <b id="shells">2, 8, 14, 2</b></div>
+      <div class="fact">Block <b id="block">d</b></div>
+      <div class="fact">Outer-shell e⁻ <b id="valence">2</b></div>
+    </div>
+    <div class="actions">
+      <button class="action" onclick="playAufbau()">▶ Animate Aufbau Electron Filling</button>
+    </div>
+  </div>
+</aside>
+
+<main id="centerMain">
+  <div class="panel" id="stagePanel">
+    <div class="head">Live Bohr Atomic View <span class="muted">interactive orbital motion</span></div>
+    <div id="stage" class="stage">
+      <div class="stars"></div>
+      <div class="legend">🔴 Proton p⁺ &nbsp; ⚪ Neutron n⁰<br>🔵 Electron e⁻<br><span style="color:#63e6ff">Click any electron to inspect</span></div>
+      <div id="stageStatus" class="stageStatus">Fe • Z = 26</div>
+      <div class="atom" id="atom">
+        <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div><div class="ring r4"></div>
+        <div class="ring r5"></div><div class="ring r6"></div><div class="ring r7"></div>
+        <div class="orbitLabel l1">K • n=1</div><div class="orbitLabel l2">L • n=2</div><div class="orbitLabel l3">M • n=3</div><div class="orbitLabel l4">N • n=4</div>
+        <div class="orbitLabel l5">O • n=5</div><div class="orbitLabel l6">P • n=6</div><div class="orbitLabel l7">Q • n=7</div>
+        <div id="nucleus" class="nucleus" title="Protons and Neutrons in nucleus"></div>
+        <div id="electronLayer"></div>
+      </div>
+      <div class="stageControls">
+        <button onclick="moving=!moving;showToast(moving?'Animation resumed':'Animation paused')">◉ Pause / Resume</button>
+        <button onclick="direction*=-1;showToast(direction===1?'Forward':'Reverse')">↻ Reverse</button>
+        <button onclick="resetMotion()">↺ Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel section" id="configPanel">
+    <div class="head">Electronic Configuration <span class="muted">Aufbau • Hund • Pauli</span></div>
+    <div class="body"><div id="config" class="config"></div><div id="orbgrid" class="orbgrid"></div></div>
+  </div>
+
+  <div id="dynamicPanel" class="panel section hidden">
+    <div class="head"><span id="dynamicTitle">Module</span><button class="mini" onclick="switchView('atom')">← Back to Bohr Atom</button></div>
+    <div class="body" id="dynamicBody"></div>
+  </div>
+</main>
+
+<aside class="right" id="rightAside">
+  <div class="panel">
+    <div class="head">Atomic Composition <span class="muted">live count</span></div>
+    <div class="body"><div class="rightgrid">
+      <div class="stat"><small>Atomic No. Z</small><strong id="z">26</strong></div>
+      <div class="stat"><small>Electrons e⁻</small><strong id="ecount">26</strong></div>
+      <div class="stat"><small>Protons p⁺</small><strong id="pcount">26</strong></div>
+      <div class="stat"><small>Neutrons n⁰</small><strong id="ncount">30</strong></div>
+    </div></div>
+  </div>
+
+  <div class="panel section">
+    <div class="head">Inspected Electron <span class="muted">click e⁻ above</span></div>
+    <div class="body"><div id="electronTitle"><b>Electron #26</b></div>
+      <div class="qgrid" style="margin-top:8px">
+        <div class="q"><b>n</b><span id="qn">3</span></div><div class="q"><b>l</b><span id="ql">2</span></div><div class="q"><b>mₗ</b><span id="qml">-2</span></div><div class="q"><b>mₛ</b><span id="qms">−½</span></div>
+      </div>
+      <div id="subshell" class="muted" style="margin-top:7px">Subshell: 3d</div>
+    </div>
+  </div>
+
+  <div class="panel section">
+    <div class="head">Orbital Shape <span class="muted">conceptual</span></div>
+    <div class="body"><div class="orbitalView"><div id="shape" class="shape d"></div><div class="axis"></div><div class="axis v"></div></div><div id="shapeText" class="muted" style="text-align:center;margin-top:5px">3d orbital</div></div>
+  </div>
+
+  <div class="panel section">
+    <div class="head">Nucleus / Isotope</div>
+    <div class="body">
+      <select id="isotope" style="width:100%;background:#071b2b;border:1px solid #214b63;color:#fff;padding:8px;border-radius:7px"></select>
+      <div style="height:7px"></div>
+      <div class="rightgrid">
+        <div class="stat"><small>Protons</small><strong id="np">26</strong></div><div class="stat"><small>Neutrons</small><strong id="nn">30</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="practiceBox" class="panel section hidden">
+    <div class="head">Practice Rules & Quiz</div>
+    <div class="body">
+      <div class="rule-lab" id="ruleLab" style="margin-top:0">
+        <div class="rule-lab-title">Hund's Rule & Pauli Exclusion Principle</div>
+        <div class="rule-lab-sub">Learn the rule first, then solve board/entrance quiz questions below.</div>
+
+        <div class="rule-tabs">
+          <button class="rule-tab active" id="hundRuleBtn" type="button" onclick="showRuleLab('hund')">Hund's Rule</button>
+          <button class="rule-tab" id="pauliRuleBtn" type="button" onclick="showRuleLab('pauli')">Pauli Principle</button>
+        </div>
+
+        <div class="rule-panel" id="hundRulePanel">
+          <h4>Hund's Rule of Maximum Multiplicity</h4>
+          <div>Degenerate orbitals are occupied <b>singly with parallel spins first</b>, then pairing starts. Spin multiplicity = <b>2S + 1</b>.</div>
+          <div class="rule-formula">p⁴ → ↑↓ &nbsp; ↑ &nbsp; ↑ &nbsp; → 2 unpaired electrons</div>
+          <div class="rule-orbitals"><div class="orb-box">↑↓</div><div class="orb-box">↑</div><div class="orb-box">↑</div></div>
+          <div class="rule-grid">
+            <div class="rule-card"><b>p²</b> ↑ &nbsp; ↑ &nbsp; _ → 2 unpaired</div>
+            <div class="rule-card"><b>p⁴</b> ↑↓ &nbsp; ↑ &nbsp; ↑ → 2 unpaired</div>
+            <div class="rule-card"><b>d⁴</b> ↑ &nbsp; ↑ &nbsp; ↑ &nbsp; ↑ &nbsp; _ → 4 unpaired</div>
+            <div class="rule-card"><b>d⁷</b> ↑↓ &nbsp; ↑↓ &nbsp; ↑ &nbsp; ↑ &nbsp; ↑ → 3 unpaired</div>
+          </div>
+          <div class="rule-quiz"><b>Worked Problem:</b> A free Fe atom (Z = 26) has 3d⁶ 4s². How many unpaired electrons?
+            <div class="rule-action-row"><button class="rule-tab" type="button" onclick="checkRuleAnswer('hundQ1',this)">Show answer</button></div>
+            <div id="hundQ1" style="display:none;margin-top:8px"><b>Answer: 4.</b> Five 3d orbitals fill singly first (5 ↑); the 6th electron pairs in one orbital (↑↓ ↑ ↑ ↑ ↑), leaving 4 unpaired electrons.</div>
+          </div>
+        </div>
+
+        <div class="rule-panel" id="pauliRulePanel" style="display:none">
+          <h4>Pauli Exclusion Principle</h4>
+          <div>No two electrons in the same atom can have the same complete set of four quantum numbers <b>(n, l, m<sub>l</sub>, m<sub>s</sub>)</b>.</div>
+          <div class="rule-formula">One orbital holds maximum 2 electrons with opposite spins (+½ and −½)</div>
+          <div class="rule-grid">
+            <div class="rule-card"><b>Allowed</b> (2,1,0,+½) & (2,1,0,−½)</div>
+            <div class="rule-card"><b>Forbidden</b> (2,1,0,+½) & (2,1,0,+½)</div>
+            <div class="rule-card"><b>Subshell capacity</b> 2(2l+1): s=2, p=6, d=10, f=14</div>
+            <div class="rule-card"><b>Shell capacity</b> 2n² electrons maximum</div>
+          </div>
+          <div class="rule-quiz"><b>Worked Problem:</b> Maximum electrons possible in the n = 3 shell?
+            <div class="rule-action-row"><button class="rule-tab" type="button" onclick="checkRuleAnswer('pauliQ1',this)">Show answer</button></div>
+            <div id="pauliQ1" style="display:none;margin-top:8px"><b>Answer: 18.</b> 2n² = 2(3)² = 18 = 3s² + 3p⁶ + 3d¹⁰.</div>
+          </div>
+        </div>
+
+        <div class="rule-action-row">
+          <button class="rule-download" type="button" onclick="downloadRuleNotes()">⬇ Download Revision Notes</button>
+          <button class="rule-tab" type="button" onclick="makeQuiz();showToast('Quiz reset!')">↻ Reset Quiz</button>
+        </div>
+      </div>
+
+      <div class="practice-divider"><span>Interactive Practice Quiz</span></div>
+      <div class="practice-quiz" id="quiz"></div>
+    </div>
+  </div>
+</aside>
+</div>
+
+<footer class="footer">
+  <span>Moleqyn • AtomVerse Quantum Engine</span>
+  <span>Aligned with NCERT Class 9–12 Chemistry Curriculum</span>
+</footer>
+<div id="toast" class="toast"></div>
+
+<script>
+const raw=[
+["H","Hydrogen",1,1.008],["He","Helium",2,4.003],["Li","Lithium",3,6.94],["Be","Beryllium",4,9.012],["B","Boron",5,10.81],["C","Carbon",6,12.011],["N","Nitrogen",7,14.007],["O","Oxygen",8,15.999],["F","Fluorine",9,18.998],["Ne","Neon",10,20.180],
+["Na","Sodium",11,22.990],["Mg","Magnesium",12,24.305],["Al","Aluminium",13,26.982],["Si","Silicon",14,28.085],["P","Phosphorus",15,30.974],["S","Sulfur",16,32.06],["Cl","Chlorine",17,35.45],["Ar","Argon",18,39.948],
+["K","Potassium",19,39.098],["Ca","Calcium",20,40.078],["Sc","Scandium",21,44.956],["Ti","Titanium",22,47.867],["V","Vanadium",23,50.942],["Cr","Chromium",24,51.996],["Mn","Manganese",25,54.938],["Fe","Iron",26,55.845],["Co","Cobalt",27,58.933],["Ni","Nickel",28,58.693],["Cu","Copper",29,63.546],["Zn","Zinc",30,65.38],["Ga","Gallium",31,69.723],["Ge","Germanium",32,72.630],["As","Arsenic",33,74.922],["Se","Selenium",34,78.971],["Br","Bromine",35,79.904],["Kr","Krypton",36,83.798],
+["Rb","Rubidium",37,85.468],["Sr","Strontium",38,87.62],["Y","Yttrium",39,88.906],["Zr","Zirconium",40,91.222],["Nb","Niobium",41,92.906],["Mo","Molybdenum",42,95.95],["Tc","Technetium",43,97],["Ru","Ruthenium",44,101.07],["Rh","Rhodium",45,102.906],["Pd","Palladium",46,106.42],["Ag","Silver",47,107.868],["Cd","Cadmium",48,112.414],["In","Indium",49,114.818],["Sn","Tin",50,118.710],["Sb","Antimony",51,121.760],["Te","Tellurium",52,127.60],["I","Iodine",53,126.904],["Xe","Xenon",54,131.293],
+["Cs","Cesium",55,132.905],["Ba","Barium",56,137.327],["La","Lanthanum",57,138.905],["Ce","Cerium",58,140.116],["Pr","Praseodymium",59,140.908],["Nd","Neodymium",60,144.242],["Pm","Promethium",61,145],["Sm","Samarium",62,150.36],["Eu","Europium",63,151.964],["Gd","Gadolinium",64,157.25],["Tb","Terbium",65,158.925],["Dy","Dysprosium",66,162.500],["Ho","Holmium",67,164.930],["Er","Erbium",68,167.259],["Tm","Thulium",69,168.934],["Yb","Ytterbium",70,173.045],["Lu","Lutetium",71,174.967],["Hf","Hafnium",72,178.49],["Ta","Tantalum",73,180.948],["W","Tungsten",74,183.84],["Re","Rhenium",75,186.207],["Os","Osmium",76,190.23],["Ir","Iridium",77,192.217],["Pt","Platinum",78,195.084],["Au","Gold",79,196.967],["Hg","Mercury",80,200.592],
+["Tl","Thallium",81,204.38],["Pb","Lead",82,207.2],["Bi","Bismuth",83,208.980],["Po","Polonium",84,209],["At","Astatine",85,210],["Rn","Radon",86,222],
+["Fr","Francium",87,223],["Ra","Radium",88,226],["Ac","Actinium",89,227],["Th","Thorium",90,232.038],["Pa","Protactinium",91,231.036],["U","Uranium",92,238.029],["Np","Neptunium",93,237],["Pu","Plutonium",94,244],["Am","Americium",95,243],["Cm","Curium",96,247],["Bk","Berkelium",97,247],["Cf","Californium",98,251],["Es","Einsteinium",99,252],["Fm","Fermium",100,257],["Md","Mendelevium",101,258],["No","Nobelium",102,259],["Lr","Lawrencium",103,266],["Rf","Rutherfordium",104,267],["Db","Dubnium",105,268],["Sg","Seaborgium",106,269],["Bh","Bohrium",107,270],["Hs","Hassium",108,269],["Mt","Meitnerium",109,277],["Ds","Darmstadtium",110,281],["Rg","Roentgenium",111,282],["Cn","Copernicium",112,285],["Nh","Nihonium",113,286],["Fl","Flerovium",114,289],["Mc","Moscovium",115,290],["Lv","Livermorium",116,293],["Ts","Tennessine",117,294],["Og","Oganesson",118,294]
+];
+const RADIOACTIVE_ISOTOPES={43:97,61:145,84:209,85:210,86:222,87:223,88:226,89:227,93:237,94:244,95:243,96:247,97:247,98:251,99:252,100:257,101:258,102:259,103:266,104:267,105:268,106:269,107:270,108:269,109:277,110:281,111:282,112:285,113:286,114:289,115:290,116:293,117:294,118:294};
+const E=raw.map(x=>({sym:x[0],name:x[1],z:x[2],mass:x[3]}));
+function massDisplay(e){return RADIOACTIVE_ISOTOPES[e.z]?`[${RADIOACTIVE_ISOTOPES[e.z]}]`:`${e.mass} u`;}
+const byZ=z=>E[(z>=1&&z<=118?z:26)-1];
+
+const groupPositions={
+1:{H:1,He:18},
+2:{Li:1,Be:2,B:13,C:14,N:15,O:16,F:17,Ne:18},
+3:{Na:1,Mg:2,Al:13,Si:14,P:15,S:16,Cl:17,Ar:18},
+4:{K:1,Ca:2,Sc:3,Ti:4,V:5,Cr:6,Mn:7,Fe:8,Co:9,Ni:10,Cu:11,Zn:12,Ga:13,Ge:14,As:15,Se:16,Br:17,Kr:18},
+5:{Rb:1,Sr:2,Y:3,Zr:4,Nb:5,Mo:6,Tc:7,Ru:8,Rh:9,Pd:10,Ag:11,Cd:12,In:13,Sn:14,Sb:15,Te:16,I:17,Xe:18},
+6:{Cs:1,Ba:2,La:3,Hf:4,Ta:5,W:6,Re:7,Os:8,Ir:9,Pt:10,Au:11,Hg:12,Tl:13,Pb:14,Bi:15,Po:16,At:17,Rn:18},
+7:{Fr:1,Ra:2,Ac:3,Rf:4,Db:5,Sg:6,Bh:7,Hs:8,Mt:9,Ds:10,Rg:11,Cn:12,Nh:13,Fl:14,Mc:15,Lv:16,Ts:17,Og:18}
+};
+const fRows={9:["Ce","Pr","Nd","Pm","Sm","Eu","Gd","Tb","Dy","Ho","Er","Tm","Yb","Lu"],10:["Th","Pa","U","Np","Pu","Am","Cm","Bk","Cf","Es","Fm","Md","No","Lr"]};
+
+const L="spdf";
+const DISPLAY_ORDER=[[1,0],[2,0],[2,1],[3,0],[3,1],[3,2],[4,0],[4,1],[4,2],[4,3],[5,0],[5,1],[5,2],[5,3],[6,0],[6,1],[6,2],[7,0],[7,1]];
+function displayParts(arr){const rank=new Map(DISPLAY_ORDER.map((x,i)=>[x.join(":"),i]));return [...arr].sort((a,b)=>(rank.get(a[0]+":"+a[1])??99)-(rank.get(b[0]+":"+b[1])??99));}
+const CONFIGS={"1":[[1,0,1]],"2":[[1,0,2]],"3":[[1,0,2],[2,0,1]],"4":[[1,0,2],[2,0,2]],"5":[[1,0,2],[2,0,2],[2,1,1]],"6":[[1,0,2],[2,0,2],[2,1,2]],"7":[[1,0,2],[2,0,2],[2,1,3]],"8":[[1,0,2],[2,0,2],[2,1,4]],"9":[[1,0,2],[2,0,2],[2,1,5]],"10":[[1,0,2],[2,0,2],[2,1,6]],"11":[[1,0,2],[2,0,2],[2,1,6],[3,0,1]],"12":[[1,0,2],[2,0,2],[2,1,6],[3,0,2]],"13":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,1]],"14":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,2]],"15":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,3]],"16":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,4]],"17":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,5]],"18":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6]],"19":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,1]],"20":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2]],"21":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,1]],"22":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,2]],"23":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,3]],"24":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,1],[3,2,5]],"25":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,5]],"26":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,6]],"27":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,7]],"28":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,8]],"29":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,1],[3,2,10]],"30":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10]],"31":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,1]],"32":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,2]],"33":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,3]],"34":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,4]],"35":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,5]],"36":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6]],"37":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,1]],"38":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2]],"39":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,1]],"40":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,2]],"41":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,1],[4,2,4]],"42":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,1],[4,2,5]],"43":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,5]],"44":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,1],[4,2,7]],"45":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,1],[4,2,8]],"46":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[4,2,10]],"47":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,1],[4,2,10]],"48":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10]],"49":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,1]],"50":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,2]],"51":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,3]],"52":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,4]],"53":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,5]],"54":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6]],"55":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,1]],"56":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2]],"57":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[5,2,1]],"58":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,1],[5,2,1]],"59":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,3]],"60":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,4]],"61":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,5]],"62":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,6]],"63":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,7]],"64":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,7],[5,2,1]],"65":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,9]],"66":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,10]],"67":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,11]],"68":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,12]],"69":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,13]],"70":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14]],"71":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,1]],"72":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,2]],"73":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,3]],"74":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,4]],"75":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,5]],"76":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,6]],"77":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,7]],"78":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,1],[4,3,14],[5,2,9]],"79":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,1],[4,3,14],[5,2,10]],"80":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10]],"81":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,1]],"82":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,2]],"83":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,3]],"84":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,4]],"85":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,5]],"86":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6]],"87":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,1]],"88":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2]],"89":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2],[6,2,1]],"90":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2],[6,2,2]],"91":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2],[5,3,2],[6,2,1]],"92":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2],[5,3,3],[6,2,1]],"93":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2],[5,3,4],[6,2,1]],"94":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2],[5,3,6]],"95":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2],[5,3,7]],"96":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2],[5,3,7],[6,2,1]],"97":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2],[5,3,9]],"98":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2],[5,3,10]],"99":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2],[5,3,11]],"100":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2],[5,3,12]],"101":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2],[5,3,13]],"102":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2],[5,3,14]],"103":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2],[5,3,14],[7,1,1]],"104":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2],[5,3,14],[6,2,2]],"105":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2],[5,3,14],[6,2,3]],"106":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2],[5,3,14],[6,2,4]],"107":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2],[5,3,14],[6,2,5]],"108":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2],[5,3,14],[6,2,6]],"109":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2],[5,3,14],[6,2,7]],"110":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2],[5,3,14],[6,2,8]],"111":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2],[5,3,14],[6,2,9]],"112":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2],[5,3,14],[6,2,10]],"113":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2],[5,3,14],[6,2,10],[7,1,1]],"114":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2],[5,3,14],[6,2,10],[7,1,2]],"115":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2],[5,3,14],[6,2,10],[7,1,3]],"116":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2],[5,3,14],[6,2,10],[7,1,4]],"117":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2],[5,3,14],[6,2,10],[7,1,5]],"118":[[1,0,2],[2,0,2],[2,1,6],[3,0,2],[3,1,6],[4,0,2],[3,2,10],[4,1,6],[5,0,2],[4,2,10],[5,1,6],[6,0,2],[4,3,14],[5,2,10],[6,1,6],[7,0,2],[5,3,14],[6,2,10],[7,1,6]]};
+
+let selected=26,isotope=null,moving=true,direction=1,quizScore=0;
+let orbState={n:3,l:2,orient:"d_xy"};
+let qState={n:3,l:2,ml:-2,ms:"−½",eIdx:null};
+let specState={ni:3,nf:2};
+let currentActiveView="atom";
+
+const $=id=>document.getElementById(id);
+const symbol=$("symbol"),ename=$("ename"),etag=$("etag"),blocktag=$("blocktag"),unpairedTag=$("unpairedTag"),weight=$("weight"),shells=$("shells"),block=$("block"),valence=$("valence");
+const config=$("config"),orbgrid=$("orbgrid"),nucleus=$("nucleus"),electronLayer=$("electronLayer");
+const electronTitle=$("electronTitle"),qn=$("qn"),ql=$("ql"),qml=$("qml"),qms=$("qms"),subshell=$("subshell"),shape=$("shape"),shapeText=$("shapeText");
+const isotopeSelect=$("isotope"),dynamicPanel=$("dynamicPanel"),dynamicTitle=$("dynamicTitle"),dynamicBody=$("dynamicBody"),practiceBox=$("practiceBox"),quiz=$("quiz");
+const cmpARef=()=>document.getElementById("cmpA"),cmpBRef=()=>document.getElementById("cmpB");
+
+function sanitizeZ(val){
+  const n=Number(val);
+  return Number.isInteger(n)&&n>=1&&n<=118 ? n : 26;
+}
+
+function blockOf(e){
+  if(e.z<=2 || (e.z>=3&&e.z<=4) || (e.z>=11&&e.z<=12) || (e.z>=19&&e.z<=20) || e.z===55 || e.z===56 || e.z===87 || e.z===88) return "s";
+  if((e.z>=5&&e.z<=10)||(e.z>=13&&e.z<=18)||(e.z>=31&&e.z<=36)||(e.z>=49&&e.z<=54)||(e.z>=81&&e.z<=86)||(e.z>=113&&e.z<=118)) return "p";
+  if((e.z>=58&&e.z<=71)||(e.z>=90&&e.z<=103)) return "f";
+  return "d";
+}
+function parts(z){ return CONFIGS[sanitizeZ(z)].map(x=>[x[0],x[1],x[2]]); }
+function qs(z){
+  const out=[];let num=0;
+  for(const [n,l,c] of parts(z)){
+    let used=0;
+    for(let ml=-l;ml<=l && used<c;ml++){out.push({electron:++num,n,l,ml,ms:"+½"});used++}
+    for(let ml=-l;ml<=l && used<c;ml++){out.push({electron:++num,n,l,ml,ms:"−½"});used++}
+  }
+  return out;
+}
+function shell(z){const a=[0,0,0,0,0,0,0];qs(z).forEach(q=>a[q.n-1]++);return a.filter(Boolean)}
+function valenceCount(z){
+  const sh=shell(z);
+  return sh[sh.length-1]||0;
+}
+function unpairedCount(z){
+  let u=0;
+  for(const [n,l,c] of parts(z)){
+    const boxes=2*l+1;
+    u += c<=boxes ? c : 2*boxes-c;
+  }
+  return u;
+}
+function commonIsotopes(e){
+  const base=RADIOACTIVE_ISOTOPES[e.z]||Math.round(e.mass);
+  const common={
+    H:[1,2,3],He:[3,4],Li:[6,7],Be:[9],B:[10,11],C:[12,13,14],N:[14,15],O:[16,17,18],
+    Na:[23],Mg:[24,25,26],Si:[28,29,30],Cl:[35,37],K:[39,40,41],Ca:[40,42,44],
+    Cr:[50,52,53,54],Fe:[54,56,57,58],Co:[59,60],Ni:[58,60,62],Cu:[63,65],Zn:[64,66,68],
+    Br:[79,81],Zr:[90,91,92,94],Ag:[107,109],Sn:[116,118,120],I:[127,131],La:[138,139],
+    Ce:[140,142],Gd:[156,158,160],Au:[197],Pb:[204,206,207,208],U:[234,235,238],Lr:[266],Og:[294]
+  };
+  return [...new Set(common[e.sym]||[base-1,base,base+1].filter(x=>x>=e.z))];
+}
+
+function buildPT(){
+  const p=$("pt"),f=$("ptf");p.innerHTML="";f.innerHTML="";
+  E.forEach(e=>{
+    const b=blockOf(e);
+    let period=Object.keys(groupPositions).find(k=>groupPositions[k][e.sym]);
+    if(!period)return;
+    const d=document.createElement("button");d.className="el "+b;d.dataset.block=b;d.dataset.z=e.z;
+    d.style.gridColumn=groupPositions[period][e.sym];d.style.gridRow=period;
+    d.innerHTML=`<span class="num">${e.z}</span><span class="sym">${e.sym}</span>`;
+    d.title=`${e.name} • Z=${e.z}`;d.onclick=()=>select(e.z,true);p.appendChild(d);
+  });
+  [["Lanthanides",9,fRows[9]],["Actinides",10,fRows[10]]].forEach(([label,row,syms])=>{
+    const lab=document.createElement("div");lab.className="f-label";lab.textContent=label;f.appendChild(lab);
+    const gap=document.createElement("div");gap.className="f-gap";f.appendChild(gap);
+    syms.forEach(sym=>{
+      const e=E.find(x=>x.sym===sym);if(!e)return;
+      const d=document.createElement("button");d.className="el f";d.dataset.block="f";d.dataset.z=e.z;
+      d.innerHTML=`<span class="num">${e.z}</span><span class="sym">${e.sym}</span>`;
+      d.title=`${e.name} • Z=${e.z}`;d.onclick=()=>select(e.z,true);f.appendChild(d);
+    });
+  });
+}
+
+function select(z, clearSearchInput=true){
+  selected=sanitizeZ(z);
+  localStorage.setItem("atomverse-selected",String(selected));
+  isotope=null;
+  qState.eIdx=null;
+  update();
+  document.querySelectorAll(".el").forEach(x=>x.classList.toggle("sel",+x.dataset.z===selected));
+  if(clearSearchInput) $("search").value="";
+  if(currentActiveView!=="atom") renderViewContent();
+}
+
+function updateGateBanner(){
+  const isOn=$("gateSwitch").classList.contains("on");
+  $("gateBanner").classList.toggle("show",isOn);
+  if(!isOn)return;
+  const e=byZ(selected), u=unpairedCount(e.z), mult=u+1;
+  const anomalies={24:"Cr (3d⁵ 4s¹ — half-filled d-subshell stability)",29:"Cu (3d¹⁰ 4s¹ — fully-filled d-subshell stability)",41:"Nb (4d⁴ 5s¹)",42:"Mo (4d⁵ 5s¹)",44:"Ru (4d⁷ 5s¹)",45:"Rh (4d⁸ 5s¹)",46:"Pd (4d¹⁰ 5s⁰)",47:"Ag (4d¹⁰ 5s¹)",57:"La (5d¹ 6s² — 4f⁰)",58:"Ce (4f¹ 5d¹ 6s²)",64:"Gd (4f⁷ 5d¹ 6s² — half-filled 4f⁷)",78:"Pt (4f¹⁴ 5d⁹ 6s¹)",79:"Au (4f¹⁴ 5d¹⁰ 6s¹)",103:"Lr (5f¹⁴ 7s² 7p¹ — relativistic p-orbital stabilization)"};
+  const note=anomalies[e.z]?`Aufbau Exception: <b>${anomalies[e.z]}</b>`:`Selected: <b>${e.name} (${e.sym}, Z=${e.z})</b>`;
+  $("gateBannerText").innerHTML=`<b>Exam & Competition Insight:</b> ${note} • Unpaired e⁻ = <b>${u}</b> • Spin Multiplicity (2S+1) = <b>${mult}</b> • Magnetic Moment μ = <b>${Math.sqrt(u*(u+2)).toFixed(2)} BM</b>`;
+}
+
+function update(){
+  const e=byZ(selected),baseMass=RADIOACTIVE_ISOTOPES[e.z]||Math.round(e.mass),mass=isotope||baseMass,arr=parts(e.z),q=qs(e.z),sh=shell(e.z),u=unpairedCount(e.z);
+  symbol.textContent=e.sym;ename.textContent=e.name;etag.textContent="Z = "+e.z;blocktag.textContent=blockOf(e)+"-block";
+  if(unpairedTag) unpairedTag.textContent=u+" unpaired e⁻";
+  weight.textContent=massDisplay(e);shells.textContent=sh.join(", ");block.textContent=blockOf(e);valence.textContent=valenceCount(e.z);
+  $("z").textContent=e.z;$("ecount").textContent=e.z;$("pcount").textContent=e.z;$("ncount").textContent=mass-e.z;$("np").textContent=e.z;$("nn").textContent=mass-e.z;
+  $("stageStatus").textContent=`${e.sym} • Z = ${e.z} • ${e.name}`;
+  config.innerHTML=displayParts(arr).map(x=>`${x[0]}${L[x[1]]}<sup>${x[2]}</sup>`).join(" ");
+  renderOrb(arr);renderNucleus(e.z,mass-e.z);renderElectrons(e.z);populateIsotopes(e);showElectron(q[q.length-1]);
+  updateGateBanner();
+}
+
+function renderOrb(arr){
+  orbgrid.innerHTML="";
+  displayParts(arr).forEach(([n,l,c])=>{
+    const d=document.createElement("div");d.className="orb";
+    let arrows="",filled=0;
+    for(let ml=-l;ml<=l && filled<c;ml++){arrows+="↑ ";filled++}
+    for(let ml=-l;ml<=l && filled<c;ml++){arrows+="↓ ";filled++}
+    d.innerHTML=`<small>${n}${L[l]} • ${2*l+1} orb</small><div class="arrows">${arrows}</div>`;
+    orbgrid.appendChild(d);
+  });
+}
+
+function renderNucleus(p,n){
+  nucleus.innerHTML="";
+  const totalNucleons=p+n;
+  const particleCount=totalNucleons<=18 ? totalNucleons : 18;
+  const pp=Math.max(1,Math.round(particleCount*p/(totalNucleons||1)));
+  nucleus.classList.toggle("representative",totalNucleons>18);
+
+  for(let i=0;i<particleCount;i++){
+    const d=document.createElement("div");
+    d.className=i<pp?"np":"nn";
+    d.setAttribute("aria-hidden","true");
+    nucleus.appendChild(d);
+  }
+
+  const info=document.createElement("div");
+  info.className="nucleusInfo";
+  info.innerHTML=`<div class="coreTitle">Nucleus</div><div class="coreCounts"><span class="pCount">p⁺ ${p}</span><span class="nCount">n⁰ ${n}</span></div>`;
+  nucleus.appendChild(info);
+}
+
+function renderElectrons(z){
+  electronLayer.innerHTML="";const q=qs(z),sh=shell(z),seen=Array(7).fill(0);
+  q.forEach(a=>{
+    const d=document.createElement("div");d.className="electron";const count=sh[a.n-1],idx=seen[a.n-1]++,r=40+a.n*27,ang=idx/count*Math.PI*2+(a.n*.32);
+    d.style.left=(270+r*Math.cos(ang)-7.5)+"px";d.style.top=(270+r*Math.sin(ang)-7.5)+"px";d.onclick=ev=>{ev.stopPropagation();showElectron(a)};electronLayer.appendChild(d);
+  });
+}
+
+function showElectron(q){
+  if(!q)return;
+  electronTitle.innerHTML=`<b>Electron #${q.electron}</b>`;qn.textContent=q.n;ql.textContent=q.l;qml.textContent=q.ml;qms.textContent=q.ms;
+  subshell.textContent=`Subshell: ${q.n}${L[q.l]} • orbital mₗ = ${q.ml}`;
+  shape.className="shape "+(q.l===0?"":q.l===1?"p":q.l===2?"d":"f");
+  shapeText.textContent=`${q.n}${L[q.l]} orbital • mₗ = ${q.ml}`;
+}
+
+function populateIsotopes(e){
+  isotopeSelect.innerHTML="";
+  const list=commonIsotopes(e);
+  const activeIso=isotope&&list.includes(isotope)?isotope:list[0];
+  list.forEach(a=>{const o=document.createElement("option");o.value=a;o.textContent=`${e.sym}-${a} • n=${a-e.z}`;isotopeSelect.appendChild(o)});
+  isotopeSelect.value=activeIso;
+  isotopeSelect.onchange=()=>{isotope=+isotopeSelect.value;update();if(currentActiveView==="isotopes")renderViewContent()};
+}
+
+function playAufbau(){
+  const boxes=[...orbgrid.children];boxes.forEach(x=>x.style.opacity=.18);
+  boxes.forEach((x,i)=>setTimeout(()=>x.style.opacity=1,i*220));
+  showToast("Aufbau filling simulation running");
+}
+function resetMotion(){direction=1;moving=true;showToast("Orbit motion reset");}
+
+function compare(){
+  const elA=cmpARef(),elB=cmpBRef();
+  if(!elA||!elB)return;
+  const a=byZ(+elA.value),b=byZ(+elB.value);
+  const ua=unpairedCount(a.z),ub=unpairedCount(b.z);
+  $("cmpOut").innerHTML=`<div class="rightgrid">
+    <div class="stat"><small>Element A</small><strong>${a.sym} — ${a.name}</strong><span class="muted">Z = ${a.z}</span></div>
+    <div class="stat"><small>Element B</small><strong>${b.sym} — ${b.name}</strong><span class="muted">Z = ${b.z}</span></div>
+    <div class="stat"><small>Weight / Isotope (${a.sym})</small><strong>${massDisplay(a)}</strong></div>
+    <div class="stat"><small>Weight / Isotope (${b.sym})</small><strong>${massDisplay(b)}</strong></div>
+    <div class="stat"><small>Configuration (${a.sym})</small><strong style="font-size:12.5px">${displayParts(parts(a.z)).map(x=>`${x[0]}${L[x[1]]}<sup>${x[2]}</sup>`).join(" ")}</strong></div>
+    <div class="stat"><small>Configuration (${b.sym})</small><strong style="font-size:12.5px">${displayParts(parts(b.z)).map(x=>`${x[0]}${L[x[1]]}<sup>${x[2]}</sup>`).join(" ")}</strong></div>
+    <div class="stat"><small>Shell Distribution (${a.sym})</small><strong>${shell(a.z).join(", ")}</strong></div>
+    <div class="stat"><small>Shell Distribution (${b.sym})</small><strong>${shell(b.z).join(", ")}</strong></div>
+    <div class="stat"><small>Block & Outer e⁻ (${a.sym})</small><strong>${blockOf(a)}-block • ${valenceCount(a.z)} e⁻</strong></div>
+    <div class="stat"><small>Block & Outer e⁻ (${b.sym})</small><strong>${blockOf(b)}-block • ${valenceCount(b.z)} e⁻</strong></div>
+    <div class="stat"><small>Unpaired e⁻ (${a.sym})</small><strong>${ua} unpaired • 2S+1 = ${ua+1}</strong></div>
+    <div class="stat"><small>Unpaired e⁻ (${b.sym})</small><strong>${ub} unpaired • 2S+1 = ${ub+1}</strong></div>
+  </div>`;
+}
+
+const quizBank=[
+  {q:"For a 3d electron, what is the principal quantum number (n) and azimuthal quantum number (l)?",a:"n = 3, l = 2",opts:["n = 3, l = 1","n = 3, l = 2","n = 2, l = 2","n = 4, l = 2"],exp:"For any subshell, n is the shell number (3) and l maps as s=0, p=1, d=2, f=3."},
+  {q:"How many degenerate orbitals are present in a d subshell (l = 2) and an f subshell (l = 3)?",a:"d = 5, f = 7",opts:["d = 3, f = 5","d = 5, f = 7","d = 5, f = 10","d = 10, f = 14"],exp:"Number of orbitals in a subshell = 2l + 1. For d (l=2): 2(2)+1 = 5; for f (l=3): 2(3)+1 = 7."},
+  {q:"If l = 2, the allowed magnetic quantum number (mₗ) values are:",a:"−2, −1, 0, +1, +2",opts:["−1, 0, +1","−2, −1, 0, +1, +2","0, +1, +2","−3, −2, −1, 0, +1, +2, +3"],exp:"mₗ ranges in integer steps from −l to +l."},
+  {q:"How many radial nodes and angular nodes are present in a 4p orbital?",a:"2 radial, 1 angular",opts:["3 radial, 1 angular","2 radial, 1 angular","1 radial, 2 angular","2 radial, 2 angular"],exp:"For 4p (n=4, l=1): Radial nodes = n − l − 1 = 4 − 1 − 1 = 2; Angular nodes = l = 1."},
+  {q:"Which of the following ground-state configurations is correct for Chromium (Z = 24)?",a:"[Ar] 3d⁵ 4s¹",opts:["[Ar] 3d⁴ 4s²","[Ar] 3d⁵ 4s¹","[Ar] 3d⁶ 4s⁰","[Ar] 3d⁵ 4p¹"],exp:"Half-filled 3d⁵ subshell exchange energy and extra symmetry stabilize [Ar] 3d⁵ 4s¹."},
+  {q:"According to Hund's rule, how many unpaired electrons are present in a ground-state Fe (Z = 26, 3d⁶ 4s²) atom?",a:"4",opts:["2","4","6","0"],exp:"In 3d⁶, 5 orbitals fill singly first (5 ↑) and the 6th pairs up (↑↓ ↑ ↑ ↑ ↑), leaving 4 unpaired electrons."},
+  {q:"Which quantum number set (n, l, mₗ, mₛ) is FORBIDDEN?",a:"(2, 2, 0, +½)",opts:["(3, 2, −2, +½)","(2, 1, 0, −½)","(2, 2, 0, +½)","(4, 3, +3, +½)"],exp:"For n = 2, allowed l values are 0 and 1 (l ≤ n − 1). Thus l = 2 is forbidden in shell n = 2."}
+];
+
+function makeQuiz(){
+  quizScore=0;
+  quiz.innerHTML=`<div class="score"><span>Score: <b id="score">0</b> / ${quizBank.length}</span><button class="mini" type="button" onclick="makeQuiz();showToast('Quiz reset!')">↻ Reset Quiz</button></div>`+quizBank.map((x,i)=>`<div class="qitem"><b>${i+1}. ${x.q}</b>${x.opts.map(o=>`<button type="button" onclick="gradeQuiz(this,${i},'${o.replace(/'/g,"\\'")}')">${o}</button>`).join("")}<div id="qexp_${i}" class="muted" style="display:none;margin-top:6px;padding:7px 9px;border-left:3px solid var(--cyan);background:rgba(53,221,255,.06)"><b>Concept Explanation:</b> ${x.exp}</div></div>`).join("");
+}
+function gradeQuiz(btn,i,answer){
+  const item=quizBank[i],buttons=[...btn.parentElement.querySelectorAll("button")];
+  if(buttons.some(b=>b.classList.contains("correct")||b.classList.contains("wrong")))return;
+  if(answer===item.a){btn.classList.add("correct");quizScore++;$("score").textContent=quizScore}else btn.classList.add("wrong");
+  if(answer!==item.a)buttons.find(b=>b.textContent===item.a)?.classList.add("correct");
+  const expEl=document.getElementById("qexp_"+i);
+  if(expEl) expEl.style.display="block";
+}
+function showToast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(showToast._t);showToast._t=setTimeout(()=>t.classList.remove("show"),1800)}
+
+document.querySelectorAll("#filters button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("#filters button").forEach(x=>x.classList.remove("on"));b.classList.add("on");
+  const f=b.dataset.filter;document.querySelectorAll(".el").forEach(x=>x.style.display=(f==="all"||x.dataset.block===f)?"":"none");
+});
+
+$("search").oninput=function(){
+  const q=this.value.toLowerCase().trim();if(!q)return;
+  const match=
+    E.find(e=>String(e.z)===q) ||
+    E.find(e=>e.sym.toLowerCase()===q) ||
+    E.find(e=>e.name.toLowerCase()===q) ||
+    E.find(e=>e.sym.toLowerCase().startsWith(q)) ||
+    E.find(e=>e.name.toLowerCase().startsWith(q)) ||
+    E.find(e=>e.name.toLowerCase().includes(q));
+  if(match){select(match.z,false);showToast(`${match.name} (Z=${match.z}) selected`)}
+};
+
+function applyGate(on, notify=true){
+  $("gateSwitch").classList.toggle("on",on);
+  localStorage.setItem("atomverse-gate",on?"1":"0");
+  updateGateBanner();
+  if(notify) showToast(on?"Exam mode ON":"Exam mode OFF");
+}
+$("gateWrap").onclick=()=>applyGate(!$("gateSwitch").classList.contains("on"),true);
+applyGate(localStorage.getItem("atomverse-gate")==="1",false);
+
+function tick(){const d=new Date();$("clock").textContent=d.toLocaleTimeString();requestAnimationFrame(tick)}
+function animate(t){
+  if(moving){
+    const q=qs(selected),sh=shell(selected),seen=Array(7).fill(0);
+    document.querySelectorAll(".electron").forEach((d,i)=>{
+      const a=q[i];if(!a)return;
+      const count=sh[a.n-1],idx=seen[a.n-1]++,r=40+a.n*27,ang=idx/count*Math.PI*2+direction*t/2300*(a.n%2?1:-1);
+      d.style.left=(270+r*Math.cos(ang)-7.5)+"px";d.style.top=(270+r*Math.sin(ang)-7.5)+"px";
+    });
+  }
+  requestAnimationFrame(animate);
+}
+
+/* Switch View in-place without breaking page links */
+function switchView(view){
+  currentActiveView=view;
+  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.toggle("active",b.dataset.view===view));
+  
+  const stagePanel=$("stagePanel");
+  const configPanel=$("configPanel");
+  const dynPanel=$("dynamicPanel");
+  const pracBox=$("practiceBox");
+
+  if(view==="atom"){
+    stagePanel.style.display="block";
+    configPanel.style.display="block";
+    dynPanel.classList.add("hidden");
+    pracBox.classList.add("hidden");
+  } else if(view==="practice"){
+    stagePanel.style.display="none";
+    configPanel.style.display="none";
+    dynPanel.classList.add("hidden");
+    pracBox.classList.remove("hidden");
+    if(!quiz.innerHTML.trim()) makeQuiz();
+    showRuleLab("hund");
+  } else {
+    stagePanel.style.display="none";
+    configPanel.style.display="none";
+    dynPanel.classList.remove("hidden");
+    pracBox.classList.add("hidden");
+    renderViewContent();
+  }
+}
+
+function setOrbitalControl(lVal, orientVal){
+  orbState.l=lVal;
+  if(orbState.n<=lVal) orbState.n=lVal+1;
+  const defaults={0:"s",1:"p_z",2:"d_xy",3:"f_xyz"};
+  orbState.orient=orientVal||defaults[lVal];
+  renderViewContent();
+}
+
+function renderViewContent(){
+  const e=byZ(selected), q=qs(e.z), last=q[q.length-1];
+  const view=currentActiveView;
+
+  if(view==="orbitals"){
+    dynamicTitle.textContent="Orbital Explorer — s, p, d, f Subshells & Spatial Orientation";
+    const orients={
+      0:[["s","s (mₗ = 0) • Spherical"]],
+      1:[["p_x","pₓ (mₗ = −1) • X-axis"],["p_z","p_z (mₗ = 0) • Z-axis"],["p_y","pᵧ (mₗ = +1) • Y-axis"]],
+      2:[["d_xy","d_xy (mₗ = −2)"],["d_xz","d_xz (mₗ = −1)"],["d_z2","d_z² (mₗ = 0)"],["d_yz","d_yz (mₗ = +1)"],["d_x2y2","d_x²−y² (mₗ = +2)"]],
+      3:[["f_y3x2","f_y(3x²−y²) (mₗ = −3)"],["f_xyz","f_xyz (mₗ = −2)"],["f_yz2","f_yz² (mₗ = −1)"],["f_z3","f_z³ (mₗ = 0)"],["f_xz2","f_xz² (mₗ = +1)"],["f_zx2y2","f_z(x²−y²) (mₗ = +2)"],["f_x3y2","f_x(x²−3y²) (mₗ = +3)"]]
+    };
+    const l=orbState.l;
+    const n=Math.max(orbState.n, l+1);
+    orbState.n=n;
+    const curOrients=orients[l];
+    if(!curOrients.some(x=>x[0]===orbState.orient)) orbState.orient=curOrients[0][0];
+    const activeLabel=curOrients.find(x=>x[0]===orbState.orient)[1];
+    const radialNodes=n-l-1, angularNodes=l, totalNodes=n-1;
+    const shapeClass=l===0?"":l===1?"p":l===2?"d":"f";
+    const rotMap={s:"rotate(0deg)",p_x:"rotate(90deg)",p_z:"rotate(0deg)",p_y:"rotate(45deg)",d_xy:"rotate(-25deg)",d_xz:"rotate(20deg)",d_z2:"rotate(0deg) scaleX(.75)",d_yz:"rotate(65deg)",d_x2y2:"rotate(45deg)",f_xyz:"rotate(25deg)",f_z3:"rotate(0deg) scaleY(1.15)"};
+    const transformStyle=rotMap[orbState.orient]||"rotate(15deg)";
+
+    dynamicBody.innerHTML=`
+      <div class="toolbarRow">
+        <div>
+          <label>Subshell (l):</label><br>
+          <div style="display:flex;gap:6px;margin-top:4px">
+            <button type="button" class="mini ${l===0?'on':''}" onclick="setOrbitalControl(0)">s (l=0)</button>
+            <button type="button" class="mini ${l===1?'on':''}" onclick="setOrbitalControl(1)">p (l=1)</button>
+            <button type="button" class="mini ${l===2?'on':''}" onclick="setOrbitalControl(2)">d (l=2)</button>
+            <button type="button" class="mini ${l===3?'on':''}" onclick="setOrbitalControl(3)">f (l=3)</button>
+          </div>
+        </div>
+        <div>
+          <label>Shell (n):</label><br>
+          <select id="orbNSelect" class="ctrlSelect" style="width:130px;margin-top:4px">
+            ${[1,2,3,4,5,6,7].filter(x=>x>l).map(x=>`<option value="${x}" ${x===n?"selected":""}>n = ${x} (${x}${L[l]})</option>`).join("")}
+          </select>
+        </div>
+        <div style="flex:1;min-width:220px">
+          <label>Spatial Orientation (mₗ):</label><br>
+          <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:4px">
+            ${curOrients.map(([k,lab])=>`<button type="button" class="mini ${orbState.orient===k?'on':''}" onclick="setOrbitalControl(${l},'${k}')">${lab.split(" ")[0]}</button>`).join("")}
+          </div>
+        </div>
+      </div>
+
+      <div class="compare" style="grid-template-columns:1.2fr 1fr;gap:14px;align-items:stretch">
+        <div class="moduleCard">
+          <h3>Visual Waveform: ${n}${L[l]} — ${activeLabel}</h3>
+          <div class="orbitalView" style="height:220px">
+            <div class="shape ${shapeClass}" style="transform:${transformStyle}"></div>
+            <div class="axis"></div><div class="axis v"></div>
+          </div>
+          <p style="margin-top:8px">Element: <b>${e.name} (${e.sym}, Z=${e.z})</b> — Config: <b>${displayParts(parts(e.z)).map(x=>`${x[0]}${L[x[1]]}${x[2]}`).join(" ")}</b></p>
+        </div>
+        <div class="moduleCard">
+          <h3>Nodal Surfaces & Mechanics (${n}${L[l]})</h3>
+          <div class="rightgrid" style="margin-top:8px">
+            <div class="stat"><small>Subshell</small><strong>${n}${L[l]}</strong></div>
+            <div class="stat"><small>Orbitals</small><strong>${2*l+1} (Max ${4*l+2} e⁻)</strong></div>
+            <div class="stat"><small>Radial Nodes (n−l−1)</small><strong>${radialNodes}</strong></div>
+            <div class="stat"><small>Angular Nodes (l)</small><strong>${angularNodes}</strong></div>
+            <div class="stat"><small>Total Nodes (n−1)</small><strong>${totalNodes}</strong></div>
+            <div class="stat"><small>Orbital Angular Momentum</small><strong>√${l*(l+1)} ℏ</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="moduleGrid" style="margin-top:14px">
+        <div class="moduleCard"><h3>s orbital (l=0)</h3><div class="orbitalView"><div class="shape"></div><div class="axis"></div><div class="axis v"></div></div><p>1 spherical orbital (mₗ = 0). Max 2 e⁻.</p></div>
+        <div class="moduleCard"><h3>p orbitals (l=1)</h3><div class="orbitalView"><div class="shape p"></div><div class="axis"></div><div class="axis v"></div></div><p>3 dumbbell orbitals (mₗ = −1, 0, +1). Max 6 e⁻.</p></div>
+        <div class="moduleCard"><h3>d orbitals (l=2)</h3><div class="orbitalView"><div class="shape d"></div><div class="axis"></div><div class="axis v"></div></div><p>5 clover/ring orbitals (mₗ = −2..+2). Max 10 e⁻.</p></div>
+        <div class="moduleCard"><h3>f orbitals (l=3)</h3><div class="orbitalView"><div class="shape f"></div><div class="axis"></div><div class="axis v"></div></div><p>7 complex lobes (mₗ = −3..+3). Max 14 e⁻.</p></div>
+      </div>`;
+    $("orbNSelect").onchange=function(){orbState.n=+this.value;renderViewContent();};
+  }
+
+  if(view==="quantum"){
+    dynamicTitle.textContent="Quantum Numbers Validator (n, l, mₗ, mₛ)";
+    const eIdx = qState.eIdx && qState.eIdx<=q.length ? qState.eIdx : q.length;
+    const chosenE = q[eIdx-1] || last;
+    const n=qState.n, l=qState.l, ml=qState.ml, ms=qState.ms;
+    const reasons=[];
+    if(n<1 || !Number.isInteger(n)) reasons.push("n must be positive integer (1, 2, 3...).");
+    if(l<0 || l>=n) reasons.push(`l must be between 0 and n−1 (for n=${n}, l can be 0 to ${n-1}).`);
+    if(Math.abs(ml)>l) reasons.push(`mₗ must be between −l and +l (for l=${l}, mₗ can be ${-l} to +${l}).`);
+    if(ms!=="+½" && ms!=="−½") reasons.push("mₛ must be +½ or −½.");
+    const isAllowed = reasons.length===0;
+    const shellNames=["K","L","M","N","O","P","Q"];
+
+    dynamicBody.innerHTML=`
+      <div class="focus-intro">
+        <div class="focus-card"><h3>n → Principal</h3><p>Shell size and energy (n = 1, 2, 3...). Max capacity 2n².</p></div>
+        <div class="focus-card"><h3>l → Azimuthal</h3><p>Subshell geometry (l = 0..n−1): 0=s, 1=p, 2=d, 3=f.</p></div>
+        <div class="focus-card"><h3>mₗ → Magnetic</h3><p>Orientation (−l..+l): select 1 of (2l+1) orbitals.</p></div>
+        <div class="focus-card"><h3>mₛ → Spin</h3><p>Electron spin direction: +½ (↑) or −½ (↓).</p></div>
+      </div>
+
+      <div class="toolbarRow">
+        <div>
+          <label>Element:</label><br>
+          <select id="qElSelect" class="ctrlSelect" style="width:190px;margin-top:4px">
+            ${E.map(x=>`<option value="${x.z}" ${x.z===selected?"selected":""}>Z=${x.z} • ${x.sym} — ${x.name}</option>`).join("")}
+          </select>
+        </div>
+        <div>
+          <label>Inspect Electron of ${e.sym}:</label><br>
+          <select id="qElecSelect" class="ctrlSelect" style="width:220px;margin-top:4px">
+            ${q.map(item=>`<option value="${item.electron}" ${item.electron===chosenE.electron?"selected":""}>Electron #${item.electron} (${item.n}${L[item.l]}, mₗ=${item.ml}, ${item.ms})</option>`).join("")}
+          </select>
+        </div>
+        <div>
+          <label>Load To Validator:</label><br>
+          <button type="button" class="mini on" style="margin-top:4px;padding:8px 12px" id="loadElecBtn">Load Electron #${chosenE.electron} →</button>
+        </div>
+      </div>
+
+      <div class="compareBox" style="margin-bottom:14px">
+        <h3 style="margin:0 0 10px;font-family:'Space Grotesk',sans-serif">Quantum Combination Validator</h3>
+        <div class="qgrid">
+          <div class="q"><b>n (Shell)</b>
+            <select id="testN" class="ctrlSelect" style="margin-top:6px">
+              ${[1,2,3,4,5,6,7].map(v=>`<option value="${v}" ${v===n?"selected":""}>n = ${v}</option>`).join("")}
+            </select>
+          </div>
+          <div class="q"><b>l (Subshell)</b>
+            <select id="testL" class="ctrlSelect" style="margin-top:6px">
+              ${[0,1,2,3,4].map(v=>`<option value="${v}" ${v===l?"selected":""}>l = ${v} (${L[v]||"g"})</option>`).join("")}
+            </select>
+          </div>
+          <div class="q"><b>mₗ (Orbital)</b>
+            <select id="testMl" class="ctrlSelect" style="margin-top:6px">
+              ${[-4,-3,-2,-1,0,1,2,3,4].map(v=>`<option value="${v}" ${v===ml?"selected":""}>mₗ = ${v>0?"+"+v:v}</option>`).join("")}
+            </select>
+          </div>
+          <div class="q"><b>mₛ (Spin)</b>
+            <select id="testMs" class="ctrlSelect" style="margin-top:6px">
+              <option value="+½" ${ms==="+½"?"selected":""}>mₛ = +½ (↑)</option>
+              <option value="−½" ${ms==="−½"?"selected":""}>mₛ = −½ (↓)</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:12px;padding:12px;border-radius:8px;border:1px solid var(--line);background:var(--panel)">
+          ${isAllowed
+            ? `<span class="badgeOk">✓ VALID ALLOWED COMBINATION</span> &nbsp; <b>(n=${n}, l=${l}, mₗ=${ml}, mₛ=${ms})</b><br><div style="margin-top:6px" class="muted">Belongs to shell <b>n=${n} (${shellNames[n-1]} shell)</b>, subshell <b>${n}${L[l]}</b>. Radial nodes = <b>${n-l-1}</b>, Angular nodes = <b>${l}</b>.</div>`
+            : `<span class="badgeErr">✗ FORBIDDEN COMBINATION</span> &nbsp; <b>(n=${n}, l=${l}, mₗ=${ml}, mₛ=${ms})</b><br><div style="margin-top:6px" class="muted"><b>Reason:</b> ${reasons.join(" ")}</div>`
+          }
+        </div>
+      </div>`;
+
+    $("qElSelect").onchange=function(){select(+this.value,true);};
+    $("qElecSelect").onchange=function(){qState.eIdx=+this.value;renderViewContent();};
+    $("loadElecBtn").onclick=function(){qState.n=chosenE.n;qState.l=chosenE.l;qState.ml=chosenE.ml;qState.ms=chosenE.ms;renderViewContent();};
+    $("testN").onchange=function(){qState.n=+this.value;renderViewContent();};
+    $("testL").onchange=function(){qState.l=+this.value;renderViewContent();};
+    $("testMl").onchange=function(){qState.ml=+this.value;renderViewContent();};
+    $("testMs").onchange=function(){qState.ms=this.value;renderViewContent();};
+  }
+
+  if(view==="isotopes"){
+    const list=commonIsotopes(e);
+    const baseA=RADIOACTIVE_ISOTOPES[e.z]||Math.round(e.mass);
+    const m=(isotope&&isotope>=e.z)?isotope:(list.includes(baseA)?baseA:list[0]);
+    const neutrons=m-e.z;
+    dynamicTitle.textContent="Isotopes & Nuclear Structure Lab";
+    dynamicBody.innerHTML=`
+      <div class="focus-intro">
+        <div class="focus-card"><h3>Nuclide Symbol</h3><div style="margin-top:4px"><span class="isoNotation"><span class="supSub"><span>${m}</span><span>${e.z}</span></span><span>${e.sym}</span></span></div></div>
+        <div class="focus-card"><h3>Protons (p⁺ = Z)</h3><p><b>${e.z} protons</b> (identifies element as ${e.name}).</p></div>
+        <div class="focus-card"><h3>Neutrons (n⁰ = A − Z)</h3><p><b>${m} − ${e.z} = ${neutrons} neutrons</b>.</p></div>
+        <div class="focus-card"><h3>Electrons (Neutral)</h3><p><b>${e.z} electrons</b>.</p></div>
+      </div>
+
+      <div class="toolbarRow">
+        <div>
+          <label>Element:</label><br>
+          <select id="isoElSelect" class="ctrlSelect" style="width:200px;margin-top:4px">
+            ${E.map(x=>`<option value="${x.z}" ${x.z===selected?"selected":""}>Z=${x.z} • ${x.sym} — ${x.name}</option>`).join("")}
+          </select>
+        </div>
+        <div>
+          <label>Known Isotopes:</label><br>
+          <select id="focusIsoSelect" class="ctrlSelect" style="width:200px;margin-top:4px">
+            ${list.map(a=>`<option value="${a}" ${a===m?"selected":""}>${e.sym}-${a} (A=${a}, n⁰=${a-e.z})</option>`).join("")}
+          </select>
+        </div>
+        <div>
+          <label>Custom Mass (A ≥ ${e.z}):</label><br>
+          <div style="display:flex;gap:6px;margin-top:4px">
+            <input id="customMassInput" type="number" class="ctrlInput" style="width:110px" min="${e.z}" max="350" value="${m}">
+            <button type="button" class="mini on" id="applyMassBtn">Apply A</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="rightgrid">
+        <div class="stat"><small>Isotope Name</small><strong>${e.name}-${m}</strong></div>
+        <div class="stat"><small>Mass Number A</small><strong>${m}</strong></div>
+        <div class="stat"><small>Protons Z</small><strong>${e.z}</strong></div>
+        <div class="stat"><small>Neutrons N</small><strong>${neutrons}</strong></div>
+        <div class="stat"><small>N/Z Ratio</small><strong>${(neutrons/e.z).toFixed(2)}</strong></div>
+        <div class="stat"><small>Nuclear Stability</small><strong>${(neutrons/e.z>=1 && neutrons/e.z<=1.5)?"Stable Belt":"Radioactive Candidate"}</strong></div>
+      </div>`;
+
+    $("isoElSelect").onchange=function(){select(+this.value,true);};
+    $("focusIsoSelect").onchange=function(){isotope=+this.value;update();renderViewContent();};
+    $("applyMassBtn").onclick=function(){
+      const val=Number($("customMassInput").value);
+      if(!Number.isInteger(val) || val<e.z){
+        showToast(`Mass number must be ≥ ${e.z}`);
+        return;
+      }
+      isotope=val;update();renderViewContent();
+    };
+  }
+
+  if(view==="spectra"){
+    const seed=e.z*17+3;
+    const xs=[11,24,37,49,63,78].map((x,i)=>(x+(seed*(i+1))%7)%94+3);
+    const ni=Math.max(2, specState.ni), nf=Math.min(ni-1, Math.max(1, specState.nf));
+    specState.ni=ni; specState.nf=nf;
+    const dE = 13.6 * (1/(nf*nf) - 1/(ni*ni));
+    const lambdaNm = 1239.84 / dE;
+    const freqTHz = (299792.458 / lambdaNm);
+    const seriesNames={1:"Lyman (UV)",2:"Balmer (Visible)",3:"Paschen (IR)",4:"Brackett (IR)",5:"Pfund (IR)"};
+    const linePos = Math.max(4, Math.min(96, ((lambdaNm - 90) / 1800) * 92 + 4));
+
+    dynamicTitle.textContent="Atomic Emission Spectra & Bohr Electron Transitions";
+    dynamicBody.innerHTML=`
+      <div class="focus-intro">
+        <div class="focus-card"><h3>Element</h3><p><b>${e.name} (${e.sym}), Z=${e.z}</b></p></div>
+        <div class="focus-card"><h3>Transition</h3><p><b>n = ${ni} → n = ${nf}</b> (${seriesNames[nf]||"IR"})</p></div>
+        <div class="focus-card"><h3>Photon Energy</h3><p><b>ΔE = ${dE.toFixed(2)} eV</b></p></div>
+        <div class="focus-card"><h3>Wavelength λ</h3><p><b>${lambdaNm.toFixed(1)} nm</b></p></div>
+      </div>
+
+      <div class="toolbarRow">
+        <div>
+          <label>Element:</label><br>
+          <select id="specElSelect" class="ctrlSelect" style="width:200px;margin-top:4px">
+            ${E.map(x=>`<option value="${x.z}" ${x.z===selected?"selected":""}>Z=${x.z} • ${x.sym} — ${x.name}</option>`).join("")}
+          </select>
+        </div>
+        <div>
+          <label>Initial Orbit (nᵢ):</label><br>
+          <select id="specNi" class="ctrlSelect" style="width:120px;margin-top:4px">
+            ${[2,3,4,5,6,7].map(v=>`<option value="${v}" ${v===ni?"selected":""}>nᵢ = ${v}</option>`).join("")}
+          </select>
+        </div>
+        <div>
+          <label>Final Orbit (n_f):</label><br>
+          <select id="specNf" class="ctrlSelect" style="width:120px;margin-top:4px">
+            ${[1,2,3,4,5,6].filter(v=>v<ni).map(v=>`<option value="${v}" ${v===nf?"selected":""}>n_f = ${v}</option>`).join("")}
+          </select>
+        </div>
+      </div>
+
+      <div class="spectrum">
+        ${xs.map((x,i)=>`<i class="line" title="${e.sym} line #${i+1}" style="left:${x}%;color:hsl(${(i*52+e.z)%360},100%,65%)"></i>`).join("")}
+        <i class="line" title="Computed Transition λ=${lambdaNm.toFixed(1)} nm" style="left:${linePos.toFixed(1)}%;width:4px;color:#fff;background:#fff"></i>
+      </div>
+
+      <div class="rightgrid" style="margin-top:14px">
+        <div class="stat"><small>Series</small><strong>${seriesNames[nf]||"Infrared"}</strong></div>
+        <div class="stat"><small>Energy ΔE</small><strong>${dE.toFixed(3)} eV</strong></div>
+        <div class="stat"><small>Wavelength λ</small><strong>${lambdaNm.toFixed(1)} nm</strong></div>
+        <div class="stat"><small>Frequency ν</small><strong>${freqTHz.toFixed(1)} THz</strong></div>
+      </div>`;
+
+    $("specElSelect").onchange=function(){select(+this.value,true);};
+    $("specNi").onchange=function(){specState.ni=+this.value;if(specState.nf>=specState.ni)specState.nf=specState.ni-1;renderViewContent();};
+    $("specNf").onchange=function(){specState.nf=+this.value;renderViewContent();};
+  }
+
+  if(view==="compare"){
+    dynamicTitle.textContent="Side-by-Side Element Comparison (118 Elements)";
+    dynamicBody.innerHTML=`<div class="compare"><select id="cmpA">${E.map(x=>`<option value="${x.z}" ${x.z===selected?"selected":""}>Z=${x.z} • ${x.sym} — ${x.name}</option>`).join("")}</select><select id="cmpB">${E.map(x=>`<option value="${x.z}" ${x.z===(selected===26?24:26)?"selected":""}>Z=${x.z} • ${x.sym} — ${x.name}</option>`).join("")}</select></div><div id="cmpOut" class="compareBox"></div>`;
+    cmpARef().onchange=compare;cmpBRef().onchange=compare;compare();
+  }
+}
+
+function showRuleLab(rule){
+  const h=$("hundRulePanel"), p=$("pauliRulePanel");
+  const hb=$("hundRuleBtn"), pb=$("pauliRuleBtn");
+  const isH=rule==="hund";
+  if(h) h.style.display=isH?"block":"none";
+  if(p) p.style.display=isH?"none":"block";
+  if(hb) hb.classList.toggle("active",isH);
+  if(pb) pb.classList.toggle("active",!isH);
+}
+function checkRuleAnswer(id,btn){
+  const e=$(id); if(!e)return;
+  const opening=e.style.display==="none"; e.style.display=opening?"block":"none";
+  if(btn)btn.textContent=opening?"Hide answer":"Show answer";
+}
+function downloadRuleNotes(){
+  const t=`Moleqyn ATOMVERSE — ATOMIC STRUCTURE NOTES
+HUND'S RULE & PAULI EXCLUSION PRINCIPLE
+
+1. HUND'S RULE OF MAXIMUM MULTIPLICITY
+Degenerate orbitals are filled singly with parallel spins (+1/2) first before electron pairing begins.
+- Multiplicity formula: 2S + 1 (where S = sum of spin quantum numbers)
+- Example Fe (Z=26): 3d6 4s2 -> 4 unpaired electrons in 3d -> S = 4 * 1/2 = 2 -> Multiplicity = 5.
+
+2. PAULI EXCLUSION PRINCIPLE
+No two electrons in the same atom can possess the exact same set of 4 quantum numbers (n, l, ml, ms).
+- Max electrons in any single orbital: 2 with paired antiparallel spins (+1/2, -1/2).
+- Subshell capacity: 2(2l + 1) -> s=2, p=6, d=10, f=14.
+- Shell capacity: 2n^2 electrons.
+
+3. NODAL SURFACES
+- Radial nodes: n - l - 1
+- Angular nodes: l
+- Total nodes: n - 1
+`;
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([t],{type:"text/plain"}));
+  a.download="Moleqyn_AtomVerse_Notes.txt";
+  document.body.appendChild(a); a.click(); a.remove();
+}
+
+window.addEventListener('scroll',function(){
+  const nav=document.getElementById('mlabNav');
+  if(nav) nav.classList.toggle('scrolled',window.scrollY>40);
+});
+
+buildPT();
+select(sanitizeZ(localStorage.getItem("atomverse-selected")),false);
+tick();
+</script>
+<script src="js/shared-nav.js"></script>
+</body>
+</html>

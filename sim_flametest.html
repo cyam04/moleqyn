@@ -1,0 +1,564 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Moleqyn | Flame Test &amp; Qualitative Salt Analysis Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <script>
+    (function(){
+      var saved = localStorage.getItem('mlab_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', saved);
+      if(saved === 'day' || saved === 'light') {
+        document.documentElement.classList.add('light-mode');
+      }
+    })();
+  </script>
+  <style>
+    :root {
+      --bg: #07111f; --panel: rgba(13, 26, 45, 0.95);
+      --border: rgba(255, 255, 255, 0.12); --primary: #00f0ff;
+      --secondary: #ff00aa; --accent: #ffd166; --text: #f0f4ff; --muted: #8ea3bf;
+    }
+    :root[data-theme="day"], html.light-mode {
+      --bg: #f8fafc;
+      --panel: #ffffff;
+      --border: rgba(0, 0, 0, 0.08);
+      --primary: #0284c7;
+      --secondary: #d946ef;
+      --accent: #ca8a04;
+      --text: #0f172a;
+      --muted: #475569;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      padding-top: 65px;
+    }
+    :root[data-theme="day"] body, html.light-mode body {
+      background: #f8fafc !important;
+      color: #0f172a !important;
+    }
+
+    /* DAY MODE OVERRIDES */
+    :root[data-theme="day"] .left-salts, html.light-mode .left-salts,
+    :root[data-theme="day"] .right-info, html.light-mode .right-info {
+      background: #ffffff !important;
+      border-color: rgba(0, 0, 0, 0.08) !important;
+    }
+    :root[data-theme="day"] .salt-btn, html.light-mode .salt-btn {
+      background: #f8fafc !important;
+      border-color: rgba(0, 0, 0, 0.08) !important;
+      color: #0f172a !important;
+    }
+    :root[data-theme="day"] .salt-btn:hover, html.light-mode .salt-btn:hover,
+    :root[data-theme="day"] .salt-btn.active, html.light-mode .salt-btn.active {
+      background: rgba(2, 132, 199, 0.1) !important;
+      border-color: #0284c7 !important;
+    }
+    :root[data-theme="day"] .burner-view, html.light-mode .burner-view {
+      background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%) !important;
+    }
+    :root[data-theme="day"] .test-hud, html.light-mode .test-hud {
+      background: rgba(255, 255, 255, 0.88) !important;
+      border-color: rgba(0, 0, 0, 0.1) !important;
+      color: #0f172a !important;
+    }
+    :root[data-theme="day"] .info-card, html.light-mode .info-card {
+      background: #f8fafc !important;
+      border-color: rgba(0, 0, 0, 0.08) !important;
+    }
+
+    /* FLOATING NAV */
+    .mlab-nav {
+      position: fixed; top: 12px; left: 50%; transform: translateX(-50%);
+      width: calc(100% - 32px); max-width: 1400px; z-index: 1000;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 20px; border-radius: 16px;
+      background: rgba(7, 17, 31, 0.78); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      transition: background 0.3s, border-color 0.3s;
+    }
+    :root[data-theme="day"] .mlab-nav, html.light-mode .mlab-nav {
+      background: rgba(255, 255, 255, 0.85) !important;
+      border-color: rgba(0,0,0,0.08) !important;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
+    }
+    .mlab-nav-left { display: flex; align-items: center; gap: 14px; }
+    .mlab-brand {
+      display: inline-flex; align-items: center; gap: 10px; text-decoration: none;
+      font-family: 'Space Grotesk', sans-serif; font-size: 1.3rem; font-weight: 800;
+      transition: transform 0.25s ease;
+    }
+    .mlab-brand:hover { transform: scale(1.02); }
+    .brand-logo, .mlab-brand-logo {
+      width: 28px; height: 28px; display: inline-block; vertical-align: middle;
+      filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.45));
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.35s ease;
+      flex-shrink: 0;
+    }
+    .mlab-brand:hover .brand-logo, .mlab-brand:hover .mlab-brand-logo {
+      transform: rotate(15deg) scale(1.1); filter: drop-shadow(0 0 16px rgba(0, 240, 255, 0.8));
+    }
+    .mlab-brand-text {
+      font-family: 'Space Grotesk', sans-serif; font-size: 1.35rem; font-weight: 800; letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #ffffff 45%, #00f0ff 100%);
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+      display: inline-block; text-transform: none;
+    }
+    :root[data-theme="day"] .mlab-brand-text, html.light-mode .mlab-brand-text {
+      background: linear-gradient(135deg, #0f172a 45%, #0284c7 100%);
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+    }
+    .mlab-nav-badge {
+      font-size: 0.72rem; padding: 2px 8px; border-radius: 8px;
+      background: rgba(0, 240, 255, 0.15); border: 1px solid rgba(0, 240, 255, 0.3);
+      color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .mlab-nav-dropdown { position: relative; }
+    .mlab-dropdown-trigger {
+      display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 10px;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+      color: var(--text); font-family: 'Space Grotesk', sans-serif; font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .mlab-dropdown-trigger:hover { border-color: var(--primary); background: rgba(0, 240, 255, 0.1); }
+    .mlab-dropdown-menu {
+      position: absolute; top: calc(100% + 8px); left: 0; min-width: 260px;
+      background: rgba(7, 17, 31, 0.96); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border); border-radius: 14px; padding: 8px;
+      display: none; flex-direction: column; gap: 2px; box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+      z-index: 1001; max-height: 400px; overflow-y: auto;
+    }
+    :root[data-theme="day"] .mlab-dropdown-menu, html.light-mode .mlab-dropdown-menu {
+      background: rgba(255, 255, 255, 0.98) !important;
+      border-color: rgba(0,0,0,0.1) !important;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.12) !important;
+    }
+    .mlab-dropdown-menu.show { display: flex; }
+    .mlab-dropdown-header {
+      font-size: 0.7rem; color: var(--muted); text-transform: uppercase; font-weight: 700;
+      letter-spacing: 0.5px; padding: 6px 10px 4px;
+    }
+    .mlab-dropdown-item {
+      padding: 7px 10px; border-radius: 8px; font-size: 0.82rem; color: var(--text);
+      text-decoration: none; transition: background 0.15s; display: flex; align-items: center; gap: 8px;
+    }
+    .mlab-dropdown-item:hover { background: rgba(0, 240, 255, 0.12); color: var(--primary); }
+    .mlab-dropdown-item.active { background: rgba(0, 240, 255, 0.18); color: var(--primary); font-weight: 700; }
+    .mlab-dropdown-divider { height: 1px; background: var(--border); margin: 4px 0; }
+    .mlab-nav-right { display: flex; align-items: center; gap: 12px; }
+    .mlab-nav-link {
+      color: var(--muted); text-decoration: none; font-size: 0.85rem; font-weight: 600;
+      padding: 6px 12px; border-radius: 8px; transition: color 0.2s;
+    }
+    .mlab-nav-link:hover { color: var(--text); }
+    .mlab-theme-toggle {
+      width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05); color: var(--text); cursor: pointer;
+      display: flex; align-items: center; justify-content: center; font-size: 1.05rem;
+      transition: all 0.2s;
+    }
+    .mlab-theme-toggle:hover { border-color: var(--primary); transform: scale(1.05); }
+    .theme-icon-sun { display: none; }
+    .theme-icon-moon { display: inline-block; }
+    :root[data-theme="day"] .theme-icon-sun, html.light-mode .theme-icon-sun { display: inline-block; }
+    :root[data-theme="day"] .theme-icon-moon, html.light-mode .theme-icon-moon { display: none; }
+    @media (max-width: 768px) {
+      .mlab-nav { padding: 8px 14px; top: 8px; width: calc(100% - 16px); }
+      .mlab-nav-link { display: none; }
+      body { padding-top: 60px; }
+    }
+
+    .lab-layout {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 340px 1fr 340px;
+      overflow: hidden;
+    }
+    @media (max-width: 1000px) {
+      .lab-layout { grid-template-columns: 300px 1fr; }
+      .right-info { display: none; }
+    }
+
+    /* Left Salt Selector */
+    .left-salts {
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      overflow-y: auto;
+    }
+    .salt-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 14px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      text-align: left;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .salt-btn:hover, .salt-btn.active {
+      background: rgba(0, 240, 255, 0.15);
+      border-color: var(--primary);
+      transform: translateX(4px);
+    }
+    .salt-formula { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: var(--accent); }
+
+    /* Center Burner */
+    .burner-view {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at center, #0e1e35 0%, #030814 100%);
+      position: relative;
+    }
+    #flameCanvas { width: 100%; height: 100%; display: block; }
+
+    .test-hud {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      background: rgba(7, 17, 31, 0.8);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 20px;
+    }
+    .salt-name-big { font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem; font-weight: 700; }
+    .emission-line { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--primary); margin-top: 4px; }
+
+    /* Right Info */
+    .right-info {
+      background: var(--panel);
+      border-left: 1px solid var(--border);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+    }
+    .info-card {
+      background: rgba(4, 10, 22, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="mlab-nav" id="mlabNav">
+  <div class="mlab-nav-left">
+    <a href="index.html" class="mlab-brand" aria-label="Moleqyn Home">
+      <img src="favicon.svg" alt="Moleqyn Logo" class="brand-logo" width="28" height="28">
+      <span class="mlab-brand-text">Moleqyn</span>
+    </a>
+    <div class="mlab-nav-badge">Flame Lab</div>
+    <div class="mlab-nav-dropdown">
+      <button class="mlab-dropdown-trigger" id="mlabQuickSwitchBtn" aria-expanded="false" title="Switch Simulator">
+        <span>Flame Test &amp; Emission</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </button>
+      <div class="mlab-dropdown-menu" id="mlabQuickSwitchMenu">
+        <div class="mlab-dropdown-header">Interactive Virtual Labs</div>
+        <a href="sim_flametest.html" class="mlab-dropdown-item active">🔥 Flame Test &amp; Emission</a>
+        <a href="sim_gaslaws.html" class="mlab-dropdown-item">🎈 Gas Laws &amp; Kinetic Theory</a>
+        <a href="sim_equilibrium.html" class="mlab-dropdown-item">🔄 Le Chatelier's Equilibrium</a>
+        <a href="sim_molecules.html" class="mlab-dropdown-item">🔮 3D Molecule Visualizer</a>
+        <a href="sim_bonding.html" class="mlab-dropdown-item">⚛️ Chemical Bonding &amp; VSEPR</a>
+        <a href="reaction.html" class="mlab-dropdown-item">⚖️ Chemical Reaction Balancer</a>
+        <a href="sim_titration.html" class="mlab-dropdown-item">🧪 Acid-Base Titration</a>
+        <a href="sim_electro.html" class="mlab-dropdown-item">⚡ Electrochemistry (Galvanic)</a>
+        <a href="sim_atomverse.html" class="mlab-dropdown-item">🪐 Atomverse (Bohr &amp; Quantum)</a>
+        <a href="sim_calorimetry.html" class="mlab-dropdown-item">🌡️ Thermochemistry &amp; Calorimetry</a>
+        <a href="sim_halflife.html" class="mlab-dropdown-item">☢️ Nuclear Half-Life Decay</a>
+        <a href="sim_rutherford.html" class="mlab-dropdown-item">🎯 Rutherford Gold Foil</a>
+        <a href="sim_particle.html" class="mlab-dropdown-item">🔬 Particle &amp; Brownian Motion</a>
+        <div class="mlab-dropdown-divider"></div>
+        <a href="simulators.html" class="mlab-dropdown-item">← All 11 Virtual Labs Hub</a>
+      </div>
+    </div>
+  </div>
+  <div class="mlab-nav-right">
+    <button type="button" onclick="generateFlameReport()" style="background:linear-gradient(135deg,#00f0ff,#38ef7d);color:#07111f;border:none;padding:6px 14px;border-radius:10px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:0.82rem;cursor:pointer;display:flex;align-items:center;gap:6px;transition:0.2s;box-shadow:0 0 15px rgba(0,240,255,0.3);">📄 Lab Report</button>
+    <a href="simulators.html" class="mlab-nav-link">Virtual Labs</a>
+    <a href="experiments.html" class="mlab-nav-link">Experiments</a>
+    <a href="learn.html" class="mlab-nav-link">Study Hub</a>
+    <button class="mlab-theme-toggle" id="mlabThemeBtn" title="Toggle Light/Dark Theme" aria-label="Toggle theme">
+      <span class="theme-icon-sun">☀️</span>
+      <span class="theme-icon-moon">🌙</span>
+    </button>
+  </div>
+</nav>
+
+<div class="lab-layout">
+
+  <!-- Salt List -->
+  <aside class="left-salts">
+    <div style="font-family:'Space Grotesk',sans-serif; font-size:0.95rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Select Salt / Cation</div>
+    
+    <button class="salt-btn active" onclick="selectSalt('cu', this)">
+      <div>
+        <div style="font-weight:600;">Copper(II) Chloride</div>
+        <div style="font-size:0.75rem; color:var(--muted);">Cation: Cu²⁺</div>
+      </div>
+      <span class="salt-formula">CuCl₂</span>
+    </button>
+
+    <button class="salt-btn" onclick="selectSalt('na', this)">
+      <div>
+        <div style="font-weight:600;">Sodium Chloride</div>
+        <div style="font-size:0.75rem; color:var(--muted);">Cation: Na⁺</div>
+      </div>
+      <span class="salt-formula">NaCl</span>
+    </button>
+
+    <button class="salt-btn" onclick="selectSalt('sr', this)">
+      <div>
+        <div style="font-weight:600;">Strontium Nitrate</div>
+        <div style="font-size:0.75rem; color:var(--muted);">Cation: Sr²⁺</div>
+      </div>
+      <span class="salt-formula">Sr(NO₃)₂</span>
+    </button>
+
+    <button class="salt-btn" onclick="selectSalt('k', this)">
+      <div>
+        <div style="font-weight:600;">Potassium Chloride</div>
+        <div style="font-size:0.75rem; color:var(--muted);">Cation: K⁺</div>
+      </div>
+      <span class="salt-formula">KCl</span>
+    </button>
+
+    <button class="salt-btn" onclick="selectSalt('ba', this)">
+      <div>
+        <div style="font-weight:600;">Barium Chloride</div>
+        <div style="font-size:0.75rem; color:var(--muted);">Cation: Ba²⁺</div>
+      </div>
+      <span class="salt-formula">BaCl₂</span>
+    </button>
+
+    <button class="salt-btn" onclick="selectSalt('li', this)">
+      <div>
+        <div style="font-weight:600;">Lithium Carbonate</div>
+        <div style="font-size:0.75rem; color:var(--muted);">Cation: Li⁺</div>
+      </div>
+      <span class="salt-formula">Li₂CO₃</span>
+    </button>
+  </aside>
+
+  <!-- Flame Viewport -->
+  <main class="burner-view">
+    <div class="test-hud">
+      <div class="salt-name-big" id="hudSalt">Copper(II) Chloride</div>
+      <div class="emission-line" id="hudFlame">Flame Emission: Blue-Green (Emerald) • λ ≈ 510 nm</div>
+    </div>
+    <canvas id="flameCanvas"></canvas>
+  </main>
+
+  <!-- Right Details -->
+  <aside class="right-info">
+    <div style="font-family:'Space Grotesk',sans-serif; font-size:1.1rem; font-weight:700;">Excitation Theory</div>
+    
+    <div class="info-card">
+      <strong style="color:var(--primary);">Thermal Excitation:</strong>
+      Heat from the Bunsen burner excites valence electrons of metal cations into higher energy quantum shells (e.g. 3d → 4p).
+    </div>
+
+    <div class="info-card">
+      <strong style="color:var(--accent);">Photon Emission:</strong>
+      When electrons drop back to ground state, they release energy according to Planck's equation:<br/>
+      <code style="display:block; margin:8px 0; color:var(--primary); font-family:'JetBrains Mono';">ΔE = h·c / λ</code>
+      Each cation emits a characteristic visible spectral color.
+    </div>
+
+    <div class="info-card" id="saltExamNote">
+      <strong style="color:#38ef7d;">NCERT Practical Note:</strong>
+      Platinum or Nichrome wire loop is dipped in concentrated HCl to form volatile metal chlorides before introducing into non-luminous flame.
+    </div>
+
+    <button type="button" onclick="generateFlameReport()" style="width:100%;margin-top:auto;background:linear-gradient(135deg,#00f0ff,#38ef7d);color:#07111f;border:none;padding:12px;border-radius:12px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;box-shadow:0 0 15px rgba(0,240,255,0.3);font-size:0.92rem;display:flex;align-items:center;justify-content:center;gap:8px;">📄 Generate Salt Analysis Certificate</button>
+  </aside>
+
+</div>
+
+<script>
+const SALTS = {
+  cu: { name: 'Copper(II) Chloride', color: '#00e5a3', flameText: 'Flame Emission: Blue-Green (Emerald) • λ ≈ 510 nm', note: 'Used in fireworks for intense emerald green hues.' },
+  na: { name: 'Sodium Chloride', color: '#ffb703', flameText: 'Flame Emission: Golden-Yellow (Doublet) • λ ≈ 589 nm', note: 'Extremely persistent golden yellow emission (D-line doublet).' },
+  sr: { name: 'Strontium Nitrate', color: '#ff0055', flameText: 'Flame Emission: Crimson Red • λ ≈ 650 nm', note: 'Standard red pyrotechnic flare component.' },
+  k: { name: 'Potassium Chloride', color: '#c084fc', flameText: 'Flame Emission: Lilac / Violet • λ ≈ 766 nm', note: 'Viewed through Cobalt Blue Glass to filter out yellow Na impurities.' },
+  ba: { name: 'Barium Chloride', color: '#a7f3d0', flameText: 'Flame Emission: Apple Green • λ ≈ 524 nm', note: 'Toxic soluble salt; diagnostic pale green emission.' },
+  li: { name: 'Lithium Carbonate', color: '#fb7185', flameText: 'Flame Emission: Carmine / Carmine-Red • λ ≈ 670 nm', note: 'Deep carmine red flame distinct from strontium.' }
+};
+
+let activeSalt = SALTS.cu;
+const canvas = document.getElementById('flameCanvas');
+const ctx = canvas.getContext('2d');
+
+function resize() {
+  canvas.width = canvas.parentElement.clientWidth;
+  canvas.height = canvas.parentElement.clientHeight;
+}
+window.addEventListener('resize', resize);
+resize();
+
+function selectSalt(key, btn) {
+  activeSalt = SALTS[key];
+  document.querySelectorAll('.salt-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  document.getElementById('hudSalt').textContent = activeSalt.name;
+  document.getElementById('hudFlame').textContent = activeSalt.flameText;
+  document.getElementById('saltExamNote').innerHTML = `<strong style="color:#38ef7d;">NCERT Practical Note:</strong> ${activeSalt.note}`;
+}
+
+// Particle flame simulation
+let flameParticles = [];
+function renderFlame() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const cx = canvas.width / 2;
+  const cy = canvas.height / 2 + 120;
+
+  // Draw Burner base
+  ctx.fillStyle = '#334155';
+  ctx.fillRect(cx - 24, cy, 48, 80);
+  ctx.fillStyle = '#64748b';
+  ctx.fillRect(cx - 30, cy + 80, 60, 20);
+
+  // Wire loop holder
+  ctx.strokeStyle = '#94a3b8';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(cx - 150, cy - 20);
+  ctx.lineTo(cx - 10, cy - 30);
+  ctx.stroke();
+
+  // Loop tip
+  ctx.beginPath();
+  ctx.arc(cx - 8, cy - 30, 8, 0, Math.PI * 2);
+  ctx.fillStyle = activeSalt.color;
+  ctx.fill();
+
+  // Spawn flame particles
+  for (let i = 0; i < 6; i++) {
+    flameParticles.push({
+      x: cx + (Math.random() - 0.5) * 16,
+      y: cy,
+      vx: (Math.random() - 0.5) * 1.8,
+      vy: -Math.random() * 6 - 3,
+      r: Math.random() * 22 + 12,
+      life: 1.0,
+      color: activeSalt.color
+    });
+  }
+
+  // Update & Draw Flame
+  flameParticles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.r *= 0.96;
+    p.life -= 0.024;
+
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, p.life);
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, Math.max(1, p.r), 0, Math.PI * 2);
+    ctx.fillStyle = p.color;
+    ctx.shadowBlur = 25;
+    ctx.shadowColor = p.color;
+    ctx.fill();
+    ctx.restore();
+  });
+
+  flameParticles = flameParticles.filter(p => p.life > 0 && p.r > 1);
+
+  requestAnimationFrame(renderFlame);
+}
+function generateFlameReport() {
+  let modal = document.getElementById('flameReportModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'flameReportModal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(2,6,18,0.85);backdrop-filter:blur(10px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+    document.body.appendChild(modal);
+  }
+
+  const currentUser = localStorage.getItem('Moleqyn_user') ? JSON.parse(localStorage.getItem('Moleqyn_user')).name : (localStorage.getItem('moleqyn_user') ? JSON.parse(localStorage.getItem('moleqyn_user')).name : 'Rahul Sharma (Student)');
+  const dateStr = new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' });
+
+  modal.innerHTML = `
+    <div style="background:#0b192c;border:1px solid rgba(0,240,255,0.3);border-radius:16px;max-width:760px;width:100%;max-height:90vh;overflow-y:auto;padding:28px;color:#f0f4ff;box-shadow:0 25px 60px rgba(0,0,0,0.7);font-family:'Inter',sans-serif;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid rgba(255,255,255,0.12);padding-bottom:16px;margin-bottom:20px;">
+        <div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;color:#00f0ff;">🔥 Flame Test Qualitative Analysis Certificate</div>
+          <div style="font-size:0.82rem;color:#8ea3bf;margin-top:2px;">Atomic Emission Spectroscopy & Cation Identification</div>
+        </div>
+        <div style="text-align:right;">
+          <span style="display:inline-block;padding:4px 10px;background:rgba(56,239,125,0.15);color:#38ef7d;border:1px solid #38ef7d;border-radius:12px;font-size:0.75rem;font-weight:700;">NCERT VERIFIED</span>
+          <div style="font-size:0.75rem;color:#8ea3bf;margin-top:4px;">\${dateStr}</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:0.85rem;">
+        <div><strong>Student:</strong> <span style="color:#00f0ff;">\${currentUser}</span></div>
+        <div><strong>Sample Tested:</strong> \${activeSalt.name}</div>
+        <div><strong>Excitation Source:</strong> Non-Luminous Bunsen Flame</div>
+        <div><strong>Sample Loop:</strong> Platinum / Nichrome Wire (HCl paste)</div>
+      </div>
+
+      <div style="margin-bottom:18px;">
+        <h4 style="font-family:'Space Grotesk',sans-serif;color:#ffd166;font-size:0.92rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">1. Spectral Observation & Emission Line</h4>
+        <table style="width:100%;border-collapse:collapse;font-size:0.85rem;background:#071222;border-radius:8px;overflow:hidden;">
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#8ea3bf;">Identified Salt</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-weight:bold;color:#f0f4ff;">\${activeSalt.name}</td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#8ea3bf;">Observed Flame Color</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-weight:bold;color:\${activeSalt.color};">\${activeSalt.flameText.split('•')[0].replace('Flame Emission:', '').trim()}</td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#8ea3bf;">Characteristic Wavelength (λ)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-weight:bold;color:#ffd166;">\${activeSalt.flameText.split('•')[1] ? activeSalt.flameText.split('•')[1].trim() : 'Visible Spectrum'}</td></tr>
+          <tr><td style="padding:8px 12px;color:#8ea3bf;">Diagnostic Quality</td><td style="padding:8px 12px;font-size:0.82rem;color:#8ea3bf;">\${activeSalt.note}</td></tr>
+        </table>
+      </div>
+
+      <div style="margin-bottom:18px;">
+        <h4 style="font-family:'Space Grotesk',sans-serif;color:#ffd166;font-size:0.92rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">2. Quantum Electronic Transition Principle</h4>
+        <div style="background:#071222;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:0.88rem;color:#00f0ff;">
+          ΔE = E₂ − E₁ = h·c / λ = h·ν
+          <div style="font-size:0.8rem;color:#8ea3bf;margin-top:6px;font-family:'Inter',sans-serif;">Thermal energy promotes valence s-electrons or d-electrons to excited states. Photon of exact frequency ν is emitted upon relaxation to ground state.</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:20px;padding:12px;background:rgba(56,239,125,0.06);border:1px solid rgba(56,239,125,0.25);border-radius:10px;font-size:0.84rem;line-height:1.6;">
+        <strong style="color:#38ef7d;display:block;margin-bottom:4px;">NCERT Lab Practical Standard Operating Procedure:</strong>
+        Clean wire loop repeatedly in concentrated hydrochloric acid until it imparts no color to the flame. Form a paste of the test salt with concentrated HCl, touch with loop tip, and hold in outer non-luminous zone of Bunsen flame.
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:10px;border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;">
+        <button type="button" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:8px 18px;border-radius:8px;cursor:pointer;font-weight:600;" onclick="document.getElementById('flameReportModal').style.display='none'">✕ Close</button>
+        <button type="button" style="background:#00f0ff;border:none;color:#000;padding:8px 18px;border-radius:8px;cursor:pointer;font-weight:bold;" onclick="window.print()">🖨️ Print / Save PDF</button>
+      </div>
+    </div>
+  `;
+  modal.style.display = 'flex';
+}
+
+renderFlame();
+</script>
+
+<script src="js/shared-nav.js"></script>
+</body>
+</html>

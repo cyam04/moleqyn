@@ -1,0 +1,1736 @@
+<!DOCTYPE html>
+<!-- MOLEQYN DEMO LOGIN — All authentication flows are CLIENT-SIDE SIMULATIONS only.
+     No server, no real credentials, no OTP delivery. See audit report for details. -->
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Moleqyn | Student Authentication &amp; Batch Login (Demo)</title>
+  <script>
+    (function () {
+      var saved = localStorage.getItem('mlab_theme') || localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
+      if (saved === 'day' || saved === 'light') {
+        document.documentElement.setAttribute('data-theme', 'day');
+        document.documentElement.classList.add('light-mode');
+      }
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #060d1b;
+      --bg-card: rgba(13, 24, 44, 0.85);
+      --bg-card-solid: #0d182c;
+      --border: rgba(0, 240, 255, 0.16);
+      --border-focus: #00f0ff;
+      --primary: #00f0ff;
+      --primary-glow: rgba(0, 240, 255, 0.35);
+      --secondary: #ff00aa;
+      --accent: #ffd166;
+      --success: #38ef7d;
+      --danger: #ef4444;
+      --text: #f0f6fc;
+      --muted: #8b9bb4;
+      --pw-yellow: #f59e0b;
+      --pw-blue: #0284c7;
+    }
+    :root[data-theme="day"], html.light-mode {
+      --bg: #f0f4f9;
+      --bg-card: rgba(255, 255, 255, 0.95);
+      --bg-card-solid: #ffffff;
+      --border: rgba(2, 132, 199, 0.18);
+      --border-focus: #0284c7;
+      --primary: #0284c7;
+      --primary-glow: rgba(2, 132, 199, 0.25);
+      --secondary: #db2777;
+      --accent: #d97706;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --text: #0f172a;
+      --muted: #64748b;
+      --pw-yellow: #d97706;
+      --pw-blue: #0284c7;
+    }
+    html.light-mode body, :root[data-theme="day"] body {
+      background-image:
+        radial-gradient(circle at 15% 20%, rgba(2, 132, 199, 0.08), transparent 45%),
+        radial-gradient(circle at 85% 80%, rgba(219, 39, 119, 0.06), transparent 50%),
+        radial-gradient(circle at 50% 50%, #ffffff, #f0f4f9);
+    }
+    html.light-mode .input-box input, :root[data-theme="day"] .input-box input {
+      color: #0f172a;
+    }
+    html.light-mode .tab-btn, :root[data-theme="day"] .tab-btn {
+      color: #64748b;
+    }
+    .brand-logo, .auth-title { font-family: 'Outfit', 'Space Grotesk', sans-serif; }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg);
+      background-image:
+        radial-gradient(circle at 15% 20%, rgba(0, 240, 255, 0.12), transparent 45%),
+        radial-gradient(circle at 85% 80%, rgba(255, 0, 170, 0.10), transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(13, 24, 44, 0.95), var(--bg));
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Ambient animated particle grid background */
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-size: 50px 50px;
+      background-image:
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    }
+
+    /* TOP LIVE SMS NOTIFICATION SIMULATOR */
+    .sms-toast {
+      position: fixed;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0f233f;
+      border: 1px solid var(--primary);
+      border-radius: 18px;
+      padding: 14px 22px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 25px var(--primary-glow);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      max-width: 520px;
+      width: 90%;
+      transition: all 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .sms-toast.show {
+      top: 24px;
+    }
+
+    .sms-icon {
+      font-size: 1.8rem;
+      background: rgba(0, 240, 255, 0.15);
+      border-radius: 12px;
+      padding: 8px;
+      flex-shrink: 0;
+    }
+
+    .sms-body {
+      flex: 1;
+      font-size: 0.84rem;
+      line-height: 1.4;
+    }
+
+    .sms-title {
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2px;
+    }
+
+    .sms-autofill-btn {
+      background: var(--primary);
+      color: #030a16;
+      border: none;
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .sms-autofill-btn:hover {
+      box-shadow: 0 0 10px var(--primary-glow);
+      transform: scale(1.04);
+    }
+
+    /* TOP HEADER BRANDING */
+    .auth-header {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      margin-bottom: 24px;
+      max-width: 500px;
+    }
+
+    .brand-auth-link {
+      font-family: 'Space Grotesk', sans-serif;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+      transition: transform 0.25s ease;
+    }
+
+    .brand-auth-link:hover {
+      transform: scale(1.02);
+    }
+
+    .brand-logo {
+      width: 42px;
+      height: 42px;
+      display: inline-block;
+      vertical-align: middle;
+      filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.5));
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.35s ease;
+      flex-shrink: 0;
+    }
+
+    .brand-auth-link:hover .brand-logo {
+      transform: rotate(15deg) scale(1.1);
+      filter: drop-shadow(0 0 18px rgba(0, 240, 255, 0.85));
+    }
+
+    .brand-text {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.3rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #ffffff 45%, #00f0ff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      display: inline-block;
+    }
+
+    :root[data-theme="day"] .brand-text,
+    html.light-mode .brand-text {
+      background: linear-gradient(135deg, #0f172a 45%, #0284c7 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+    }
+
+    .auth-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: var(--pw-yellow);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* MAIN CONTAINER CARD */
+    .auth-card {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 480px;
+      background: var(--bg-card);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      padding: 34px 30px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(0, 240, 255, 0.08);
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+
+    .auth-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary), var(--pw-yellow));
+    }
+
+    /* PW-STYLE AUTH TABS */
+    .auth-tabs {
+      display: flex;
+      background: rgba(3, 10, 24, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 4px;
+      margin-bottom: 24px;
+      gap: 4px;
+    }
+
+    .auth-tab {
+      flex: 1;
+      padding: 10px 8px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .auth-tab:hover {
+      color: var(--text);
+    }
+
+    .auth-tab.active {
+      background: var(--primary);
+      color: #030a16;
+      box-shadow: 0 4px 15px var(--primary-glow);
+      font-weight: 700;
+    }
+
+    /* VIEWS */
+    .auth-view {
+      display: none;
+      animation: fadeInView 0.28s ease;
+    }
+
+    .auth-view.active {
+      display: block;
+    }
+
+    @keyframes fadeInView {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ACTIVE LOGGED-IN ALERT BANNER */
+    .active-session-banner {
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      font-size: 0.86rem;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .active-session-banner strong {
+      color: var(--primary);
+    }
+
+    .banner-actions {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .btn-banner-dash {
+      background: var(--primary);
+      color: #030a16;
+      padding: 5px 14px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .btn-banner-switch {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 5px 12px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+
+    /* FORM ELEMENTS */
+    .form-group {
+      margin-bottom: 18px;
+      text-align: left;
+    }
+
+    .form-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 7px;
+    }
+
+    .form-label span.req {
+      color: var(--secondary);
+      margin-left: 2px;
+    }
+
+    .form-label a.forgot {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 0.78rem;
+      font-weight: 500;
+    }
+
+    .form-label a.forgot:hover {
+      text-decoration: underline;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      font-size: 1.05rem;
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 13px 16px 13px 42px;
+      background: rgba(3, 9, 20, 0.65);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.25s ease;
+    }
+
+    .form-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.2);
+      background: rgba(4, 14, 32, 0.85);
+    }
+
+    .pass-toggle-btn {
+      position: absolute;
+      right: 14px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+    }
+
+    .pass-toggle-btn:hover {
+      color: var(--text);
+    }
+
+    /* MOBILE NUMBER INPUT GROUP */
+    .phone-input-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .country-code-pill {
+      background: rgba(3, 9, 20, 0.65);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text);
+      flex-shrink: 0;
+    }
+
+    /* 6-DIGIT OTP BOXES (PW STYLE) */
+    .otp-boxes-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin: 16px 0;
+    }
+
+    .otp-digit {
+      width: 50px;
+      height: 56px;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.6rem;
+      font-weight: 700;
+      background: rgba(3, 9, 20, 0.8);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      color: var(--primary);
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .otp-digit:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 12px var(--primary-glow);
+      transform: scale(1.05);
+    }
+
+    /* RESEND OTP ROW */
+    .resend-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    .resend-btn {
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-weight: 600;
+      cursor: pointer;
+      padding: 0;
+      font-size: 0.8rem;
+    }
+
+    .resend-btn:disabled {
+      color: var(--muted);
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    /* PRIMARY SUBMIT BUTTON */
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--primary), #00c3ff);
+      color: #030a16;
+      border: none;
+      border-radius: 14px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 5px 20px var(--primary-glow);
+      margin-top: 6px;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 240, 255, 0.45);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+
+    /* SOCIAL LOGIN BUTTONS */
+    .social-divider {
+      display: flex;
+      align-items: center;
+      margin: 22px 0 16px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .social-divider::before,
+    .social-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .social-divider span {
+      padding: 0 12px;
+    }
+
+    .btn-google {
+      width: 100%;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-google:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    /* PW BATCH SELECTION CHIPS (IN REGISTER VIEW) */
+    .batch-selector-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .batch-chip {
+      background: rgba(3, 9, 20, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .batch-chip:hover {
+      border-color: var(--primary);
+      background: rgba(0, 240, 255, 0.05);
+    }
+
+    .batch-chip.selected {
+      border-color: var(--primary);
+      background: rgba(0, 240, 255, 0.15);
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.2);
+    }
+
+    .batch-chip-name {
+      font-weight: 700;
+      font-size: 0.84rem;
+      color: var(--text);
+    }
+
+    .batch-chip-sub {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* AVATAR PICKER */
+    .avatar-picker-row {
+      display: flex;
+      gap: 10px;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .avatar-choice {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .avatar-choice:hover,
+    .avatar-choice.selected {
+      border-color: var(--primary);
+      background: rgba(0, 240, 255, 0.2);
+      transform: scale(1.15);
+      box-shadow: 0 0 10px var(--primary-glow);
+    }
+
+    /* INSTANT DEMO BATCH PROFILES */
+    .demo-profiles-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .demo-card {
+      background: rgba(4, 12, 28, 0.7);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .demo-card:hover {
+      border-color: var(--primary);
+      background: rgba(0, 240, 255, 0.08);
+      transform: translateX(4px);
+      box-shadow: 0 4px 20px rgba(0, 240, 255, 0.15);
+    }
+
+    .demo-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .demo-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      border: 1px solid var(--border);
+    }
+
+    .demo-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    .demo-tag {
+      font-size: 0.76rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .demo-badge {
+      background: rgba(56, 239, 125, 0.15);
+      color: var(--success);
+      border: 1px solid var(--success);
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    /* FOOTER LINKS */
+    .auth-footer {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      margin-top: 24px;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .auth-footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .auth-footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* GOOGLE POPUP MODAL SIMULATOR */
+    .google-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 18, 0.85);
+      backdrop-filter: blur(10px);
+      z-index: 100000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .google-modal-card {
+      background: #ffffff;
+      color: #202124;
+      border-radius: 20px;
+      max-width: 440px;
+      width: 100%;
+      padding: 32px 28px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes popIn {
+      from {
+        transform: scale(0.92);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .google-account-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      border: 1px solid #dadce0;
+      margin-bottom: 10px;
+      transition: all 0.2s;
+    }
+
+    .google-account-item:hover {
+      background: #f8f9fa;
+      border-color: #1a73e8;
+    }
+
+    /* SHAKE ANIMATION ON ERROR */
+    @keyframes shake {
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      20%,
+      60% {
+        transform: translateX(-8px);
+      }
+
+      40%,
+      80% {
+        transform: translateX(8px);
+      }
+    }
+
+    .shake-err {
+      animation: shake 0.4s ease;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+
+<body>
+  <div style="position:fixed;top:18px;left:50%;transform:translateX(-50%);width:92%;max-width:500px;display:flex;justify-content:space-between;align-items:center;z-index:100;">
+    <a href="index.html" style="color:var(--text);text-decoration:none;font-weight:700;display:flex;align-items:center;gap:6px;font-size:0.9rem;padding:8px 16px;border-radius:20px;background:var(--bg-card);border:1px solid var(--border);">
+      â† Return to Moleqyn
+    </a>
+    <button class="mlab-theme-btn" id="mlabThemeBtn" title="Switch Theme" style="background:var(--bg-card);border:1px solid var(--border);color:var(--text);width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;">â˜€ï¸</button>
+  </div>
+
+  <div class="bg-grid"></div>
+
+  <!-- ⚠️ DEMO DISCLAIMER BANNER -->
+  <div id="demoBanner" style="
+    position:fixed; top:0; left:0; right:0; z-index:9999;
+    background:linear-gradient(90deg, rgba(255,170,0,0.18), rgba(255,0,100,0.15));
+    border-bottom:1px solid rgba(255,200,0,0.35);
+    backdrop-filter:blur(8px);
+    padding:7px 20px;
+    display:flex; align-items:center; justify-content:space-between;
+    font-size:0.78rem; color:#ffe08a; font-family:'Inter',sans-serif;
+    gap:12px;
+  ">
+    <span>⚠️ <strong>DEMO MODE</strong> — All login flows are client-side simulations. No real authentication, OTP
+      delivery, or account storage occurs. Do not enter real personal data.</span>
+    <button onclick="document.getElementById('demoBanner').style.display='none'"
+      style="background:transparent;border:1px solid rgba(255,200,0,0.4);color:#ffe08a;border-radius:6px;padding:2px 10px;cursor:pointer;font-size:0.75rem;white-space:nowrap;">Dismiss</button>
+  </div>
+
+  <!-- LIVE SIMULATED SMS PUSH TOAST -->
+  <div class="sms-toast" id="smsToast">
+    <div class="sms-icon">📲</div>
+    <div class="sms-body">
+      <div class="sms-title">
+        <span>SMS • MOLEQYN VERIFY</span>
+        <span style="font-size:0.7rem; color:var(--muted);">just now</span>
+      </div>
+      <div>Your 6-digit login OTP is <strong id="smsOtpCode"
+          style="color:var(--primary); font-size:1rem; letter-spacing:1px;">739201</strong>. Do not share this with
+        anyone.</div>
+    </div>
+    <button class="sms-autofill-btn" onclick="autoFillOTP()">Auto-Fill</button>
+  </div>
+
+  <!-- AUTH HEADER BRANDING -->
+  <header class="auth-header">
+    <a href="index.html" class="brand-auth-link" aria-label="Moleqyn Home">
+      <img src="favicon.svg" alt="Moleqyn Logo" class="brand-logo" width="42" height="42" />
+      <span class="brand-text">Moleqyn</span>
+    </a>
+    <div style="color: var(--muted); font-size: 0.9rem;">
+      India's Next-Gen Interactive Chemistry Portal
+    </div>
+    <div class="auth-badge">
+      ⚡ PW-Grade Live Student Portal
+    </div>
+  </header>
+
+  <!-- MAIN CARD CONTAINER -->
+  <main class="auth-card" id="authCard">
+
+    <!-- ACTIVE SESSION RECONNECT BANNER (IF ALREADY LOGGED IN) -->
+    <div id="alreadyLoggedInBanner" class="active-session-banner hidden">
+      <span>Currently signed in as <strong id="loggedInNameText">Alex Sharma</strong></span>
+      <div class="banner-actions">
+        <a href="dashboard.html" class="btn-banner-dash">Go to Dashboard ➔</a>
+        <button class="btn-banner-switch" onclick="switchAccount()">Switch User</button>
+      </div>
+    </div>
+
+    <!-- AUTH TABS SWITCHER -->
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabOtp" onclick="switchAuthTab('otp')">
+        📱 Phone OTP
+      </button>
+      <button class="auth-tab" id="tabEmail" onclick="switchAuthTab('email')">
+        ✉️ Password
+      </button>
+      <button class="auth-tab" id="tabRegister" onclick="switchAuthTab('register')">
+        📝 Register
+      </button>
+      <button class="auth-tab" id="tabDemo" onclick="switchAuthTab('demo')">
+        ⚡ 1-Click
+      </button>
+    </div>
+
+    <!-- ==========================================
+         VIEW 1: PHONE NUMBER & LIVE OTP (PW STYLE)
+         ========================================== -->
+    <section class="auth-view active" id="viewOtp">
+      <div id="phoneStep">
+        <div class="form-group">
+          <label class="form-label" for="phoneInput">
+            <span>Mobile Number <span class="req">*</span></span>
+            <span style="font-size:0.75rem; color:var(--muted);">Any 10-digit number</span>
+          </label>
+          <div class="phone-input-row">
+            <div class="country-code-pill">
+              <span>🇮🇳</span>
+              <span>+91</span>
+            </div>
+            <input type="tel" id="phoneInput" class="form-input" style="padding-left: 16px;" placeholder="98765 43210"
+              maxlength="10" onkeypress="if(event.key==='Enter') sendOTP()" />
+          </div>
+        </div>
+
+        <button class="btn-submit" type="button" id="btnSendOtp" onclick="sendOTP()">
+          <span>Get Verification OTP</span>
+          <span>➔</span>
+        </button>
+      </div>
+
+      <!-- STEP 2: 6-DIGIT OTP ENTRY -->
+      <div id="otpStep" class="hidden">
+        <div style="text-align:center; margin-bottom:12px;">
+          <div style="font-weight:600; font-size:0.95rem;">Enter Verification Code</div>
+          <div style="font-size:0.8rem; color:var(--muted); margin-top:2px;">
+            Sent via SMS to <span id="displayPhone" style="color:var(--primary); font-weight:600;">+91 98765
+              43210</span>
+            <a href="javascript:void(0)" onclick="editPhone()"
+              style="color:var(--primary); margin-left:6px; font-size:0.76rem;">Change</a>
+          </div>
+        </div>
+
+        <div class="otp-boxes-container">
+          <input type="text" class="otp-digit" maxlength="1" id="otp1" oninput="handleOtpInput(1)"
+            onkeydown="handleOtpKey(event, 1)" autofocus />
+          <input type="text" class="otp-digit" maxlength="1" id="otp2" oninput="handleOtpInput(2)"
+            onkeydown="handleOtpKey(event, 2)" />
+          <input type="text" class="otp-digit" maxlength="1" id="otp3" oninput="handleOtpInput(3)"
+            onkeydown="handleOtpKey(event, 3)" />
+          <input type="text" class="otp-digit" maxlength="1" id="otp4" oninput="handleOtpInput(4)"
+            onkeydown="handleOtpKey(event, 4)" />
+          <input type="text" class="otp-digit" maxlength="1" id="otp5" oninput="handleOtpInput(5)"
+            onkeydown="handleOtpKey(event, 5)" />
+          <input type="text" class="otp-digit" maxlength="1" id="otp6" oninput="handleOtpInput(6)"
+            onkeydown="handleOtpKey(event, 6)" />
+        </div>
+
+        <div class="resend-row">
+          <span id="countdownText">Resend OTP in <strong>28s</strong></span>
+          <button class="resend-btn" id="resendBtn" onclick="resendOTP()" disabled>Resend Code</button>
+        </div>
+
+        <button class="btn-submit" type="button" id="btnVerifyOtp" onclick="verifyAndLogin()">
+          <span>Verify &amp; Launch Dashboard</span>
+          <span>🚀</span>
+        </button>
+      </div>
+
+      <!-- GOOGLE 1-TAP IN PHONE VIEW -->
+      <div class="social-divider">
+        <span>OR CONTINUE WITH</span>
+      </div>
+      <button class="btn-google" type="button" onclick="openGoogleModal()">
+        <svg width="18" height="18" viewBox="0 0 18 18">
+          <path fill="#4285F4"
+            d="M17.64 9.2c0-.63-.06-1.25-.16-1.84H9v3.49h4.84a4.14 4.14 0 0 1-1.8 2.71v2.26h2.92c1.71-1.57 2.68-3.89 2.68-6.62z" />
+          <path fill="#34A853"
+            d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.91-2.26c-.8.54-1.83.86-3.05.86-2.34 0-4.33-1.58-5.04-3.71H.96v2.33C2.44 15.98 5.48 18 9 18z" />
+          <path fill="#FBBC05" d="M3.96 10.71a5.41 5.41 0 0 1 0-3.42V4.96H.96a9 9 0 0 0 0 8.08l3-2.33z" />
+          <path fill="#EA4335"
+            d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.59C13.46.89 11.43 0 9 0 5.48 0 2.44 2.02.96 4.96l3 2.33c.71-2.13 2.7-3.71 5.04-3.71z" />
+        </svg>
+        <span>Google Account</span>
+      </button>
+    </section>
+
+    <!-- ==========================================
+         VIEW 2: EMAIL & PASSWORD LOGIN
+         ========================================== -->
+    <section class="auth-view" id="viewEmail">
+      <form id="emailLoginForm" onsubmit="event.preventDefault(); handleEmailLogin();">
+        <div class="form-group">
+          <label class="form-label" for="loginEmail">
+            <span>Email Address <span class="req">*</span></span>
+          </label>
+          <div class="input-wrapper">
+            <span class="input-icon">✉️</span>
+            <input type="email" id="loginEmail" class="form-input" placeholder="student@school.edu" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="loginPass">
+            <span>Password <span class="req">*</span></span>
+            <a href="javascript:void(0)" class="forgot" onclick="forgotPassword()">Forgot Password?</a>
+          </label>
+          <div class="input-wrapper">
+            <span class="input-icon">🔒</span>
+            <input type="password" id="loginPass" class="form-input" placeholder="••••••••" required />
+            <button type="button" class="pass-toggle-btn" onclick="togglePassVisibility('loginPass', this)">👁️</button>
+          </div>
+        </div>
+
+        <div
+          style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; font-size:0.82rem; color:var(--muted);">
+          <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+            <input type="checkbox" id="rememberMe" checked style="accent-color:var(--primary); cursor:pointer;" />
+            <span>Keep me signed in</span>
+          </label>
+          <span style="color:var(--success); font-size:0.75rem;">● Secure 256-bit</span>
+        </div>
+
+        <button class="btn-submit" type="submit" id="btnEmailLogin">
+          <span>Sign In to Student Account</span>
+          <span>➔</span>
+        </button>
+      </form>
+
+      <div class="social-divider">
+        <span>OR CONTINUE WITH</span>
+      </div>
+      <button class="btn-google" type="button" onclick="openGoogleModal()">
+        <svg width="18" height="18" viewBox="0 0 18 18">
+          <path fill="#4285F4"
+            d="M17.64 9.2c0-.63-.06-1.25-.16-1.84H9v3.49h4.84a4.14 4.14 0 0 1-1.8 2.71v2.26h2.92c1.71-1.57 2.68-3.89 2.68-6.62z" />
+          <path fill="#34A853"
+            d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.91-2.26c-.8.54-1.83.86-3.05.86-2.34 0-4.33-1.58-5.04-3.71H.96v2.33C2.44 15.98 5.48 18 9 18z" />
+          <path fill="#FBBC05" d="M3.96 10.71a5.41 5.41 0 0 1 0-3.42V4.96H.96a9 9 0 0 0 0 8.08l3-2.33z" />
+          <path fill="#EA4335"
+            d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.59C13.46.89 11.43 0 9 0 5.48 0 2.44 2.02.96 4.96l3 2.33c.71-2.13 2.7-3.71 5.04-3.71z" />
+        </svg>
+        <span>Google Account</span>
+      </button>
+    </section>
+
+    <!-- ==========================================
+         VIEW 3: COMPLETE NEW REGISTRATION (PW ENROLLMENT)
+         ========================================== -->
+    <section class="auth-view" id="viewRegister">
+      <form id="regForm" onsubmit="event.preventDefault(); handleRegister();">
+        <div class="form-group">
+          <label class="form-label" for="regName">Student Full Name <span class="req">*</span></label>
+          <div class="input-wrapper">
+            <span class="input-icon">👤</span>
+            <input type="text" id="regName" class="form-input" placeholder="e.g. Ananya Sen" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="regEmail">Email Address <span class="req">*</span></label>
+          <div class="input-wrapper">
+            <span class="input-icon">✉️</span>
+            <input type="email" id="regEmail" class="form-input" placeholder="ananya@school.edu" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Choose Your Target Batch &amp; Class <span class="req">*</span></label>
+          <div class="batch-selector-grid">
+            <div class="batch-chip selected" onclick="selectBatch(this, 'Class 11 Science • Arjuna JEE')">
+              <div class="batch-chip-name">⚡ Arjuna JEE</div>
+              <div class="batch-chip-sub">Class 11 • JEE 2027</div>
+            </div>
+            <div class="batch-chip" onclick="selectBatch(this, 'Class 12 Science • Lakshya Board+JEE')">
+              <div class="batch-chip-name">🎯 Lakshya JEE</div>
+              <div class="batch-chip-sub">Class 12 • Boards</div>
+            </div>
+            <div class="batch-chip" onclick="selectBatch(this, 'Class 12 Droppers • Yakeen NEET')">
+              <div class="batch-chip-name">🩺 Yakeen NEET</div>
+              <div class="batch-chip-sub">Medical Aspirants</div>
+            </div>
+            <div class="batch-chip" onclick="selectBatch(this, 'Class 10 CBSE • Udaan Batch')">
+              <div class="batch-chip-name">📘 Udaan Board</div>
+              <div class="batch-chip-sub">Class 10 Boards 95%+</div>
+            </div>
+          </div>
+          <input type="hidden" id="selectedBatchVal" value="Class 11 Science • Arjuna JEE" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Pick Your Avatar</label>
+          <div class="avatar-picker-row">
+            <div class="avatar-choice selected" onclick="selectAvatar(this, '👨‍🔬')">👨‍🔬</div>
+            <div class="avatar-choice" onclick="selectAvatar(this, '👩‍🔬')">👩‍🔬</div>
+            <div class="avatar-choice" onclick="selectAvatar(this, '⚡')">⚡</div>
+            <div class="avatar-choice" onclick="selectAvatar(this, '🧪')">🧪</div>
+            <div class="avatar-choice" onclick="selectAvatar(this, '⚛️')">⚛️</div>
+            <div class="avatar-choice" onclick="selectAvatar(this, '🚀')">🚀</div>
+          </div>
+          <input type="hidden" id="selectedAvatarVal" value="👨‍🔬" />
+        </div>
+
+        <button class="btn-submit" type="submit">
+          <span>Complete Enrollment &amp; Enter Lab</span>
+          <span>🎓</span>
+        </button>
+      </form>
+    </section>
+
+    <!-- ==========================================
+         VIEW 4: INSTANT 1-CLICK DEMO BATCH PROFILES
+         ========================================== -->
+    <section class="auth-view" id="viewDemo">
+      <div style="font-size:0.86rem; color:var(--muted); margin-bottom:16px; line-height:1.5;">
+        Test the live student dashboard instantly with authentic pre-loaded PW batch accounts:
+      </div>
+
+      <div class="demo-profiles-list">
+        <!-- Profile 1 -->
+        <div class="demo-card" onclick="loginDemoProfile('alex')">
+          <div class="demo-left">
+            <div class="demo-avatar">👨‍🔬</div>
+            <div>
+              <div class="demo-name">Alex Sharma</div>
+              <div class="demo-tag">Class 11 • Arjuna JEE Batch 2027</div>
+            </div>
+          </div>
+          <span class="demo-badge">Level 12 • 6,500 XP</span>
+        </div>
+
+        <!-- Profile 2 -->
+        <div class="demo-card" onclick="loginDemoProfile('priya')">
+          <div class="demo-left">
+            <div class="demo-avatar">👩‍🔬</div>
+            <div>
+              <div class="demo-name">Priya Patel</div>
+              <div class="demo-tag">Class 10 • Udaan Board Topper</div>
+            </div>
+          </div>
+          <span class="demo-badge">Level 15 • 8,200 XP</span>
+        </div>
+
+        <!-- Profile 3 -->
+        <div class="demo-card" onclick="loginDemoProfile('rohan')">
+          <div class="demo-left">
+            <div class="demo-avatar">🩺</div>
+            <div>
+              <div class="demo-name">Rohan Verma</div>
+              <div class="demo-tag">Class 12 • Yakeen NEET Aspirant</div>
+            </div>
+          </div>
+          <span class="demo-badge">Level 10 • 5,400 XP</span>
+        </div>
+      </div>
+
+      <div style="text-align:center; margin-top:20px; font-size:0.78rem; color:var(--muted);">
+        💡 Click any profile above for 1-second instant authentication.
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER RETURN LINK -->
+  <footer class="auth-footer">
+    <a href="index.html">← Return to Moleqyn Home</a> &bull;
+    <a href="learn.html">NCERT Notes</a> &bull;
+    <a href="simulators.html">Virtual Labs</a>
+  </footer>
+
+  <!-- GOOGLE ACCOUNT CHOOSER POPUP MODAL SIMULATOR -->
+  <div class="google-modal-overlay" id="googleModal" onclick="if(event.target===this) closeGoogleModal()">
+    <div class="google-modal-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <svg width="24" height="24" viewBox="0 0 24 24">
+          <path fill="#4285F4"
+            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+          <path fill="#34A853"
+            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+          <path fill="#FBBC05"
+            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+          <path fill="#EA4335"
+            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+        </svg>
+        <button onclick="closeGoogleModal()"
+          style="border:none; background:none; font-size:1.4rem; cursor:pointer; color:#5f6368;">✕</button>
+      </div>
+
+      <h3 style="font-family:'Space Grotesk',sans-serif; font-size:1.3rem; margin-bottom:4px;">Sign in with Google</h3>
+      <p style="font-size:0.85rem; color:#5f6368; margin-bottom:20px;">to continue to <strong>Moleqyn Virtual
+          Lab</strong></p>
+
+      <div class="google-account-item" onclick="chooseGoogleAccount('Alex Sharma', 'alex.sharma@gmail.com')">
+        <div
+          style="width:36px; height:36px; border-radius:50%; background:#1a73e8; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:bold;">
+          A</div>
+        <div style="flex:1;">
+          <div style="font-weight:600; font-size:0.92rem;">Alex Sharma</div>
+          <div style="font-size:0.78rem; color:#5f6368;">alex.sharma@gmail.com</div>
+        </div>
+      </div>
+
+      <div class="google-account-item" onclick="chooseGoogleAccount('Priya Patel', 'priya.patel.science@gmail.com')">
+        <div
+          style="width:36px; height:36px; border-radius:50%; background:#e37400; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:bold;">
+          P</div>
+        <div style="flex:1;">
+          <div style="font-weight:600; font-size:0.92rem;">Priya Patel</div>
+          <div style="font-size:0.78rem; color:#5f6368;">priya.patel.science@gmail.com</div>
+        </div>
+      </div>
+
+      <div class="google-account-item" onclick="chooseGoogleAccount('Student Scholar', 'student.learner@gmail.com')">
+        <div
+          style="width:36px; height:36px; border-radius:50%; background:#137333; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:bold;">
+          S</div>
+        <div style="flex:1;">
+          <div style="font-weight:600; font-size:0.92rem;">Student Scholar</div>
+          <div style="font-size:0.78rem; color:#5f6368;">student.learner@gmail.com</div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px; font-size:0.75rem; color:#70757a; text-align:center;">
+        To continue, Google will share your name, email address, and avatar with Moleqyn.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Live State
+    let generatedOTP = "739201";
+    let otpTimerInterval = null;
+    let timerCountdown = 30;
+
+    // AUDIO SOUND EFFECTS (Web Audio API - 100% Pure Vanilla JS)
+    function playBeep(type) {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'success') {
+          osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+          osc.frequency.exponentialRampToValueAtTime(783.99, audioCtx.currentTime + 0.15); // G5
+          gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.25);
+        } else if (type === 'click') {
+          osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.05);
+        } else if (type === 'error') {
+          osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.2);
+        }
+      } catch (e) { }
+    }
+
+    // CHECK EXISTING SESSION
+    (function checkSession() {
+      const saved = localStorage.getItem('mlab_user') || localStorage.getItem('moleqyn_user');
+      if (saved) {
+        try {
+          const user = JSON.parse(saved);
+          if (user && user.isLoggedIn) {
+            const banner = document.getElementById('alreadyLoggedInBanner');
+            const nameEl = document.getElementById('loggedInNameText');
+            if (banner && nameEl) {
+              nameEl.textContent = user.name || "Student";
+              banner.classList.remove('hidden');
+            }
+          }
+        } catch (e) { }
+      }
+    })();
+
+    function switchAccount() {
+      playBeep('click');
+      localStorage.removeItem('mlab_user');
+      localStorage.removeItem('moleqyn_user');
+      sessionStorage.removeItem('mlab_user');
+      const banner = document.getElementById('alreadyLoggedInBanner');
+      if (banner) banner.classList.add('hidden');
+    }
+
+    // AUTH TAB SWITCHER
+    function switchAuthTab(tabName) {
+      playBeep('click');
+      document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.auth-view').forEach(v => v.classList.remove('active'));
+
+      if (tabName === 'otp') {
+        document.getElementById('tabOtp').classList.add('active');
+        document.getElementById('viewOtp').classList.add('active');
+      } else if (tabName === 'email') {
+        document.getElementById('tabEmail').classList.add('active');
+        document.getElementById('viewEmail').classList.add('active');
+      } else if (tabName === 'register') {
+        document.getElementById('tabRegister').classList.add('active');
+        document.getElementById('viewRegister').classList.add('active');
+      } else if (tabName === 'demo') {
+        document.getElementById('tabDemo').classList.add('active');
+        document.getElementById('viewDemo').classList.add('active');
+      }
+    }
+
+    // ==========================================
+    // OTP FLOW
+    // ==========================================
+    function sendOTP() {
+      const phoneInput = document.getElementById('phoneInput');
+      const val = phoneInput.value.replace(/\D/g, '');
+      if (val.length < 10) {
+        playBeep('error');
+        phoneInput.parentElement.classList.add('shake-err');
+        setTimeout(() => phoneInput.parentElement.classList.remove('shake-err'), 450);
+        alert('Please enter a valid 10-digit mobile number.');
+        return;
+      }
+
+      playBeep('click');
+      const btn = document.getElementById('btnSendOtp');
+      btn.innerHTML = '<span>Sending SMS OTP...</span>';
+      btn.disabled = true;
+
+      // Generate realistic random OTP
+      generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+      document.getElementById('smsOtpCode').textContent = generatedOTP;
+      document.getElementById('displayPhone').textContent = '+91 ' + val;
+
+      setTimeout(() => {
+        document.getElementById('phoneStep').classList.add('hidden');
+        document.getElementById('otpStep').classList.remove('hidden');
+        btn.innerHTML = '<span>Get Verification OTP</span> ➔';
+        btn.disabled = false;
+
+        // Slide down live simulated SMS banner
+        const toast = document.getElementById('smsToast');
+        toast.classList.add('show');
+        playBeep('success');
+
+        // Start countdown
+        startOtpCountdown();
+
+        // Focus first OTP box
+        document.getElementById('otp1').focus();
+      }, 600);
+    }
+
+    function editPhone() {
+      playBeep('click');
+      document.getElementById('otpStep').classList.add('hidden');
+      document.getElementById('phoneStep').classList.remove('hidden');
+      document.getElementById('smsToast').classList.remove('show');
+      if (otpTimerInterval) clearInterval(otpTimerInterval);
+    }
+
+    function startOtpCountdown() {
+      if (otpTimerInterval) clearInterval(otpTimerInterval);
+      timerCountdown = 30;
+      const cdEl = document.getElementById('countdownText');
+      const resendBtn = document.getElementById('resendBtn');
+      resendBtn.disabled = true;
+
+      otpTimerInterval = setInterval(() => {
+        timerCountdown--;
+        if (timerCountdown > 0) {
+          cdEl.innerHTML = `Resend OTP in <strong>${timerCountdown}s</strong>`;
+        } else {
+          clearInterval(otpTimerInterval);
+          cdEl.innerHTML = `<span style="color:var(--success);">OTP Expired / Ready to Resend</span>`;
+          resendBtn.disabled = false;
+        }
+      }, 1000);
+    }
+
+    function resendOTP() {
+      playBeep('click');
+      generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+      document.getElementById('smsOtpCode').textContent = generatedOTP;
+      const toast = document.getElementById('smsToast');
+      toast.classList.remove('show');
+      setTimeout(() => {
+        toast.classList.add('show');
+        playBeep('success');
+      }, 200);
+      startOtpCountdown();
+    }
+
+    function autoFillOTP() {
+      playBeep('click');
+      const digits = generatedOTP.split('');
+      for (let i = 1; i <= 6; i++) {
+        document.getElementById('otp' + i).value = digits[i - 1] || '';
+      }
+      document.getElementById('smsToast').classList.remove('show');
+      document.getElementById('btnVerifyOtp').focus();
+    }
+
+    function handleOtpInput(index) {
+      const el = document.getElementById('otp' + index);
+      el.value = el.value.replace(/\D/g, '');
+      if (el.value && index < 6) {
+        document.getElementById('otp' + (index + 1)).focus();
+      }
+    }
+
+    function handleOtpKey(e, index) {
+      if (e.key === 'Backspace' && !e.target.value && index > 1) {
+        const prev = document.getElementById('otp' + (index - 1));
+        prev.focus();
+      } else if (e.key === 'Enter') {
+        verifyAndLogin();
+      }
+    }
+
+    function verifyAndLogin() {
+      let entered = '';
+      for (let i = 1; i <= 6; i++) {
+        entered += (document.getElementById('otp' + i).value || '');
+      }
+
+      if (entered.length < 6) {
+        playBeep('error');
+        alert('Please enter all 6 digits of the OTP.');
+        return;
+      }
+
+      // ⚠️ SECURITY FIX: Only accept the OTP that was actually generated.
+      // Removed hardcoded bypass codes '123456' and '739201'.
+      if (entered !== generatedOTP) {
+        playBeep('error');
+        alert('Incorrect OTP! Please check the code shown in the SMS alert.');
+        return;
+      }
+
+      playBeep('success');
+      const mob = document.getElementById('phoneInput').value.trim() || '9876543210';
+      const user = {
+        name: "Student (+91 " + mob.slice(-4) + ")",
+        email: mob + "@sms.moleqyn",
+        phone: "+91 " + mob,
+        class: "Class 11 Science • Arjuna JEE",
+        avatar: "👨‍🔬",
+        level: 1,
+        xp: "100 XP (Welcome)",
+        streak: 1,
+        labsCompleted: 0,
+        timeSpent: "0 mins",
+        chapterMastery: 0,
+        isNewUser: true,
+        isLoggedIn: true,
+        loginMethod: "phone_otp",
+        loginTime: new Date().toLocaleTimeString()
+      };
+
+      commitSessionAndRedirect(user);
+    }
+
+    // ==========================================
+    // EMAIL & PASSWORD FLOW — DEMO ONLY
+    // Accepts any non-empty email + password. No server verification.
+    // ==========================================
+    function togglePassVisibility(id, btn) {
+      const input = document.getElementById(id);
+      if (input.type === 'password') {
+        input.type = 'text';
+        btn.textContent = '🙈';
+      } else {
+        input.type = 'password';
+        btn.textContent = '👁️';
+      }
+    }
+
+    function forgotPassword() {
+      playBeep('click');
+      const email = prompt("Enter your registered student email address for password reset:", "student@school.edu");
+      if (email && email.trim()) {
+        playBeep('success');
+        alert(`Password reset link and security verification OTP have been dispatched to ${email.trim()}.`);
+      }
+    }
+
+    function handleEmailLogin() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const pass = document.getElementById('loginPass').value;
+
+      if (!email || !pass) {
+        playBeep('error');
+        alert('Please enter both email and password.');
+        return;
+      }
+
+      const userPart = email.split('@')[0];
+      const formattedName = userPart.split(/[._-]/).filter(Boolean).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') || "Student Scholar";
+
+      const user = {
+        name: formattedName,
+        email: email,
+        phone: "+91 98765 43210",
+        class: "Class 11 Science • Arjuna JEE",
+        avatar: "👨‍🔬",
+        level: 1,
+        xp: "100 XP (Welcome)",
+        streak: 1,
+        labsCompleted: 0,
+        timeSpent: "0 mins",
+        chapterMastery: 0,
+        isNewUser: true,
+        isLoggedIn: true,
+        loginMethod: "email_password",
+        loginTime: new Date().toLocaleTimeString()
+      };
+
+      playBeep('success');
+      commitSessionAndRedirect(user);
+    }
+
+    // ==========================================
+    // REGISTRATION FLOW — DEMO ONLY
+    // Creates a local session object only. No account is persisted server-side.
+    // ==========================================
+    function selectBatch(el, batchVal) {
+      playBeep('click');
+      document.querySelectorAll('.batch-chip').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      document.getElementById('selectedBatchVal').value = batchVal;
+    }
+
+    function selectAvatar(el, avatarVal) {
+      playBeep('click');
+      document.querySelectorAll('.avatar-choice').forEach(a => a.classList.remove('selected'));
+      el.classList.add('selected');
+      document.getElementById('selectedAvatarVal').value = avatarVal;
+    }
+
+    function handleRegister() {
+      const name = document.getElementById('regName').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const batch = document.getElementById('selectedBatchVal').value;
+      const avatar = document.getElementById('selectedAvatarVal').value;
+
+      if (!name || !email) {
+        playBeep('error');
+        alert('Please fill out all required fields.');
+        return;
+      }
+
+      const user = {
+        name: name,
+        email: email,
+        phone: "+91 98765 43210",
+        class: batch,
+        avatar: avatar,
+        level: 1,
+        xp: "150 XP (Welcome Bonus)",
+        streak: 1,
+        labsCompleted: 0,
+        timeSpent: "0 mins",
+        chapterMastery: 0,
+        isNewUser: true,
+        isLoggedIn: true,
+        loginMethod: "registration",
+        loginTime: new Date().toLocaleTimeString()
+      };
+
+      playBeep('success');
+      commitSessionAndRedirect(user);
+    }
+
+    // ==========================================
+    // INSTANT DEMO BATCH PROFILES
+    // ==========================================
+    function loginDemoProfile(type) {
+      playBeep('success');
+      let user = null;
+
+      if (type === 'alex') {
+        user = {
+          name: "Alex Sharma",
+          email: "alex.sharma@school.edu",
+          phone: "+91 98765 43210",
+          class: "Class 11 Science • Arjuna JEE",
+          avatar: "👨‍🔬",
+          level: 12,
+          xp: "6,500 XP",
+          isLoggedIn: true,
+          batchTag: "Arjuna 2027",
+          streak: 7,
+          labsCompleted: 14,
+          chapterMastery: 68,
+          isNewUser: false,
+          isDemo: true
+        };
+      } else if (type === 'priya') {
+        user = {
+          name: "Priya Patel",
+          email: "priya.patel@topper.edu",
+          phone: "+91 99887 76655",
+          class: "Class 10 CBSE • Udaan Batch",
+          avatar: "👩‍🔬",
+          level: 15,
+          xp: "8,200 XP",
+          isLoggedIn: true,
+          batchTag: "Udaan 2026",
+          streak: 14,
+          labsCompleted: 22,
+          chapterMastery: 84,
+          isNewUser: false,
+          isDemo: true
+        };
+      } else if (type === 'rohan') {
+        user = {
+          name: "Rohan Verma",
+          email: "rohan.neet@medschool.edu",
+          phone: "+91 91234 56789",
+          class: "Class 12 Medical • Yakeen NEET",
+          avatar: "🩺",
+          level: 10,
+          xp: "5,400 XP",
+          isLoggedIn: true,
+          batchTag: "Yakeen NEET",
+          streak: 5,
+          labsCompleted: 11,
+          chapterMastery: 59,
+          isNewUser: false,
+          isDemo: true
+        };
+      }
+
+      commitSessionAndRedirect(user);
+    }
+
+    // ==========================================
+    // GOOGLE AUTH POPUP SIMULATOR — DEMO ONLY
+    // Not connected to Google OAuth. Simulates account selection UI only.
+    // ==========================================
+    function openGoogleModal() {
+      playBeep('click');
+      document.getElementById('googleModal').style.display = 'flex';
+    }
+    function closeGoogleModal() {
+      document.getElementById('googleModal').style.display = 'none';
+    }
+    function chooseGoogleAccount(name, email) {
+      playBeep('success');
+      closeGoogleModal();
+
+      const user = {
+        name: name,
+        email: email,
+        phone: "+91 98765 43210",
+        class: "Class 11 Science • Arjuna JEE",
+        avatar: "👨‍🔬",
+        level: 1,
+        xp: "100 XP (Welcome)",
+        streak: 1,
+        labsCompleted: 0,
+        timeSpent: "0 mins",
+        chapterMastery: 0,
+        isNewUser: true,
+        isLoggedIn: true,
+        loginMethod: "google_oauth",
+        loginTime: new Date().toLocaleTimeString()
+      };
+
+      commitSessionAndRedirect(user);
+    }
+
+    // ==========================================
+    // PERSISTENCE & REDIRECT
+    // ==========================================
+    function commitSessionAndRedirect(userObj) {
+      try {
+        localStorage.setItem('mlab_user', JSON.stringify(userObj));
+        localStorage.setItem('moleqyn_user', JSON.stringify(userObj));
+        localStorage.setItem('matterlab_user', JSON.stringify(userObj));
+      } catch (e) { }
+
+      // Button visual state
+      const activeBtn = document.querySelector('.auth-view.active .btn-submit');
+      if (activeBtn) {
+        activeBtn.innerHTML = '<span>Verifying &amp; Logging In...</span> ⏳';
+        activeBtn.disabled = true;
+      }
+
+      setTimeout(() => {
+        window.location.href = 'dashboard.html';
+      }, 450);
+    }
+  </script>
+  <script src="js/shared-nav.js"></script>
+</body>
+
+</html>
+

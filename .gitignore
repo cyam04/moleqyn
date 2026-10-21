@@ -1,4 +1,10 @@
-﻿*.log
-*.tmp
+# Antigravity agent files
+.agents/
+
+# Local utility scripts
+*.ps1
+
+# OS files
 .DS_Store
 Thumbs.db
+desktop.ini

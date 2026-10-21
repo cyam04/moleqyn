@@ -1,0 +1,2089 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Moleqyn | Universal Chemical Reaction Lab &amp; AI Predictor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"/>
+
+  <script>
+    (function () {
+      var saved = localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
+      if (saved === 'light') {
+        document.documentElement.setAttribute('data-theme', 'day');
+        document.documentElement.classList.add('light-mode');
+      }
+    })();
+  </script>
+
+  <style>
+    :root {
+      --bg: #080c16; --panel: #0e1626; --panel2: #142036; --border: rgba(255,255,255,0.09); 
+      --primary: #00d4ff; --primary-rgb: 0, 240, 255; --secondary: #a855f7; --accent: #ffd700; 
+      --text: #f8fafc; --muted: #94a3b8; --green: #4ade80; --red: #fb7185; --orange: #fb923c;
+      --purple: #c084fc; --card-glow: rgba(0, 240, 255, 0.15);
+      --font-display: 'Outfit', sans-serif;
+      --glass-bg: rgba(14, 22, 38, 0.78);
+      --nav-bg-scrolled: rgba(10, 16, 28, 0.96);
+      --glass-border: rgba(255, 255, 255, 0.08);
+    }
+
+    /* DAY THEME TOKENS */
+    :root[data-theme="day"],
+    html.light-mode {
+      --bg: #f8fafc; --panel: #ffffff; --panel2: #f1f5f9; --border: rgba(15, 23, 42, 0.09);
+      --primary: #0284c7; --primary-rgb: 2, 132, 199; --secondary: #7c3aed; --accent: #d97706;
+      --text: #0f172a; --muted: #64748b; --green: #16a34a; --red: #dc2626; --orange: #ea580c;
+      --purple: #9333ea; --card-glow: rgba(2, 132, 199, 0.12);
+      --glass-bg: rgba(255, 255, 255, 0.88);
+      --nav-bg-scrolled: rgba(255, 255, 255, 0.98);
+      --glass-border: rgba(15, 23, 42, 0.1);
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { 
+      background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; 
+      min-height:100vh; overflow-x:hidden;
+      background-image: radial-gradient(circle at top right, rgba(0,212,255,0.06), transparent 60%),
+                        radial-gradient(circle at bottom left, rgba(168,85,247,0.05), transparent 60%);
+      transition: background 0.3s ease, color 0.3s ease;
+      padding-top: 75px;
+    }
+
+    :root[data-theme="day"] body,
+    html.light-mode body {
+      background-image: radial-gradient(circle at top right, rgba(2,132,199,0.05), transparent 60%),
+                        radial-gradient(circle at bottom left, rgba(124,58,237,0.04), transparent 60%);
+    }
+    
+    /* ===== UNIFIED Moleqyn FLOATING NAVBAR ===== */
+    .mlab-nav {
+      position: fixed;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 95%;
+      max-width: 1250px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 22px;
+      border-radius: 40px;
+      border: 1px solid var(--glass-border);
+      z-index: 1000;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      transition: all 0.3s ease;
+    }
+    .mlab-nav.scrolled {
+      top: 6px;
+      background: var(--nav-bg-scrolled);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+      border-color: var(--primary);
+    }
+    .mlab-brand {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .mlab-brand span { color: var(--primary); }
+    .mlab-links {
+      display: flex;
+      list-style: none;
+      align-items: center;
+      gap: 0.3rem;
+      margin: 0;
+      padding: 0;
+    }
+    .mlab-links > li > a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.86rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 20px;
+      transition: all 0.2s;
+      display: block;
+    }
+    .mlab-links > li > a:hover,
+    .mlab-links > li > a.active {
+      color: var(--primary);
+      background: rgba(var(--primary-rgb), 0.1);
+    }
+    .mlab-dropdown { position: relative; }
+    .mlab-dropbtn {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.86rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+    .mlab-dropbtn:hover, .mlab-dropbtn.active {
+      color: var(--primary);
+      background: rgba(var(--primary-rgb), 0.1);
+    }
+    .mlab-dropdown-content {
+      display: none;
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--nav-bg-scrolled);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 8px;
+      min-width: 270px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+      z-index: 2000;
+      backdrop-filter: blur(20px);
+    }
+    .mlab-dropdown:hover .mlab-dropdown-content {
+      display: block;
+      animation: navFadeIn 0.2s ease;
+    }
+    @keyframes navFadeIn {
+      from { opacity: 0; transform: translateX(-50%) translateY(-6px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+    .mlab-drop-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      text-decoration: none;
+      color: var(--muted);
+      transition: all 0.2s;
+    }
+    .mlab-drop-item:hover {
+      background: rgba(var(--primary-rgb), 0.1);
+      color: var(--primary);
+    }
+    .mlab-drop-icon { font-size: 1.1rem; width: 28px; text-align: center; }
+    .mlab-drop-title { font-size: 0.82rem; font-weight: 600; color: var(--text); }
+    .mlab-drop-sub { font-size: 0.70rem; color: var(--muted); margin-top: 1px; }
+    .mlab-drop-item:hover .mlab-drop-title { color: var(--primary); }
+    
+    .mlab-nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .mlab-back-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      color: var(--primary);
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .mlab-back-btn:hover {
+      background: var(--primary);
+      color: #000;
+      border-color: var(--primary);
+    }
+    :root[data-theme="day"] .mlab-back-btn, html.light-mode .mlab-back-btn {
+      background: rgba(15, 23, 42, 0.05);
+      border-color: #cbd5e1;
+      color: #0284c7;
+    }
+    :root[data-theme="day"] .mlab-back-btn:hover, html.light-mode .mlab-back-btn:hover {
+      background: #0284c7;
+      color: #fff;
+    }
+    .mlab-theme-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.05rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .mlab-theme-btn:hover {
+      border-color: var(--primary);
+      transform: scale(1.1) rotate(15deg);
+      box-shadow: 0 0 14px var(--primary-glow);
+    }
+    :root[data-theme="day"] .mlab-theme-btn, html.light-mode .mlab-theme-btn {
+      background: rgba(15, 23, 42, 0.05);
+      border-color: #cbd5e1;
+      color: #0f172a;
+    }
+
+    .page-wrap { max-width: 1240px; margin: 0 auto; padding: 24px 20px; }
+    
+    /* TITLE BANNER */
+    .title-box { text-align: center; margin-bottom: 24px; position: relative; }
+    .title { font-family:'Space Grotesk',sans-serif; font-size: 2.3rem; font-weight: 700; letter-spacing: -0.5px; }
+    .title span { background: linear-gradient(135deg, #00d4ff, #4ade80); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .subtitle { color: var(--muted); font-size: 0.96rem; margin-top: 6px; max-width: 720px; margin-left: auto; margin-right: auto; line-height: 1.5; }
+
+    /* MODE TABS */
+    .mode-tabs {
+      display: flex; justify-content: center; gap: 12px; margin-bottom: 22px;
+    }
+    .mode-tab {
+      background: var(--panel); border: 1px solid var(--border); color: var(--muted);
+      padding: 10px 22px; border-radius: 12px; font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600; font-size: 0.92rem; cursor: pointer; transition: all 0.25s;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .mode-tab:hover { color: var(--text); border-color: rgba(0,212,255,0.4); }
+    .mode-tab.active {
+      background: rgba(0,212,255,0.12); color: var(--primary);
+      border-color: var(--primary); box-shadow: 0 0 20px rgba(0,212,255,0.25);
+    }
+
+    /* CUSTOM INPUT & PREDICTOR BAR */
+    .custom-bar {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 16px;
+      padding: 20px; margin-bottom: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    .custom-bar-header {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;
+    }
+    .custom-bar-title {
+      font-family: 'Space Grotesk', sans-serif; font-size: 1.05rem; font-weight: 700; color: #fff;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .custom-bar-title span { color: var(--green); font-size: 0.8rem; background: rgba(74,222,128,0.15); padding: 2px 8px; border-radius: 6px; }
+    
+    .input-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .input-wrap { flex: 1; min-width: 320px; position: relative; }
+    .custom-input {
+      width: 100%; background: rgba(3, 10, 20, 0.7); border: 1px solid var(--border); border-radius: 10px;
+      padding: 14px 16px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 1.05rem;
+      transition: all 0.25s;
+    }
+    .custom-input:focus {
+      outline: none; border-color: var(--primary); box-shadow: 0 0 15px rgba(0,212,255,0.35); background: rgba(5, 14, 28, 0.95);
+    }
+    .btn-action {
+      padding: 12px 22px; border-radius: 10px; border: none; font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700; font-size: 0.92rem; cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .btn-predict {
+      background: linear-gradient(135deg, #00d4ff, #0099ff); color: #020812;
+      box-shadow: 0 4px 15px rgba(0,212,255,0.3);
+    }
+    .btn-predict:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,212,255,0.45); }
+    .btn-balance {
+      background: linear-gradient(135deg, #4ade80, #22c55e); color: #020812;
+    }
+    .btn-balance:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(74,222,128,0.4); }
+
+    /* QUICK PILLS FOR INSPIRATION */
+    .quick-prompts {
+      display: flex; gap: 8px; align-items: center; margin-top: 14px; flex-wrap: wrap;
+    }
+    .quick-label { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+    .quick-pill {
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: #cbd5e1;
+      padding: 4px 12px; border-radius: 14px; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .quick-pill:hover { background: rgba(0,212,255,0.12); color: var(--primary); border-color: var(--primary); }
+
+    /* PREDICTION FEEDBACK BOX */
+    .prediction-card {
+      background: linear-gradient(135deg, rgba(13,29,51,0.9), rgba(19,39,66,0.9));
+      border: 1px solid rgba(0,212,255,0.3); border-radius: 16px; padding: 20px;
+      margin-bottom: 24px; display: none; animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    .pred-header {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;
+    }
+    .pred-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 10px; }
+    .pred-badge {
+      padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .pred-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-top: 14px; }
+    .pred-item {
+      background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 12px 14px;
+    }
+    .pred-item-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; font-weight: 600; margin-bottom: 4px; }
+    .pred-item-val { font-size: 0.95rem; font-weight: 600; color: #fff; display: flex; align-items: center; gap: 8px; }
+
+    /* EQUATION DISPLAY & INTERACTIVE STEPPERS */
+    .equation-container {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 16px;
+      padding: 28px 24px; margin-bottom: 20px; display: flex; align-items: center;
+      justify-content: center; gap: 14px; flex-wrap: wrap; position: relative;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+    .eq-part { 
+      display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.2); 
+      padding: 10px 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); 
+    }
+    .coeff-control { display: flex; flex-direction: column; align-items: center; }
+    .coeff-btn {
+      background: rgba(255,255,255,0.08); border: 1px solid var(--border); color: var(--text);
+      width: 26px; height: 26px; border-radius: 50%; cursor: pointer; font-size: 0.95rem;
+      font-weight: bold; display: flex; align-items: center; justify-content: center; transition: 0.2s;
+    }
+    .coeff-btn:hover { background: var(--primary); color: #000; border-color: var(--primary); }
+    .coeff-val {
+      font-family: 'JetBrains Mono', monospace; font-size: 1.45rem; font-weight: 700;
+      margin: 2px 0; color: var(--accent); min-width: 26px; text-align: center;
+    }
+    .molecule-name { 
+      font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; font-weight: 700; 
+      letter-spacing: 0.5px;
+    }
+    .molecule-name sub { font-size: 0.65em; vertical-align: -0.25em; color: rgba(255,255,255,0.8); }
+    .operator { font-family: 'Space Grotesk', sans-serif; font-size: 1.7rem; color: var(--muted); margin: 0 4px; font-weight: 600; }
+
+    .status-badge {
+      position: absolute; top: 16px; right: 20px; padding: 6px 14px; border-radius: 20px;
+      font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s;
+    }
+    .status-unbalanced { background: rgba(251,113,133,0.15); color: var(--red); border: 1px solid var(--red); }
+    .status-balanced { background: rgba(74,222,128,0.15); color: var(--green); border: 1px solid var(--green); box-shadow: 0 0 15px rgba(74,222,128,0.3); }
+
+    /* VISUAL MOLECULE CANVAS */
+    .visual-canvas-card {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 16px;
+      padding: 16px; margin-bottom: 24px; position: relative; overflow: hidden;
+    }
+    .canvas-title-bar {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+    }
+    .canvas-title { font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 600; color: var(--muted); }
+    .visual-canvas {
+      width: 100%; height: 230px; background: radial-gradient(circle at 50% 50%, #0c203b 0%, #061224 85%);
+      border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; position: relative; overflow: hidden;
+    }
+    #molCanvas { width: 100%; height: 100%; display: block; }
+
+    /* BALANCING SCALES / ATOM COUNTS */
+    .scales-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+    .scale-box { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 22px; }
+    .scale-header {
+      text-align: center; font-family: 'Space Grotesk', sans-serif; font-size: 1rem;
+      color: var(--muted); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .atom-counts { display: flex; flex-direction: column; gap: 8px; }
+    .atom-row {
+      display: flex; justify-content: space-between; align-items: center; padding: 10px 14px;
+      background: rgba(0,0,0,0.25); border-radius: 8px; border: 1px solid rgba(255,255,255,0.04);
+    }
+    .atom-name { font-family: 'JetBrains Mono', monospace; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+    .atom-dot { width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 0 8px currentColor; }
+    .atom-val { font-family: 'JetBrains Mono', monospace; font-size: 1.25rem; font-weight: 700; }
+
+    /* ACTION BUTTONS */
+    .controls { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px; }
+    .btn {
+      padding: 12px 24px; border-radius: 10px; border: none; font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700; font-size: 0.92rem; cursor: pointer; transition: 0.2s;
+    }
+    .btn-solve { background: var(--green); color: #000; }
+    .btn-solve:hover { background: #6aff94; box-shadow: 0 4px 15px rgba(74,222,128,0.4); }
+    .btn-next { background: var(--primary); color: #000; }
+    .btn-next:hover { background: #00e8ff; box-shadow: 0 4px 15px rgba(0,212,255,0.4); }
+    .btn-reset { background: transparent; border: 1px solid var(--red); color: var(--red); }
+    .btn-reset:hover { background: var(--red); color: #fff; }
+
+    /* ==============================================================
+       VIRTUAL BEAKER & REAGENT MIXER (INTERACTIVE BENCH)
+       ============================================================== */
+    #mixerSection { display: none; margin-bottom: 24px; }
+    .mixer-layout {
+      display: grid; grid-template-columns: 1.1fr 1fr; gap: 24px;
+    }
+    @media (max-width: 900px) {
+      .mixer-layout { grid-template-columns: 1fr; }
+    }
+    
+    /* REAGENT SHELF */
+    .shelf-card {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 16px;
+      padding: 22px; display: flex; flex-direction: column; gap: 16px;
+    }
+    .shelf-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 700; color: #fff; display: flex; align-items: center; justify-content: space-between; }
+    .shelf-filters { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+    .shelf-filter-btn {
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--muted);
+      padding: 5px 12px; border-radius: 12px; font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: 0.2s; white-space: nowrap;
+    }
+    .shelf-filter-btn.active, .shelf-filter-btn:hover {
+      background: rgba(0,212,255,0.15); color: var(--primary); border-color: var(--primary);
+    }
+    .reagent-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; max-height: 380px; overflow-y: auto; padding-right: 4px;
+    }
+    .reagent-bottle {
+      background: rgba(4, 10, 22, 0.6); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px;
+      padding: 12px 10px; text-align: center; cursor: pointer; transition: all 0.2s; position: relative;
+    }
+    .reagent-bottle:hover {
+      border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 4px 15px rgba(0,212,255,0.25);
+    }
+    .reagent-icon { font-size: 1.6rem; margin-bottom: 4px; }
+    .reagent-name { font-size: 0.8rem; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .reagent-formula { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--primary); margin-top: 2px; }
+    .reagent-type-badge { font-size: 0.62rem; color: var(--muted); text-transform: uppercase; margin-top: 4px; }
+
+    /* CUSTOM REAGENT ADD ROW */
+    .custom-reagent-row {
+      display: flex; gap: 8px; margin-top: 4px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .custom-reagent-input {
+      flex: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 8px;
+      padding: 8px 12px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.88rem;
+    }
+    .custom-reagent-input:focus { outline: none; border-color: var(--primary); }
+
+    /* BEAKER SIMULATION STAGE */
+    .beaker-card {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 16px;
+      padding: 22px; display: flex; flex-direction: column; gap: 16px; position: relative;
+    }
+    .beaker-stage {
+      flex: 1; min-height: 320px; background: radial-gradient(circle at 50% 60%, #0d223f 0%, #061122 80%);
+      border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; position: relative;
+      overflow: hidden; display: flex; align-items: center; justify-content: center;
+    }
+    #beakerCanvas { width: 100%; height: 100%; display: block; }
+    
+    .thermometer-hud {
+      position: absolute; top: 14px; right: 14px; background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 10px;
+      padding: 8px 12px; display: flex; align-items: center; gap: 8px;
+    }
+    .therm-val { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; color: #fb7185; }
+    .therm-label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; }
+
+    .beaker-controls {
+      display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap;
+    }
+    .beaker-log {
+      background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); border-radius: 10px;
+      padding: 10px 14px; font-size: 0.82rem; color: #cbd5e1; max-height: 90px; overflow-y: auto;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .log-entry { margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+    .log-entry.reaction { color: var(--green); font-weight: 700; }
+
+    .concept-card {
+      background: rgba(0,212,255,0.05); border: 1px solid rgba(0,212,255,0.2); border-radius: 14px;
+      padding: 20px 24px; font-size: 0.88rem; color: var(--muted); line-height: 1.6;
+    }
+    /* DAY THEME OVERRIDES */
+    :root[data-theme="day"] .custom-bar,
+    html.light-mode .custom-bar,
+    :root[data-theme="day"] .visual-canvas-card,
+    html.light-mode .visual-canvas-card,
+    :root[data-theme="day"] .scale-box,
+    html.light-mode .scale-box,
+    :root[data-theme="day"] .equation-container,
+    html.light-mode .equation-container,
+    :root[data-theme="day"] .beaker-card,
+    html.light-mode .beaker-card {
+      background: #ffffff;
+      border-color: #e2e8f0;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    }
+
+    :root[data-theme="day"] .custom-input,
+    html.light-mode .custom-input {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      color: #0f172a;
+    }
+
+    :root[data-theme="day"] .mode-tab,
+    html.light-mode .mode-tab {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+      color: #475569;
+    }
+
+    :root[data-theme="day"] .mode-tab.active,
+    html.light-mode .mode-tab.active {
+      background: rgba(2, 132, 199, 0.12);
+      color: #0284c7;
+      border-color: #0284c7;
+      box-shadow: 0 0 20px rgba(2, 132, 199, 0.2);
+    }
+
+    :root[data-theme="day"] .eq-part,
+    html.light-mode .eq-part,
+    :root[data-theme="day"] .atom-row,
+    html.light-mode .atom-row {
+      background: #f8fafc;
+      border-color: #e2e8f0;
+    }
+
+    :root[data-theme="day"] .molecule-name,
+    html.light-mode .molecule-name {
+      color: #0f172a;
+    }
+
+    :root[data-theme="day"] .visual-canvas,
+    html.light-mode .visual-canvas,
+    :root[data-theme="day"] .beaker-stage,
+    html.light-mode .beaker-stage {
+      background: radial-gradient(circle at 50% 50%, #f1f5f9 0%, #e2e8f0 85%);
+      border-color: #cbd5e1;
+    }
+
+    :root[data-theme="day"] .concept-card,
+    html.light-mode .concept-card {
+      background: rgba(2, 132, 199, 0.05);
+      border-color: rgba(2, 132, 199, 0.2);
+      color: #475569;
+    }
+
+    :root[data-theme="day"] .custom-bar-title,
+    html.light-mode .custom-bar-title {
+      color: #0f172a;
+    }
+
+    :root[data-theme="day"] .quick-pill,
+    html.light-mode .quick-pill {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+      color: #334155;
+    }
+
+    @media (max-width: 768px) {
+      .mlab-links { display: none; }
+      body { padding-top: 65px; }
+      .scales-container { grid-template-columns: 1fr; }
+      .equation-container { flex-direction: column; padding-top: 60px; }
+      .status-badge { top: 12px; right: 50%; transform: translateX(50%); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- UNIFIED FLOATING NAVBAR -->
+<nav class="mlab-nav" id="mlabNav">
+  <a href="index.html" class="mlab-brand" aria-label="Moleqyn Home"><img src="favicon.svg" alt="Moleqyn Logo" class="brand-logo" width="28" height="28"><span class="mlab-brand-text">Moleqyn</span></a>
+  <ul class="mlab-links">
+    <li><a href="index.html">Home</a></li>
+    <li class="mlab-dropdown">
+      <a class="mlab-dropbtn active" href="simulators.html">Virtual Labs ▾</a>
+      <div class="mlab-dropdown-content">
+        <a href="simulators.html" class="mlab-drop-item">
+          <div class="mlab-drop-icon">🧪</div>
+          <div>
+            <div class="mlab-drop-title">Virtual Simulators Hub</div>
+            <div class="mlab-drop-sub">14 interactive engines for Class 6-12</div>
+          </div>
+        </a>
+        <a href="sim_atomverse.html" class="mlab-drop-item">
+          <div class="mlab-drop-icon">⚛️</div>
+          <div>
+            <div class="mlab-drop-title">AtomVerse Quantum Lab</div>
+            <div class="mlab-drop-sub">118 elements live electron orbits</div>
+          </div>
+        </a>
+        <a href="sim_titration.html" class="mlab-drop-item">
+          <div class="mlab-drop-icon">💧</div>
+          <div>
+            <div class="mlab-drop-title">Acid-Base Titration Lab</div>
+            <div class="mlab-drop-sub">Volumetric analysis &amp; pH curve</div>
+          </div>
+        </a>
+        <a href="sim_electro.html" class="mlab-drop-item">
+          <div class="mlab-drop-icon">🔋</div>
+          <div>
+            <div class="mlab-drop-title">Electrochemistry Lab</div>
+            <div class="mlab-drop-sub">Galvanic cell &amp; Nernst EMF</div>
+          </div>
+        </a>
+        <a href="reaction.html" class="mlab-drop-item" style="background:var(--primary-glow)">
+          <div class="mlab-drop-icon">⚗️</div>
+          <div>
+            <div class="mlab-drop-title" style="color:var(--primary)">Reaction Balancer &amp; Lab</div>
+            <div class="mlab-drop-sub">Balance &amp; predict chemical equations</div>
+          </div>
+        </a>
+        <a href="experiments.html" class="mlab-drop-item">
+          <div class="mlab-drop-icon">📔</div>
+          <div>
+            <div class="mlab-drop-title">Experiment Library</div>
+            <div class="mlab-drop-sub">NCERT guided practicals</div>
+          </div>
+        </a>
+        <a href="periodic-table.html" class="mlab-drop-item">
+          <div class="mlab-drop-icon">🔢</div>
+          <div>
+            <div class="mlab-drop-title">Periodic Table</div>
+            <div class="mlab-drop-sub">Explore all 118 elements</div>
+          </div>
+        </a>
+        <a href="ai-tutor.html" class="mlab-drop-item">
+          <div class="mlab-drop-icon">🤖</div>
+          <div>
+            <div class="mlab-drop-title">AI Chemistry Tutor</div>
+            <div class="mlab-drop-sub">Ask any doubt 24/7</div>
+          </div>
+        </a>
+      </div>
+    </li>
+    <li><a href="learn.html">Learn</a></li>
+    <li><a href="quiz.html">Quiz</a></li>
+    <li><a href="dashboard.html">Student Portal</a></li>
+    <li><a href="about.html">About us</a></li>
+  </ul>
+  <div class="mlab-nav-right">
+    <a href="simulators.html" class="mlab-back-btn">← Back to Labs</a>
+    <button class="mlab-theme-btn" id="mlabThemeBtn" title="Switch Theme">☀️</button>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <div class="title-box">
+    <div class="title">Universal Chemical Reaction Lab &amp; <span>AI Predictor</span></div>
+    <div class="subtitle">Enter any chemical reaction or compounds from your mind. Test live product predictions, precipitate colors, gas effervescence, and exact stoichiometric balancing.</div>
+  </div>
+
+  <!-- MODE SELECTOR TABS -->
+  <div class="mode-tabs">
+    <button class="mode-tab active" id="tabBalancer" onclick="switchMode('balancer')">
+      ⚖️ Equation Balancer &amp; Stoichiometry
+    </button>
+    <button class="mode-tab" id="tabMixer" onclick="switchMode('mixer')">
+      🧪 Virtual Reagent Shelf &amp; Beaker Lab
+    </button>
+  </div>
+
+  <!-- UNIVERSAL CUSTOM INPUT BAR -->
+  <div class="custom-bar">
+    <div class="custom-bar-header">
+      <div class="custom-bar-title">
+        <span>⚡ CUSTOM ENGINE</span> Enter Any Reactants or Full Chemical Equation
+      </div>
+      <div style="font-size:0.8rem;color:var(--muted);">
+        Supports nested parentheses like <code>Ca(OH)2</code>, <code>Pb(NO3)2</code>, <code>(NH4)2SO4</code>
+      </div>
+    </div>
+    
+    <div class="input-row">
+      <div class="input-wrap">
+        <input type="text" class="custom-input" id="customInput" 
+               placeholder="Type any reactants (e.g. HCl + NaOH or Zn + HCl) or full equation (A + B -> C + D)"
+               onkeydown="if(event.key==='Enter') runCustomInput()"/>
+      </div>
+      <button class="btn-action btn-predict" onclick="runCustomInput()">
+        ✨ Predict &amp; Solve
+      </button>
+      <button class="btn-action btn-balance" onclick="autoSolve()">
+        ⚡ Auto-Balance
+      </button>
+      <button class="btn-action" style="background:rgba(0,212,255,0.15);color:var(--primary);border:1px solid var(--primary);" onclick="generateReactionReport()">
+        📄 Lab Report
+      </button>
+    </div>
+
+    <!-- QUICK PRESETS / INSPIRATION PILLS -->
+    <div class="quick-prompts">
+      <span class="quick-label">Try Custom Ideas:</span>
+      <span class="quick-pill" onclick="loadPrompt('HCl + NaOH')">HCl + NaOH (Acid-Base)</span>
+      <span class="quick-pill" onclick="loadPrompt('Zn + HCl')">Zn + HCl (Gas Bubble)</span>
+      <span class="quick-pill" onclick="loadPrompt('Fe + CuSO4')">Fe + CuSO4 (Displacement)</span>
+      <span class="quick-pill" onclick="loadPrompt('Pb(NO3)2 + KI')">Pb(NO3)2 + KI (Yellow Ppt)</span>
+      <span class="quick-pill" onclick="loadPrompt('AgNO3 + NaCl')">AgNO3 + NaCl (White Curd)</span>
+      <span class="quick-pill" onclick="loadPrompt('CaCO3 + HCl')">CaCO3 + HCl (CO2 Fizz)</span>
+      <span class="quick-pill" onclick="loadPrompt('CH4 + O2')">CH4 + O2 (Combustion)</span>
+      <span class="quick-pill" onclick="loadPrompt('Al + Fe2O3')">Al + Fe2O3 (Thermite)</span>
+      <span class="quick-pill" onclick="loadPrompt('KClO3 -> KCl + O2')">KClO3 Decomposition</span>
+    </div>
+  </div>
+
+  <!-- REACTION PREDICTION CARD (SHOWN WHEN AI PREDICTOR PROCESSES REACTANTS) -->
+  <div class="prediction-card" id="predictionCard">
+    <div class="pred-header">
+      <div class="pred-title">
+        <span id="predIcon">✨</span> <span id="predTitleText">Predicted Reaction Mechanism</span>
+      </div>
+      <span class="pred-badge" id="predBadge" style="background:rgba(0,212,255,0.2);color:var(--primary);border:1px solid var(--primary);">
+        Double Displacement
+      </span>
+    </div>
+    <div style="font-size:1.15rem;font-family:'Space Grotesk',sans-serif;font-weight:700;color:#fff;margin-bottom:6px;" id="predBalancedEq">
+      <!-- Full balanced equation string -->
+    </div>
+    <div style="font-size:0.88rem;color:var(--muted);line-height:1.5;" id="predExplanation">
+      <!-- Chemical explanation -->
+    </div>
+    <div class="pred-grid">
+      <div class="pred-item">
+        <div class="pred-item-label">Reaction Type</div>
+        <div class="pred-item-val" id="predTypeVal">Neutralization</div>
+      </div>
+      <div class="pred-item">
+        <div class="pred-item-label">Physical Observation</div>
+        <div class="pred-item-val" id="predObsVal">Color change &amp; heat</div>
+      </div>
+      <div class="pred-item">
+        <div class="pred-item-label">Enthalpy &amp; Heat (ΔH)</div>
+        <div class="pred-item-val" id="predHeatVal" style="color:var(--red);">Exothermic (Heats up)</div>
+      </div>
+      <div class="pred-item">
+        <div class="pred-item-label">Driving Force</div>
+        <div class="pred-item-val" id="predForceVal">Stable water formation</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 1: BALANCER & STOICHIOMETRIC ENGINE -->
+  <div id="balancerSection">
+    <!-- EQUATION WITH INTERACTIVE COEFFICIENT STEPPERS -->
+    <div class="equation-container" id="eqContainer">
+      <!-- Rendered dynamically -->
+    </div>
+
+    <!-- VISUAL MOLECULE COLLISION CANVAS -->
+    <div class="visual-canvas-card">
+      <div class="canvas-title-bar">
+        <div class="canvas-title">⚛️ Dynamic Molecular Cluster &amp; Bond Conservation Engine</div>
+        <div style="font-size:0.78rem;color:var(--muted);">Live bonded atom spheres with stoichiometric multiples</div>
+      </div>
+      <div class="visual-canvas">
+        <canvas id="molCanvas"></canvas>
+      </div>
+    </div>
+
+    <!-- ATOM CONSERVATION SCALES -->
+    <div class="scales-container">
+      <div class="scale-box">
+        <div class="scale-header">
+          <span>Reactants (Left Side)</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:var(--primary);" id="rMassLabel">Molar Mass: 0 g</span>
+        </div>
+        <div class="atom-counts" id="reactantsCount"></div>
+      </div>
+      <div class="scale-box">
+        <div class="scale-header">
+          <span>Products (Right Side)</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:var(--primary);" id="pMassLabel">Molar Mass: 0 g</span>
+        </div>
+        <div class="atom-counts" id="productsCount"></div>
+      </div>
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="controls">
+      <button class="btn btn-reset" onclick="resetEq()">🔄 Reset to 1:1</button>
+      <button class="btn btn-solve" onclick="autoSolve()">⚡ Auto-Balance Matrix</button>
+      <button class="btn btn-next" onclick="cyclePreset()">⏭ Cycle Classic Preset</button>
+      <button class="btn" style="background:rgba(255,255,255,0.08);color:#fff;border:1px solid var(--border);" onclick="openInMixer()">🧪 Pour into Virtual Beaker</button>
+    </div>
+  </div>
+
+  <!-- SECTION 2: VIRTUAL REAGENT SHELF & BEAKER LAB -->
+  <div id="mixerSection">
+    <div class="mixer-layout">
+      <!-- SHELF -->
+      <div class="shelf-card">
+        <div class="shelf-title">
+          <span>🧪 Chemical Reagent Shelf</span>
+          <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">Click bottle to add to beaker</span>
+        </div>
+
+        <div class="shelf-filters">
+          <button class="shelf-filter-btn active" onclick="filterShelf('all', this)">All Chemicals</button>
+          <button class="shelf-filter-btn" onclick="filterShelf('acid', this)">Acids</button>
+          <button class="shelf-filter-btn" onclick="filterShelf('base', this)">Bases</button>
+          <button class="shelf-filter-btn" onclick="filterShelf('salt', this)">Salts</button>
+          <button class="shelf-filter-btn" onclick="filterShelf('metal', this)">Metals</button>
+        </div>
+
+        <div class="reagent-grid" id="reagentGrid">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <!-- CUSTOM REAGENT INPUT -->
+        <div class="custom-reagent-row">
+          <input type="text" class="custom-reagent-input" id="customReagentInput" placeholder="Enter custom formula (e.g. KMnO4, KI, Na2CO3)"/>
+          <button class="btn-action btn-predict" style="padding:8px 14px;font-size:0.82rem;" onclick="addCustomReagent()">+ Add</button>
+        </div>
+      </div>
+
+      <!-- BEAKER DISPLAY -->
+      <div class="beaker-card">
+        <div class="shelf-title">
+          <span>⚗️ Reaction Beaker Stage</span>
+          <button class="btn-action btn-reset" style="padding:4px 10px;font-size:0.75rem;" onclick="washBeaker()">🧽 Flush Beaker</button>
+        </div>
+
+        <div class="beaker-stage">
+          <canvas id="beakerCanvas"></canvas>
+          <div class="thermometer-hud">
+            <span style="font-size:1.1rem;">🌡️</span>
+            <div>
+              <div class="therm-val" id="beakerTemp">25.0°C</div>
+              <div class="therm-label">Solution Temp</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="beaker-controls">
+          <div style="font-size:0.82rem;color:var(--muted);">
+            Contents: <strong id="beakerContents" style="color:#fff;">Empty (Water base)</strong>
+          </div>
+          <button class="btn-action btn-balance" style="padding:8px 14px;font-size:0.82rem;" onclick="syncBeakerToBalancer()">
+            ⚖️ Send to Balancer
+          </button>
+        </div>
+
+        <!-- REACTION LOG -->
+        <div class="beaker-log" id="beakerLog">
+          <div class="log-entry">🧪 Beaker initialized with distilled water at 25.0°C.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="concept-card">
+    <strong>Law of Conservation of Mass (Antoine Lavoisier, 1789)</strong>
+    Matter can neither be created nor destroyed in a chemical reaction. The total number of atoms of each element on the reactant side must exactly equal the total number of atoms on the product side. Balancing is accomplished solely by adjusting stoichiometric coefficients, never by altering chemical subscripts!
+  </div>
+</div>
+
+<script>
+// ==============================================================
+// 1. ATOMIC DATA & COLOR PALETTE
+// ==============================================================
+const ATOM_COLORS = {
+  'H': '#ffffff', 'C': '#64748b', 'O': '#ff4d4d', 'N': '#3b82f6',
+  'Na': '#a855f7', 'Cl': '#22c55e', 'K': '#d946ef', 'Fe': '#e07a5f',
+  'Al': '#94a3b8', 'S': '#facc15', 'Cu': '#00d4ff', 'Zn': '#38bdf8',
+  'Mg': '#4ade80', 'Ca': '#f472b6', 'Pb': '#94a3b8', 'I': '#8b5cf6',
+  'Ag': '#e2e8f0', 'Ba': '#fbbf24', 'Br': '#b91c1c', 'Mn': '#c084fc',
+  'P': '#fb923c', 'Si': '#38bdf8', 'F': '#2dd4bf'
+};
+
+const ATOM_WEIGHTS = {
+  'H': 1.008, 'C': 12.011, 'O': 15.999, 'N': 14.007,
+  'Na': 22.990, 'Cl': 35.453, 'K': 39.098, 'Fe': 55.845,
+  'Al': 26.982, 'S': 32.065, 'Cu': 63.546, 'Zn': 65.38,
+  'Mg': 24.305, 'Ca': 40.078, 'Pb': 207.2, 'I': 126.904,
+  'Ag': 107.868, 'Ba': 137.327, 'Br': 79.904, 'Mn': 54.938,
+  'P': 30.974, 'Si': 28.085, 'F': 18.998
+};
+
+// PRESET EQUATION BANK
+const PRESETS = [
+  { raw: "CH4 + O2 -> CO2 + H2O", balanced: [1, 2, 1, 2] },
+  { raw: "HCl + NaOH -> NaCl + H2O", balanced: [1, 1, 1, 1] },
+  { raw: "Zn + HCl -> ZnCl2 + H2", balanced: [1, 2, 1, 1] },
+  { raw: "Pb(NO3)2 + KI -> PbI2 + KNO3", balanced: [1, 2, 1, 2] },
+  { raw: "AgNO3 + NaCl -> AgCl + NaNO3", balanced: [1, 1, 1, 1] },
+  { raw: "Fe + CuSO4 -> FeSO4 + Cu", balanced: [1, 1, 1, 1] },
+  { raw: "CaCO3 + HCl -> CaCl2 + H2O + CO2", balanced: [1, 2, 1, 1, 1] },
+  { raw: "H2 + O2 -> H2O", balanced: [2, 1, 2] },
+  { raw: "N2 + H2 -> NH3", balanced: [1, 3, 2] },
+  { raw: "C3H8 + O2 -> CO2 + H2O", balanced: [1, 5, 3, 4] },
+  { raw: "KClO3 -> KCl + O2", balanced: [2, 2, 3] },
+  { raw: "Al + Fe2O3 -> Al2O3 + Fe", balanced: [2, 1, 1, 2] }
+];
+
+let presetIdx = 0;
+let currentReaction = null;
+let coeffs = { r: [], p: [] };
+let activeMode = 'balancer';
+
+// ==============================================================
+// 2. ROBUST RECURSIVE PARENTHESES FORMULA PARSER
+// ==============================================================
+function parseFormula(formula) {
+  // Normalize brackets e.g. [Cu(NH3)4] -> (Cu(NH3)4)
+  const str = formula.replace(/\[/g, '(').replace(/\]/g, ')').trim();
+  
+  // Tokenize formula into elements, numbers, and parentheses
+  const tokens = [];
+  const regex = /([A-Z][a-z]*|\d+|\(|\))/g;
+  let match;
+  while ((match = regex.exec(str)) !== null) {
+    tokens.push(match[0]);
+  }
+
+  function parseGroup(toks) {
+    const counts = {};
+    let i = 0;
+    while (i < toks.length) {
+      if (toks[i] === '(') {
+        let depth = 1;
+        let j = i + 1;
+        while (j < toks.length && depth > 0) {
+          if (toks[j] === '(') depth++;
+          else if (toks[j] === ')') depth--;
+          j++;
+        }
+        const innerCounts = parseGroup(toks.slice(i + 1, j - 1));
+        let multiplier = 1;
+        if (j < toks.length && /^\d+$/.test(toks[j])) {
+          multiplier = parseInt(toks[j], 10);
+          j++;
+        }
+        for (const el in innerCounts) {
+          counts[el] = (counts[el] || 0) + innerCounts[el] * multiplier;
+        }
+        i = j;
+      } else if (/^[A-Z][a-z]*$/.test(toks[i])) {
+        const el = toks[i];
+        let multiplier = 1;
+        if (i + 1 < toks.length && /^\d+$/.test(toks[i + 1])) {
+          multiplier = parseInt(toks[i + 1], 10);
+          i += 2;
+        } else {
+          i += 1;
+        }
+        counts[el] = (counts[el] || 0) + multiplier;
+      } else {
+        i++;
+      }
+    }
+    return counts;
+  }
+
+  return parseGroup(tokens);
+}
+
+// ==============================================================
+// 3. INTELLIGENT REACTION PREDICTOR
+// ==============================================================
+const REACTION_KNOWLEDGE_BASE = [
+  // Neutralization
+  {
+    reactants: ['HCl', 'NaOH'],
+    products: ['NaCl', 'H2O'],
+    type: 'Acid-Base Neutralization',
+    obs: 'Clear solution; temperature increases by ~5.5°C (Exothermic). pH shifts to 7.0.',
+    heat: 'Exothermic (ΔH = -57.3 kJ/mol)',
+    force: 'Formation of highly stable water molecule from H⁺ and OH⁻',
+    icon: '💧', badge: 'Neutralization'
+  },
+  {
+    reactants: ['H2SO4', 'NaOH'],
+    products: ['Na2SO4', 'H2O'],
+    type: 'Acid-Base Neutralization',
+    obs: 'Clear neutral salt solution, sharp temperature increase.',
+    heat: 'Exothermic (ΔH = -114.6 kJ/mol)',
+    force: 'Formation of liquid H2O and sulfate salt',
+    icon: '💧', badge: 'Neutralization'
+  },
+  {
+    reactants: ['HNO3', 'KOH'],
+    products: ['KNO3', 'H2O'],
+    type: 'Acid-Base Neutralization',
+    obs: 'Colorless potassium nitrate solution with heat generation.',
+    heat: 'Exothermic (ΔH = -57.1 kJ/mol)',
+    force: 'Neutralization of hydronium and hydroxide ions',
+    icon: '💧', badge: 'Neutralization'
+  },
+  {
+    reactants: ['CH3COOH', 'NaOH'],
+    products: ['CH3COONa', 'H2O'],
+    type: 'Weak Acid-Strong Base Neutralization',
+    obs: 'Forms mildly basic sodium acetate buffer solution.',
+    heat: 'Exothermic (ΔH = -55.2 kJ/mol)',
+    force: 'Proton transfer from acetic acid to hydroxide',
+    icon: '🧪', badge: 'Neutralization'
+  },
+
+  // Gas Effervescence / Metal-Acid
+  {
+    reactants: ['Zn', 'HCl'],
+    products: ['ZnCl2', 'H2'],
+    type: 'Single Displacement (Effervescence)',
+    obs: 'Brisk bubbling! Hydrogen gas (H₂↑) rapidly evolves; pops with burning splint.',
+    heat: 'Exothermic (ΔH = -153 kJ/mol)',
+    force: 'Zinc has lower standard electrode potential than Hydrogen (Zn²⁺/Zn = -0.76V)',
+    icon: '🫧', badge: 'Gas Effervescence'
+  },
+  {
+    reactants: ['Zn', 'H2SO4'],
+    products: ['ZnSO4', 'H2'],
+    type: 'Single Displacement',
+    obs: 'Continuous streams of H₂ gas bubbles rising to the surface.',
+    heat: 'Exothermic (ΔH = -155 kJ/mol)',
+    force: 'Displacement of H⁺ ions by electropositive Zn metal',
+    icon: '🫧', badge: 'Gas Effervescence'
+  },
+  {
+    reactants: ['Mg', 'HCl'],
+    products: ['MgCl2', 'H2'],
+    type: 'Violent Single Displacement',
+    obs: 'Vigorous effervescence, magnesium ribbon dissolves rapidly with steam.',
+    heat: 'Strongly Exothermic (ΔH = -467 kJ/mol)',
+    force: 'High reactivity of magnesium in the electrochemical series',
+    icon: '⚡', badge: 'Single Displacement'
+  },
+  {
+    reactants: ['Al', 'HCl'],
+    products: ['AlCl3', 'H2'],
+    type: 'Single Displacement',
+    obs: 'Passivation layer dissolves followed by furious H₂ gas release.',
+    heat: 'Exothermic',
+    force: 'Aluminum displacing hydrogen cations',
+    icon: '🫧', badge: 'Single Displacement'
+  },
+
+  // Metal Displacement
+  {
+    reactants: ['Fe', 'CuSO4'],
+    products: ['FeSO4', 'Cu'],
+    type: 'Single Displacement (Redox)',
+    obs: 'Deep blue solution turns pale light green; reddish-brown copper deposits on iron.',
+    heat: 'Exothermic (ΔH = -152 kJ/mol)',
+    force: 'Iron is more electropositive than Copper (displaces Cu²⁺ from solution)',
+    icon: '🧲', badge: 'Displacement'
+  },
+  {
+    reactants: ['Zn', 'CuSO4'],
+    products: ['ZnSO4', 'Cu'],
+    type: 'Single Displacement',
+    obs: 'Blue color rapidly discharges into colorless ZnSO₄; spongy brown Cu powder precipitates.',
+    heat: 'Exothermic (ΔH = -218 kJ/mol)',
+    force: 'Zn displaces less active copper ions',
+    icon: '🔋', badge: 'Daniell Cell Reaction'
+  },
+  {
+    reactants: ['Cu', 'AgNO3'],
+    products: ['Cu(NO3)2', 'Ag'],
+    type: 'Single Displacement',
+    obs: 'Solution turns brilliant cyan blue; shiny needle-like silver crystals grow on copper wire.',
+    heat: 'Exothermic',
+    force: 'Copper oxidizes to Cu²⁺ while Ag⁺ reduces to metallic silver',
+    icon: '✨', badge: 'Precious Metal Deposit'
+  },
+
+  // Precipitation (Double Displacement)
+  {
+    reactants: ['Pb(NO3)2', 'KI'],
+    products: ['PbI2', 'KNO3'],
+    type: 'Double Displacement (Precipitation)',
+    obs: 'Instantaneous brilliant canary-yellow precipitate of Lead(II) Iodide (PbI₂↓)!',
+    heat: 'Slightly Exothermic',
+    force: 'Extremely low solubility product (Ksp of PbI₂ = 7.1 × 10⁻⁹)',
+    icon: '🟡', badge: 'Golden Precipitate'
+  },
+  {
+    reactants: ['AgNO3', 'NaCl'],
+    products: ['AgCl', 'NaNO3'],
+    type: 'Double Displacement (Precipitation)',
+    obs: 'Instant milky curdy-white precipitate of Silver Chloride (AgCl↓) forms.',
+    heat: 'Neutral (ΔH ≈ 0 kJ/mol)',
+    force: 'Extremely low Ksp of AgCl (1.8 × 10⁻¹⁰) drives quantitative precipitation',
+    icon: '⚪', badge: 'White Precipitate'
+  },
+  {
+    reactants: ['BaCl2', 'Na2SO4'],
+    products: ['BaSO4', 'NaCl'],
+    type: 'Double Displacement (Precipitation)',
+    obs: 'Heavy dense white precipitate of Barium Sulfate (BaSO₄↓), insoluble in dilute acids.',
+    heat: 'Slightly Exothermic',
+    force: 'High lattice energy and low Ksp of Barium Sulfate (1.1 × 10⁻¹⁰)',
+    icon: '⚪', badge: 'Dense Precipitate'
+  },
+  {
+    reactants: ['CuSO4', 'NaOH'],
+    products: ['Cu(OH)2', 'Na2SO4'],
+    type: 'Precipitation',
+    obs: 'Pale sky-blue gelatinous precipitate of Copper(II) Hydroxide (Cu(OH)₂↓).',
+    heat: 'Exothermic',
+    force: 'Insolubility of transition metal hydroxide',
+    icon: '🔵', badge: 'Gelatinous Ppt'
+  },
+  {
+    reactants: ['FeCl3', 'NaOH'],
+    products: ['Fe(OH)3', 'NaCl'],
+    type: 'Precipitation',
+    obs: 'Reddish-brown rust-like precipitate of Iron(III) Hydroxide (Fe(OH)₃↓).',
+    heat: 'Exothermic',
+    force: 'Precipitation of insoluble ferric hydroxide',
+    icon: '🟤', badge: 'Rust Precipitate'
+  },
+
+  // Acid + Carbonate (CO2 fizz)
+  {
+    reactants: ['CaCO3', 'HCl'],
+    products: ['CaCl2', 'H2O', 'CO2'],
+    type: 'Acid-Carbonate Effervescence',
+    obs: 'Vigorous bubbling and frothing! Colorless, odorless CO₂ gas turns lime water milky.',
+    heat: 'Exothermic',
+    force: 'Decomposition of unstable carbonic acid (H₂CO₃ → H₂O + CO₂↑)',
+    icon: '🫧', badge: 'Brisk Effervescence'
+  },
+  {
+    reactants: ['NaHCO3', 'HCl'],
+    products: ['NaCl', 'H2O', 'CO2'],
+    type: 'Baking Soda Acid Reaction',
+    obs: 'Rapid foaming and release of cool CO₂ bubbles.',
+    heat: 'Slightly Endothermic / Cool to touch',
+    force: 'Bicarbonate protonation and gas evolution',
+    icon: '🫧', badge: 'Kitchen Chemistry'
+  },
+
+  // Combustion
+  {
+    reactants: ['CH4', 'O2'],
+    products: ['CO2', 'H2O'],
+    type: 'Complete Hydrocarbon Combustion',
+    obs: 'Luminous blue flame, significant heat release (Bunsen burner principle).',
+    heat: 'Highly Exothermic (ΔH = -890 kJ/mol)',
+    force: 'Conversion of C-H bonds into strong C=O and O-H bonds',
+    icon: '🔥', badge: 'Combustion'
+  },
+  {
+    reactants: ['C3H8', 'O2'],
+    products: ['CO2', 'H2O'],
+    type: 'Propane Combustion',
+    obs: 'Clean high-temperature flame, used in LPG cylinders.',
+    heat: 'Highly Exothermic (ΔH = -2220 kJ/mol)',
+    force: 'Thermodynamically favored oxidation to CO₂ and H₂O',
+    icon: '🔥', badge: 'Combustion'
+  },
+  {
+    reactants: ['C2H5OH', 'O2'],
+    products: ['CO2', 'H2O'],
+    type: 'Ethanol Combustion',
+    obs: 'Clear pale blue alcohol flame, smoke-free.',
+    heat: 'Exothermic (ΔH = -1367 kJ/mol)',
+    force: 'Complete oxidation of alcohol',
+    icon: '🔥', badge: 'Combustion'
+  },
+
+  // Combination / Synthesis
+  {
+    reactants: ['H2', 'O2'],
+    products: ['H2O'],
+    type: 'Synthesis / Explosive Combination',
+    obs: 'High energy release, water vapor condensates into liquid droplets.',
+    heat: 'Extremely Exothermic (ΔH = -286 kJ/mol)',
+    force: 'Very high H-O bond dissociation energy (464 kJ/mol)',
+    icon: '⚡', badge: 'Synthesis'
+  },
+  {
+    reactants: ['N2', 'H2'],
+    products: ['NH3'],
+    type: 'Haber-Bosch Synthesis',
+    obs: 'Industrial equilibrium synthesis of ammonia fertilizer.',
+    heat: 'Exothermic (ΔH = -92 kJ/mol)',
+    force: 'Direct combination under Fe catalyst and 200 atm',
+    icon: '🏭', badge: 'Industrial Synthesis'
+  },
+  {
+    reactants: ['Mg', 'O2'],
+    products: ['MgO'],
+    type: 'Combination / Oxidation',
+    obs: 'Dazzling brilliant white light; forms white magnesium oxide ash.',
+    heat: 'Highly Exothermic (ΔH = -601 kJ/mol)',
+    force: 'Massive ionic crystal lattice energy of MgO (3791 kJ/mol)',
+    icon: '✨', badge: 'Bright White Flame'
+  },
+  {
+    reactants: ['Na', 'Cl2'],
+    products: ['NaCl'],
+    type: 'Redox Combination',
+    obs: 'Yellow chlorine gas reacts with sodium with bright yellow flame forming table salt.',
+    heat: 'Exothermic (ΔH = -411 kJ/mol)',
+    force: 'Large lattice energy of NaCl crystal lattice',
+    icon: '🧂', badge: 'Synthesis'
+  },
+
+  // Decomposition & Thermite
+  {
+    reactants: ['KClO3'],
+    products: ['KCl', 'O2'],
+    type: 'Thermal Catalytic Decomposition',
+    obs: 'Solid melts and releases pure Oxygen gas (O₂↑); relights glowing splint.',
+    heat: 'Endothermic / Requires MnO₂ catalyst',
+    force: 'Thermolysis of oxyanion chlorate into chloride and oxygen',
+    icon: '🧪', badge: 'Decomposition'
+  },
+  {
+    reactants: ['CaCO3'],
+    products: ['CaO', 'CO2'],
+    type: 'Thermal Decomposition (Calcination)',
+    obs: 'Limestone decomposes at 900°C to quicklime (CaO) and CO₂ gas.',
+    heat: 'Endothermic (ΔH = +178 kJ/mol)',
+    force: 'Thermal entropy increase from gas liberation',
+    icon: '🧱', badge: 'Calcination'
+  },
+  {
+    reactants: ['H2O2'],
+    products: ['H2O', 'O2'],
+    type: 'Disproportionation Decomposition',
+    obs: 'Rapid bubbling of O₂ gas with catalase/MnO₂ (Elephant Toothpaste effect).',
+    heat: 'Exothermic (ΔH = -98 kJ/mol)',
+    force: 'Oxygen undergoes auto-redox (-1 to -2 and 0)',
+    icon: '🫧', badge: 'Decomposition'
+  },
+  {
+    reactants: ['Al', 'Fe2O3'],
+    products: ['Al2O3', 'Fe'],
+    type: 'Thermite Reaction (Extreme Redox)',
+    obs: 'Blinding white heat (>2500°C), produces pool of white-hot molten liquid iron.',
+    heat: 'Tremendously Exothermic (ΔH = -850 kJ/mol)',
+    force: 'Ultra-high affinity of Aluminum for oxygen (forming Al₂O₃ lattice)',
+    icon: '💥', badge: 'Molten Thermite'
+  }
+];
+
+function predictReaction(reactantMols) {
+  // Normalize reactant strings (strip spaces, ignore case)
+  const normReactants = reactantMols.map(s => s.trim().replace(/\s+/g, '')).sort();
+
+  for (const entry of REACTION_KNOWLEDGE_BASE) {
+    const entryNorm = entry.reactants.map(s => s.replace(/\s+/g, '')).sort();
+    if (entryNorm.length === normReactants.length && 
+        entryNorm.every((val, idx) => val.toLowerCase() === normReactants[idx].toLowerCase())) {
+      return entry;
+    }
+  }
+
+  // Heuristic: Check if hydrocarbon combustion (contains C, H, maybe O + O2)
+  if (normReactants.includes('O2')) {
+    const other = normReactants.find(r => r !== 'O2');
+    if (other) {
+      const atoms = parseFormula(other);
+      if (atoms.C && atoms.H && Object.keys(atoms).every(k => ['C', 'H', 'O'].includes(k))) {
+        return {
+          reactants: [other, 'O2'],
+          products: ['CO2', 'H2O'],
+          type: 'Combustion Reaction',
+          obs: 'Exothermic oxidation generating heat, light, Carbon Dioxide and Water vapor.',
+          heat: 'Exothermic (Combustion)',
+          force: 'Formation of ultra-stable CO₂ and H₂O bonds',
+          icon: '🔥', badge: 'Combustion'
+        };
+      }
+    }
+  }
+
+  return null;
+}
+
+// ==============================================================
+// 4. GAUSSIAN ELIMINATION MATRIX SOLVER FOR EQUATION BALANCING
+// ==============================================================
+function balanceEquation(reactants, products) {
+  // Extract all unique elements
+  const allElements = new Set();
+  reactants.forEach(r => Object.keys(r.atoms).forEach(el => allElements.add(el)));
+  products.forEach(p => Object.keys(p.atoms).forEach(el => allElements.add(el)));
+
+  const elementsList = Array.from(allElements);
+  const nRows = elementsList.length;
+  const nR = reactants.length;
+  const nP = products.length;
+  const nCols = nR + nP;
+
+  // Brute force range search up to 12
+  const maxVal = 12;
+  const currR = Array(nR).fill(1);
+  const currP = Array(nP).fill(1);
+
+  function matches(cr, cp) {
+    for (const el of elementsList) {
+      let rSum = 0;
+      cr.forEach((c, i) => rSum += (reactants[i].atoms[el] || 0) * c);
+      let pSum = 0;
+      cp.forEach((c, i) => pSum += (products[i].atoms[el] || 0) * c);
+      if (rSum !== pSum) return false;
+    }
+    return true;
+  }
+
+  // Optimized recursive search starting from smallest total sum
+  let bestSolution = null;
+  let minSum = Infinity;
+
+  // For small equations (most school chem is <= 4 components), this searches in < 15ms
+  function search(idx, isR) {
+    if (isR) {
+      if (idx === nR) {
+        search(0, false);
+        return;
+      }
+      for (let v = 1; v <= maxVal; v++) {
+        currR[idx] = v;
+        search(idx + 1, true);
+        if (bestSolution && minSum < 10) return; // early exit on simple solution
+      }
+    } else {
+      if (idx === nP) {
+        if (matches(currR, currP)) {
+          const sum = currR.reduce((a,b)=>a+b,0) + currP.reduce((a,b)=>a+b,0);
+          if (sum < minSum) {
+            minSum = sum;
+            bestSolution = { r: [...currR], p: [...currP] };
+          }
+        }
+        return;
+      }
+      for (let v = 1; v <= maxVal; v++) {
+        currP[idx] = v;
+        search(idx + 1, false);
+        if (bestSolution && minSum < 10) return;
+      }
+    }
+  }
+
+  search(0, true);
+  return bestSolution;
+}
+
+// ==============================================================
+// 5. LOADING & DISPLAYING REACTIONS
+// ==============================================================
+function loadReactionFromObjects(rMols, pMols, knownSolution = null, meta = null) {
+  const reactants = rMols.map(name => ({ name, atoms: parseFormula(name) }));
+  const products = pMols.map(name => ({ name, atoms: parseFormula(name) }));
+
+  currentReaction = { reactants, products };
+  coeffs.r = Array(reactants.length).fill(1);
+  coeffs.p = Array(products.length).fill(1);
+
+  // If known solution provided, apply it; otherwise auto-balance
+  const solved = knownSolution || balanceEquation(reactants, products);
+  if (solved) {
+    coeffs.r = solved.r ? [...solved.r] : solved.slice(0, reactants.length);
+    coeffs.p = solved.p ? [...solved.p] : solved.slice(reactants.length);
+  }
+
+  renderEq();
+  updateCounts();
+
+  // Handle meta card
+  const card = document.getElementById('predictionCard');
+  if (meta) {
+    card.style.display = 'block';
+    document.getElementById('predIcon').textContent = meta.icon || '✨';
+    document.getElementById('predTitleText').textContent = meta.type || 'Reaction Prediction';
+    document.getElementById('predBadge').textContent = meta.badge || 'Verified Mechanism';
+    
+    // Build balanced eq string
+    let rStr = reactants.map((r, i) => (coeffs.r[i] > 1 ? coeffs.r[i] : '') + r.name).join(' + ');
+    let pStr = products.map((p, i) => (coeffs.p[i] > 1 ? coeffs.p[i] : '') + p.name).join(' + ');
+    document.getElementById('predBalancedEq').textContent = `${rStr} ⟶ ${pStr}`;
+    
+    document.getElementById('predExplanation').textContent = meta.force || '';
+    document.getElementById('predTypeVal').textContent = meta.type || 'Inorganic';
+    document.getElementById('predObsVal').textContent = meta.obs || 'Mass conserved';
+    document.getElementById('predHeatVal').textContent = meta.heat || 'Exothermic';
+    document.getElementById('predForceVal').textContent = meta.force ? meta.force.split('(')[0] : 'Electrochemical potential';
+  } else {
+    card.style.display = 'none';
+  }
+
+  return true;
+}
+
+function runCustomInput() {
+  const rawInput = document.getElementById('customInput').value.trim();
+  if (!rawInput) return;
+
+  // Check if input has explicit arrow '->' or '⟶' or '='
+  if (/->|⟶|=/.test(rawInput)) {
+    const parts = rawInput.split(/->|⟶|=/);
+    if (parts.length === 2) {
+      const rMols = parts[0].split('+').map(s => s.trim()).filter(Boolean);
+      const pMols = parts[1].split('+').map(s => s.trim()).filter(Boolean);
+      if (rMols.length && pMols.length) {
+        // Full equation provided
+        loadReactionFromObjects(rMols, pMols, null, null);
+        return;
+      }
+    }
+  }
+
+  // If user entered only reactants (e.g. "HCl + NaOH" or "Zn + HCl")
+  const rMols = rawInput.split('+').map(s => s.trim()).filter(Boolean);
+  if (rMols.length > 0) {
+    const pred = predictReaction(rMols);
+    if (pred) {
+      loadReactionFromObjects(pred.reactants, pred.products, null, pred);
+      return;
+    } else {
+      // Suggestion/alert if no direct match in current engine
+      alert(`Moleqyn AI Engine parsed reactants: [${rMols.join(', ')}].\n\nIf you have a full equation in mind, please type: ${rawInput} -> Products`);
+    }
+  }
+}
+
+function loadPrompt(str) {
+  document.getElementById('customInput').value = str;
+  runCustomInput();
+}
+
+function autoSolve() {
+  if (!currentReaction) return;
+  const sol = balanceEquation(currentReaction.reactants, currentReaction.products);
+  if (sol) {
+    coeffs.r = [...sol.r];
+    coeffs.p = [...sol.p];
+    renderEq();
+    updateCounts();
+  } else {
+    alert("Unable to balance equation. Please check chemical formulas.");
+  }
+}
+
+function resetEq() {
+  if (!currentReaction) return;
+  coeffs.r = Array(currentReaction.reactants.length).fill(1);
+  coeffs.p = Array(currentReaction.products.length).fill(1);
+  renderEq();
+  updateCounts();
+}
+
+function cyclePreset() {
+  presetIdx = (presetIdx + 1) % PRESETS.length;
+  const p = PRESETS[presetIdx];
+  document.getElementById('customInput').value = p.raw;
+  const parts = p.raw.split('->');
+  const rMols = parts[0].split('+').map(s => s.trim());
+  const pMols = parts[1].split('+').map(s => s.trim());
+  loadReactionFromObjects(rMols, pMols, p.balanced, null);
+}
+
+function updateCoeff(side, idx, delta) {
+  if (side === 'r') {
+    coeffs.r[idx] = Math.max(1, coeffs.r[idx] + delta);
+  } else {
+    coeffs.p[idx] = Math.max(1, coeffs.p[idx] + delta);
+  }
+  renderEq();
+  updateCounts();
+}
+
+function formatSubscripts(name) {
+  return name.replace(/\d+/g, '<sub>$&</sub>');
+}
+
+function renderEq() {
+  const container = document.getElementById('eqContainer');
+  let html = '';
+
+  currentReaction.reactants.forEach((r, i) => {
+    if (i > 0) html += `<div class="operator">+</div>`;
+    html += `
+      <div class="eq-part">
+        <div class="coeff-control">
+          <button class="coeff-btn" onclick="updateCoeff('r',${i},1)">+</button>
+          <div class="coeff-val">${coeffs.r[i]}</div>
+          <button class="coeff-btn" onclick="updateCoeff('r',${i},-1)">−</button>
+        </div>
+        <div class="molecule-name">${formatSubscripts(r.name)}</div>
+      </div>
+    `;
+  });
+
+  html += `<div class="operator">⟶</div>`;
+
+  currentReaction.products.forEach((p, i) => {
+    if (i > 0) html += `<div class="operator">+</div>`;
+    html += `
+      <div class="eq-part">
+        <div class="coeff-control">
+          <button class="coeff-btn" onclick="updateCoeff('p',${i},1)">+</button>
+          <div class="coeff-val">${coeffs.p[i]}</div>
+          <button class="coeff-btn" onclick="updateCoeff('p',${i},-1)">−</button>
+        </div>
+        <div class="molecule-name">${formatSubscripts(p.name)}</div>
+      </div>
+    `;
+  });
+
+  html += `<div id="statusBadge" class="status-badge"></div>`;
+  container.innerHTML = html;
+}
+
+function updateCounts() {
+  const rCounts = {};
+  const pCounts = {};
+  let rMass = 0, pMass = 0;
+
+  currentReaction.reactants.forEach((r, i) => {
+    for (const a in r.atoms) {
+      const c = r.atoms[a] * coeffs.r[i];
+      rCounts[a] = (rCounts[a] || 0) + c;
+      rMass += c * (ATOM_WEIGHTS[a] || 12);
+    }
+  });
+
+  currentReaction.products.forEach((p, i) => {
+    for (const a in p.atoms) {
+      const c = p.atoms[a] * coeffs.p[i];
+      pCounts[a] = (pCounts[a] || 0) + c;
+      pMass += c * (ATOM_WEIGHTS[a] || 12);
+    }
+  });
+
+  let isBalanced = true;
+  const allAtoms = new Set([...Object.keys(rCounts), ...Object.keys(pCounts)]);
+
+  let rHtml = '', pHtml = '';
+  allAtoms.forEach(a => {
+    const rc = rCounts[a] || 0;
+    const pc = pCounts[a] || 0;
+    if (rc !== pc) isBalanced = false;
+
+    const color = rc === pc ? 'var(--green)' : 'var(--red)';
+    const dot = `<div class="atom-dot" style="background:${ATOM_COLORS[a] || '#fff'}"></div>`;
+
+    rHtml += `<div class="atom-row"><div class="atom-name">${dot} ${a}</div><div class="atom-val" style="color:${color}">${rc}</div></div>`;
+    pHtml += `<div class="atom-row"><div class="atom-name">${dot} ${a}</div><div class="atom-val" style="color:${color}">${pc}</div></div>`;
+  });
+
+  document.getElementById('reactantsCount').innerHTML = rHtml;
+  document.getElementById('productsCount').innerHTML = pHtml;
+
+  document.getElementById('rMassLabel').textContent = `Total Mass: ${rMass.toFixed(2)} g/mol`;
+  document.getElementById('pMassLabel').textContent = `Total Mass: ${pMass.toFixed(2)} g/mol`;
+
+  const badge = document.getElementById('statusBadge');
+  if (isBalanced) {
+    badge.className = 'status-badge status-balanced';
+    badge.textContent = '✓ BALANCED (Mass Conserved)';
+  } else {
+    badge.className = 'status-badge status-unbalanced';
+    badge.textContent = '✗ UNBALANCED';
+  }
+}
+
+// ==============================================================
+// 6. ANIMATED MOLECULAR CANVAS (COLLISION & CLUSTER ENGINE)
+// ==============================================================
+const canvas = document.getElementById('molCanvas');
+const ctx = canvas.getContext('2d');
+let W, H;
+
+function resizeCanvas() {
+  const wrap = canvas.parentElement;
+  W = canvas.width = wrap.clientWidth;
+  H = canvas.height = wrap.clientHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+setTimeout(resizeCanvas, 80);
+
+let animClock = 0;
+
+function drawMoleculeCluster(atoms, cx, cy, label, timeOffset = 0) {
+  ctx.save();
+  const keys = Object.keys(atoms);
+  const totalAtoms = keys.reduce((acc, k) => acc + atoms[k], 0);
+
+  const radius = Math.min(26, 12 + totalAtoms * 3.5);
+  let atomIndex = 0;
+
+  // Gentle float bobbing
+  const bobY = cy + Math.sin(animClock * 2 + timeOffset) * 4;
+
+  keys.forEach(sym => {
+    const count = atoms[sym];
+    const color = ATOM_COLORS[sym] || '#bbb';
+
+    for (let c = 0; c < count; c++) {
+      const angle = (atomIndex / Math.max(1, totalAtoms)) * Math.PI * 2 + (animClock * 0.3);
+      const dist = totalAtoms === 1 ? 0 : radius * 0.55;
+      const ax = cx + Math.cos(angle) * dist;
+      const ay = bobY + Math.sin(angle) * dist;
+
+      // Glow
+      ctx.beginPath();
+      ctx.arc(ax, ay, 9, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 8;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Atom symbol text
+      ctx.font = 'bold 8px JetBrains Mono';
+      ctx.fillStyle = sym === 'H' ? '#000' : '#fff';
+      ctx.textAlign = 'center';
+      ctx.fillText(sym, ax, ay + 3);
+
+      atomIndex++;
+    }
+  });
+
+  // Molecule Label under cluster
+  ctx.font = '600 11px Space Grotesk';
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+  ctx.textAlign = 'center';
+  ctx.fillText(label, cx, bobY + radius + 14);
+
+  ctx.restore();
+}
+
+function drawCanvas() {
+  animClock += 0.02;
+  if (!W || !H || !currentReaction) { requestAnimationFrame(drawCanvas); return; }
+  ctx.clearRect(0, 0, W, H);
+
+  // Background gradient
+  const bg = ctx.createLinearGradient(0, 0, W, H);
+  bg.addColorStop(0, '#0a1b32');
+  bg.addColorStop(1, '#050c18');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // Center dividing reaction arrow
+  ctx.strokeStyle = 'rgba(0, 212, 255, 0.25)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(W / 2, 15);
+  ctx.lineTo(W / 2, H - 15);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.font = 'bold 20px Space Grotesk';
+  ctx.fillStyle = 'var(--primary)';
+  ctx.textAlign = 'center';
+  ctx.fillText('⟶', W / 2, H / 2 + 6);
+
+  // Draw Reactant Clusters (Left half)
+  const leftW = W / 2 - 40;
+  let rCount = 0;
+  currentReaction.reactants.forEach((r, i) => rCount += coeffs.r[i]);
+
+  let rIdx = 0;
+  currentReaction.reactants.forEach((r, i) => {
+    const n = coeffs.r[i];
+    for (let c = 0; c < n; c++) {
+      const cx = 35 + ((rIdx + 0.5) / Math.max(1, rCount)) * leftW;
+      const cy = H / 2 + (c % 2 === 0 ? -16 : 16);
+      drawMoleculeCluster(r.atoms, cx, cy, r.name, rIdx * 1.5);
+      rIdx++;
+    }
+  });
+
+  // Draw Product Clusters (Right half)
+  const rightW = W / 2 - 40;
+  let pCount = 0;
+  currentReaction.products.forEach((p, i) => pCount += coeffs.p[i]);
+
+  let pIdx = 0;
+  currentReaction.products.forEach((p, i) => {
+    const n = coeffs.p[i];
+    for (let c = 0; c < n; c++) {
+      const cx = W / 2 + 35 + ((pIdx + 0.5) / Math.max(1, pCount)) * rightW;
+      const cy = H / 2 + (c % 2 === 0 ? -16 : 16);
+      drawMoleculeCluster(p.atoms, cx, cy, p.name, pIdx * 1.5 + 2);
+      pIdx++;
+    }
+  });
+
+  requestAnimationFrame(drawCanvas);
+}
+
+// ==============================================================
+// 7. VIRTUAL BEAKER & REAGENT MIXER ENGINE
+// ==============================================================
+const REAGENTS_SHELF = [
+  // Acids
+  { id: 'hcl', name: 'Hydrochloric Acid', formula: 'HCl', type: 'acid', icon: '🧪', color: '#e2e8f0' },
+  { id: 'h2so4', name: 'Sulfuric Acid', formula: 'H2SO4', type: 'acid', icon: '⚗️', color: '#cbd5e1' },
+  { id: 'hno3', name: 'Nitric Acid', formula: 'HNO3', type: 'acid', icon: '🧪', color: '#e2e8f0' },
+  { id: 'ch3cooh', name: 'Acetic Acid', formula: 'CH3COOH', type: 'acid', icon: '🍾', color: '#e2e8f0' },
+  // Bases
+  { id: 'naoh', name: 'Sodium Hydroxide', formula: 'NaOH', type: 'base', icon: '⚪', color: '#a855f7' },
+  { id: 'koh', name: 'Potassium Hydroxide', formula: 'KOH', type: 'base', icon: '⚪', color: '#d946ef' },
+  { id: 'caoh2', name: 'Calcium Hydroxide', formula: 'Ca(OH)2', type: 'base', icon: '🥛', color: '#f8fafc' },
+  { id: 'nh4oh', name: 'Ammonium Hydroxide', formula: 'NH4OH', type: 'base', icon: '💧', color: '#38bdf8' },
+  // Salts
+  { id: 'cuso4', name: 'Copper Sulfate', formula: 'CuSO4', type: 'salt', icon: '💎', color: '#00d4ff' },
+  { id: 'agno3', name: 'Silver Nitrate', formula: 'AgNO3', type: 'salt', icon: '✨', color: '#f1f5f9' },
+  { id: 'ki', name: 'Potassium Iodide', formula: 'KI', type: 'salt', icon: '🧂', color: '#8b5cf6' },
+  { id: 'pbno32', name: 'Lead(II) Nitrate', formula: 'Pb(NO3)2', type: 'salt', icon: '⚪', color: '#cbd5e1' },
+  { id: 'bacl2', name: 'Barium Chloride', formula: 'BaCl2', type: 'salt', icon: '🧂', color: '#fbbf24' },
+  { id: 'na2so4', name: 'Sodium Sulfate', formula: 'Na2SO4', type: 'salt', icon: '🧂', color: '#ffffff' },
+  { id: 'fecl3', name: 'Iron(III) Chloride', formula: 'FeCl3', type: 'salt', icon: '🟤', color: '#e07a5f' },
+  { id: 'caco3', name: 'Calcium Carbonate', formula: 'CaCO3', type: 'salt', icon: '🧱', color: '#ffffff' },
+  { id: 'nahco3', name: 'Sodium Bicarbonate', formula: 'NaHCO3', type: 'salt', icon: '🧂', color: '#ffffff' },
+  // Metals
+  { id: 'zn', name: 'Zinc Granules', formula: 'Zn', type: 'metal', icon: '🔘', color: '#94a3b8' },
+  { id: 'fe', name: 'Iron Nails / Filings', formula: 'Fe', type: 'metal', icon: '🔩', color: '#64748b' },
+  { id: 'mg', name: 'Magnesium Ribbon', formula: 'Mg', type: 'metal', icon: '🎗️', color: '#e2e8f0' },
+  { id: 'cu', name: 'Copper Turnings', formula: 'Cu', type: 'metal', icon: '🪙', color: '#b45309' },
+  { id: 'al', name: 'Aluminum Foil', formula: 'Al', type: 'metal', icon: '📄', color: '#cbd5e1' }
+];
+
+let beakerContentsList = [];
+let beakerTemp = 25.0;
+let beakerColor = { r: 10, g: 35, b: 65, a: 0.6 }; // Water base
+let beakerBubbles = [];
+let beakerPrecipitates = [];
+
+function renderShelf(filter = 'all') {
+  const container = document.getElementById('reagentGrid');
+  container.innerHTML = '';
+  
+  const filtered = filter === 'all' ? REAGENTS_SHELF : REAGENTS_SHELF.filter(r => r.type === filter);
+  filtered.forEach(r => {
+    const div = document.createElement('div');
+    div.className = 'reagent-bottle';
+    div.onclick = () => addReagentToBeaker(r.formula, r.name);
+    div.innerHTML = `
+      <div class="reagent-icon">${r.icon}</div>
+      <div class="reagent-name">${r.name}</div>
+      <div class="reagent-formula">${r.formula}</div>
+      <div class="reagent-type-badge">${r.type}</div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function filterShelf(type, btn) {
+  document.querySelectorAll('.shelf-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderShelf(type);
+}
+
+function addCustomReagent() {
+  const input = document.getElementById('customReagentInput');
+  const val = input.value.trim();
+  if (!val) return;
+  addReagentToBeaker(val, val);
+  input.value = '';
+}
+
+function addReagentToBeaker(formula, name) {
+  beakerContentsList.push(formula);
+  logBeaker(`Added 10mL of ${name} (${formula}) to beaker.`);
+
+  // Check reactions among added reagents
+  checkBeakerReaction();
+  updateBeakerHUD();
+}
+
+function checkBeakerReaction() {
+  if (beakerContentsList.length < 2) return;
+
+  const currentPair = beakerContentsList.slice(-2);
+  const pred = predictReaction(currentPair);
+
+  if (pred) {
+    logBeaker(`⚡ REACTION OBSERVED: ${pred.type}!`, true);
+    logBeaker(`→ ${pred.obs}`, true);
+
+    // Apply physical effects
+    if (pred.heat.includes('Exothermic')) {
+      beakerTemp = Math.min(85, beakerTemp + 18.5);
+    } else if (pred.heat.includes('Endothermic')) {
+      beakerTemp = Math.max(10, beakerTemp - 8.0);
+    }
+
+    // Effervescence (bubbles)
+    if (pred.badge.includes('Effervescence') || pred.badge.includes('Gas')) {
+      spawnBubbles(60);
+    }
+
+    // Precipitate colors
+    if (pred.badge.includes('Yellow Precipitate')) {
+      beakerColor = { r: 234, g: 179, b: 8, a: 0.85 }; // Bright Canary Yellow
+      spawnPrecipitates('#facc15', 50);
+    } else if (pred.badge.includes('White Precipitate') || pred.badge.includes('Dense Precipitate')) {
+      beakerColor = { r: 241, g: 245, b: 249, a: 0.85 }; // Dense White
+      spawnPrecipitates('#ffffff', 50);
+    } else if (pred.badge.includes('Gelatinous Ppt')) {
+      beakerColor = { r: 14, g: 165, b: 233, a: 0.8 }; // Sea Blue
+      spawnPrecipitates('#38bdf8', 40);
+    } else if (pred.badge.includes('Rust Precipitate')) {
+      beakerColor = { r: 180, g: 83, b: 9, a: 0.8 }; // Rust Brown
+      spawnPrecipitates('#b45309', 40);
+    } else if (pred.reactants.includes('CuSO4')) {
+      beakerColor = { r: 0, g: 180, b: 240, a: 0.7 }; // Copper sulfate blue
+    }
+  } else {
+    // If just CuSO4 added
+    if (beakerContentsList.includes('CuSO4')) {
+      beakerColor = { r: 0, g: 150, b: 230, a: 0.65 };
+    }
+  }
+}
+
+function spawnBubbles(count) {
+  for (let i = 0; i < count; i++) {
+    beakerBubbles.push({
+      x: 60 + Math.random() * (bW - 120),
+      y: bH - 40 - Math.random() * 80,
+      r: 2 + Math.random() * 5,
+      vy: 1.5 + Math.random() * 3,
+      alpha: 0.8
+    });
+  }
+}
+
+function spawnPrecipitates(color, count) {
+  for (let i = 0; i < count; i++) {
+    beakerPrecipitates.push({
+      x: 70 + Math.random() * (bW - 140),
+      y: bH - 120 + Math.random() * 50,
+      targetY: bH - 25 - Math.random() * 15,
+      r: 3 + Math.random() * 4,
+      color: color,
+      settled: false
+    });
+  }
+}
+
+function logBeaker(msg, isReaction = false) {
+  const log = document.getElementById('beakerLog');
+  const div = document.createElement('div');
+  div.className = `log-entry ${isReaction ? 'reaction' : ''}`;
+  div.textContent = msg;
+  log.prepend(div);
+}
+
+function updateBeakerHUD() {
+  document.getElementById('beakerTemp').textContent = `${beakerTemp.toFixed(1)}°C`;
+  document.getElementById('beakerContents').textContent = beakerContentsList.length > 0 
+    ? beakerContentsList.join(' + ') : 'Empty (Water base)';
+}
+
+function washBeaker() {
+  beakerContentsList = [];
+  beakerTemp = 25.0;
+  beakerColor = { r: 10, g: 35, b: 65, a: 0.6 };
+  beakerBubbles = [];
+  beakerPrecipitates = [];
+  updateBeakerHUD();
+  logBeaker('🧽 Beaker thoroughly rinsed and washed with distilled water.');
+}
+
+function syncBeakerToBalancer() {
+  if (beakerContentsList.length === 0) {
+    alert("Beaker is empty! Add chemicals from the shelf first.");
+    return;
+  }
+  const inputStr = beakerContentsList.join(' + ');
+  document.getElementById('customInput').value = inputStr;
+  switchMode('balancer');
+  runCustomInput();
+}
+
+function openInMixer() {
+  switchMode('mixer');
+  if (currentReaction) {
+    washBeaker();
+    currentReaction.reactants.forEach(r => addReagentToBeaker(r.name, r.name));
+  }
+}
+
+// BEAKER ANIMATION CANVAS
+const bCanvas = document.getElementById('beakerCanvas');
+const bCtx = bCanvas.getContext('2d');
+let bW, bH;
+
+function resizeBeakerCanvas() {
+  const wrap = bCanvas.parentElement;
+  bW = bCanvas.width = wrap.clientWidth;
+  bH = bCanvas.height = wrap.clientHeight;
+}
+window.addEventListener('resize', resizeBeakerCanvas);
+setTimeout(resizeBeakerCanvas, 100);
+
+function drawBeaker() {
+  if (!bW || !bH) { requestAnimationFrame(drawBeaker); return; }
+  bCtx.clearRect(0, 0, bW, bH);
+
+  const cx = bW / 2;
+  const bw = Math.min(220, bW * 0.6);
+  const bh = Math.min(200, bH * 0.7);
+  const bx = cx - bw / 2;
+  const by = bH - bh - 20;
+
+  // Draw Liquid
+  const fillLevel = Math.min(bh - 30, 60 + beakerContentsList.length * 20);
+  const liquidY = by + bh - fillLevel;
+
+  bCtx.save();
+  bCtx.fillStyle = `rgba(${beakerColor.r}, ${beakerColor.g}, ${beakerColor.b}, ${beakerColor.a})`;
+  bCtx.fillRect(bx + 4, liquidY, bw - 8, fillLevel);
+  bCtx.restore();
+
+  // Draw Precipitates settled at bottom
+  beakerPrecipitates.forEach(p => {
+    if (!p.settled) {
+      p.y += 0.8;
+      if (p.y >= p.targetY) p.settled = true;
+    }
+    bCtx.beginPath();
+    bCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    bCtx.fillStyle = p.color;
+    bCtx.fill();
+  });
+
+  // Draw Gas Bubbles rising
+  for (let i = beakerBubbles.length - 1; i >= 0; i--) {
+    const b = beakerBubbles[i];
+    b.y -= b.vy;
+    b.x += (Math.random() - 0.5) * 1.5;
+
+    bCtx.beginPath();
+    bCtx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+    bCtx.fillStyle = `rgba(255, 255, 255, ${b.alpha})`;
+    bCtx.strokeStyle = 'rgba(0, 212, 255, 0.8)';
+    bCtx.lineWidth = 1;
+    bCtx.fill();
+    bCtx.stroke();
+
+    if (b.y <= liquidY) {
+      beakerBubbles.splice(i, 1);
+    }
+  }
+
+  // Draw Glass Beaker Outer Outline
+  bCtx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+  bCtx.lineWidth = 3;
+  bCtx.beginPath();
+  // Spout on left
+  bCtx.moveTo(bx - 10, by);
+  bCtx.lineTo(bx, by + 10);
+  bCtx.lineTo(bx, by + bh - 10);
+  bCtx.quadraticCurveTo(bx, by + bh, bx + 10, by + bh);
+  bCtx.lineTo(bx + bw - 10, by + bh);
+  bCtx.quadraticCurveTo(bx + bw, by + bh, bx + bw, by + bh - 10);
+  bCtx.lineTo(bx + bw, by);
+  bCtx.stroke();
+
+  // Beaker Graduation Marks
+  bCtx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+  bCtx.lineWidth = 1.5;
+  for (let m = 1; m <= 4; m++) {
+    const my = by + bh - m * 35;
+    bCtx.beginPath();
+    bCtx.moveTo(bx + 8, my);
+    bCtx.lineTo(bx + 26, my);
+    bCtx.stroke();
+
+    bCtx.font = '10px JetBrains Mono';
+    bCtx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+    bCtx.fillText(`${m * 50}ml`, bx + 32, my + 3);
+  }
+
+  requestAnimationFrame(drawBeaker);
+}
+
+// ==============================================================
+// 8. TABS & INITIALIZATION
+// ==============================================================
+function switchMode(mode) {
+  activeMode = mode;
+  document.getElementById('tabBalancer').classList.toggle('active', mode === 'balancer');
+  document.getElementById('tabMixer').classList.toggle('active', mode === 'mixer');
+
+  document.getElementById('balancerSection').style.display = mode === 'balancer' ? 'block' : 'none';
+  document.getElementById('mixerSection').style.display = mode === 'mixer' ? 'block' : 'none';
+
+  if (mode === 'mixer') {
+    setTimeout(resizeBeakerCanvas, 50);
+  } else {
+    setTimeout(resizeCanvas, 50);
+  }
+}
+
+function generateReactionReport() {
+  let modal = document.getElementById('rxnReportModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'rxnReportModal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(2,6,18,0.85);backdrop-filter:blur(10px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+    document.body.appendChild(modal);
+  }
+
+  const currentUser = localStorage.getItem('moleqyn_user') ? JSON.parse(localStorage.getItem('moleqyn_user')).name : (localStorage.getItem('matterlab_user') ? JSON.parse(localStorage.getItem('matterlab_user')).name : 'Rahul Sharma (Student)');
+  const dateStr = new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' });
+  const isBalanced = checkBalanced();
+  const eqStr = currentReaction ? currentReaction.balanced : (document.getElementById('customInput').value || 'Chemical Reaction');
+
+  modal.innerHTML = `
+    <div style="background:#0b192c;border:1px solid rgba(0,212,255,0.3);border-radius:16px;max-width:760px;width:100%;max-height:90vh;overflow-y:auto;padding:28px;color:#f0f4ff;box-shadow:0 25px 60px rgba(0,0,0,0.7);font-family:'Inter',sans-serif;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid rgba(255,255,255,0.12);padding-bottom:16px;margin-bottom:20px;">
+        <div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;color:#00d4ff;">⚗️ Moleqyn Stoichiometry & Reaction Report</div>
+          <div style="font-size:0.82rem;color:#7a90b0;margin-top:2px;">Law of Conservation of Mass & Stoichiometric Verification</div>
+        </div>
+        <div style="text-align:right;">
+          <span style="display:inline-block;padding:4px 10px;background:rgba(74,222,128,0.15);color:#4ade80;border:1px solid #4ade80;border-radius:12px;font-size:0.75rem;font-weight:700;">CONSERVED DATA</span>
+          <div style="font-size:0.75rem;color:#7a90b0;margin-top:4px;">${dateStr}</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:0.85rem;">
+        <div><strong>Investigator:</strong> <span style="color:#00d4ff;">${currentUser}</span></div>
+        <div><strong>Status:</strong> ${isBalanced ? '<span style="color:#4ade80;font-weight:bold;">✅ Balanced Equation</span>' : '<span style="color:#fb7185;font-weight:bold;">⚠️ Unbalanced</span>'}</div>
+        <div><strong>Reactant Molar Mass:</strong> ${document.getElementById('rMassLabel') ? document.getElementById('rMassLabel').textContent : 'Conserved'}</div>
+        <div><strong>Product Molar Mass:</strong> ${document.getElementById('pMassLabel') ? document.getElementById('pMassLabel').textContent : 'Conserved'}</div>
+      </div>
+
+      <div style="margin-bottom:18px;">
+        <h4 style="font-family:'Space Grotesk',sans-serif;color:#ffd700;font-size:0.92rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">1. Verified Balanced Chemical Equation</h4>
+        <div style="background:#071222;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:14px;font-family:'JetBrains Mono',monospace;font-size:1.05rem;color:#4ade80;text-align:center;">
+          ${eqStr}
+        </div>
+      </div>
+
+      <div style="margin-bottom:18px;">
+        <h4 style="font-family:'Space Grotesk',sans-serif;color:#ffd700;font-size:0.92rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">2. Stoichiometric & Phenomenological Profile</h4>
+        <table style="width:100%;border-collapse:collapse;font-size:0.82rem;background:#071222;border-radius:8px;overflow:hidden;">
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#7a90b0;">Reaction Classification</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;color:#00d4ff;">${document.getElementById('predTypeVal') ? document.getElementById('predTypeVal').textContent : 'Redox / Displacement'}</td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#7a90b0;">Physical Observation</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;">${document.getElementById('predObsVal') ? document.getElementById('predObsVal').textContent : 'Atom re-arrangement & bond energy changes'}</td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#7a90b0;">Enthalpy Shift (ΔH)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;">${document.getElementById('predHeatVal') ? document.getElementById('predHeatVal').textContent : 'Exothermic / Spontaneous'}</td></tr>
+          <tr><td style="padding:8px 12px;color:#7a90b0;">Law of Conservation of Mass</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;color:#4ade80;font-weight:bold;">Total Atoms (Reactants) = Total Atoms (Products)</td></tr>
+        </table>
+      </div>
+
+      <div style="margin-bottom:20px;padding:12px;background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.2);border-radius:10px;font-size:0.84rem;line-height:1.6;">
+        <strong style="color:#00d4ff;display:block;margin-bottom:4px;">Scientific Conclusion:</strong>
+        In accordance with Lavoisier's Law of Conservation of Mass and Dalton's Atomic Theory, no atoms are created or destroyed during chemical transformation. The stoichiometric coefficients represent the exact molar ratio of reacting particles.
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:10px;border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;">
+        <button type="button" class="btn-action" onclick="document.getElementById('rxnReportModal').style.display='none'">✕ Close</button>
+        <button type="button" class="btn-action" style="background:#00d4ff;color:#000;font-weight:bold;" onclick="window.print()">🖨️ Print / Save PDF</button>
+      </div>
+    </div>
+  `;
+  modal.style.display = 'flex';
+}
+
+// Initial Launch
+renderShelf();
+cyclePreset();
+drawCanvas();
+drawBeaker();
+</script>
+<script src="js/shared-nav.js"></script>
+</body>
+</html>

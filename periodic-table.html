@@ -1,0 +1,543 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Moleqyn Interactive Periodic Table – Explore all 118 elements with properties, electron configuration, and simulations for Class 6-12 NCERT/CBSE."/>
+  <title>Moleqyn | Interactive Periodic Table</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <script>
+    (function () {
+      var saved = localStorage.getItem('mlab_theme') || localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
+      if (saved === 'day' || saved === 'light') {
+        document.documentElement.setAttribute('data-theme', 'day');
+        document.documentElement.classList.add('light-mode');
+      }
+    })();
+  </script>
+  <style>
+    :root {
+      --bg: #060d1f;--bg2: #0d1b35;--glass: rgba(255,255,255,0.04);--border: rgba(255,255,255,0.1);
+      --primary: #00d4ff;--primary-glow: rgba(0,212,255,0.25);--secondary: #ff00cc;
+      --text: #f0f4ff;--muted: #8899bb;--nav-h: 70px;
+      --c-alkali: #ff6b6b;--c-alkali-earth: #ff9a5c;--c-transition: #5c85ff;
+      --c-post-trans: #74c6c6;--c-metalloid: #a78bfa;--c-nonmetal: #4ade80;
+      --c-halogen: #facc15;--c-noble: #fb7185;--c-lanthanide: #e879f9;
+      --c-actinide: #60a5fa;--c-unknown: #64748b;
+    }
+    :root{--glass-bg:rgba(15,23,42,0.7);--nav-bg-scrolled:rgba(15,23,42,0.98);--glass-border:rgba(255,255,255,0.08);--btn-primary:#0ea5e9;}
+    :root[data-theme="day"], html.light-mode{
+      --bg:#f0f4f8;--bg2:#ffffff;--glass:rgba(0,0,0,0.04);--border:rgba(0,0,0,0.12);
+      --text:#0f172a;--muted:#64748b;--primary:#0284c7;--primary-glow:rgba(2,132,199,0.2);--secondary:#db2777;
+      --glass-bg:rgba(255,255,255,0.85);--nav-bg-scrolled:rgba(255,255,255,0.98);--glass-border:rgba(0,0,0,0.1);--btn-primary:#0284c7;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden;transition:background 0.3s,color 0.3s;}
+    .page-header h1, .dp-name, .dp-symbol{font-family:'Outfit','Space Grotesk',sans-serif;}
+        /* Day mode enhancements */
+    html.light-mode .el-cell, :root[data-theme="day"] .el-cell { background: #ffffff; border-color: rgba(0,0,0,0.12); box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+    html.light-mode .el-cell:hover, :root[data-theme="day"] .el-cell:hover { box-shadow: 0 8px 25px rgba(2,132,199,0.25); }
+    html.light-mode .search-box, :root[data-theme="day"] .search-box { background: #ffffff; border-color: rgba(0,0,0,0.12); box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
+    html.light-mode .leg-item:hover, :root[data-theme="day"] .leg-item:hover { background: #ffffff; border-color: rgba(0,0,0,0.12); }
+    html.light-mode .detail-panel, :root[data-theme="day"] .detail-panel { background: #ffffff; border-color: rgba(0,0,0,0.12); box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+    html.light-mode .dp-section, :root[data-theme="day"] .dp-section { background: #f8fafc; border-color: rgba(0,0,0,0.08); }
+    html.light-mode .dp-close, :root[data-theme="day"] .dp-close { background: #f1f5f9; border-color: rgba(0,0,0,0.1); color: #475569; }
+    html.light-mode .dp-econf, :root[data-theme="day"] .dp-econf { background: rgba(2,132,199,0.08); color: #0284c7; }
+
+    /* ===== UNIFIED MATTERLAB FLOATING NAVBAR ===== */
+    .mlab-nav{position:fixed;top:20px;left:50%;transform:translateX(-50%);width:95%;max-width:1200px;background:var(--glass-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;justify-content:space-between;align-items:center;padding:12px 25px;border-radius:40px;border:1px solid var(--glass-border);z-index:1000;box-shadow:0 10px 30px rgba(0,0,0,0.1);transition:all 0.4s ease;}
+    .mlab-nav.scrolled{top:10px;background:var(--nav-bg-scrolled);box-shadow:0 15px 40px rgba(0,0,0,0.15);border-color:var(--primary);}
+    .mlab-brand{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;color:var(--text);text-decoration:none;}
+    .mlab-brand span{color:var(--primary);}
+    .mlab-links{display:flex;list-style:none;align-items:center;gap:0.4rem;}
+    .mlab-links>li>a{color:var(--muted);text-decoration:none;font-size:0.88rem;font-weight:500;padding:7px 14px;border-radius:20px;transition:all 0.2s;display:block;}
+    .mlab-links>li>a:hover,.mlab-links>li>a.active{color:var(--primary);background:var(--primary-glow);}
+    .mlab-dropdown{position:relative;}
+    .mlab-dropbtn{color:var(--muted);text-decoration:none;font-size:0.88rem;font-weight:500;padding:7px 14px;border-radius:20px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all 0.2s;}
+    .mlab-dropbtn:hover{color:var(--primary);background:var(--primary-glow);}
+    .mlab-dropdown-content{display:none;position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);background:var(--nav-bg-scrolled);border:1px solid var(--glass-border);border-radius:16px;padding:8px;min-width:270px;box-shadow:0 20px 50px rgba(0,0,0,0.3);z-index:2000;backdrop-filter:blur(20px);}
+    .mlab-dropdown:hover .mlab-dropdown-content{display:block;animation:navFadeIn 0.2s ease;}
+    @keyframes navFadeIn{from{opacity:0;transform:translateX(-50%) translateY(-8px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+    .mlab-drop-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;text-decoration:none;color:var(--muted);transition:all 0.2s;}
+    .mlab-drop-item:hover{background:var(--primary-glow);color:var(--primary);}
+    .mlab-drop-icon{font-size:1.1rem;width:30px;text-align:center;}
+    .mlab-drop-title{font-size:0.84rem;font-weight:600;color:var(--text);}
+    .mlab-drop-sub{font-size:0.71rem;color:var(--muted);margin-top:2px;}
+    .mlab-drop-item:hover .mlab-drop-title{color:var(--primary);}
+    .mlab-nav-right{display:flex;align-items:center;gap:10px;}
+    .mlab-login-btn{background:var(--btn-primary);color:#fff !important;text-decoration:none;padding:7px 18px;border-radius:20px;font-size:0.85rem;font-weight:600;transition:all 0.2s;}
+    .mlab-login-btn:hover{opacity:0.85;box-shadow:0 4px 15px var(--primary-glow);}
+    .mlab-theme-btn{background:none;border:1px solid var(--glass-border);color:var(--text);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1rem;transition:all 0.3s;}
+    .mlab-theme-btn:hover{border-color:var(--primary);}
+    /* ===== END NAVBAR CSS ===== */
+
+    .page-wrap{padding-top:100px;padding-bottom:60px;}
+    .page-header{text-align:center;padding:30px 20px 10px;}
+    .page-header h1{font-family:'Space Grotesk',sans-serif;font-size:2.6rem;font-weight:700;margin-bottom:8px;}
+    .page-header h1 span{background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+    .page-header p{color:var(--muted);font-size:0.95rem;max-width:600px;margin:0 auto;}
+    .controls-bar{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;align-items:center;padding:16px 20px 8px;}
+    .search-box{display:flex;align-items:center;gap:10px;background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:10px 16px;min-width:280px;}
+    .search-box input{background:none;border:none;outline:none;color:var(--text);font-size:0.95rem;width:100%;}
+    .search-box input::placeholder{color:var(--muted);}
+    .legend{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:8px 20px 12px;}
+    .leg-item{display:flex;align-items:center;gap:5px;font-size:0.7rem;color:var(--muted);cursor:pointer;padding:3px 8px;border-radius:20px;border:1px solid transparent;transition:all 0.2s;}
+    .leg-item:hover{border-color:var(--border);background:var(--glass);}
+    .leg-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+    .pt-container{overflow-x:auto;padding:6px 16px;}
+    .pt-grid{display:grid;grid-template-columns:repeat(18,minmax(50px,1fr));gap:2px;max-width:1080px;margin:0 auto;font-size:0.66rem;}
+    .el-cell{background:var(--glass);border:1px solid var(--border);border-radius:5px;padding:4px 2px;cursor:pointer;transition:all 0.2s;text-align:center;min-height:58px;display:flex;flex-direction:column;justify-content:center;align-items:center;position:relative;}
+    .el-cell:hover{transform:scale(1.15);z-index:20;box-shadow:0 8px 30px rgba(0,0,0,0.7);}
+    .el-cell.dimmed{opacity:0.1;}
+    .el-cell.highlighted{outline:2px solid var(--primary);outline-offset:1px;opacity:1 !important;}
+    .el-num{font-size:0.52rem;color:var(--muted);line-height:1;margin-bottom:1px;}
+    .el-sym{font-family:'Space Grotesk',sans-serif;font-size:1.15rem;font-weight:700;line-height:1.1;}
+    .el-name{font-size:0.46rem;color:var(--muted);line-height:1.2;margin-top:1px;word-break:break-word;}
+    .el-mass{font-size:0.46rem;color:var(--muted);margin-top:0px;}
+    .gap-cell{min-height:58px;}
+    .alkali{border-color:var(--c-alkali) !important;background:rgba(255,107,107,0.1) !important;}
+    .alkali-earth{border-color:var(--c-alkali-earth) !important;background:rgba(255,154,92,0.1) !important;}
+    .transition{border-color:var(--c-transition) !important;background:rgba(92,133,255,0.1) !important;}
+    .post-transition{border-color:var(--c-post-trans) !important;background:rgba(116,198,198,0.1) !important;}
+    .metalloid{border-color:var(--c-metalloid) !important;background:rgba(167,139,250,0.1) !important;}
+    .nonmetal{border-color:var(--c-nonmetal) !important;background:rgba(74,222,128,0.1) !important;}
+    .halogen{border-color:var(--c-halogen) !important;background:rgba(250,204,21,0.1) !important;}
+    .noble{border-color:var(--c-noble) !important;background:rgba(251,113,133,0.1) !important;}
+    .lanthanide{border-color:var(--c-lanthanide) !important;background:rgba(232,121,249,0.1) !important;}
+    .actinide{border-color:var(--c-actinide) !important;background:rgba(96,165,250,0.1) !important;}
+    .unknown-el{border-color:var(--c-unknown) !important;background:rgba(100,116,139,0.1) !important;}
+    .la-ac-section{max-width:1080px;margin:10px auto 0;padding:0 16px;}
+    .la-ac-label{font-size:0.68rem;color:var(--muted);font-weight:600;margin-bottom:4px;padding-left:4px;}
+    .la-ac-grid{display:flex;gap:2px;flex-wrap:wrap;margin-bottom:6px;}
+    .la-ac-grid .el-cell{min-width:50px;max-width:62px;}
+    .detail-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:2000;padding:20px;overflow-y:auto;backdrop-filter:blur(8px);}
+    .detail-overlay.open{display:flex;align-items:center;justify-content:center;}
+    .detail-panel{background:var(--bg2);border:1px solid var(--border);border-radius:22px;max-width:680px;width:100%;overflow:hidden;animation:panelIn 0.3s cubic-bezier(0.2,0,0,1);}
+    @keyframes panelIn{from{opacity:0;transform:translateY(20px) scale(0.96);}to{opacity:1;transform:none;}}
+    .dp-header{padding:24px 28px 16px;display:flex;gap:18px;align-items:flex-start;position:relative;}
+    .dp-symbol-box{width:84px;height:84px;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;border:2px solid;}
+    .dp-atomic{font-size:0.7rem;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+    .dp-symbol{font-family:'Space Grotesk',sans-serif;font-size:2.8rem;font-weight:700;line-height:1;}
+    .dp-mass-sm{font-size:0.65rem;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+    .dp-info{flex:1;}
+    .dp-name{font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700;margin-bottom:4px;}
+    .dp-cat-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:0.72rem;font-weight:600;border:1px solid;margin-bottom:8px;}
+    .dp-tagline{color:var(--muted);font-size:0.85rem;line-height:1.5;}
+    .dp-close{position:absolute;top:14px;right:18px;background:var(--glass);border:1px solid var(--border);color:var(--muted);width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:0.9rem;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+    .dp-close:hover{color:var(--text);border-color:var(--primary);}
+    .dp-body{padding:0 28px 28px;display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+    .dp-section{background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:14px;}
+    .dp-section h4{font-family:'Space Grotesk',sans-serif;font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;color:var(--primary);margin-bottom:10px;}
+    .dp-row{display:flex;justify-content:space-between;align-items:baseline;padding:4px 0;border-bottom:1px solid var(--border);}
+    .dp-row:last-child{border-bottom:none;}
+    .dp-label{color:var(--muted);font-size:0.76rem;}
+    .dp-val{font-family:'JetBrains Mono',monospace;font-size:0.78rem;font-weight:500;text-align:right;max-width:55%;}
+    .dp-full{grid-column:1/-1;}
+    .dp-econf{font-family:'JetBrains Mono',monospace;font-size:0.88rem;color:var(--primary);background:rgba(0,212,255,0.06);padding:10px;border-radius:8px;word-break:break-all;line-height:1.5;}
+    .dp-uses{color:var(--muted);font-size:0.82rem;line-height:1.65;}
+    @media(max-width:768px){
+      .pt-grid{grid-template-columns:repeat(18,minmax(36px,1fr));font-size:0.55rem;}
+      .el-sym{font-size:0.85rem;} .el-name,.el-mass,.el-num{display:none;} .el-cell{min-height:44px;}
+      .dp-body{grid-template-columns:1fr;} .page-header h1{font-size:1.9rem;}
+      .nav-links-row{display:none;}
+    }
+  </style>
+</head>
+<body>
+    <nav class="mlab-nav" id="mlabNav">
+    <a href="index.html" class="mlab-brand" aria-label="Moleqyn Home"><img src="favicon.svg" alt="Moleqyn Logo" class="brand-logo" width="28" height="28"><span class="mlab-brand-text">Moleqyn</span></a>
+    <ul class="mlab-links">
+      <li><a href="index.html">Home</a></li>
+      <li class="mlab-dropdown">
+        <a class="mlab-dropbtn">Virtual Labs â–¾</a>
+        <div class="mlab-dropdown-content">
+          <a href="simulators.html" class="mlab-drop-item"><div class="mlab-drop-icon">ðŸ§ª</div><div><div class="mlab-drop-title">Virtual Simulators</div><div class="mlab-drop-sub">Interactive engines for Class 6-12</div></div></a>
+          <a href="experiments.html" class="mlab-drop-item"><div class="mlab-drop-icon">ðŸ“”</div><div><div class="mlab-drop-title">Experiment Library</div><div class="mlab-drop-sub">NCERT guided practicals</div></div></a>
+          <a href="periodic-table.html" class="mlab-drop-item"><div class="mlab-drop-icon">ðŸ”¢</div><div><div class="mlab-drop-title">Periodic Table</div><div class="mlab-drop-sub">Explore all 118 elements</div></div></a>
+          <a href="reaction.html" class="mlab-drop-item"><div class="mlab-drop-icon">âš—ï¸</div><div><div class="mlab-drop-title">Reaction Balancer</div><div class="mlab-drop-sub">Balance chemical equations</div></div></a>
+          <a href="ai-tutor.html" class="mlab-drop-item"><div class="mlab-drop-icon">ðŸ¤–</div><div><div class="mlab-drop-title">AI Chemistry Tutor</div><div class="mlab-drop-sub">Ask any doubt 24/7</div></div></a>
+        </div>
+      </li>
+      <li><a href="learn.html">Learn</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="quiz.html">Quiz</a></li>
+      <li><a href="dashboard.html">Progress</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div class="mlab-nav-right">
+      <a href="login.html" class="mlab-login-btn">Login</a>
+      <button class="mlab-theme-btn" id="mlabThemeBtn" title="Switch Theme">â˜€ï¸</button>
+    </div>
+  </nav>
+  <script>
+    // Floating navbar scroll handling
+    (function(){
+      var nav = document.getElementById('mlabNav');
+      if (nav) {
+        window.addEventListener('scroll', function(){
+          nav.classList.toggle('scrolled', window.scrollY > 50);
+        });
+      }
+    })();
+  </script>
+
+  <div class="page-wrap">
+    <div class="page-header">
+      <h1>Interactive <span>Periodic Table</span></h1>
+      <p>All 118 elements — click any element to explore properties, electron configuration &amp; NCERT notes.</p>
+    </div>
+    <div class="controls-bar">
+      <div class="search-box">
+        <span>🔍</span>
+        <input type="text" id="searchInput" placeholder="Search element name, symbol or atomic number…"/>
+      </div>
+    </div>
+    <div class="legend">
+      <div class="leg-item" data-cat="alkali"><div class="leg-dot" style="background:var(--c-alkali)"></div>Alkali Metal</div>
+      <div class="leg-item" data-cat="alkali-earth"><div class="leg-dot" style="background:var(--c-alkali-earth)"></div>Alkaline Earth</div>
+      <div class="leg-item" data-cat="transition"><div class="leg-dot" style="background:var(--c-transition)"></div>Transition Metal</div>
+      <div class="leg-item" data-cat="post-transition"><div class="leg-dot" style="background:var(--c-post-trans)"></div>Post-Transition</div>
+      <div class="leg-item" data-cat="metalloid"><div class="leg-dot" style="background:var(--c-metalloid)"></div>Metalloid</div>
+      <div class="leg-item" data-cat="nonmetal"><div class="leg-dot" style="background:var(--c-nonmetal)"></div>Nonmetal</div>
+      <div class="leg-item" data-cat="halogen"><div class="leg-dot" style="background:var(--c-halogen)"></div>Halogen</div>
+      <div class="leg-item" data-cat="noble"><div class="leg-dot" style="background:var(--c-noble)"></div>Noble Gas</div>
+      <div class="leg-item" data-cat="lanthanide"><div class="leg-dot" style="background:var(--c-lanthanide)"></div>Lanthanide</div>
+      <div class="leg-item" data-cat="actinide"><div class="leg-dot" style="background:var(--c-actinide)"></div>Actinide</div>
+    </div>
+    <div class="pt-container">
+      <div class="pt-grid" id="pt-grid"></div>
+    </div>
+    <div class="la-ac-section">
+      <div class="la-ac-label">★ Lanthanides (57–71)</div>
+      <div class="la-ac-grid" id="la-row"></div>
+      <div class="la-ac-label">★ Actinides (89–103)</div>
+      <div class="la-ac-grid" id="ac-row"></div>
+    </div>
+  </div>
+
+  <!-- DETAIL PANEL -->
+  <div class="detail-overlay" id="detailOverlay">
+    <div class="detail-panel">
+      <div class="dp-header">
+        <div class="dp-symbol-box" id="dp-sym-box">
+          <div class="dp-atomic" id="dp-atomic">1</div>
+          <div class="dp-symbol" id="dp-symbol">H</div>
+          <div class="dp-mass-sm" id="dp-mass">1.008</div>
+        </div>
+        <div class="dp-info">
+          <div class="dp-name" id="dp-name">Hydrogen</div>
+          <div class="dp-cat-badge" id="dp-cat-badge">Nonmetal</div>
+          <div class="dp-tagline" id="dp-tagline">Most abundant element in the universe.</div>
+        </div>
+        <button class="dp-close" onclick="closeDetail()">✕</button>
+      </div>
+      <div class="dp-body">
+        <div class="dp-section">
+          <h4>Physical Properties</h4>
+          <div class="dp-row"><span class="dp-label">Period</span><span class="dp-val" id="dp-period">-</span></div>
+          <div class="dp-row"><span class="dp-label">Group</span><span class="dp-val" id="dp-group">-</span></div>
+          <div class="dp-row"><span class="dp-label">Atomic Mass</span><span class="dp-val" id="dp-amass">-</span></div>
+          <div class="dp-row"><span class="dp-label">Phase (STP)</span><span class="dp-val" id="dp-phase">-</span></div>
+          <div class="dp-row"><span class="dp-label">Density</span><span class="dp-val" id="dp-density">-</span></div>
+          <div class="dp-row"><span class="dp-label">Melting Pt.</span><span class="dp-val" id="dp-mp">-</span></div>
+          <div class="dp-row"><span class="dp-label">Boiling Pt.</span><span class="dp-val" id="dp-bp">-</span></div>
+        </div>
+        <div class="dp-section">
+          <h4>Atomic Properties</h4>
+          <div class="dp-row"><span class="dp-label">Electronegativity</span><span class="dp-val" id="dp-en">-</span></div>
+          <div class="dp-row"><span class="dp-label">Ionisation E.</span><span class="dp-val" id="dp-ie">-</span></div>
+          <div class="dp-row"><span class="dp-label">Atomic Radius</span><span class="dp-val" id="dp-ar">-</span></div>
+          <div class="dp-row"><span class="dp-label">Valence e⁻</span><span class="dp-val" id="dp-ve">-</span></div>
+          <div class="dp-row"><span class="dp-label">Oxidation States</span><span class="dp-val" id="dp-ox">-</span></div>
+          <div class="dp-row"><span class="dp-label">Discovered</span><span class="dp-val" id="dp-disc">-</span></div>
+        </div>
+        <div class="dp-section dp-full">
+          <h4>Electron Configuration</h4>
+          <div class="dp-econf" id="dp-econf">1s¹</div>
+        </div>
+        <div class="dp-section dp-full">
+          <h4>Uses &amp; NCERT Notes</h4>
+          <div class="dp-uses" id="dp-uses">-</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const ELEMENTS=[
+{z:1,sym:'H',name:'Hydrogen',mass:'1.008',cat:'nonmetal',period:1,group:1,phase:'Gas',density:'0.09 g/L',mp:'-259°C',bp:'-253°C',en:'2.20',ie:'1312 kJ/mol',ar:'53 pm',ve:'1',ox:'-1, +1',disc:'1766, Cavendish',econf:'1s¹',uses:'Fuel cells, ammonia synthesis (Haber process), hydrogenation. NCERT: Lightest element; forms H₂O; placed in group 1 but is a nonmetal.'},
+{z:2,sym:'He',name:'Helium',mass:'4.003',cat:'noble',period:1,group:18,phase:'Gas',density:'0.18 g/L',mp:'–',bp:'-269°C',en:'–',ie:'2372 kJ/mol',ar:'31 pm',ve:'0',ox:'0',disc:'1868, Janssen',econf:'1s²',uses:'Balloons, MRI cooling, welding gas. NCERT: Noble gas; zero valency; completely filled 1s shell.'},
+{z:3,sym:'Li',name:'Lithium',mass:'6.941',cat:'alkali',period:2,group:1,phase:'Solid',density:'0.53 g/cm³',mp:'180°C',bp:'1342°C',en:'0.98',ie:'520 kJ/mol',ar:'167 pm',ve:'1',ox:'+1',disc:'1817, Arfwedson',econf:'[He] 2s¹',uses:'Li-ion batteries, mood-stabilizer drugs (Li₂CO₃). NCERT: Smallest alkali metal; reacts with water.'},
+{z:4,sym:'Be',name:'Beryllium',mass:'9.012',cat:'alkali-earth',period:2,group:2,phase:'Solid',density:'1.85 g/cm³',mp:'1287°C',bp:'2970°C',en:'1.57',ie:'899 kJ/mol',ar:'112 pm',ve:'2',ox:'+2',disc:'1798, Vauquelin',econf:'[He] 2s²',uses:'Aerospace alloys, X-ray windows. NCERT: Alkaline earth metal; forms covalent compounds due to small size.'},
+{z:5,sym:'B',name:'Boron',mass:'10.811',cat:'metalloid',period:2,group:13,phase:'Solid',density:'2.37 g/cm³',mp:'2076°C',bp:'3927°C',en:'2.04',ie:'800 kJ/mol',ar:'87 pm',ve:'3',ox:'+3',disc:'1808, Davy',econf:'[He] 2s² 2p¹',uses:'Borosilicate glass (Pyrex), borax, semiconductors. NCERT: Metalloid; forms electron-deficient compounds.'},
+{z:6,sym:'C',name:'Carbon',mass:'12.011',cat:'nonmetal',period:2,group:14,phase:'Solid',density:'2.26 g/cm³',mp:'3550°C',bp:'4827°C',en:'2.55',ie:'1086 kJ/mol',ar:'77 pm',ve:'4',ox:'-4 to +4',disc:'Ancient',econf:'[He] 2s² 2p²',uses:'Organic chemistry, diamonds (hardest), graphite (lubricant/pencil), fuel. NCERT: Basis of all organic life; allotropes = diamond, graphite, fullerene.'},
+{z:7,sym:'N',name:'Nitrogen',mass:'14.007',cat:'nonmetal',period:2,group:15,phase:'Gas',density:'1.25 g/L',mp:'-210°C',bp:'-196°C',en:'3.04',ie:'1402 kJ/mol',ar:'75 pm',ve:'3',ox:'-3, +5',disc:'1772, Rutherford',econf:'[He] 2s² 2p³',uses:'Fertilisers (NH₃ via Haber process), explosives, food packaging. NCERT: 78% of atmosphere; triple bond in N₂.'},
+{z:8,sym:'O',name:'Oxygen',mass:'15.999',cat:'nonmetal',period:2,group:16,phase:'Gas',density:'1.43 g/L',mp:'-219°C',bp:'-183°C',en:'3.44',ie:'1314 kJ/mol',ar:'73 pm',ve:'2',ox:'-2',disc:'1774, Priestley',econf:'[He] 2s² 2p⁴',uses:'Respiration, combustion, steel-making, ozone layer (O₃). NCERT: Forms oxides; supports burning; 21% of atmosphere.'},
+{z:9,sym:'F',name:'Fluorine',mass:'18.998',cat:'halogen',period:2,group:17,phase:'Gas',density:'1.70 g/L',mp:'-220°C',bp:'-188°C',en:'3.98',ie:'1681 kJ/mol',ar:'71 pm',ve:'1',ox:'-1',disc:'1886, Moissan',econf:'[He] 2s² 2p⁵',uses:'Toothpaste (NaF), Teflon (PTFE), refrigerants (CFCs). NCERT: Most electronegative element; most reactive nonmetal.'},
+{z:10,sym:'Ne',name:'Neon',mass:'20.180',cat:'noble',period:2,group:18,phase:'Gas',density:'0.90 g/L',mp:'-249°C',bp:'-246°C',en:'–',ie:'2081 kJ/mol',ar:'38 pm',ve:'0',ox:'0',disc:'1898, Ramsay',econf:'[He] 2s² 2p⁶',uses:'Neon signs, lasers, refrigerant. NCERT: Noble gas; completely filled outer shell (octet).'},
+{z:11,sym:'Na',name:'Sodium',mass:'22.990',cat:'alkali',period:3,group:1,phase:'Solid',density:'0.97 g/cm³',mp:'98°C',bp:'883°C',en:'0.93',ie:'496 kJ/mol',ar:'186 pm',ve:'1',ox:'+1',disc:'1807, Davy',econf:'[Ne] 3s¹',uses:'NaCl (table salt), NaOH (caustic soda), Na₂CO₃ (washing soda), baking soda (NaHCO₃). NCERT: Reacts vigorously with water; stored in kerosene.'},
+{z:12,sym:'Mg',name:'Magnesium',mass:'24.305',cat:'alkali-earth',period:3,group:2,phase:'Solid',density:'1.74 g/cm³',mp:'650°C',bp:'1090°C',en:'1.31',ie:'738 kJ/mol',ar:'160 pm',ve:'2',ox:'+2',disc:'1755, Black',econf:'[Ne] 3s²',uses:'Alloys (lightweight), fireworks (bright white flame), chlorophyll in plants. NCERT: Burns brilliantly in air; used in flares.'},
+{z:13,sym:'Al',name:'Aluminium',mass:'26.982',cat:'post-transition',period:3,group:13,phase:'Solid',density:'2.70 g/cm³',mp:'660°C',bp:'2519°C',en:'1.61',ie:'577 kJ/mol',ar:'143 pm',ve:'3',ox:'+3',disc:'1825, Ørsted',econf:'[Ne] 3s² 3p¹',uses:'Packaging (foil), aircraft/automobile parts, cooking utensils. NCERT: Most abundant metal in Earth\'s crust; amphoteric oxide (Al₂O₃).'},
+{z:14,sym:'Si',name:'Silicon',mass:'28.086',cat:'metalloid',period:3,group:14,phase:'Solid',density:'2.33 g/cm³',mp:'1414°C',bp:'3265°C',en:'1.90',ie:'786 kJ/mol',ar:'117 pm',ve:'4',ox:'+4, -4',disc:'1824, Berzelius',econf:'[Ne] 3s² 3p²',uses:'Semiconductors, solar cells, glass (SiO₂), computer chips. NCERT: Metalloid; second most abundant element in crust; basis of computer technology.'},
+{z:15,sym:'P',name:'Phosphorus',mass:'30.974',cat:'nonmetal',period:3,group:15,phase:'Solid',density:'1.82 g/cm³',mp:'44°C',bp:'281°C',en:'2.19',ie:'1012 kJ/mol',ar:'110 pm',ve:'3',ox:'-3, +5',disc:'1669, Brandt',econf:'[Ne] 3s² 3p³',uses:'Fertilisers (DAP), detergents, matches (red P). NCERT: Essential for DNA, ATP; allotropes = white P (toxic), red P (safe).'},
+{z:16,sym:'S',name:'Sulfur',mass:'32.065',cat:'nonmetal',period:3,group:16,phase:'Solid',density:'2.07 g/cm³',mp:'113°C',bp:'445°C',en:'2.58',ie:'1000 kJ/mol',ar:'103 pm',ve:'2',ox:'-2, +4, +6',disc:'Ancient',econf:'[Ne] 3s² 3p⁴',uses:'H₂SO₄ manufacture (Contact process), rubber vulcanization, fungicides. NCERT: Forms SO₂ (acid rain); allotropes (rhombic, monoclinic).'},
+{z:17,sym:'Cl',name:'Chlorine',mass:'35.453',cat:'halogen',period:3,group:17,phase:'Gas',density:'3.21 g/L',mp:'-101°C',bp:'-34°C',en:'3.16',ie:'1251 kJ/mol',ar:'99 pm',ve:'1',ox:'-1, +7',disc:'1774, Scheele',econf:'[Ne] 3s² 3p⁵',uses:'Water purification, PVC plastic, bleach (NaOCl). NCERT: Forms NaCl (ionic bond with Na); diatomic gas (Cl₂); yellow-green colour.'},
+{z:18,sym:'Ar',name:'Argon',mass:'39.948',cat:'noble',period:3,group:18,phase:'Gas',density:'1.78 g/L',mp:'-189°C',bp:'-186°C',en:'–',ie:'1521 kJ/mol',ar:'71 pm',ve:'0',ox:'0',disc:'1894, Rayleigh',econf:'[Ne] 3s² 3p⁶',uses:'Welding shield gas, light bulbs, wine preservation. NCERT: 3rd most abundant gas in atmosphere (~0.93%).'},
+{z:19,sym:'K',name:'Potassium',mass:'39.098',cat:'alkali',period:4,group:1,phase:'Solid',density:'0.86 g/cm³',mp:'64°C',bp:'759°C',en:'0.82',ie:'419 kJ/mol',ar:'227 pm',ve:'1',ox:'+1',disc:'1807, Davy',econf:'[Ar] 4s¹',uses:'Fertilisers (KNO₃), KOH, essential for nerve function. NCERT: Reacts with water vigorously like Na; stored in kerosene.'},
+{z:20,sym:'Ca',name:'Calcium',mass:'40.078',cat:'alkali-earth',period:4,group:2,phase:'Solid',density:'1.55 g/cm³',mp:'842°C',bp:'1484°C',en:'1.00',ie:'590 kJ/mol',ar:'197 pm',ve:'2',ox:'+2',disc:'1808, Davy',econf:'[Ar] 4s²',uses:'Bones & teeth (Ca₃(PO₄)₂), cement & concrete (CaCO₃), plaster of Paris (CaSO₄). NCERT: Essential mineral; CaO = quick lime; Ca(OH)₂ = slaked lime.'},
+{z:21,sym:'Sc',name:'Scandium',mass:'44.956',cat:'transition',period:4,group:3,phase:'Solid',density:'2.99 g/cm³',mp:'1541°C',bp:'2836°C',en:'1.36',ie:'633 kJ/mol',ar:'162 pm',ve:'3',ox:'+3',disc:'1879, Nilson',econf:'[Ar] 3d¹ 4s²',uses:'Aerospace alloys, high-intensity lamps. NCERT: First d-block transition element; variable oxidation states.'},
+{z:22,sym:'Ti',name:'Titanium',mass:'47.867',cat:'transition',period:4,group:4,phase:'Solid',density:'4.51 g/cm³',mp:'1668°C',bp:'3287°C',en:'1.54',ie:'658 kJ/mol',ar:'147 pm',ve:'4',ox:'+4',disc:'1791, Gregor',econf:'[Ar] 3d² 4s²',uses:'Aerospace structures, medical implants, white pigment (TiO₂). NCERT: Corrosion resistant; high strength-to-weight ratio.'},
+{z:23,sym:'V',name:'Vanadium',mass:'50.942',cat:'transition',period:4,group:5,phase:'Solid',density:'6.11 g/cm³',mp:'1910°C',bp:'3407°C',en:'1.63',ie:'650 kJ/mol',ar:'134 pm',ve:'5',ox:'+2 to +5',disc:'1801, del Río',econf:'[Ar] 3d³ 4s²',uses:'Steel alloys, catalyst in H₂SO₄ production (V₂O₅). NCERT: Shows variable oxidation states (+2 to +5).'},
+{z:24,sym:'Cr',name:'Chromium',mass:'51.996',cat:'transition',period:4,group:6,phase:'Solid',density:'7.19 g/cm³',mp:'1907°C',bp:'2671°C',en:'1.66',ie:'653 kJ/mol',ar:'128 pm',ve:'6',ox:'+3, +6',disc:'1798, Vauquelin',econf:'[Ar] 3d⁵ 4s¹',uses:'Stainless steel, chrome plating, pigments (CrO₃). NCERT: Exception to Aufbau — half-filled 3d is extra stable.'},
+{z:25,sym:'Mn',name:'Manganese',mass:'54.938',cat:'transition',period:4,group:7,phase:'Solid',density:'7.43 g/cm³',mp:'1246°C',bp:'2061°C',en:'1.55',ie:'717 kJ/mol',ar:'127 pm',ve:'7',ox:'+2, +4, +7',disc:'1774, Gahn',econf:'[Ar] 3d⁵ 4s²',uses:'Steel production, dry cell batteries (MnO₂), KMnO₄ (pink disinfectant). NCERT: KMnO₄ is a strong oxidising agent.'},
+{z:26,sym:'Fe',name:'Iron',mass:'55.845',cat:'transition',period:4,group:8,phase:'Solid',density:'7.87 g/cm³',mp:'1538°C',bp:'2862°C',en:'1.83',ie:'762 kJ/mol',ar:'126 pm',ve:'3',ox:'+2, +3',disc:'Ancient',econf:'[Ar] 3d⁶ 4s²',uses:'Steel production, haemoglobin (blood). NCERT: Rusting = 4Fe + 3O₂ + 2H₂O → 4Fe(OH)₃ → Fe₂O₃. Prevention = galvanization, painting.'},
+{z:27,sym:'Co',name:'Cobalt',mass:'58.933',cat:'transition',period:4,group:9,phase:'Solid',density:'8.90 g/cm³',mp:'1495°C',bp:'2927°C',en:'1.88',ie:'760 kJ/mol',ar:'125 pm',ve:'3',ox:'+2, +3',disc:'1735, Brandt',econf:'[Ar] 3d⁷ 4s²',uses:'Magnets, battery electrodes (NiCo), Vitamin B₁₂. NCERT: Blue pigment cobalt blue; used in alloys.'},
+{z:28,sym:'Ni',name:'Nickel',mass:'58.693',cat:'transition',period:4,group:10,phase:'Solid',density:'8.91 g/cm³',mp:'1455°C',bp:'2913°C',en:'1.91',ie:'737 kJ/mol',ar:'124 pm',ve:'2',ox:'+2',disc:'1751, Cronstedt',econf:'[Ar] 3d⁸ 4s²',uses:'Stainless steel, coins, Ni-Cd rechargeable batteries. NCERT: Transition metal, corrosion resistant.'},
+{z:29,sym:'Cu',name:'Copper',mass:'63.546',cat:'transition',period:4,group:11,phase:'Solid',density:'8.96 g/cm³',mp:'1085°C',bp:'2562°C',en:'1.90',ie:'745 kJ/mol',ar:'128 pm',ve:'2',ox:'+1, +2',disc:'Ancient',econf:'[Ar] 3d¹⁰ 4s¹',uses:'Electrical wiring, plumbing, bronze/brass alloys. NCERT: Exception to Aufbau (3d¹⁰ 4s¹); displaces Ag and Au from solutions.'},
+{z:30,sym:'Zn',name:'Zinc',mass:'65.38',cat:'transition',period:4,group:12,phase:'Solid',density:'7.13 g/cm³',mp:'420°C',bp:'907°C',en:'1.65',ie:'906 kJ/mol',ar:'122 pm',ve:'2',ox:'+2',disc:'1746, Marggraf',econf:'[Ar] 3d¹⁰ 4s²',uses:'Galvanisation (prevents rusting), brass alloy, ZnO in sunscreen. NCERT: Displaces Cu from CuSO₄ solution (reactivity series).'},
+{z:31,sym:'Ga',name:'Gallium',mass:'69.723',cat:'post-transition',period:4,group:13,phase:'Solid',density:'5.91 g/cm³',mp:'30°C',bp:'2204°C',en:'1.81',ie:'579 kJ/mol',ar:'122 pm',ve:'3',ox:'+3',disc:'1875, Lecoq de Boisbaudran',econf:'[Ar] 3d¹⁰ 4s² 4p¹',uses:'LEDs, semiconductors, melts in hand (mp 30°C). NCERT: Predicted by Mendeleev as "eka-aluminium".'},
+{z:32,sym:'Ge',name:'Germanium',mass:'72.630',cat:'metalloid',period:4,group:14,phase:'Solid',density:'5.32 g/cm³',mp:'938°C',bp:'2833°C',en:'2.01',ie:'762 kJ/mol',ar:'122 pm',ve:'4',ox:'+4',disc:'1886, Winkler',econf:'[Ar] 3d¹⁰ 4s² 4p²',uses:'Semiconductors, fibre optics, infrared optics. NCERT: Predicted by Mendeleev as "eka-silicon"; confirmed Periodic Law.'},
+{z:33,sym:'As',name:'Arsenic',mass:'74.922',cat:'metalloid',period:4,group:15,phase:'Solid',density:'5.73 g/cm³',mp:'817°C',bp:'614°C',en:'2.18',ie:'947 kJ/mol',ar:'119 pm',ve:'3',ox:'+3, +5, -3',disc:'~1250, Albertus Magnus',econf:'[Ar] 3d¹⁰ 4s² 4p³',uses:'Semiconductor dopant (GaAs), wood preservative (old), poison. NCERT: Metalloid; toxic; multiple allotropes.'},
+{z:34,sym:'Se',name:'Selenium',mass:'78.971',cat:'nonmetal',period:4,group:16,phase:'Solid',density:'4.81 g/cm³',mp:'221°C',bp:'685°C',en:'2.55',ie:'941 kJ/mol',ar:'120 pm',ve:'2',ox:'-2, +6',disc:'1817, Berzelius',econf:'[Ar] 3d¹⁰ 4s² 4p⁴',uses:'Photocopiers (photoconductor), solar cells, antioxidant supplement. NCERT: Nonmetal with semiconductor properties.'},
+{z:35,sym:'Br',name:'Bromine',mass:'79.904',cat:'halogen',period:4,group:17,phase:'Liquid',density:'3.12 g/cm³',mp:'-7°C',bp:'59°C',en:'2.96',ie:'1140 kJ/mol',ar:'114 pm',ve:'1',ox:'-1, +5',disc:'1826, Balard',econf:'[Ar] 3d¹⁰ 4s² 4p⁵',uses:'Flame retardants, photography (AgBr), drugs. NCERT: Only liquid nonmetal at room temperature; reddish-brown vapour.'},
+{z:36,sym:'Kr',name:'Krypton',mass:'83.798',cat:'noble',period:4,group:18,phase:'Gas',density:'3.75 g/L',mp:'-157°C',bp:'-153°C',en:'3.00',ie:'1351 kJ/mol',ar:'88 pm',ve:'0',ox:'0',disc:'1898, Ramsay',econf:'[Ar] 3d¹⁰ 4s² 4p⁶',uses:'Lighting, photography flash, lasers. NCERT: Noble gas; used in "krypton standard metre".'},
+{z:37,sym:'Rb',name:'Rubidium',mass:'85.468',cat:'alkali',period:5,group:1,phase:'Solid',density:'1.53 g/cm³',mp:'39°C',bp:'688°C',en:'0.82',ie:'403 kJ/mol',ar:'248 pm',ve:'1',ox:'+1',disc:'1861, Bunsen & Kirchhoff',econf:'[Kr] 5s¹',uses:'Atomic clocks, photoelectric cells, fireworks (red-violet). NCERT: Alkali metal; very reactive.'},
+{z:38,sym:'Sr',name:'Strontium',mass:'87.620',cat:'alkali-earth',period:5,group:2,phase:'Solid',density:'2.63 g/cm³',mp:'777°C',bp:'1382°C',en:'0.95',ie:'550 kJ/mol',ar:'215 pm',ve:'2',ox:'+2',disc:'1790, Crawford',econf:'[Kr] 5s²',uses:'Fireworks (brilliant red), CRT screens, bone cancer treatment. NCERT: Alkaline earth metal; crimson flame test.'},
+{z:39,sym:'Y',name:'Yttrium',mass:'88.906',cat:'transition',period:5,group:3,phase:'Solid',density:'4.47 g/cm³',mp:'1522°C',bp:'3345°C',en:'1.22',ie:'600 kJ/mol',ar:'180 pm',ve:'3',ox:'+3',disc:'1794, Gadolin',econf:'[Kr] 4d¹ 5s²',uses:'LED phosphors, superconductors, cancer treatment (Y-90). NCERT: d-block transition metal.'},
+{z:40,sym:'Zr',name:'Zirconium',mass:'91.224',cat:'transition',period:5,group:4,phase:'Solid',density:'6.51 g/cm³',mp:'1855°C',bp:'4409°C',en:'1.33',ie:'640 kJ/mol',ar:'160 pm',ve:'4',ox:'+4',disc:'1789, Klaproth',econf:'[Kr] 4d² 5s²',uses:'Nuclear reactor cladding (low neutron absorption), ceramics, cubic zirconia. NCERT: Transition metal; corrosion resistant.'},
+{z:41,sym:'Nb',name:'Niobium',mass:'92.906',cat:'transition',period:5,group:5,phase:'Solid',density:'8.57 g/cm³',mp:'2477°C',bp:'4744°C',en:'1.60',ie:'652 kJ/mol',ar:'146 pm',ve:'5',ox:'+5',disc:'1801, Hatchett',econf:'[Kr] 4d⁴ 5s¹',uses:'Superconducting magnets (NbTi), stainless steel alloys, jet engines. NCERT: Transition metal.'},
+{z:42,sym:'Mo',name:'Molybdenum',mass:'95.960',cat:'transition',period:5,group:6,phase:'Solid',density:'10.28 g/cm³',mp:'2623°C',bp:'4639°C',en:'2.16',ie:'684 kJ/mol',ar:'139 pm',ve:'6',ox:'+6',disc:'1781, Hjelm',econf:'[Kr] 4d⁵ 5s¹',uses:'High-strength steels, catalysts, biological enzyme (nitrogenase). NCERT: d-block element.'},
+{z:43,sym:'Tc',name:'Technetium',mass:'[98]',cat:'transition',period:5,group:7,phase:'Solid',density:'11.50 g/cm³',mp:'2157°C',bp:'4265°C',en:'1.90',ie:'702 kJ/mol',ar:'136 pm',ve:'7',ox:'+7',disc:'1937, Perrier & Segrè',econf:'[Kr] 4d⁵ 5s²',uses:'Medical imaging (Tc-99m nuclear medicine). NCERT: First artificially produced element; all isotopes are radioactive.'},
+{z:44,sym:'Ru',name:'Ruthenium',mass:'101.07',cat:'transition',period:5,group:8,phase:'Solid',density:'12.37 g/cm³',mp:'2334°C',bp:'4150°C',en:'2.20',ie:'710 kJ/mol',ar:'134 pm',ve:'8',ox:'+4',disc:'1844, Klaus',econf:'[Kr] 4d⁷ 5s¹',uses:'Catalysts, electrical contacts, hard disk coatings. NCERT: Platinum group metal.'},
+{z:45,sym:'Rh',name:'Rhodium',mass:'102.906',cat:'transition',period:5,group:9,phase:'Solid',density:'12.41 g/cm³',mp:'1964°C',bp:'3695°C',en:'2.28',ie:'720 kJ/mol',ar:'134 pm',ve:'3',ox:'+3',disc:'1803, Wollaston',econf:'[Kr] 4d⁸ 5s¹',uses:'Catalytic converters (with Pt & Pd), jewellery, electroplating. NCERT: Platinum group; rare and expensive.'},
+{z:46,sym:'Pd',name:'Palladium',mass:'106.42',cat:'transition',period:5,group:10,phase:'Solid',density:'12.02 g/cm³',mp:'1555°C',bp:'2963°C',en:'2.20',ie:'805 kJ/mol',ar:'137 pm',ve:'4',ox:'+2',disc:'1803, Wollaston',econf:'[Kr] 4d¹⁰',uses:'Catalytic converters, jewellery, hydrogen storage, dentistry. NCERT: Anomalous electron configuration (no 5s electrons).'},
+{z:47,sym:'Ag',name:'Silver',mass:'107.868',cat:'transition',period:5,group:11,phase:'Solid',density:'10.50 g/cm³',mp:'962°C',bp:'2162°C',en:'1.93',ie:'731 kJ/mol',ar:'144 pm',ve:'1',ox:'+1',disc:'Ancient',econf:'[Kr] 4d¹⁰ 5s¹',uses:'Jewellery, photography (AgBr), electronics, antibacterial. NCERT: Best conductor of electricity; AgNO₃ is white silver nitrate.'},
+{z:48,sym:'Cd',name:'Cadmium',mass:'112.411',cat:'transition',period:5,group:12,phase:'Solid',density:'8.65 g/cm³',mp:'321°C',bp:'767°C',en:'1.69',ie:'868 kJ/mol',ar:'151 pm',ve:'2',ox:'+2',disc:'1817, Stromeyer',econf:'[Kr] 4d¹⁰ 5s²',uses:'Ni-Cd rechargeable batteries, yellow/red pigments, nuclear reactor control rods. NCERT: Heavy metal pollutant; causes itai-itai disease.'},
+{z:49,sym:'In',name:'Indium',mass:'114.818',cat:'post-transition',period:5,group:13,phase:'Solid',density:'7.31 g/cm³',mp:'157°C',bp:'2072°C',en:'1.78',ie:'558 kJ/mol',ar:'167 pm',ve:'3',ox:'+3',disc:'1863, Reich & Richter',econf:'[Kr] 4d¹⁰ 5s² 5p¹',uses:'LCD touchscreens (ITO = indium tin oxide), low-melting alloys, semiconductors. NCERT: Post-transition metal.'},
+{z:50,sym:'Sn',name:'Tin',mass:'118.710',cat:'post-transition',period:5,group:14,phase:'Solid',density:'7.29 g/cm³',mp:'232°C',bp:'2602°C',en:'1.96',ie:'709 kJ/mol',ar:'140 pm',ve:'4',ox:'+2, +4',disc:'Ancient',econf:'[Kr] 4d¹⁰ 5s² 5p²',uses:'Solder (Sn+Pb), tin cans (food), bronze alloy (Cu+Sn). NCERT: Allotropes (white tin & grey tin); tin pest at low temperature.'},
+{z:51,sym:'Sb',name:'Antimony',mass:'121.760',cat:'metalloid',period:5,group:15,phase:'Solid',density:'6.69 g/cm³',mp:'631°C',bp:'1587°C',en:'2.05',ie:'834 kJ/mol',ar:'140 pm',ve:'3',ox:'+3, -3',disc:'Ancient',econf:'[Kr] 4d¹⁰ 5s² 5p³',uses:'Flame retardants, lead-acid batteries, semiconductor alloys. NCERT: Metalloid; used in ancient cosmetics.'},
+{z:52,sym:'Te',name:'Tellurium',mass:'127.60',cat:'metalloid',period:5,group:16,phase:'Solid',density:'6.24 g/cm³',mp:'450°C',bp:'988°C',en:'2.10',ie:'869 kJ/mol',ar:'141 pm',ve:'2',ox:'-2, +6',disc:'1782, von Reichenstein',econf:'[Kr] 4d¹⁰ 5s² 5p⁴',uses:'Solar cells (CdTe), thermoelectrics, rubber vulcanization. NCERT: Metalloid; semiconductor properties.'},
+{z:53,sym:'I',name:'Iodine',mass:'126.904',cat:'halogen',period:5,group:17,phase:'Solid',density:'4.93 g/cm³',mp:'114°C',bp:'184°C',en:'2.66',ie:'1008 kJ/mol',ar:'140 pm',ve:'1',ox:'-1, +7',disc:'1811, Courtois',econf:'[Kr] 4d¹⁰ 5s² 5p⁵',uses:'Antiseptic (tincture of iodine), thyroid hormone (thyroxine), photography (AgI). NCERT: Halogen; sublimes; starch test for I₂ (blue-black colour).'},
+{z:54,sym:'Xe',name:'Xenon',mass:'131.293',cat:'noble',period:5,group:18,phase:'Gas',density:'5.90 g/L',mp:'-112°C',bp:'-108°C',en:'2.60',ie:'1170 kJ/mol',ar:'108 pm',ve:'0',ox:'0',disc:'1898, Ramsay & Travers',econf:'[Kr] 4d¹⁰ 5s² 5p⁶',uses:'Photography flash, satellite ion thrusters, anesthesia, car headlights. NCERT: Noble gas; XeF₂ and XeF₄ are exceptions to zero-valency rule.'},
+{z:55,sym:'Cs',name:'Cesium',mass:'132.905',cat:'alkali',period:6,group:1,phase:'Solid',density:'1.93 g/cm³',mp:'29°C',bp:'671°C',en:'0.79',ie:'376 kJ/mol',ar:'265 pm',ve:'1',ox:'+1',disc:'1860, Bunsen & Kirchhoff',econf:'[Xe] 6s¹',uses:'Atomic clocks (most accurate), photoelectric cells, drilling fluids. NCERT: Largest alkali metal; lowest IE.'},
+{z:56,sym:'Ba',name:'Barium',mass:'137.327',cat:'alkali-earth',period:6,group:2,phase:'Solid',density:'3.51 g/cm³',mp:'727°C',bp:'1897°C',en:'0.89',ie:'503 kJ/mol',ar:'222 pm',ve:'2',ox:'+2',disc:'1808, Davy',econf:'[Xe] 6s²',uses:'X-ray contrast agent (BaSO₄), fireworks (green flame), drilling fluid. NCERT: Alkaline earth; BaSO₄ is insoluble and safe for X-rays.'},
+{z:57,sym:'La',name:'Lanthanum',mass:'138.905',cat:'lanthanide',period:6,group:3,phase:'Solid',density:'6.16 g/cm³',mp:'920°C',bp:'3464°C',en:'1.10',ie:'538 kJ/mol',ar:'187 pm',ve:'3',ox:'+3',disc:'1839, Mosander',econf:'[Xe] 5d¹ 6s²',uses:'Camera lenses, hybrid car batteries, high-intensity lighting. NCERT: First lanthanide/rare earth element.'},
+{z:58,sym:'Ce',name:'Cerium',mass:'140.116',cat:'lanthanide',period:6,group:4,phase:'Solid',density:'6.77 g/cm³',mp:'795°C',bp:'3443°C',en:'1.12',ie:'527 kJ/mol',ar:'182 pm',ve:'4',ox:'+3, +4',disc:'1803, Hisinger & Berzelius',econf:'[Xe] 4f¹ 5d¹ 6s²',uses:'Catalytic converters, self-cleaning ovens, glass polishing, lighter flints. NCERT: Most abundant lanthanide.'},
+{z:59,sym:'Pr',name:'Praseodymium',mass:'140.908',cat:'lanthanide',period:6,group:5,phase:'Solid',density:'6.77 g/cm³',mp:'935°C',bp:'3520°C',en:'1.13',ie:'523 kJ/mol',ar:'182 pm',ve:'3',ox:'+3',disc:'1885, von Welsbach',econf:'[Xe] 4f³ 6s²',uses:'High-strength magnets, aircraft engines, green glass colorant. NCERT: Lanthanide/rare earth.'},
+{z:60,sym:'Nd',name:'Neodymium',mass:'144.242',cat:'lanthanide',period:6,group:6,phase:'Solid',density:'7.01 g/cm³',mp:'1021°C',bp:'3074°C',en:'1.14',ie:'530 kJ/mol',ar:'181 pm',ve:'3',ox:'+3',disc:'1885, von Welsbach',econf:'[Xe] 4f⁴ 6s²',uses:'Strongest permanent magnets (NdFeB — used in MRI, EVs, speakers), lasers. NCERT: Lanthanide.'},
+{z:61,sym:'Pm',name:'Promethium',mass:'[145]',cat:'lanthanide',period:6,group:7,phase:'Solid',density:'7.26 g/cm³',mp:'1042°C',bp:'3000°C',en:'–',ie:'536 kJ/mol',ar:'183 pm',ve:'3',ox:'+3',disc:'1945, Marinsky & Glendenin',econf:'[Xe] 4f⁵ 6s²',uses:'Nuclear batteries, luminescent paint (old). NCERT: Only radioactive lanthanide; no stable isotopes.'},
+{z:62,sym:'Sm',name:'Samarium',mass:'150.36',cat:'lanthanide',period:6,group:8,phase:'Solid',density:'7.52 g/cm³',mp:'1072°C',bp:'1794°C',en:'1.17',ie:'543 kJ/mol',ar:'180 pm',ve:'3',ox:'+3',disc:'1879, Lecoq de Boisbaudran',econf:'[Xe] 4f⁶ 6s²',uses:'SmCo permanent magnets, cancer treatment (Sm-153), catalysts. NCERT: Lanthanide.'},
+{z:63,sym:'Eu',name:'Europium',mass:'151.964',cat:'lanthanide',period:6,group:9,phase:'Solid',density:'5.24 g/cm³',mp:'822°C',bp:'1527°C',en:'–',ie:'547 kJ/mol',ar:'180 pm',ve:'3',ox:'+2, +3',disc:'1901, Demarçay',econf:'[Xe] 4f⁷ 6s²',uses:'Red & blue phosphors in TV/LED screens, euro banknote security features. NCERT: Lanthanide; anomalously low density.'},
+{z:64,sym:'Gd',name:'Gadolinium',mass:'157.25',cat:'lanthanide',period:6,group:10,phase:'Solid',density:'7.90 g/cm³',mp:'1313°C',bp:'3273°C',en:'1.20',ie:'592 kJ/mol',ar:'180 pm',ve:'3',ox:'+3',disc:'1880, Marignac',econf:'[Xe] 4f⁷ 5d¹ 6s²',uses:'MRI contrast agent (Gd-DTPA), nuclear reactor neutron absorber. NCERT: Highest magnetic moment.'},
+{z:65,sym:'Tb',name:'Terbium',mass:'158.925',cat:'lanthanide',period:6,group:11,phase:'Solid',density:'8.23 g/cm³',mp:'1356°C',bp:'3230°C',en:'–',ie:'565 kJ/mol',ar:'177 pm',ve:'3',ox:'+3',disc:'1843, Mosander',econf:'[Xe] 4f⁹ 6s²',uses:'Green phosphor in displays, solid-state devices, magnetostrictive alloys. NCERT: Lanthanide.'},
+{z:66,sym:'Dy',name:'Dysprosium',mass:'162.500',cat:'lanthanide',period:6,group:12,phase:'Solid',density:'8.55 g/cm³',mp:'1412°C',bp:'2567°C',en:'1.22',ie:'573 kJ/mol',ar:'178 pm',ve:'3',ox:'+3',disc:'1886, Lecoq de Boisbaudran',econf:'[Xe] 4f¹⁰ 6s²',uses:'Additive in NdFeB magnets (high temp performance), laser material. NCERT: Lanthanide.'},
+{z:67,sym:'Ho',name:'Holmium',mass:'164.930',cat:'lanthanide',period:6,group:13,phase:'Solid',density:'8.80 g/cm³',mp:'1474°C',bp:'2700°C',en:'1.23',ie:'581 kJ/mol',ar:'176 pm',ve:'3',ox:'+3',disc:'1878, Clève',econf:'[Xe] 4f¹¹ 6s²',uses:'Lasers (surgical), magnets, nuclear reactor control rods. NCERT: Lanthanide; highest magnetic moment of any element.'},
+{z:68,sym:'Er',name:'Erbium',mass:'167.259',cat:'lanthanide',period:6,group:14,phase:'Solid',density:'9.07 g/cm³',mp:'1529°C',bp:'2868°C',en:'1.24',ie:'589 kJ/mol',ar:'176 pm',ve:'3',ox:'+3',disc:'1843, Mosander',econf:'[Xe] 4f¹² 6s²',uses:'Fibre optic amplifiers (EDFA), lasers, pink glass colorant. NCERT: Lanthanide.'},
+{z:69,sym:'Tm',name:'Thulium',mass:'168.934',cat:'lanthanide',period:6,group:15,phase:'Solid',density:'9.32 g/cm³',mp:'1545°C',bp:'1950°C',en:'1.25',ie:'597 kJ/mol',ar:'176 pm',ve:'3',ox:'+3',disc:'1879, Clève',econf:'[Xe] 4f¹³ 6s²',uses:'Portable X-ray devices, lasers, blue-green phosphors. NCERT: Rarest lanthanide after Pm.'},
+{z:70,sym:'Yb',name:'Ytterbium',mass:'173.045',cat:'lanthanide',period:6,group:16,phase:'Solid',density:'6.97 g/cm³',mp:'819°C',bp:'1196°C',en:'–',ie:'603 kJ/mol',ar:'176 pm',ve:'3',ox:'+2, +3',disc:'1878, Marignac',econf:'[Xe] 4f¹⁴ 6s²',uses:'Atomic clocks (most precise), fibre lasers, stress gauges. NCERT: Lanthanide; complete 4f shell.'},
+{z:71,sym:'Lu',name:'Lutetium',mass:'174.967',cat:'lanthanide',period:6,group:17,phase:'Solid',density:'9.84 g/cm³',mp:'1663°C',bp:'3402°C',en:'1.27',ie:'524 kJ/mol',ar:'174 pm',ve:'3',ox:'+3',disc:'1907, Urbain',econf:'[Xe] 4f¹⁴ 5d¹ 6s²',uses:'PET scan detectors (Lu-PSMA therapy), petroleum refining catalysts. NCERT: Last (heaviest) lanthanide.'},
+{z:72,sym:'Hf',name:'Hafnium',mass:'178.49',cat:'transition',period:6,group:4,phase:'Solid',density:'13.31 g/cm³',mp:'2233°C',bp:'4603°C',en:'1.30',ie:'658 kJ/mol',ar:'159 pm',ve:'4',ox:'+4',disc:'1923, Coster & de Hevesy',econf:'[Xe] 4f¹⁴ 5d² 6s²',uses:'Nuclear reactor control rods, Intel microprocessor gate oxide. NCERT: Transition metal; always found with Zr.'},
+{z:73,sym:'Ta',name:'Tantalum',mass:'180.948',cat:'transition',period:6,group:5,phase:'Solid',density:'16.65 g/cm³',mp:'3017°C',bp:'5458°C',en:'1.50',ie:'761 kJ/mol',ar:'146 pm',ve:'5',ox:'+5',disc:'1802, Ekeberg',econf:'[Xe] 4f¹⁴ 5d³ 6s²',uses:'Capacitors in electronics (mobile phones), surgical implants, jet engine turbines. NCERT: Refractory metal; highly corrosion-resistant.'},
+{z:74,sym:'W',name:'Tungsten',mass:'183.84',cat:'transition',period:6,group:6,phase:'Solid',density:'19.35 g/cm³',mp:'3422°C',bp:'5555°C',en:'2.36',ie:'770 kJ/mol',ar:'139 pm',ve:'6',ox:'+6',disc:'1783, d\'Elhuyar brothers',econf:'[Xe] 4f¹⁴ 5d⁴ 6s²',uses:'Light bulb filaments, cutting tools, X-ray tubes. NCERT: Highest melting point of all metals; symbol W from "Wolfram".'},
+{z:75,sym:'Re',name:'Rhenium',mass:'186.207',cat:'transition',period:6,group:7,phase:'Solid',density:'21.02 g/cm³',mp:'3186°C',bp:'5596°C',en:'1.90',ie:'760 kJ/mol',ar:'137 pm',ve:'7',ox:'+4, +7',disc:'1925, Noddack, Tacke & Berg',econf:'[Xe] 4f¹⁴ 5d⁵ 6s²',uses:'Jet engine superalloy turbine blades, platinum-rhenium catalysts. NCERT: One of rarest elements on Earth.'},
+{z:76,sym:'Os',name:'Osmium',mass:'190.23',cat:'transition',period:6,group:8,phase:'Solid',density:'22.59 g/cm³',mp:'3033°C',bp:'5012°C',en:'2.20',ie:'840 kJ/mol',ar:'135 pm',ve:'4',ox:'+4',disc:'1803, Tennant',econf:'[Xe] 4f¹⁴ 5d⁶ 6s²',uses:'Fountain pen tips, electrical contacts, fingerprint detection (OsO₄). NCERT: Densest naturally occurring element (22.59 g/cm³).'},
+{z:77,sym:'Ir',name:'Iridium',mass:'192.217',cat:'transition',period:6,group:9,phase:'Solid',density:'22.56 g/cm³',mp:'2446°C',bp:'4428°C',en:'2.20',ie:'880 kJ/mol',ar:'136 pm',ve:'3',ox:'+3, +4',disc:'1803, Tennant',econf:'[Xe] 4f¹⁴ 5d⁷ 6s²',uses:'Spark plugs, crucibles, historical SI kilogram standard. NCERT: Most corrosion-resistant metal; K-Pg boundary evidence.'},
+{z:78,sym:'Pt',name:'Platinum',mass:'195.084',cat:'transition',period:6,group:10,phase:'Solid',density:'21.45 g/cm³',mp:'1768°C',bp:'3825°C',en:'2.28',ie:'870 kJ/mol',ar:'138 pm',ve:'4',ox:'+2, +4',disc:'1735, Ulloa',econf:'[Xe] 4f¹⁴ 5d⁹ 6s¹',uses:'Catalytic converters, jewellery, fuel cells, cancer drug (cisplatin). NCERT: Catalyst in Contact process (H₂SO₄ manufacture); noble metal.'},
+{z:79,sym:'Au',name:'Gold',mass:'196.967',cat:'transition',period:6,group:11,phase:'Solid',density:'19.30 g/cm³',mp:'1064°C',bp:'2856°C',en:'2.54',ie:'890 kJ/mol',ar:'144 pm',ve:'3',ox:'+1, +3',disc:'Ancient',econf:'[Xe] 4f¹⁴ 5d¹⁰ 6s¹',uses:'Jewellery, electronics (connectors), dentistry, investment. NCERT: Noble metal; does NOT react with single acids; dissolves in aqua regia (HNO₃ + 3HCl).'},
+{z:80,sym:'Hg',name:'Mercury',mass:'200.592',cat:'transition',period:6,group:12,phase:'Liquid',density:'13.53 g/cm³',mp:'-39°C',bp:'357°C',en:'2.00',ie:'1007 kJ/mol',ar:'151 pm',ve:'2',ox:'+1, +2',disc:'Ancient',econf:'[Xe] 4f¹⁴ 5d¹⁰ 6s²',uses:'Old thermometers, fluorescent lights, gold amalgam extraction. NCERT: Only LIQUID metal at room temperature; highly toxic; causes Minamata disease.'},
+{z:81,sym:'Tl',name:'Thallium',mass:'204.383',cat:'post-transition',period:6,group:13,phase:'Solid',density:'11.85 g/cm³',mp:'304°C',bp:'1473°C',en:'1.62',ie:'589 kJ/mol',ar:'170 pm',ve:'3',ox:'+1, +3',disc:'1861, Crookes',econf:'[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p¹',uses:'Infrared detectors, medical imaging, old rat poison (Tl₂SO₄). NCERT: Toxic post-transition metal.'},
+{z:82,sym:'Pb',name:'Lead',mass:'207.2',cat:'post-transition',period:6,group:14,phase:'Solid',density:'11.34 g/cm³',mp:'327°C',bp:'1749°C',en:'2.33',ie:'716 kJ/mol',ar:'175 pm',ve:'4',ox:'+2, +4',disc:'Ancient',econf:'[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p²',uses:'Lead-acid batteries (cars), radiation shielding (X-ray aprons), old paint & petrol. NCERT: Heavy metal pollutant; tetraethyl lead was petrol additive (causes brain damage); banned now.'},
+{z:83,sym:'Bi',name:'Bismuth',mass:'208.980',cat:'post-transition',period:6,group:15,phase:'Solid',density:'9.78 g/cm³',mp:'271°C',bp:'1564°C',en:'2.02',ie:'703 kJ/mol',ar:'156 pm',ve:'3',ox:'+3',disc:'Ancient',econf:'[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p³',uses:'Pepto-Bismol (stomach medicine), low-melting alloys, cosmetics. NCERT: Heaviest stable (non-radioactive) element.'},
+{z:84,sym:'Po',name:'Polonium',mass:'[209]',cat:'metalloid',period:6,group:16,phase:'Solid',density:'9.20 g/cm³',mp:'254°C',bp:'962°C',en:'2.00',ie:'812 kJ/mol',ar:'168 pm',ve:'2',ox:'+4',disc:'1898, Marie & Pierre Curie',econf:'[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p⁴',uses:'Anti-static devices, nuclear batteries (RTG). NCERT: Discovered by Marie Curie; radioactive alpha emitter; used as polonium-210.'},
+{z:85,sym:'At',name:'Astatine',mass:'[210]',cat:'halogen',period:6,group:17,phase:'Solid',density:'~7 g/cm³',mp:'302°C',bp:'337°C',en:'2.20',ie:'920 kJ/mol',ar:'~150 pm',ve:'1',ox:'-1, +1',disc:'1940, Corson, MacKenzie & Segrè',econf:'[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p⁵',uses:'Cancer treatment (At-211 targeted alpha therapy). NCERT: Rarest naturally occurring element on Earth; heaviest halogen.'},
+{z:86,sym:'Rn',name:'Radon',mass:'[222]',cat:'noble',period:6,group:18,phase:'Gas',density:'9.97 g/L',mp:'-71°C',bp:'-62°C',en:'2.20',ie:'1037 kJ/mol',ar:'120 pm',ve:'0',ox:'0',disc:'1900, Dorn',econf:'[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p⁶',uses:'Earthquake prediction, cancer therapy. NCERT: Radioactive noble gas; significant indoor air health hazard; from uranium decay.'},
+{z:87,sym:'Fr',name:'Francium',mass:'[223]',cat:'alkali',period:7,group:1,phase:'Solid',density:'~1.87 g/cm³',mp:'27°C',bp:'677°C',en:'0.70',ie:'393 kJ/mol',ar:'270 pm',ve:'1',ox:'+1',disc:'1939, Marguerite Perey',econf:'[Rn] 7s¹',uses:'Research only; too radioactive for practical use. NCERT: Heaviest alkali metal; lowest ionisation energy; most metallic element.'},
+{z:88,sym:'Ra',name:'Radium',mass:'[226]',cat:'alkali-earth',period:7,group:2,phase:'Solid',density:'5.50 g/cm³',mp:'700°C',bp:'1737°C',en:'0.90',ie:'509 kJ/mol',ar:'215 pm',ve:'2',ox:'+2',disc:'1898, Marie & Pierre Curie',econf:'[Rn] 7s²',uses:'Cancer treatment (brachytherapy), historical luminescent paint (radium girls). NCERT: Discovered by Marie Curie; radioactive alkaline earth; Ra-226 is most stable isotope.'},
+{z:89,sym:'Ac',name:'Actinium',mass:'[227]',cat:'actinide',period:7,group:3,phase:'Solid',density:'10.07 g/cm³',mp:'1050°C',bp:'3200°C',en:'1.10',ie:'499 kJ/mol',ar:'188 pm',ve:'3',ox:'+3',disc:'1899, Debierne',econf:'[Rn] 6d¹ 7s²',uses:'Neutron source, cancer treatment (Ac-225). NCERT: First actinide; f-block element.'},
+{z:90,sym:'Th',name:'Thorium',mass:'232.038',cat:'actinide',period:7,group:4,phase:'Solid',density:'11.72 g/cm³',mp:'1750°C',bp:'4788°C',en:'1.30',ie:'587 kJ/mol',ar:'179 pm',ve:'4',ox:'+4',disc:'1828, Berzelius',econf:'[Rn] 6d² 7s²',uses:'Nuclear fuel (Th-232 → U-233 breeder), gas mantles. NCERT: India has world\'s largest thorium reserves (Kerala beaches); India\'s 3-stage nuclear program uses Th.'},
+{z:91,sym:'Pa',name:'Protactinium',mass:'231.036',cat:'actinide',period:7,group:5,phase:'Solid',density:'15.37 g/cm³',mp:'1568°C',bp:'4000°C',en:'1.50',ie:'568 kJ/mol',ar:'163 pm',ve:'5',ox:'+5',disc:'1917, Hahn & Meitner',econf:'[Rn] 5f² 6d¹ 7s²',uses:'Research only; trace amounts in uranium ores. NCERT: Actinide; highly radioactive.'},
+{z:92,sym:'U',name:'Uranium',mass:'238.029',cat:'actinide',period:7,group:6,phase:'Solid',density:'19.05 g/cm³',mp:'1135°C',bp:'4131°C',en:'1.38',ie:'598 kJ/mol',ar:'156 pm',ve:'6',ox:'+4, +6',disc:'1789, Klaproth',econf:'[Rn] 5f³ 6d¹ 7s²',uses:'Nuclear fuel (U-235 fission), depleted U in armour-piercing ammunition. NCERT: U-235 undergoes chain fission reaction; used in nuclear reactors and weapons.'},
+{z:93,sym:'Np',name:'Neptunium',mass:'[237]',cat:'actinide',period:7,group:7,phase:'Solid',density:'20.45 g/cm³',mp:'644°C',bp:'4000°C',en:'1.36',ie:'605 kJ/mol',ar:'155 pm',ve:'5',ox:'+5',disc:'1940, McMillan & Abelson',econf:'[Rn] 5f⁴ 6d¹ 7s²',uses:'Neutron detection, research. NCERT: First transuranium element; named after planet Neptune.'},
+{z:94,sym:'Pu',name:'Plutonium',mass:'[244]',cat:'actinide',period:7,group:8,phase:'Solid',density:'19.84 g/cm³',mp:'640°C',bp:'3230°C',en:'1.28',ie:'585 kJ/mol',ar:'159 pm',ve:'4',ox:'+4',disc:'1940, Seaborg et al.',econf:'[Rn] 5f⁶ 7s²',uses:'Nuclear weapons (Fat Man bomb), MOX nuclear fuel. NCERT: Pu-239 fissions like U-235; extremely toxic.'},
+{z:95,sym:'Am',name:'Americium',mass:'[243]',cat:'actinide',period:7,group:9,phase:'Solid',density:'13.69 g/cm³',mp:'1176°C',bp:'2607°C',en:'1.30',ie:'578 kJ/mol',ar:'173 pm',ve:'3',ox:'+3',disc:'1944, Seaborg, James, Morgan & Ghiorso',econf:'[Rn] 5f⁷ 7s²',uses:'Smoke detectors (Am-241 alpha source inside ionisation chamber). NCERT: Common actinide in everyday life (smoke detectors).'},
+{z:96,sym:'Cm',name:'Curium',mass:'[247]',cat:'actinide',period:7,group:10,phase:'Solid',density:'13.51 g/cm³',mp:'1345°C',bp:'3110°C',en:'1.30',ie:'581 kJ/mol',ar:'174 pm',ve:'3',ox:'+3',disc:'1944, Seaborg et al.',econf:'[Rn] 5f⁷ 6d¹ 7s²',uses:'Alpha particle source in spacecraft RTGs (Mars rovers). NCERT: Named after Marie & Pierre Curie.'},
+{z:97,sym:'Bk',name:'Berkelium',mass:'[247]',cat:'actinide',period:7,group:11,phase:'Solid',density:'14.78 g/cm³',mp:'986°C',bp:'~2627°C',en:'1.30',ie:'601 kJ/mol',ar:'170 pm',ve:'3',ox:'+3',disc:'1949, Thompson, Ghiorso & Seaborg',econf:'[Rn] 5f⁹ 7s²',uses:'Research only; used to synthesise element 117 (Tennessine). NCERT: Named after Berkeley, California.'},
+{z:98,sym:'Cf',name:'Californium',mass:'[251]',cat:'actinide',period:7,group:12,phase:'Solid',density:'15.10 g/cm³',mp:'900°C',bp:'~1470°C',en:'1.30',ie:'608 kJ/mol',ar:'168 pm',ve:'3',ox:'+3',disc:'1950, Thompson, Street, Ghiorso & Seaborg',econf:'[Rn] 5f¹⁰ 7s²',uses:'Neutron source for cancer treatment, oil well logging, material analysis. NCERT: Named after California.'},
+{z:99,sym:'Es',name:'Einsteinium',mass:'[252]',cat:'actinide',period:7,group:13,phase:'Solid',density:'~8.84 g/cm³',mp:'860°C',bp:'~996°C',en:'1.30',ie:'619 kJ/mol',ar:'165 pm',ve:'3',ox:'+3',disc:'1952, Ghiorso et al. (from H-bomb fallout)',econf:'[Rn] 5f¹¹ 7s²',uses:'Research only; discovered in fallout of Ivy Mike thermonuclear test. NCERT: Named after Albert Einstein.'},
+{z:100,sym:'Fm',name:'Fermium',mass:'[257]',cat:'actinide',period:7,group:14,phase:'Solid',density:'~9.71 g/cm³',mp:'1527°C',bp:'–',en:'1.30',ie:'627 kJ/mol',ar:'167 pm',ve:'3',ox:'+3',disc:'1953, Ghiorso et al.',econf:'[Rn] 5f¹² 7s²',uses:'Research only. NCERT: Named after Enrico Fermi (nuclear physicist); heaviest element discovered in nuclear explosion fallout.'},
+{z:101,sym:'Md',name:'Mendelevium',mass:'[258]',cat:'actinide',period:7,group:15,phase:'Solid',density:'~10.30 g/cm³',mp:'827°C',bp:'–',en:'1.30',ie:'635 kJ/mol',ar:'173 pm',ve:'3',ox:'+3',disc:'1955, Ghiorso, Harvey, Choppin, Thompson & Seaborg',econf:'[Rn] 5f¹³ 7s²',uses:'Research only. NCERT: Named after Dmitri Mendeleev (father of Periodic Table).'},
+{z:102,sym:'No',name:'Nobelium',mass:'[259]',cat:'actinide',period:7,group:16,phase:'Solid',density:'~9.90 g/cm³',mp:'827°C',bp:'–',en:'1.30',ie:'642 kJ/mol',ar:'176 pm',ve:'3',ox:'+2, +3',disc:'1958, Dubna & Berkeley',econf:'[Rn] 5f¹⁴ 7s²',uses:'Research only. NCERT: Named after Alfred Nobel (inventor of dynamite; endowed Nobel Prizes).'},
+{z:103,sym:'Lr',name:'Lawrencium',mass:'[266]',cat:'actinide',period:7,group:17,phase:'Solid',density:'~15.60 g/cm³',mp:'1627°C',bp:'–',en:'1.30',ie:'470 kJ/mol',ar:'161 pm',ve:'3',ox:'+3',disc:'1961, Ghiorso, Sikkeland, Larsh & Latimer',econf:'[Rn] 5f¹⁴ 7s² 7p¹',uses:'Research only. NCERT: Last actinide (Z=103); named after Ernest O. Lawrence (inventor of cyclotron).'},
+{z:104,sym:'Rf',name:'Rutherfordium',mass:'[267]',cat:'transition',period:7,group:4,phase:'Solid',density:'~23.2 g/cm³',mp:'2100°C',bp:'5500°C',en:'–',ie:'~580',ar:'150 pm',ve:'4',ox:'+4',disc:'1964, Dubna/Berkeley',econf:'[Rn] 5f¹⁴ 6d² 7s²',uses:'Research only. Named after Ernest Rutherford (gold foil experiment).'},
+{z:105,sym:'Db',name:'Dubnium',mass:'[268]',cat:'transition',period:7,group:5,phase:'Solid',density:'~29.3 g/cm³',mp:'–',bp:'–',en:'–',ie:'–',ar:'139 pm',ve:'5',ox:'+5',disc:'1970, Dubna & Berkeley',econf:'[Rn] 5f¹⁴ 6d³ 7s²',uses:'Research only. Named after Dubna, Russia.'},
+{z:106,sym:'Sg',name:'Seaborgium',mass:'[269]',cat:'transition',period:7,group:6,phase:'Solid',density:'~35.0 g/cm³',mp:'–',bp:'–',en:'–',ie:'–',ar:'132 pm',ve:'6',ox:'+6',disc:'1974, Dubna',econf:'[Rn] 5f¹⁴ 6d⁴ 7s²',uses:'Research only. Named after Glenn T. Seaborg (discovered 10 elements).'},
+{z:107,sym:'Bh',name:'Bohrium',mass:'[270]',cat:'transition',period:7,group:7,phase:'Solid',density:'~37.1 g/cm³',mp:'–',bp:'–',en:'–',ie:'–',ar:'128 pm',ve:'7',ox:'+7',disc:'1981, Darmstadt',econf:'[Rn] 5f¹⁴ 6d⁵ 7s²',uses:'Research only. Named after Niels Bohr (atomic model).'},
+{z:108,sym:'Hs',name:'Hassium',mass:'[277]',cat:'transition',period:7,group:8,phase:'Solid',density:'~40.7 g/cm³',mp:'–',bp:'–',en:'–',ie:'–',ar:'126 pm',ve:'8',ox:'+8',disc:'1984, Darmstadt',econf:'[Rn] 5f¹⁴ 6d⁶ 7s²',uses:'Research only. Named after Hessen, Germany.'},
+{z:109,sym:'Mt',name:'Meitnerium',mass:'[278]',cat:'unknown-el',period:7,group:9,phase:'Solid',density:'~37.4 g/cm³',mp:'–',bp:'–',en:'–',ie:'–',ar:'–',ve:'?',ox:'?',disc:'1982, Darmstadt',econf:'[Rn] 5f¹⁴ 6d⁷ 7s²',uses:'Research only. Named after Lise Meitner (nuclear fission pioneer).'},
+{z:110,sym:'Ds',name:'Darmstadtium',mass:'[281]',cat:'unknown-el',period:7,group:10,phase:'Solid',density:'–',mp:'–',bp:'–',en:'–',ie:'–',ar:'–',ve:'?',ox:'?',disc:'1994, Darmstadt',econf:'[Rn] 5f¹⁴ 6d⁹ 7s¹',uses:'Research only. Named after Darmstadt, Germany.'},
+{z:111,sym:'Rg',name:'Roentgenium',mass:'[282]',cat:'unknown-el',period:7,group:11,phase:'Solid',density:'–',mp:'–',bp:'–',en:'–',ie:'–',ar:'–',ve:'?',ox:'?',disc:'1994, Darmstadt',econf:'[Rn] 5f¹⁴ 6d¹⁰ 7s¹',uses:'Research only. Named after Wilhelm Röntgen (X-ray discoverer).'},
+{z:112,sym:'Cn',name:'Copernicium',mass:'[285]',cat:'transition',period:7,group:12,phase:'Gas (predicted)',density:'–',mp:'–',bp:'–',en:'–',ie:'~1155',ar:'–',ve:'2',ox:'+2',disc:'1996, Darmstadt',econf:'[Rn] 5f¹⁴ 6d¹⁰ 7s²',uses:'Research only. Named after Nicolaus Copernicus (heliocentric model).'},
+{z:113,sym:'Nh',name:'Nihonium',mass:'[286]',cat:'unknown-el',period:7,group:13,phase:'Solid',density:'–',mp:'–',bp:'–',en:'–',ie:'–',ar:'–',ve:'?',ox:'?',disc:'2004, RIKEN Japan',econf:'[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p¹',uses:'Research only. Named after Japan (Nihon = Land of the Rising Sun); first element discovered in Asia.'},
+{z:114,sym:'Fl',name:'Flerovium',mass:'[289]',cat:'unknown-el',period:7,group:14,phase:'Solid',density:'–',mp:'–',bp:'–',en:'–',ie:'–',ar:'–',ve:'?',ox:'?',disc:'1999, Dubna',econf:'[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p²',uses:'Research only. Named after Flerov Laboratory of Nuclear Reactions, Dubna.'},
+{z:115,sym:'Mc',name:'Moscovium',mass:'[290]',cat:'unknown-el',period:7,group:15,phase:'Solid',density:'–',mp:'–',bp:'–',en:'–',ie:'–',ar:'–',ve:'?',ox:'?',disc:'2003, Dubna & Livermore',econf:'[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p³',uses:'Research only. Named after Moscow Oblast, Russia.'},
+{z:116,sym:'Lv',name:'Livermorium',mass:'[293]',cat:'unknown-el',period:7,group:16,phase:'Solid',density:'–',mp:'–',bp:'–',en:'–',ie:'–',ar:'–',ve:'?',ox:'?',disc:'2000, Dubna & Livermore',econf:'[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p⁴',uses:'Research only. Named after Lawrence Livermore National Laboratory, California.'},
+{z:117,sym:'Ts',name:'Tennessine',mass:'[294]',cat:'unknown-el',period:7,group:17,phase:'Solid',density:'–',mp:'–',bp:'–',en:'–',ie:'–',ar:'–',ve:'?',ox:'?',disc:'2010, Dubna',econf:'[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p⁵',uses:'Research only. Named after Tennessee, USA (home to Oak Ridge, Vanderbilt, UT).'},
+{z:118,sym:'Og',name:'Oganesson',mass:'[294]',cat:'noble',period:7,group:18,phase:'Solid (predicted)',density:'–',mp:'–',bp:'–',en:'–',ie:'~839',ar:'–',ve:'0',ox:'0',disc:'2002, Dubna & Livermore',econf:'[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p⁶',uses:'Research only. Named after Yuri Oganessian (nuclear physicist); heaviest known element.'},
+];
+
+const CAT_COLORS={alkali:'#ff6b6b','alkali-earth':'#ff9a5c',transition:'#5c85ff','post-transition':'#74c6c6',metalloid:'#a78bfa',nonmetal:'#4ade80',halogen:'#facc15',noble:'#fb7185',lanthanide:'#e879f9',actinide:'#60a5fa','unknown-el':'#64748b'};
+const CAT_NAMES={alkali:'Alkali Metal','alkali-earth':'Alkaline Earth Metal',transition:'Transition Metal','post-transition':'Post-Transition Metal',metalloid:'Metalloid',nonmetal:'Nonmetal',halogen:'Halogen',noble:'Noble Gas',lanthanide:'Lanthanide',actinide:'Actinide','unknown-el':'Unknown/Synthetic'};
+
+function buildTable(){
+  const grid=document.getElementById('pt-grid');
+  // Main table: period rows, group columns
+  // Lanthanides (57-71) and Actinides (89-103) go in separate rows
+  const laAc=new Set([...Array.from({length:15},(_,i)=>i+57),...Array.from({length:15},(_,i)=>i+89)]);
+  const mainEls=ELEMENTS.filter(e=>!laAc.has(e.z));
+
+  // Blank cells needed
+  const specialBlanks={
+    '1-2':true,'1-3':true,'1-4':true,'1-5':true,'1-6':true,'1-7':true,'1-8':true,'1-9':true,'1-10':true,'1-11':true,'1-12':true,'1-13':true,'1-14':true,'1-15':true,'1-16':true,'1-17':true,
+    '2-3':true,'2-4':true,'2-5':true,'2-6':true,'2-7':true,'2-8':true,'2-9':true,'2-10':true,'2-11':true,'2-12':true,
+    '3-3':true,'3-4':true,'3-5':true,'3-6':true,'3-7':true,'3-8':true,'3-9':true,'3-10':true,'3-11':true,'3-12':true,
+    '6-3':true,'7-3':true
+  };
+
+  const elMap={};
+  mainEls.forEach(e=>elMap[`${e.period}-${e.group}`]=e);
+
+  for(let r=1;r<=7;r++){
+    for(let c=1;c<=18;c++){
+      const key=`${r}-${c}`;
+      const el=elMap[key];
+      if(el){
+        const div=document.createElement('div');
+        div.className=`el-cell ${el.cat}`;
+        div.id=`el-${el.z}`;
+        div.setAttribute('data-z',el.z);
+        div.setAttribute('data-cat',el.cat);
+        div.style.gridColumn=c;
+        div.style.gridRow=r;
+        div.innerHTML=`<div class="el-num">${el.z}</div><div class="el-sym">${el.sym}</div><div class="el-name">${el.name}</div><div class="el-mass">${el.mass}</div>`;
+        div.addEventListener('click',()=>openDetail(el));
+        grid.appendChild(div);
+      } else if(specialBlanks[key]){
+        const div=document.createElement('div');
+        div.className='gap-cell';
+        div.style.gridColumn=c;
+        div.style.gridRow=r;
+        // La/Ac placeholders
+        if((r===6||r===7)&&c===3){
+          div.className='el-cell';
+          div.style.opacity='0.3';
+          div.style.fontSize='0.55rem';
+          div.style.color='var(--muted)';
+          div.style.cursor='default';
+          div.textContent=r===6?'57-71':'89-103';
+        }
+        grid.appendChild(div);
+      }
+    }
+  }
+
+  // Lanthanide and Actinide rows
+  const laRow=document.getElementById('la-row');
+  const acRow=document.getElementById('ac-row');
+  ELEMENTS.filter(e=>e.cat==='lanthanide').forEach(el=>{
+    const d=document.createElement('div');
+    d.className='el-cell lanthanide';d.id=`el-${el.z}`;d.setAttribute('data-z',el.z);d.setAttribute('data-cat',el.cat);
+    d.innerHTML=`<div class="el-num">${el.z}</div><div class="el-sym">${el.sym}</div><div class="el-name">${el.name}</div>`;
+    d.addEventListener('click',()=>openDetail(el));
+    laRow.appendChild(d);
+  });
+  ELEMENTS.filter(e=>e.cat==='actinide').forEach(el=>{
+    const d=document.createElement('div');
+    d.className='el-cell actinide';d.id=`el-${el.z}`;d.setAttribute('data-z',el.z);d.setAttribute('data-cat',el.cat);
+    d.innerHTML=`<div class="el-num">${el.z}</div><div class="el-sym">${el.sym}</div><div class="el-name">${el.name}</div>`;
+    d.addEventListener('click',()=>openDetail(el));
+    acRow.appendChild(d);
+  });
+}
+
+function openDetail(el){
+  const col=CAT_COLORS[el.cat]||'#888';
+  const box=document.getElementById('dp-sym-box');
+  box.style.borderColor=col;
+  box.style.background=`color-mix(in srgb,${col} 12%,transparent)`;
+  document.getElementById('dp-symbol').style.color=col;
+  document.getElementById('dp-atomic').textContent=el.z;
+  document.getElementById('dp-symbol').textContent=el.sym;
+  document.getElementById('dp-mass').textContent=el.mass+' u';
+  document.getElementById('dp-name').textContent=el.name;
+  document.getElementById('dp-name').style.color=col;
+  const badge=document.getElementById('dp-cat-badge');
+  badge.textContent=CAT_NAMES[el.cat];
+  badge.style.color=col;badge.style.borderColor=col;
+  badge.style.background=`color-mix(in srgb,${col} 12%,transparent)`;
+  document.getElementById('dp-tagline').textContent=el.uses.split('.')[0]+'.';
+  document.getElementById('dp-period').textContent=el.period;
+  document.getElementById('dp-group').textContent=el.group||'–';
+  document.getElementById('dp-amass').textContent=el.mass+' u';
+  document.getElementById('dp-phase').textContent=el.phase;
+  document.getElementById('dp-density').textContent=el.density;
+  document.getElementById('dp-mp').textContent=el.mp;
+  document.getElementById('dp-bp').textContent=el.bp;
+  document.getElementById('dp-en').textContent=el.en;
+  document.getElementById('dp-ie').textContent=el.ie;
+  document.getElementById('dp-ar').textContent=el.ar;
+  document.getElementById('dp-ve').textContent=el.ve;
+  document.getElementById('dp-ox').textContent=el.ox;
+  document.getElementById('dp-disc').textContent=el.disc;
+  document.getElementById('dp-econf').textContent=el.econf;
+  document.getElementById('dp-uses').textContent=el.uses;
+  document.getElementById('detailOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeDetail(){document.getElementById('detailOverlay').classList.remove('open');document.body.style.overflow='';}
+document.getElementById('detailOverlay').addEventListener('click',function(e){if(e.target===this)closeDetail();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDetail();});
+
+// Search
+document.getElementById('searchInput').addEventListener('input',function(){
+  const q=this.value.toLowerCase().trim();
+  document.querySelectorAll('.el-cell[data-z]').forEach(cell=>{
+    const z=parseInt(cell.getAttribute('data-z'));
+    const el=ELEMENTS.find(e=>e.z===z);
+    if(!el){return;}
+    if(!q){cell.classList.remove('dimmed','highlighted');return;}
+    const match=el.name.toLowerCase().includes(q)||el.sym.toLowerCase().includes(q)||String(el.z).includes(q)||el.cat.includes(q);
+    cell.classList.toggle('dimmed',!match);
+    cell.classList.toggle('highlighted',match);
+  });
+});
+
+// Legend filter
+document.querySelectorAll('.leg-item').forEach(item=>{
+  item.addEventListener('click',()=>{
+    const cat=item.getAttribute('data-cat');
+    const q=document.getElementById('searchInput');
+    q.value='';
+    document.querySelectorAll('.el-cell[data-z]').forEach(cell=>{
+      const c=cell.getAttribute('data-cat');
+      cell.classList.toggle('dimmed',c!==cat);
+      cell.classList.toggle('highlighted',c===cat);
+    });
+  });
+});
+
+// Theme managed via shared-nav.js
+
+buildTable();
+</script>
+
+<footer style="text-align:center;padding:1.5rem;border-top:1px solid var(--border);font-size:0.78rem;color:var(--muted);margin-top:2rem;">
+  Moleqyn Periodic Table | All 118 Elements &nbsp;|&nbsp; <a href="about.html" style="color:var(--primary);text-decoration:none;">About</a>
+</footer>
+  <script src="js/shared-nav.js"></script>
+</body>
+</html>
+
+

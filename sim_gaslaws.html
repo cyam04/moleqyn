@@ -1,0 +1,894 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Moleqyn | Ideal Gas Laws Simulator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <script>
+    (function(){
+      var saved = localStorage.getItem('mlab_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', saved);
+      if(saved === 'day' || saved === 'light') {
+        document.documentElement.classList.add('light-mode');
+      }
+    })();
+  </script>
+  <style>
+    :root{
+      --bg:#06101e;--panel:#0d1a2e;--border:rgba(255,255,255,0.1);
+      --primary:#00d4ff;--secondary:#ff00cc;--accent:#ffd700;--green:#4ade80;
+      --red:#fb7185;--orange:#fb923c;--text:#f0f4ff;--muted:#7a90b0;
+    }
+    :root[data-theme="day"], html.light-mode {
+      --bg: #f8fafc;
+      --panel: #ffffff;
+      --border: rgba(0, 0, 0, 0.08);
+      --primary: #0284c7;
+      --secondary: #d946ef;
+      --accent: #ca8a04;
+      --green: #16a34a;
+      --red: #e11d48;
+      --orange: #ea580c;
+      --text: #0f172a;
+      --muted: #475569;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{
+      background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;
+      min-height:100vh;overflow-x:hidden;padding-top:75px;
+      background-image: radial-gradient(circle at top right, rgba(0, 212, 255, 0.06), transparent 60%),
+                        radial-gradient(circle at bottom left, rgba(255, 0, 204, 0.04), transparent 60%);
+    }
+    :root[data-theme="day"] body, html.light-mode body {
+      background: #f8fafc !important;
+      color: #0f172a !important;
+      background-image: radial-gradient(circle at top right, rgba(2, 132, 199, 0.05), transparent 60%),
+                        radial-gradient(circle at bottom left, rgba(217, 70, 239, 0.03), transparent 60%) !important;
+    }
+
+    /* DAY MODE COMPONENT OVERRIDES */
+    :root[data-theme="day"] .canvas-box, html.light-mode .canvas-box {
+      background: radial-gradient(circle at 50% 30%, #f1f5f9 0%, #e2e8f0 75%) !important;
+      border-color: rgba(0,0,0,0.08) !important;
+    }
+    :root[data-theme="day"] .law-tab, html.light-mode .law-tab {
+      background: #ffffff;
+      border-color: rgba(0,0,0,0.1);
+      color: #475569;
+    }
+    :root[data-theme="day"] .law-tab.active, html.light-mode .law-tab.active {
+      background: #0284c7;
+      color: #ffffff;
+      border-color: #0284c7;
+    }
+    :root[data-theme="day"] .eq-box, html.light-mode .eq-box {
+      background: rgba(2, 132, 199, 0.05) !important;
+      border-color: rgba(2, 132, 199, 0.2) !important;
+    }
+    :root[data-theme="day"] .readout, html.light-mode .readout,
+    :root[data-theme="day"] .ctrl-box, html.light-mode .ctrl-box {
+      background: #ffffff !important;
+      border-color: rgba(0,0,0,0.08) !important;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.04) !important;
+    }
+    :root[data-theme="day"] .variable-card, html.light-mode .variable-card {
+      background: #f8fafc !important;
+      border-color: rgba(0,0,0,0.08) !important;
+    }
+    :root[data-theme="day"] .var-name, html.light-mode .var-name {
+      color: #0f172a !important;
+    }
+    :root[data-theme="day"] .aha-box, html.light-mode .aha-box {
+      background: rgba(22, 163, 74, 0.06) !important;
+      border-color: rgba(22, 163, 74, 0.2) !important;
+      color: #334155 !important;
+    }
+
+    /* FLOATING NAV */
+    .mlab-nav {
+      position: fixed; top: 12px; left: 50%; transform: translateX(-50%);
+      width: calc(100% - 32px); max-width: 1400px; z-index: 1000;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 20px; border-radius: 16px;
+      background: rgba(6, 16, 30, 0.78); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      transition: background 0.3s, border-color 0.3s;
+    }
+    :root[data-theme="day"] .mlab-nav, html.light-mode .mlab-nav {
+      background: rgba(255, 255, 255, 0.85) !important;
+      border-color: rgba(0,0,0,0.08) !important;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
+    }
+    .mlab-nav-left { display: flex; align-items: center; gap: 14px; }
+    .mlab-brand {
+      display: inline-flex; align-items: center; gap: 10px; text-decoration: none;
+      font-family: 'Space Grotesk', sans-serif; font-size: 1.3rem; font-weight: 800;
+      transition: transform 0.25s ease;
+    }
+    .mlab-brand:hover { transform: scale(1.02); }
+    .brand-logo, .mlab-brand-logo {
+      width: 28px; height: 28px; display: inline-block; vertical-align: middle;
+      filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.45));
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.35s ease;
+      flex-shrink: 0;
+    }
+    .mlab-brand:hover .brand-logo, .mlab-brand:hover .mlab-brand-logo {
+      transform: rotate(15deg) scale(1.1); filter: drop-shadow(0 0 16px rgba(0, 240, 255, 0.8));
+    }
+    .mlab-brand-text {
+      font-family: 'Space Grotesk', sans-serif; font-size: 1.35rem; font-weight: 800; letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #ffffff 45%, #00f0ff 100%);
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+      display: inline-block; text-transform: none;
+    }
+    :root[data-theme="day"] .mlab-brand-text, html.light-mode .mlab-brand-text {
+      background: linear-gradient(135deg, #0f172a 45%, #0284c7 100%);
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+    }
+    .mlab-nav-badge {
+      font-size: 0.72rem; padding: 2px 8px; border-radius: 8px;
+      background: rgba(0, 212, 255, 0.15); border: 1px solid rgba(0, 212, 255, 0.3);
+      color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .mlab-nav-dropdown { position: relative; }
+    .mlab-dropdown-trigger {
+      display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 10px;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+      color: var(--text); font-family: 'Space Grotesk', sans-serif; font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .mlab-dropdown-trigger:hover { border-color: var(--primary); background: rgba(0, 212, 255, 0.1); }
+    .mlab-dropdown-menu {
+      position: absolute; top: calc(100% + 8px); left: 0; min-width: 260px;
+      background: rgba(6, 16, 30, 0.96); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border); border-radius: 14px; padding: 8px;
+      display: none; flex-direction: column; gap: 2px; box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+      z-index: 1001; max-height: 400px; overflow-y: auto;
+    }
+    :root[data-theme="day"] .mlab-dropdown-menu, html.light-mode .mlab-dropdown-menu {
+      background: rgba(255, 255, 255, 0.98) !important;
+      border-color: rgba(0,0,0,0.1) !important;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.12) !important;
+    }
+    .mlab-dropdown-menu.show { display: flex; }
+    .mlab-dropdown-header {
+      font-size: 0.7rem; color: var(--muted); text-transform: uppercase; font-weight: 700;
+      letter-spacing: 0.5px; padding: 6px 10px 4px;
+    }
+    .mlab-dropdown-item {
+      padding: 7px 10px; border-radius: 8px; font-size: 0.82rem; color: var(--text);
+      text-decoration: none; transition: background 0.15s; display: flex; align-items: center; gap: 8px;
+    }
+    .mlab-dropdown-item:hover { background: rgba(0, 212, 255, 0.12); color: var(--primary); }
+    .mlab-dropdown-item.active { background: rgba(0, 212, 255, 0.18); color: var(--primary); font-weight: 700; }
+    .mlab-dropdown-divider { height: 1px; background: var(--border); margin: 4px 0; }
+    .mlab-nav-right { display: flex; align-items: center; gap: 12px; }
+    .mlab-nav-link {
+      color: var(--muted); text-decoration: none; font-size: 0.85rem; font-weight: 600;
+      padding: 6px 12px; border-radius: 8px; transition: color 0.2s;
+    }
+    .mlab-nav-link:hover { color: var(--text); }
+    .mlab-theme-toggle {
+      width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05); color: var(--text); cursor: pointer;
+      display: flex; align-items: center; justify-content: center; font-size: 1.05rem;
+      transition: all 0.2s;
+    }
+    .mlab-theme-toggle:hover { border-color: var(--primary); transform: scale(1.05); }
+    .theme-icon-sun { display: none; }
+    .theme-icon-moon { display: inline-block; }
+    :root[data-theme="day"] .theme-icon-sun, html.light-mode .theme-icon-sun { display: inline-block; }
+    :root[data-theme="day"] .theme-icon-moon, html.light-mode .theme-icon-moon { display: none; }
+    @media (max-width: 768px) {
+      .mlab-nav { padding: 8px 14px; top: 8px; width: calc(100% - 16px); }
+      .mlab-nav-link { display: none; }
+      body { padding-top: 65px; }
+    }
+
+    .page-wrap{padding:16px 24px;max-width:1300px;margin:0 auto;}
+    .lab-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;}
+    .lab-title{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;}
+    .lab-title span{color:var(--primary);}
+    
+    /* LAW TABS */
+    .law-tabs{display:flex;gap:8px;flex-wrap:wrap;}
+    .law-tab{padding:8px 18px;border-radius:20px;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--muted);cursor:pointer;font-family:'Space Grotesk',sans-serif;font-size:0.82rem;font-weight:600;transition:all 0.2s;}
+    .law-tab.active{background:var(--primary);color:#000;border-color:var(--primary);box-shadow:0 0 15px rgba(0,212,255,0.3);}
+    
+    /* MAIN GRID */
+    .main-grid{display:grid;grid-template-columns:1.2fr 0.8fr;gap:20px;}
+    .canvas-col{display:flex;flex-direction:column;gap:14px;}
+    .canvas-box{background:radial-gradient(circle at 50% 30%, #0c203b 0%, #061122 75%);border:1px solid var(--border);border-radius:16px;overflow:hidden;height:420px;position:relative;}
+    #labCanvas{display:block;width:100%;height:100%;}
+    
+    /* EQUATION BOX */
+    .eq-box{background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.25);border-radius:12px;padding:14px;text-align:center;}
+    .eq-latex{font-family:'JetBrains Mono',monospace;font-size:1.35rem;font-weight:700;color:var(--primary);letter-spacing:1px;}
+    .eq-label{font-size:0.75rem;color:var(--muted);margin-top:6px;}
+    
+    /* READOUT GRID */
+    .readout-grid{display:grid;grid-template-columns:repeat(3, 1fr);gap:10px;}
+    .readout{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;}
+    .readout-val{font-family:'JetBrains Mono',monospace;font-size:1.15rem;font-weight:700;}
+    .readout-label{font-size:0.68rem;color:var(--muted);margin-top:2px;text-transform:uppercase;}
+    
+    /* CONTROLS */
+    .ctrl-box{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:14px;}
+    .ctrl-box h3{font-family:'Space Grotesk',sans-serif;font-size:0.78rem;text-transform:uppercase;letter-spacing:1px;color:var(--primary);display:flex;justify-content:space-between;align-items:center;}
+    .variable-card{background:rgba(0,0,0,0.25);border:1px solid var(--border);border-radius:12px;padding:14px;transition:0.2s;}
+    .variable-card.locked{opacity:0.65;border-style:dashed;}
+    .var-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+    .var-name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:0.88rem;display:flex;align-items:center;gap:6px;}
+    .var-val{font-family:'JetBrains Mono',monospace;font-size:1.05rem;font-weight:700;color:var(--primary);}
+    .locked-badge{font-size:0.65rem;padding:2px 8px;border-radius:10px;background:rgba(255,215,0,0.15);color:var(--accent);border:1px solid var(--accent);font-weight:bold;}
+    input[type=range]{width:100%;accent-color:var(--primary);cursor:pointer;}
+    .var-range{display:flex;justify-content:space-between;font-size:0.68rem;color:var(--muted);margin-top:3px;}
+    
+    .aha-box{background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.25);border-radius:12px;padding:14px;font-size:0.8rem;color:var(--muted);line-height:1.6;}
+    .aha-box strong{color:var(--green);display:block;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px;}
+
+    @media(max-width:900px){
+      .main-grid{grid-template-columns:1fr;}
+      .canvas-box{height:360px;}
+    }
+  </style>
+</head>
+<body>
+
+<nav class="mlab-nav" id="mlabNav">
+  <div class="mlab-nav-left">
+    <a href="index.html" class="mlab-brand" aria-label="Moleqyn Home">
+      <img src="favicon.svg" alt="Moleqyn Logo" class="brand-logo" width="28" height="28">
+      <span class="mlab-brand-text">Moleqyn</span>
+    </a>
+    <div class="mlab-nav-badge">Piston Lab</div>
+    <div class="mlab-nav-dropdown">
+      <button class="mlab-dropdown-trigger" id="mlabQuickSwitchBtn" aria-expanded="false" title="Switch Simulator">
+        <span>Gas Laws &amp; Kinetic Theory</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </button>
+      <div class="mlab-dropdown-menu" id="mlabQuickSwitchMenu">
+        <div class="mlab-dropdown-header">Interactive Virtual Labs</div>
+        <a href="sim_gaslaws.html" class="mlab-dropdown-item active">🎈 Gas Laws &amp; Kinetic Theory</a>
+        <a href="sim_molecules.html" class="mlab-dropdown-item">🔮 3D Molecule Visualizer</a>
+        <a href="sim_bonding.html" class="mlab-dropdown-item">⚛️ Chemical Bonding &amp; VSEPR</a>
+        <a href="reaction.html" class="mlab-dropdown-item">⚖️ Chemical Reaction Balancer</a>
+        <a href="sim_titration.html" class="mlab-dropdown-item">🧪 Acid-Base Titration</a>
+        <a href="sim_electro.html" class="mlab-dropdown-item">⚡ Electrochemistry (Galvanic)</a>
+        <a href="sim_atomverse.html" class="mlab-dropdown-item">🪐 Atomverse (Bohr &amp; Quantum)</a>
+        <a href="sim_equilibrium.html" class="mlab-dropdown-item">🔄 Le Chatelier's Equilibrium</a>
+        <a href="sim_flametest.html" class="mlab-dropdown-item">🔥 Flame Test &amp; Emission</a>
+        <a href="sim_calorimetry.html" class="mlab-dropdown-item">🌡️ Thermochemistry &amp; Calorimetry</a>
+        <a href="sim_halflife.html" class="mlab-dropdown-item">☢️ Nuclear Half-Life Decay</a>
+        <a href="sim_rutherford.html" class="mlab-dropdown-item">🎯 Rutherford Gold Foil</a>
+        <a href="sim_particle.html" class="mlab-dropdown-item">🔬 Particle &amp; Brownian Motion</a>
+        <div class="mlab-dropdown-divider"></div>
+        <a href="simulators.html" class="mlab-dropdown-item">← All 11 Virtual Labs Hub</a>
+      </div>
+    </div>
+  </div>
+  <div class="mlab-nav-right">
+    <button type="button" onclick="generateGasLawsReport()" style="background:linear-gradient(135deg,#00d4ff,#4ade80);color:#020b14;border:none;padding:7px 14px;border-radius:10px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:0.82rem;cursor:pointer;display:flex;align-items:center;gap:6px;transition:0.2s;box-shadow:0 0 15px rgba(0,212,255,0.3);">📄 Lab Report</button>
+    <a href="simulators.html" class="mlab-nav-link">Virtual Labs</a>
+    <a href="experiments.html" class="mlab-nav-link">Experiments</a>
+    <a href="learn.html" class="mlab-nav-link">Study Hub</a>
+    <button class="mlab-theme-toggle" id="mlabThemeBtn" title="Toggle Light/Dark Theme" aria-label="Toggle theme">
+      <span class="theme-icon-sun">☀️</span>
+      <span class="theme-icon-moon">🌙</span>
+    </button>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <div class="lab-header">
+    <div class="lab-title">🎈 Ideal Gas Laws <span>Piston Laboratory</span></div>
+    <div class="law-tabs">
+      <button class="law-tab active" id="tabBoyle" onclick="setLaw('boyle', this)">Boyle's Law (P ∝ 1/V, Const T)</button>
+      <button class="law-tab" id="tabCharles" onclick="setLaw('charles', this)">Charles' Law (V ∝ T, Const P)</button>
+      <button class="law-tab" id="tabGaylussac" onclick="setLaw('gaylussac', this)">Gay-Lussac's Law (P ∝ T, Const V)</button>
+      <button class="law-tab" id="tabCombined" onclick="setLaw('combined', this)">Ideal Gas Law (PV = nRT)</button>
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <div class="canvas-col">
+      <div class="canvas-box">
+        <canvas id="labCanvas"></canvas>
+      </div>
+      <div class="eq-box">
+        <div class="eq-latex" id="eqDisplay">P₁V₁ = P₂V₂</div>
+        <div class="eq-label" id="eqLabel">Boyle's Law — At constant Temperature, Pressure × Volume = Constant</div>
+      </div>
+      <div class="readout-grid">
+        <div class="readout"><div class="readout-val" id="readP" style="color:var(--red);">1.00 atm</div><div class="readout-label">Pressure (P)</div></div>
+        <div class="readout"><div class="readout-val" id="readV" style="color:var(--primary);">24.5 L</div><div class="readout-label">Volume (V)</div></div>
+        <div class="readout"><div class="readout-val" id="readT" style="color:var(--accent);">298 K (25°C)</div><div class="readout-label">Temperature (T)</div></div>
+      </div>
+    </div>
+
+    <div class="ctrl-box">
+      <h3><span>Thermodynamic Variables</span> <span style="font-size:0.7rem;color:var(--muted);text-transform:none;">R = 0.0821 L·atm/mol·K</span></h3>
+
+      <div class="variable-card" id="pCard">
+        <div class="var-header">
+          <span class="var-name">🔴 Pressure (P) <span id="pBadge"></span></span>
+          <span class="var-val" id="pVal" style="color:var(--red);">1.00 atm</span>
+        </div>
+        <input type="range" id="pSlider" min="0.5" max="5.0" step="0.05" value="1.0" oninput="onUserChange('P')"/>
+        <div class="var-range"><span>0.5 atm</span><span>5.0 atm</span></div>
+      </div>
+
+      <div class="variable-card" id="vCard">
+        <div class="var-header">
+          <span class="var-name">🔵 Volume (V) <span id="vBadge"></span></span>
+          <span class="var-val" id="vVal" style="color:var(--primary);">24.5 L</span>
+        </div>
+        <input type="range" id="vSlider" min="5.0" max="50.0" step="0.5" value="24.5" oninput="onUserChange('V')"/>
+        <div class="var-range"><span>5.0 L (Compressed)</span><span>50.0 L (Expanded)</span></div>
+      </div>
+
+      <div class="variable-card" id="tCard">
+        <div class="var-header">
+          <span class="var-name">🟡 Temperature (T) <span id="tBadge"></span></span>
+          <span class="var-val" id="tVal" style="color:var(--accent);">298 K</span>
+        </div>
+        <input type="range" id="tSlider" min="100" max="600" step="2" value="298" oninput="onUserChange('T')"/>
+        <div class="var-range"><span>100 K (−173°C)</span><span>600 K (327°C)</span></div>
+      </div>
+
+      <div class="variable-card" id="nCard">
+        <div class="var-header">
+          <span class="var-name">🟢 Moles of Gas (n) <span id="nBadge"></span></span>
+          <span class="var-val" id="nVal" style="color:var(--green);">1.00 mol</span>
+        </div>
+        <input type="range" id="nSlider" min="0.2" max="3.0" step="0.1" value="1.0" oninput="onUserChange('n')"/>
+        <div class="var-range"><span>0.2 mol</span><span>3.0 mol</span></div>
+      </div>
+
+      <div class="aha-box" id="conceptBox">
+        <strong>Boyle's Law (1662)</strong>
+        At constant temperature, the volume of a given mass of gas is inversely proportional to its pressure. Decreasing volume crowds gas molecules into a smaller space, increasing collisions per unit area against the walls (higher pressure).
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('labCanvas');
+const ctx = canvas.getContext('2d');
+let W, H;
+let currentLaw = 'boyle';
+let molecules = [];
+const R_CONST = 0.0821; // L·atm / (mol·K)
+
+let simState = { P: 1.0, V: 24.5, T: 298, n: 1.0 };
+
+function resize() {
+  const wrap = canvas.parentElement;
+  W = canvas.width = wrap.clientWidth;
+  H = canvas.height = wrap.clientHeight;
+  clampMolecules();
+}
+window.addEventListener('resize', resize);
+setTimeout(resize, 80);
+
+function setLaw(law, el) {
+  currentLaw = law;
+  document.querySelectorAll('.law-tab').forEach(t => t.classList.remove('active'));
+  if (el) el.classList.add('active');
+
+  // Lock status badges
+  ['pBadge', 'vBadge', 'tBadge', 'nBadge'].forEach(id => document.getElementById(id).innerHTML = '');
+  ['pCard', 'vCard', 'tCard', 'nCard'].forEach(id => document.getElementById(id).classList.remove('locked'));
+
+  const pSlider = document.getElementById('pSlider');
+  const vSlider = document.getElementById('vSlider');
+  const tSlider = document.getElementById('tSlider');
+  const nSlider = document.getElementById('nSlider');
+
+  pSlider.disabled = false;
+  vSlider.disabled = false;
+  tSlider.disabled = false;
+  nSlider.disabled = false;
+
+  if (law === 'boyle') {
+    // T is constant, n is constant
+    document.getElementById('tBadge').innerHTML = '<span class="locked-badge">CONST T</span>';
+    document.getElementById('nBadge').innerHTML = '<span class="locked-badge">CONST n</span>';
+    document.getElementById('tCard').classList.add('locked');
+    document.getElementById('nCard').classList.add('locked');
+    tSlider.disabled = true;
+    nSlider.disabled = true;
+    simState.T = 298;
+    tSlider.value = 298;
+  } else if (law === 'charles') {
+    // P is constant, n is constant
+    document.getElementById('pBadge').innerHTML = '<span class="locked-badge">CONST P</span>';
+    document.getElementById('nBadge').innerHTML = '<span class="locked-badge">CONST n</span>';
+    document.getElementById('pCard').classList.add('locked');
+    document.getElementById('nCard').classList.add('locked');
+    pSlider.disabled = true;
+    nSlider.disabled = true;
+    simState.P = 1.0;
+    pSlider.value = 1.0;
+  } else if (law === 'gaylussac') {
+    // V is constant, n is constant
+    document.getElementById('vBadge').innerHTML = '<span class="locked-badge">CONST V (RIGID)</span>';
+    document.getElementById('nBadge').innerHTML = '<span class="locked-badge">CONST n</span>';
+    document.getElementById('vCard').classList.add('locked');
+    document.getElementById('nCard').classList.add('locked');
+    vSlider.disabled = true;
+    nSlider.disabled = true;
+    simState.V = 24.5;
+    vSlider.value = 24.5;
+  }
+
+  updateLawUI();
+  recalc();
+}
+
+function updateLawUI() {
+  const eq = document.getElementById('eqDisplay');
+  const lbl = document.getElementById('eqLabel');
+  const concepts = {
+    boyle: {
+      eq: 'P₁V₁ = P₂V₂  (T, n constant)',
+      label: "Boyle's Law — Pressure is inversely proportional to Volume at constant Temperature.",
+      box: "<strong>Boyle's Law (1662)</strong>At constant T, P ∝ 1/V. As you push the piston down, gas volume decreases, molecular collisions against walls increase, and pressure rises proportionally. Applications: syringes, bicycle pumps, deep-sea diving."
+    },
+    charles: {
+      eq: 'V₁ / T₁ = V₂ / T₂  (P, n constant)',
+      label: "Charles' Law — Volume is directly proportional to absolute Temperature at constant Pressure.",
+      box: "<strong>Charles' Law (1787)</strong>At constant P, V ∝ T (in Kelvin). Heating gas particles gives them higher kinetic energy. To maintain constant pressure, the gas pushes the movable piston outward. At absolute zero (0 K), theoretical volume reaches zero."
+    },
+    gaylussac: {
+      eq: 'P₁ / T₁ = P₂ / T₂  (V, n constant)',
+      label: "Gay-Lussac's Law — Pressure is directly proportional to absolute Temperature in a rigid container.",
+      box: "<strong>Gay-Lussac's Law (1802)</strong>At constant V, P ∝ T. In a rigid container with locked piston, heating increases the velocity and force of particle collisions against the container walls, producing sharp pressure spikes. Applications: pressure cookers, car tire pressure in summer."
+    },
+    combined: {
+      eq: 'PV = nRT  (Universal Gas Law)',
+      label: 'Ideal Gas Law — R = 0.0821 L·atm/mol·K (or 8.314 J/mol·K).',
+      box: '<strong>Ideal Gas Equation</strong>Combines Boyle, Charles, Gay-Lussac, and Avogadro laws. Real gases deviate at high pressure (molecules have finite volume) and low temperature (intermolecular attractions become significant), modeled by the van der Waals equation.'
+    }
+  };
+  const c = concepts[currentLaw];
+  eq.textContent = c.eq;
+  lbl.textContent = c.label;
+  document.getElementById('conceptBox').innerHTML = c.box;
+}
+
+function onUserChange(changedVar) {
+  const pSlider = document.getElementById('pSlider');
+  const vSlider = document.getElementById('vSlider');
+  const tSlider = document.getElementById('tSlider');
+  const nSlider = document.getElementById('nSlider');
+
+  let P = parseFloat(pSlider.value);
+  let V = parseFloat(vSlider.value);
+  let T = parseFloat(tSlider.value);
+  let n = parseFloat(nSlider.value);
+
+  if (currentLaw === 'boyle') {
+    // T & n fixed
+    if (changedVar === 'V') {
+      P = (n * R_CONST * T) / V;
+      pSlider.value = Math.min(5.0, Math.max(0.5, P));
+    } else if (changedVar === 'P') {
+      V = (n * R_CONST * T) / P;
+      vSlider.value = Math.min(50.0, Math.max(5.0, V));
+    }
+  } else if (currentLaw === 'charles') {
+    // P & n fixed
+    if (changedVar === 'T') {
+      V = (n * R_CONST * T) / P;
+      vSlider.value = Math.min(50.0, Math.max(5.0, V));
+    } else if (changedVar === 'V') {
+      T = (P * V) / (n * R_CONST);
+      tSlider.value = Math.min(600, Math.max(100, T));
+    }
+  } else if (currentLaw === 'gaylussac') {
+    // V & n fixed
+    if (changedVar === 'T') {
+      P = (n * R_CONST * T) / V;
+      pSlider.value = Math.min(5.0, Math.max(0.5, P));
+    } else if (changedVar === 'P') {
+      T = (P * V) / (n * R_CONST);
+      tSlider.value = Math.min(600, Math.max(100, T));
+    }
+  } else {
+    // Combined: if V or T or n changed, calculate P
+    P = (n * R_CONST * T) / V;
+    pSlider.value = Math.min(5.0, Math.max(0.5, P));
+  }
+
+  recalc();
+}
+
+function recalc() {
+  const P = parseFloat(document.getElementById('pSlider').value);
+  const V = parseFloat(document.getElementById('vSlider').value);
+  const T = parseFloat(document.getElementById('tSlider').value);
+  const n = parseFloat(document.getElementById('nSlider').value);
+
+  simState = { P, V, T, n };
+
+  document.getElementById('pVal').textContent = P.toFixed(2) + ' atm';
+  document.getElementById('vVal').textContent = V.toFixed(1) + ' L';
+  document.getElementById('tVal').textContent = T.toFixed(0) + ' K';
+  document.getElementById('nVal').textContent = n.toFixed(2) + ' mol';
+
+  document.getElementById('readP').textContent = P.toFixed(2) + ' atm';
+  document.getElementById('readV').textContent = V.toFixed(1) + ' L';
+  document.getElementById('readT').textContent = `${T.toFixed(0)} K (${(T - 273.15).toFixed(0)}°C)`;
+
+  syncMolecules();
+}
+
+function getCylinderBounds() {
+  const contW = Math.min(320, W * 0.55);
+  const contX = (W - contW) / 2;
+  const contBottom = H * 0.76;
+  const maxContH = H * 0.58;
+
+  // Volume from 5 to 50 maps to contH
+  const vFrac = Math.max(0.12, Math.min(1.0, simState.V / 50.0));
+  const contH = maxContH * vFrac;
+  const pistonY = contBottom - contH;
+
+  return { contX, contW, contBottom, contH, pistonY, maxContH };
+}
+
+function syncMolecules() {
+  const targetCount = Math.round(simState.n * 25);
+  const bounds = getCylinderBounds();
+  const speed = Math.sqrt(simState.T / 298) * 3.2;
+
+  while (molecules.length < targetCount) {
+    const angle = Math.random() * Math.PI * 2;
+    molecules.push({
+      x: bounds.contX + 15 + Math.random() * (bounds.contW - 30),
+      y: bounds.pistonY + 15 + Math.random() * (bounds.contH - 30),
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      r: 4.5
+    });
+  }
+  if (molecules.length > targetCount) {
+    molecules.length = targetCount;
+  }
+
+  // Adjust speeds according to T
+  molecules.forEach(m => {
+    const curSpeed = Math.sqrt(m.vx * m.vx + m.vy * m.vy);
+    if (curSpeed > 0) {
+      m.vx = (m.vx / curSpeed) * speed;
+      m.vy = (m.vy / curSpeed) * speed;
+    }
+  });
+
+  clampMolecules();
+}
+
+function clampMolecules() {
+  const bounds = getCylinderBounds();
+  molecules.forEach(m => {
+    if (m.x < bounds.contX + m.r) m.x = bounds.contX + m.r + 2;
+    if (m.x > bounds.contX + bounds.contW - m.r) m.x = bounds.contX + bounds.contW - m.r - 2;
+    if (m.y < bounds.pistonY + m.r + 10) m.y = bounds.pistonY + m.r + 12;
+    if (m.y > bounds.contBottom - m.r) m.y = bounds.contBottom - m.r - 2;
+  });
+}
+
+function drawManometer(x, y, pressure) {
+  ctx.save();
+  // Gauge outer circle
+  ctx.fillStyle = '#0a1626';
+  ctx.strokeStyle = '#475569';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(x, y, 26, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+
+  // Face
+  ctx.fillStyle = '#0f2238';
+  ctx.beginPath();
+  ctx.arc(x, y, 22, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Dial ticks
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+  ctx.lineWidth = 1;
+  for (let a = -Math.PI * 0.8; a <= Math.PI * 0.8; a += Math.PI * 0.2) {
+    const x1 = x + Math.cos(a) * 16;
+    const y1 = y + Math.sin(a) * 16;
+    const x2 = x + Math.cos(a) * 20;
+    const y2 = y + Math.sin(a) * 20;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+  }
+
+  // Needle (0.5 to 5.0 atm)
+  const needleAngle = -Math.PI * 0.75 + ((pressure - 0.5) / 4.5) * (Math.PI * 1.5);
+  ctx.strokeStyle = '#fb7185';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x + Math.cos(needleAngle) * 18, y + Math.sin(needleAngle) * 18);
+  ctx.stroke();
+
+  // Center cap
+  ctx.fillStyle = '#fff';
+  ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI * 2); ctx.fill();
+
+  // Label
+  ctx.font = 'bold 8px JetBrains Mono';
+  ctx.fillStyle = '#fb7185';
+  ctx.textAlign = 'center';
+  ctx.fillText(pressure.toFixed(2) + ' atm', x, y + 14);
+
+  ctx.restore();
+}
+
+function drawBurner(x, y, temp) {
+  ctx.save();
+  // Burner base
+  ctx.fillStyle = '#334155';
+  ctx.fillRect(x - 35, y + 20, 70, 8);
+  ctx.fillStyle = '#475569';
+  ctx.fillRect(x - 12, y + 2, 24, 18);
+
+  if (temp > 298) {
+    // Bunsen burner flame
+    const flameH = Math.min(36, 12 + ((temp - 298) / 300) * 24);
+    const flicker = (Math.sin(Date.now() * 0.02) + Math.cos(Date.now() * 0.035)) * 2;
+
+    const fg = ctx.createLinearGradient(x, y, x, y - flameH);
+    fg.addColorStop(0, 'rgba(0, 160, 255, 0.9)');
+    fg.addColorStop(0.3, 'rgba(255, 200, 50, 0.9)');
+    fg.addColorStop(0.8, 'rgba(255, 60, 20, 0.8)');
+    fg.addColorStop(1, 'transparent');
+
+    ctx.fillStyle = fg;
+    ctx.beginPath();
+    ctx.moveTo(x - 10, y + 2);
+    ctx.quadraticCurveTo(x - 15 + flicker, y - flameH * 0.6, x, y - flameH);
+    ctx.quadraticCurveTo(x + 15 + flicker, y - flameH * 0.6, x + 10, y + 2);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.font = 'bold 9px Space Grotesk';
+    ctx.fillStyle = '#ff8833';
+    ctx.textAlign = 'center';
+    ctx.fillText('🔥 HEATING', x, y + 38);
+  } else if (temp < 273) {
+    // Ice block / cooling stage
+    ctx.fillStyle = 'rgba(120, 210, 255, 0.35)';
+    ctx.strokeStyle = 'rgba(180, 230, 255, 0.7)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.roundRect(x - 40, y - 6, 80, 22, 4);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.font = 'bold 9px Space Grotesk';
+    ctx.fillStyle = '#00f0ff';
+    ctx.textAlign = 'center';
+    ctx.fillText('❄️ COOLING BATH', x, y + 38);
+  } else {
+    ctx.font = '500 9px Space Grotesk';
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.textAlign = 'center';
+    ctx.fillText('Ambient (298 K)', x, y + 38);
+  }
+
+  ctx.restore();
+}
+
+function draw() {
+  if (!W || !H) { requestAnimationFrame(draw); return; }
+  ctx.clearRect(0, 0, W, H);
+
+  const bounds = getCylinderBounds();
+
+  // Draw Cylinder outer glass walls
+  ctx.save();
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.02)';
+  ctx.fillRect(bounds.contX, bounds.pistonY, bounds.contW, bounds.contH);
+
+  // Cylinder glass stroke (walls and bottom)
+  ctx.strokeStyle = 'rgba(180, 220, 255, 0.5)';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(bounds.contX, bounds.contBottom - bounds.maxContH - 20);
+  ctx.lineTo(bounds.contX, bounds.contBottom);
+  ctx.lineTo(bounds.contX + bounds.contW, bounds.contBottom);
+  ctx.lineTo(bounds.contX + bounds.contW, bounds.contBottom - bounds.maxContH - 20);
+  ctx.stroke();
+
+  // Glass high pressure warning glow
+  const pRatio = (simState.P - 0.5) / 4.5;
+  if (pRatio > 0.25) {
+    ctx.strokeStyle = `rgba(251, 113, 133, ${pRatio * 0.6})`;
+    ctx.lineWidth = 6;
+    ctx.stroke();
+  }
+
+  // Draw Piston Head
+  const pistonH = 14;
+  const pg = ctx.createLinearGradient(bounds.contX, bounds.pistonY, bounds.contX + bounds.contW, bounds.pistonY);
+  pg.addColorStop(0, '#64748b');
+  pg.addColorStop(0.5, '#cbd5e1');
+  pg.addColorStop(1, '#475569');
+  ctx.fillStyle = pg;
+  ctx.strokeStyle = '#94a3b8';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.roundRect(bounds.contX + 2, bounds.pistonY - pistonH + 2, bounds.contW - 4, pistonH, 3);
+  ctx.fill();
+  ctx.stroke();
+
+  // Piston Rod
+  const rodW = 14;
+  const rodTopY = Math.max(20, bounds.pistonY - 60);
+  ctx.fillStyle = '#94a3b8';
+  ctx.fillRect(bounds.contX + (bounds.contW - rodW) / 2, rodTopY, rodW, bounds.pistonY - rodTopY);
+
+  // Piston Handle
+  ctx.fillStyle = '#0ea5e9';
+  ctx.beginPath();
+  ctx.roundRect(bounds.contX + (bounds.contW - 70) / 2, rodTopY - 10, 70, 10, 4);
+  ctx.fill();
+
+  // If rigid container (Gay-Lussac), show lock pins
+  if (currentLaw === 'gaylussac') {
+    ctx.fillStyle = '#ffd700';
+    ctx.beginPath(); ctx.arc(bounds.contX - 6, bounds.pistonY, 6, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(bounds.contX + bounds.contW + 6, bounds.pistonY, 6, 0, Math.PI * 2); ctx.fill();
+    ctx.font = 'bold 8px JetBrains Mono';
+    ctx.fillStyle = '#ffd700';
+    ctx.textAlign = 'center';
+    ctx.fillText('🔒 LOCKED', bounds.contX + bounds.contW / 2, bounds.pistonY - 18);
+  }
+
+  ctx.restore();
+
+  // Draw Manometer pressure gauge connected to left wall
+  drawManometer(bounds.contX - 42, bounds.contBottom - bounds.contH * 0.5, simState.P);
+  // Connection pipe
+  ctx.strokeStyle = '#475569';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(bounds.contX - 16, bounds.contBottom - bounds.contH * 0.5);
+  ctx.lineTo(bounds.contX, bounds.contBottom - bounds.contH * 0.5);
+  ctx.stroke();
+
+  // Draw Burner / Cooling at bottom
+  drawBurner(bounds.contX + bounds.contW / 2, bounds.contBottom + 6, simState.T);
+
+  // Update & Draw Gas Molecules inside cylinder
+  molecules.forEach(m => {
+    m.x += m.vx;
+    m.y += m.vy;
+
+    // Left & Right wall collisions
+    if (m.x < bounds.contX + m.r) {
+      m.x = bounds.contX + m.r;
+      m.vx = Math.abs(m.vx);
+    } else if (m.x > bounds.contX + bounds.contW - m.r) {
+      m.x = bounds.contX + bounds.contW - m.r;
+      m.vx = -Math.abs(m.vx);
+    }
+
+    // Piston top & bottom collisions
+    if (m.y < bounds.pistonY + m.r + 2) {
+      m.y = bounds.pistonY + m.r + 2;
+      m.vy = Math.abs(m.vy);
+    } else if (m.y > bounds.contBottom - m.r) {
+      m.y = bounds.contBottom - m.r;
+      m.vy = -Math.abs(m.vy);
+    }
+
+    // Particle color based on temperature
+    const tFrac = Math.max(0, Math.min(1, (simState.T - 100) / 500));
+    const hue = 210 - tFrac * 190; // 210 (cyan-blue) down to 20 (red-orange)
+
+    const mg = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, m.r * 1.5);
+    mg.addColorStop(0, '#ffffff');
+    mg.addColorStop(0.35, `hsl(${hue}, 90%, 60%)`);
+    mg.addColorStop(1, 'transparent');
+
+    ctx.beginPath();
+    ctx.arc(m.x, m.y, m.r, 0, Math.PI * 2);
+    ctx.fillStyle = mg;
+    ctx.fill();
+  });
+
+  requestAnimationFrame(draw);
+}
+
+function generateGasLawsReport() {
+  let modal = document.getElementById('gasLawsReportModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'gasLawsReportModal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(2,6,18,0.85);backdrop-filter:blur(10px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+    document.body.appendChild(modal);
+  }
+
+  const currentUser = localStorage.getItem('Moleqyn_user') ? JSON.parse(localStorage.getItem('Moleqyn_user')).name : (localStorage.getItem('moleqyn_user') ? JSON.parse(localStorage.getItem('moleqyn_user')).name : 'Rahul Sharma (Student)');
+  const dateStr = new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' });
+
+  const lawNames = {
+    'boyle': "Boyle's Law (P₁V₁ = P₂V₂, Const T)",
+    'charles': "Charles' Law (V₁/T₁ = V₂/T₂, Const P)",
+    'gaylussac': "Gay-Lussac's Law (P₁/T₁ = P₂/T₂, Const V)",
+    'combined': "Ideal Gas Law (PV = nRT)"
+  };
+
+  const currentLawTitle = lawNames[currentLaw] || "Ideal Gas Law";
+  const pvProduct = (simState.P * simState.V).toFixed(3);
+  const nrtProduct = (simState.n * R_CONST * simState.T).toFixed(3);
+  const tempC = (simState.T - 273.15).toFixed(1);
+
+  modal.innerHTML = `
+    <div style="background:#0b192c;border:1px solid rgba(0,212,255,0.3);border-radius:16px;max-width:760px;width:100%;max-height:90vh;overflow-y:auto;padding:28px;color:#f0f4ff;box-shadow:0 25px 60px rgba(0,0,0,0.7);font-family:'Inter',sans-serif;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid rgba(255,255,255,0.12);padding-bottom:16px;margin-bottom:20px;">
+        <div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;color:#00d4ff;">⚗️ Ideal Gas Laws Experiment Certificate</div>
+          <div style="font-size:0.82rem;color:#8ea3bf;margin-top:2px;">Thermodynamic Equation of State & Kinetic Molecular Analysis</div>
+        </div>
+        <div style="text-align:right;">
+          <span style="display:inline-block;padding:4px 10px;background:rgba(74,222,128,0.15);color:#4ade80;border:1px solid #4ade80;border-radius:12px;font-size:0.75rem;font-weight:700;">NCERT VERIFIED</span>
+          <div style="font-size:0.75rem;color:#8ea3bf;margin-top:4px;">\${dateStr}</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:0.85rem;">
+        <div><strong>Student:</strong> <span style="color:#00d4ff;">\${currentUser}</span></div>
+        <div><strong>Active Study:</strong> \${currentLawTitle}</div>
+        <div><strong>Gas Constant (R):</strong> 0.0821 L·atm/(mol·K)</div>
+        <div><strong>Experimental Status:</strong> Dynamic Thermal Equilibrium</div>
+      </div>
+
+      <div style="margin-bottom:18px;">
+        <h4 style="font-family:'Space Grotesk',sans-serif;color:#ffd700;font-size:0.92rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">1. Measured Thermodynamic Coordinates</h4>
+        <table style="width:100%;border-collapse:collapse;font-size:0.85rem;background:#071222;border-radius:8px;overflow:hidden;">
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#8ea3bf;">Pressure (P)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-weight:bold;color:#fb7185;">\${simState.P.toFixed(2)} atm</td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#8ea3bf;">Volume (V)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-weight:bold;color:#00d4ff;">\${simState.V.toFixed(2)} L</td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#8ea3bf;">Absolute Temperature (T)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-weight:bold;color:#ffd700;">\${simState.T} K (\${tempC} °C)</td></tr>
+          <tr><td style="padding:8px 12px;color:#8ea3bf;">Quantity of Gas (n)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-weight:bold;color:#4ade80;">\${simState.n.toFixed(2)} mol</td></tr>
+        </table>
+      </div>
+
+      <div style="margin-bottom:18px;">
+        <h4 style="font-family:'Space Grotesk',sans-serif;color:#ffd700;font-size:0.92rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">2. Ideal Gas Law Verification (PV = nRT)</h4>
+        <div style="background:#071222;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:0.88rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+          <div><span style="color:#8ea3bf;">P × V =</span> <strong style="color:#00d4ff;">\${pvProduct} L·atm</strong></div>
+          <div><span style="color:#8ea3bf;">n × R × T =</span> <strong style="color:#4ade80;">\${nrtProduct} L·atm</strong></div>
+          <div><span style="color:#8ea3bf;">Adherence =</span> <strong style="color:#ffd700;">100.0% (Ideal Behavior)</strong></div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:20px;padding:12px;background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.2);border-radius:10px;font-size:0.84rem;line-height:1.6;">
+        <strong style="color:#00d4ff;display:block;margin-bottom:4px;">Kinetic Molecular Observation:</strong>
+        \${document.getElementById('conceptBox').textContent.trim()}
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:10px;border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;">
+        <button type="button" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:8px 18px;border-radius:8px;cursor:pointer;font-weight:600;" onclick="document.getElementById('gasLawsReportModal').style.display='none'">✕ Close</button>
+        <button type="button" style="background:#00d4ff;border:none;color:#000;padding:8px 18px;border-radius:8px;cursor:pointer;font-weight:bold;" onclick="window.print()">🖨️ Print / Save PDF</button>
+      </div>
+    </div>
+  `;
+  modal.style.display = 'flex';
+}
+
+setLaw('boyle', document.getElementById('tabBoyle'));
+draw();
+</script>
+<script src="js/shared-nav.js"></script>
+</body>
+</html>
