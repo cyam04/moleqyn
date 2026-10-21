@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -1719,13 +1719,77 @@
       if (target) target.classList.add('active');
     }
 
-    // INTERACTIVE TASK CHECKLIST
-    function toggleTask(item, id) {
+    // INTERACTIVE TASK CHECKLIST — with localStorage persistence
+    const TASK_STORAGE_KEY = 'moleqyn_daily_tasks';
+    const TASK_DATE_KEY = 'moleqyn_tasks_date';
+
+    function getTasksFromStorage() {
+      const today = new Date().toDateString();
+      const savedDate = localStorage.getItem(TASK_DATE_KEY);
+      // Reset at midnight (new day)
+      if (savedDate !== today) {
+        localStorage.removeItem(TASK_STORAGE_KEY);
+        localStorage.setItem(TASK_DATE_KEY, today);
+        return null;
+      }
+      try { return JSON.parse(localStorage.getItem(TASK_STORAGE_KEY)); } catch(e) { return null; }
+    }
+
+    function saveTasksToStorage() {
+      const items = document.querySelectorAll('#dailyTaskList .task-item');
+      const state = [];
+      items.forEach(it => {
+        state.push({
+          text: it.querySelector('.task-text') ? it.querySelector('.task-text').textContent : '',
+          sub: it.querySelector('.task-sub') ? it.querySelector('.task-sub').textContent : '',
+          xp: it.querySelector('.task-xp-badge') ? it.querySelector('.task-xp-badge').textContent : '+25 XP',
+          checked: it.querySelector('.task-checkbox').checked,
+          custom: it.dataset.custom === 'true'
+        });
+      });
+      localStorage.setItem(TASK_STORAGE_KEY, JSON.stringify(state));
+      localStorage.setItem(TASK_DATE_KEY, new Date().toDateString());
+    }
+
+    function restoreTasksFromStorage() {
+      const saved = getTasksFromStorage();
+      if (!saved || !saved.length) return false;
+      const list = document.getElementById('dailyTaskList');
+      // Only restore custom tasks & checkbox states
+      const existing = list.querySelectorAll('.task-item');
+      // Restore states of existing items
+      existing.forEach((item, idx) => {
+        if (saved[idx] !== undefined) {
+          const cb = item.querySelector('.task-checkbox');
+          if (cb) { cb.checked = saved[idx].checked; item.classList.toggle('completed', saved[idx].checked); }
+        }
+      });
+      // Re-add custom tasks
+      saved.forEach(s => {
+        if (!s.custom) return;
+        const div = document.createElement('div');
+        div.className = 'task-item' + (s.checked ? ' completed' : '');
+        div.dataset.custom = 'true';
+        div.onclick = function() { toggleTask(this); };
+        div.innerHTML = `
+          <input type="checkbox" class="task-checkbox" ${s.checked ? 'checked' : ''} onclick="event.stopPropagation(); toggleTask(this.parentElement)" />
+          <div class="task-content">
+            <div class="task-text">${s.text}</div>
+            <div class="task-sub">${s.sub}</div>
+          </div>
+          <span class="task-xp-badge">${s.xp}</span>
+        `;
+        list.appendChild(div);
+      });
+      return true;
+    }
+
+    function toggleTask(item) {
       const cb = item.querySelector('.task-checkbox');
       cb.checked = !cb.checked;
       item.classList.toggle('completed', cb.checked);
       playBeep(cb.checked ? 'success' : 'click');
-
+      saveTasksToStorage();
       recalcDailyGoal();
     }
 
@@ -1737,6 +1801,17 @@
       });
       const pct = Math.round((done / items.length) * 100);
       document.getElementById('dailyGoalVal').textContent = pct + '% (' + done + '/' + items.length + ')';
+
+      // Also update streak XP in user profile
+      const saved = localStorage.getItem('mlab_user');
+      if (saved) {
+        try {
+          const u = JSON.parse(saved);
+          u.dailyGoalPct = pct;
+          localStorage.setItem('mlab_user', JSON.stringify(u));
+          localStorage.setItem('moleqyn_user', JSON.stringify(u));
+        } catch(e) {}
+      }
 
       if (pct === 100) {
         showToast('🎉 Awesome! 100% of Today\'s Chemistry Goals Completed! (+100 Bonus XP)');
@@ -1753,9 +1828,10 @@
       const list = document.getElementById('dailyTaskList');
       const div = document.createElement('div');
       div.className = 'task-item';
-      div.onclick = function() { toggleTask(this, Date.now()); };
+      div.dataset.custom = 'true';
+      div.onclick = function() { toggleTask(this); };
       div.innerHTML = `
-        <input type="checkbox" class="task-checkbox" onclick="event.stopPropagation(); toggleTask(this.parentElement, Date.now())" />
+        <input type="checkbox" class="task-checkbox" onclick="event.stopPropagation(); toggleTask(this.parentElement)" />
         <div class="task-content">
           <div class="task-text">${text.trim()}</div>
           <div class="task-sub">Personalized student study milestone</div>
@@ -1763,8 +1839,9 @@
         <span class="task-xp-badge">+30 XP</span>
       `;
       list.appendChild(div);
+      saveTasksToStorage();
       recalcDailyGoal();
-      showToast('New study goal added to your daily checklist!');
+      showToast('New study goal added to your daily checklist! (Auto-saved ✅)');
     }
 
     // LOGOUT
@@ -2141,6 +2218,8 @@
     }
 
     initDashboard();
+    // Restore saved checklist state (runs after initDashboard sets base tasks)
+    setTimeout(() => restoreTasksFromStorage(), 50);
   </script>
   <script src="js/shared-nav.js"></script>
 </body>

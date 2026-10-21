@@ -68,22 +68,76 @@
       });
     }
 
-    /* Mobile hamburger */
-    const ham = document.getElementById('hamburger');
-    const mobileMenu = document.getElementById('mobile-menu');
-    if (ham && mobileMenu) {
-      ham.addEventListener('click', function () {
-        mobileMenu.classList.toggle('open');
-        ham.textContent = mobileMenu.classList.contains('open') ? '✕' : '☰';
-      });
-      /* Close on link click */
-      mobileMenu.querySelectorAll('a').forEach(function (a) {
-        a.addEventListener('click', function () {
-          mobileMenu.classList.remove('open');
-          ham.textContent = '☰';
+    /* Mobile hamburger & responsive menu */
+    (function initMobileNav() {
+      // 1. Existing id-based hamburger
+      const ham = document.getElementById('hamburger');
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (ham && mobileMenu) {
+        ham.addEventListener('click', function () {
+          mobileMenu.classList.toggle('open');
+          ham.textContent = mobileMenu.classList.contains('open') ? '✕' : '☰';
+        });
+        mobileMenu.querySelectorAll('a').forEach(function (a) {
+          a.addEventListener('click', function () {
+            mobileMenu.classList.remove('open');
+            ham.textContent = '☰';
+          });
+        });
+      }
+
+      // 2. Class-based mlab-nav floating navigation support
+      const mlabNavs = document.querySelectorAll('.mlab-nav');
+      mlabNavs.forEach(function (nav) {
+        let btn = nav.querySelector('.mlab-hamburger');
+        if (!btn) {
+          btn = document.createElement('button');
+          btn.className = 'mlab-hamburger';
+          btn.setAttribute('aria-label', 'Toggle Navigation Menu');
+          btn.innerHTML = '<span></span><span></span><span></span>';
+          nav.appendChild(btn);
+        }
+
+        let mMenu = document.querySelector('.mlab-mobile-menu');
+        if (!mMenu) {
+          mMenu = document.createElement('div');
+          mMenu.className = 'mlab-mobile-menu';
+          var links = nav.querySelectorAll('.mlab-links > li > a, .mlab-dropdown-content a');
+          var seen = {};
+          links.forEach(function (link) {
+            var href = link.getAttribute('href');
+            if (href && !seen[href] && href !== '#' && !link.classList.contains('mlab-theme-btn')) {
+              seen[href] = true;
+              var a = document.createElement('a');
+              a.href = href;
+              a.innerHTML = link.innerHTML;
+              mMenu.appendChild(a);
+            }
+          });
+          document.body.appendChild(mMenu);
+        }
+
+        btn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          btn.classList.toggle('open');
+          mMenu.classList.toggle('open');
+        });
+
+        mMenu.querySelectorAll('a').forEach(function (a) {
+          a.addEventListener('click', function () {
+            btn.classList.remove('open');
+            mMenu.classList.remove('open');
+          });
+        });
+
+        document.addEventListener('click', function (e) {
+          if (!nav.contains(e.target) && !mMenu.contains(e.target)) {
+            btn.classList.remove('open');
+            mMenu.classList.remove('open');
+          }
         });
       });
-    }
+    })();
 
     /* Student progress helpers (localStorage) */
     window.MLProgress = {

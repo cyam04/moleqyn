@@ -642,3 +642,295 @@ html.light-mode .mlab-dropdown-content {
 .page-body { padding-top: 90px; }
 /* ===== END mlab-nav ===== */
 
+/* =================================================================
+   COMPREHENSIVE MOBILE RESPONSIVE — Moleqyn Platform
+   Covers all pages: Home, Learn, Simulators, Dashboard, Quiz, etc.
+   v5.0 — 2026-10-21
+================================================================= */
+
+/* ── Hamburger Button (mobile nav) ── */
+.mlab-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  background: none;
+  border: none;
+  transition: background 0.2s;
+}
+.mlab-hamburger:hover { background: rgba(255,255,255,0.08); }
+.mlab-hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--text-primary, #f1f5f9);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+.mlab-hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.mlab-hamburger.open span:nth-child(2) { opacity: 0; }
+.mlab-hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+/* ── Mobile Slide-down Nav Menu ── */
+.mlab-mobile-menu {
+  display: none;
+  position: fixed;
+  top: 70px;
+  left: 0; right: 0;
+  background: var(--bg-card, #1e1e2e);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding: 1rem 1.5rem 1.5rem;
+  z-index: 999;
+  flex-direction: column;
+  gap: 0.5rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  animation: slideDown 0.25s ease;
+}
+.mlab-mobile-menu.open { display: flex; }
+.mlab-mobile-menu a {
+  text-decoration: none;
+  color: var(--text-secondary, #94a3b8);
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 10px 12px;
+  border-radius: 10px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.mlab-mobile-menu a:hover { background: rgba(56,189,248,0.1); color: var(--accent-primary, #38bdf8); }
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─────────────────────────────────────────────
+   BREAKPOINT: Tablet (≤ 900px)
+───────────────────────────────────────────── */
+@media (max-width: 900px) {
+  /* Floating nav: hide links, show hamburger */
+  .mlab-nav .mlab-links { display: none !important; }
+  .mlab-hamburger { display: flex; }
+
+  /* Page padding adjust */
+  .page-body { padding-top: 80px; }
+
+  /* Section padding reduce */
+  .page-section { padding: 2.5rem 1.2rem; }
+
+  /* Simulator hub grid */
+  .sim-grid, .labs-grid, .exp-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1rem !important;
+  }
+
+  /* Learn page chapter cards */
+  .chapters-grid, .topic-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1rem !important;
+  }
+
+  /* Dashboard sidebar collapse */
+  .dash-layout, .dashboard-layout {
+    flex-direction: column !important;
+    grid-template-columns: 1fr !important;
+  }
+  .sidebar-menu, .dash-sidebar {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    gap: 0.5rem !important;
+    padding: 0.75rem !important;
+  }
+  .sidebar-menu .menu-item-btn {
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    font-size: 0.8rem !important;
+    padding: 8px 14px !important;
+  }
+
+  /* Stats/metrics grid */
+  .stats-row, .metrics-grid, .stat-cards {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1rem !important;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   BREAKPOINT: Mobile (≤ 640px)
+───────────────────────────────────────────── */
+@media (max-width: 640px) {
+  /* General text scaling */
+  html { font-size: 15px; }
+
+  /* Page body top padding */
+  .page-body { padding-top: 75px; }
+
+  /* Section padding */
+  .page-section { padding: 1.5rem 1rem; }
+
+  /* Floating nav shrink */
+  .mlab-nav { top: 10px; width: 96%; padding: 8px 16px; }
+  .mlab-brand { font-size: 1.1rem !important; }
+
+  /* Hero section */
+  .home-hero { padding: 2rem 1rem 3rem; min-height: auto; }
+  .hero-title, .home-hero-title { font-size: clamp(1.8rem, 8vw, 2.8rem) !important; }
+  .hero-subtitle { font-size: 0.95rem !important; margin-bottom: 2rem !important; }
+  .hero-cta-row, .hero-actions { flex-direction: column !important; gap: 0.75rem !important; align-items: center !important; }
+  .hero-btn, .cta-btn { width: 100% !important; max-width: 300px; text-align: center; }
+
+  /* Feature cards / lab cards: 1 column */
+  .features-grid, .sim-grid, .labs-grid, .exp-grid,
+  .chapters-grid, .topic-grid, .resource-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.85rem !important;
+  }
+
+  /* Stats: 2 per row on phones */
+  .stats-row, .metrics-grid, .stat-cards {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem !important;
+  }
+
+  /* Card padding reduce */
+  .card, .panel-card, .feature-card, .sim-card, .lab-card {
+    padding: 1.1rem !important;
+  }
+
+  /* Dashboard: Stack fully */
+  .dashboard-layout, .dash-layout {
+    flex-direction: column !important;
+    grid-template-columns: 1fr !important;
+  }
+  .sidebar-menu {
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    padding: 0.5rem 0.75rem !important;
+    gap: 0.4rem !important;
+  }
+  .menu-item-btn .menu-label { display: none; }
+  .menu-item-btn { padding: 8px 12px !important; }
+
+  /* Dashboard stat cards */
+  .dash-stat-card { padding: 0.85rem 1rem !important; }
+  .dash-stat-val { font-size: 1.4rem !important; }
+
+  /* Resume/continue card */
+  .resume-card, .continue-card { padding: 1rem !important; }
+  .resume-card-actions { flex-direction: column !important; gap: 0.5rem !important; }
+
+  /* Leaderboard table */
+  .lb-table { font-size: 0.82rem !important; }
+  .lb-table td, .lb-table th { padding: 8px 6px !important; }
+
+  /* Learn page */
+  .learn-hero, .board-hero { padding: 1.5rem 1rem !important; }
+  .learn-tabs, .topic-tabs { flex-wrap: wrap !important; gap: 0.4rem !important; }
+  .learn-tab-btn { font-size: 0.8rem !important; padding: 6px 12px !important; }
+
+  /* Quiz page */
+  .quiz-options { grid-template-columns: 1fr !important; gap: 0.75rem !important; }
+  .quiz-option-btn { padding: 0.85rem 1rem !important; font-size: 0.9rem !important; }
+  .quiz-progress-bar { height: 6px !important; }
+  .quiz-header { flex-wrap: wrap !important; gap: 0.5rem !important; }
+
+  /* Periodic table scroll wrapper */
+  .periodic-table-wrap, .pt-container {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Nomenclature / Reaction page */
+  .nomen-input-row, .reaction-input-row {
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+  }
+  .nomen-input-row input, .reaction-input { width: 100% !important; }
+
+  /* Junior / Board-prep page */
+  .junior-grid, .board-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.85rem !important;
+  }
+
+  /* About page */
+  .about-grid { grid-template-columns: 1fr !important; }
+  .about-hero { padding: 1.5rem 1rem !important; flex-direction: column !important; }
+
+  /* Contact page */
+  .contact-grid { grid-template-columns: 1fr !important; }
+
+  /* Footer */
+  .footer-links { flex-wrap: wrap !important; gap: 0.75rem !important; }
+
+  /* Modals */
+  .modal-content, .report-modal { width: 95vw !important; padding: 1.5rem 1rem !important; }
+
+  /* Badge cards grid */
+  .badges-grid, .badge-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 0.75rem !important; }
+}
+
+/* ─────────────────────────────────────────────
+   BREAKPOINT: Small Mobile (≤ 400px)
+───────────────────────────────────────────── */
+@media (max-width: 400px) {
+  html { font-size: 14px; }
+
+  .mlab-brand { font-size: 1rem !important; }
+  .hero-title { font-size: 1.6rem !important; }
+
+  .stats-row, .metrics-grid, .stat-cards {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .dash-stat-val { font-size: 1.2rem !important; }
+
+  /* Simulator canvas */
+  canvas { max-width: 100% !important; height: auto !important; }
+}
+
+/* ── Touch-friendly hit targets ── */
+@media (hover: none) and (pointer: coarse) {
+  button, a, .task-item, .quiz-option-btn, .sim-card, .menu-item-btn {
+    min-height: 44px;
+  }
+  input, select, textarea {
+    font-size: 16px !important; /* Prevent iOS zoom on focus */
+  }
+}
+
+/* ── Simulator canvas responsive ── */
+.sim-canvas-wrap, #canvasContainer, .canvas-container {
+  max-width: 100%;
+  overflow: hidden;
+}
+.sim-canvas-wrap canvas, #simCanvas, #particleCanvas {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ── Scroll snap for mobile carousels ── */
+.mobile-scroll-snap {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  gap: 1rem;
+  padding-bottom: 0.5rem;
+}
+.mobile-scroll-snap > * { scroll-snap-align: start; flex-shrink: 0; }
+
+/* ── Hide scrollbar but keep functionality ── */
+.mobile-scroll-snap::-webkit-scrollbar,
+.sidebar-menu::-webkit-scrollbar { height: 3px; }
+.mobile-scroll-snap::-webkit-scrollbar-thumb,
+.sidebar-menu::-webkit-scrollbar-thumb { background: rgba(56,189,248,0.3); border-radius: 3px; }
+
+/* ===== END MOBILE RESPONSIVE ===== */
