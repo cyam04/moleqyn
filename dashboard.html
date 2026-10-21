@@ -1971,16 +1971,34 @@
         document.getElementById('lbMyXp').textContent = user.xp || "100 XP";
         document.getElementById('lbMyRank').textContent = "#100+";
         document.getElementById('xpFillBar').style.width = "10%";
-        document.getElementById('menuLabBadge').textContent = "0";
+        var labsDone = user.labsCompleted || 0;
+        document.getElementById('menuLabBadge').textContent = String(labsDone);
 
-        // Resume Card: First Experiment Welcome
-        document.getElementById('resumeTag').textContent = "🚀 Start Your 1st Chemistry Lab";
-        document.getElementById('resumeTitle').textContent = "Module 1: States of Matter & Particle Simulator";
-        document.getElementById('resumeSub').innerHTML = "Interactive 3D simulation: <strong>Kinetics of Solids, Liquids &amp; Gases</strong>";
-        document.getElementById('resumeBtn').setAttribute('href', 'sim_particle.html');
-        document.getElementById('resumeBtnText').textContent = "▶ Start 1st Practical Now";
-        document.getElementById('resumePct').textContent = "0%";
-        document.getElementById('resumePctLabel').textContent = "Course Progress";
+        // Resume Card: Check if student has visited a simulator
+        var lastSim = null;
+        try {
+          var lastSimStr = localStorage.getItem('moleqyn_last_sim');
+          if (lastSimStr) lastSim = JSON.parse(lastSimStr);
+        } catch(e) {}
+
+        if (lastSim && lastSim.url && lastSim.name) {
+          document.getElementById('resumeTag').textContent = "⚡ Continue Your Practical";
+          document.getElementById('resumeTitle').textContent = lastSim.name;
+          document.getElementById('resumeSub').innerHTML = "Pick up where you left off in <strong>" + lastSim.name + "</strong>";
+          document.getElementById('resumeBtn').setAttribute('href', lastSim.url);
+          document.getElementById('resumeBtnText').textContent = "▶ Resume Lab Now";
+          document.getElementById('resumePct').textContent = Math.min(100, Math.max(15, labsDone * 10)) + "%";
+          document.getElementById('resumePctLabel').textContent = "Practical Mastery";
+        } else {
+          // Default Welcome State
+          document.getElementById('resumeTag').textContent = "🚀 Start Your 1st Chemistry Lab";
+          document.getElementById('resumeTitle').textContent = "Module 1: States of Matter & Particle Simulator";
+          document.getElementById('resumeSub').innerHTML = "Interactive 3D simulation: <strong>Kinetics of Solids, Liquids &amp; Gases</strong>";
+          document.getElementById('resumeBtn').setAttribute('href', 'sim_particle.html');
+          document.getElementById('resumeBtnText').textContent = "▶ Start 1st Practical Now";
+          document.getElementById('resumePct').textContent = "0%";
+          document.getElementById('resumePctLabel').textContent = "Course Progress";
+        }
 
         // Daily Checklist: Uncheck all for new day
         const tasks = document.querySelectorAll('#dailyTaskList .task-item');

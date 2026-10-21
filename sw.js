@@ -3,7 +3,7 @@
    Provides offline caching for school computer labs & slow networks
 ================================================================ */
 
-const CACHE_NAME = 'moleqyn-cache-v3';
+const CACHE_NAME = 'moleqyn-cache-v4';
 
 const STATIC_ASSETS = [
   './',

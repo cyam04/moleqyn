@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -477,7 +477,7 @@
           <p class="mission-desc">Discover how particles vibrate in solids, slip in liquids, and zip in gases. Test separation techniques: filtration, evaporation, winnowing and magnetic sorting.</p>
           <div class="mission-meta">
             <span>XP: +150 XP</span>
-            <button class="mission-btn" onclick="startMission('Matter Detective')">Play Mission →</button>
+            <button class="mission-btn" onclick="startMission('matter')">Play Mission →</button>
           </div>
         </div>
 
@@ -489,7 +489,7 @@
           <p class="mission-desc">Natural indicators in everyday life! Use turmeric and red cabbage extract to test whether your lemon juice, soap water, and baking soda are acidic, basic, or neutral.</p>
           <div class="mission-meta">
             <span>XP: +200 XP</span>
-            <button class="mission-btn" onclick="startMission('Acid & Base Explorer')">Play Mission →</button>
+            <button class="mission-btn" onclick="startMission('acid')">Play Mission →</button>
           </div>
         </div>
 
@@ -501,7 +501,7 @@
           <p class="mission-desc">Melting wax vs burning wick! Rusting iron vs cutting paper! Discover evidence of chemical reactions: bubbles, color change, heat, and new substances.</p>
           <div class="mission-meta">
             <span>XP: +180 XP</span>
-            <button class="mission-btn" onclick="startMission('Physical vs Chemical')">Play Mission →</button>
+            <button class="mission-btn" onclick="startMission('reactions')">Play Mission →</button>
           </div>
         </div>
 
@@ -513,7 +513,7 @@
           <p class="mission-desc">Build the building blocks of the universe! Assemble protons in the center, snap neutrons into place, and watch electrons orbit in shells to make Hydrogen, Carbon, and Oxygen.</p>
           <div class="mission-meta">
             <span>XP: +250 XP</span>
-            <button class="mission-btn" onclick="window.location.href='sim_atomverse.html'">Launch Lab →</button>
+            <button class="mission-btn" onclick="startMission('atomverse')">Launch Lab →</button>
           </div>
         </div>
 
@@ -525,7 +525,7 @@
           <p class="mission-desc">Look inside a burning candle flame. Explore the dark inner zone, luminous middle zone, and the non-luminous hottest outer zone used by goldsmiths.</p>
           <div class="mission-meta">
             <span>XP: +220 XP</span>
-            <button class="mission-btn" onclick="startMission('Candle Flame')">Play Mission →</button>
+            <button class="mission-btn" onclick="startMission('flame')">Play Mission →</button>
           </div>
         </div>
 
@@ -537,7 +537,7 @@
           <p class="mission-desc">Hit with a hammer (malleability), ring the bell (sonority), and complete the electrical circuit. Watch sulfur snap while copper stretches into fine wire!</p>
           <div class="mission-meta">
             <span>XP: +210 XP</span>
-            <button class="mission-btn" onclick="startMission('Metals Test Bench')">Play Mission →</button>
+            <button class="mission-btn" onclick="startMission('metals')">Play Mission →</button>
           </div>
         </div>
 
@@ -625,7 +625,7 @@
 
   <script src="js/shared-nav.js"></script>
   <script>
-        // Floating navbar scroll handling
+    // Floating navbar scroll handling
     (function(){
       var nav = document.getElementById('mlabNav');
       if (nav) {
@@ -635,7 +635,7 @@
       }
     })();
 
-    // Interactive Beaker Logic
+    // Interactive Beaker Logic with Gamification
     var chemicalData = {
       lemon: { name: "Lemon Juice (Citric Acid)", color: "#ef4444", tag: "Red • Strongly Acidic (pH ~2.2)" },
       soap: { name: "Soap Water (Sodium Stearate)", color: "#3b82f6", tag: "Blue • Mildly Basic (pH ~9.0)" },
@@ -645,13 +645,31 @@
       bleach: { name: "Bleach (Sodium Hypochlorite)", color: "#8b5cf6", tag: "Deep Violet • Strong Base (pH ~12.5)" }
     };
 
+    var testedSubstances = new Set();
+    try {
+      var saved = JSON.parse(localStorage.getItem('junior_tested_substances') || '[]');
+      saved.forEach(function(s){ testedSubstances.add(s); });
+    } catch(e) {}
+
     function addChemical(key) {
       var item = chemicalData[key];
+      if (!item) return;
+
       var liquid = document.getElementById('beakerLiquid');
       liquid.style.background = item.color;
       liquid.style.height = "75%";
       document.getElementById('liquidLabel').textContent = item.name;
       document.getElementById('phTag').textContent = item.tag;
+
+      testedSubstances.add(key);
+      try {
+        localStorage.setItem('junior_tested_substances', JSON.stringify(Array.from(testedSubstances)));
+      } catch(e) {}
+
+      // Check if Junior Alchemist Badge is unlocked (all 6 tested)
+      if (testedSubstances.size === 6) {
+        showBadgeCelebration("Junior Alchemist 🧙‍♂️", "You've successfully tested all 6 household pH substances! Earned +50 XP!");
+      }
     }
 
     function resetBeaker() {
@@ -662,8 +680,66 @@
       document.getElementById('phTag').textContent = "Green/Blue • Neutral Solution";
     }
 
-    function startMission(name) {
-      alert("Launching " + name + " interactive simulation walkthrough!");
+    function showBadgeCelebration(badgeName, message) {
+      // Award XP
+      try {
+        var userStr = localStorage.getItem('mlab_user') || localStorage.getItem('moleqyn_user');
+        if (userStr) {
+          var user = JSON.parse(userStr);
+          var xpVal = parseInt(user.xp, 10) || 100;
+          user.xp = (xpVal + 50) + " XP";
+          localStorage.setItem('mlab_user', JSON.stringify(user));
+          localStorage.setItem('moleqyn_user', JSON.stringify(user));
+        }
+      } catch(e) {}
+
+      // Toast notification
+      var banner = document.createElement('div');
+      banner.style.position = 'fixed';
+      banner.style.bottom = '30px';
+      banner.style.left = '50%';
+      banner.style.transform = 'translateX(-50%)';
+      banner.style.background = 'linear-gradient(135deg, #10b981, #00f0ff)';
+      banner.style.color = '#030a16';
+      banner.style.padding = '14px 24px';
+      banner.style.borderRadius = '16px';
+      banner.style.boxShadow = '0 10px 30px rgba(0,240,255,0.4)';
+      banner.style.zIndex = '9999';
+      banner.style.fontWeight = '700';
+      banner.style.fontSize = '0.95rem';
+      banner.style.textAlign = 'center';
+      banner.innerHTML = '🎉 <strong>' + badgeName + ' Unlocked!</strong><br/><span style="font-size:0.82rem; font-weight:500;">' + message + '</span>';
+      document.body.appendChild(banner);
+      setTimeout(function(){ banner.remove(); }, 4000);
+    }
+
+    function startMission(missionKey) {
+      switch(missionKey) {
+        case 'matter':
+          window.location.href = 'sim_particle.html';
+          break;
+        case 'acid':
+          var beaker = document.getElementById('beakerLiquid');
+          if (beaker) {
+            beaker.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(function(){ addChemical('lemon'); }, 600);
+          }
+          break;
+        case 'reactions':
+          window.location.href = 'reaction.html';
+          break;
+        case 'atomverse':
+          window.location.href = 'sim_atomverse.html';
+          break;
+        case 'flame':
+          window.location.href = 'sim_flametest.html';
+          break;
+        case 'metals':
+          window.location.href = 'sim_electro.html';
+          break;
+        default:
+          window.location.href = 'simulators.html';
+      }
     }
   </script>
 </body>
