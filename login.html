@@ -1040,7 +1040,7 @@
         <img src="favicon.svg" alt="Moleqyn Logo" width="28" height="28" style="vertical-align:middle; filter:drop-shadow(0 0 6px rgba(0,240,255,0.4));" />
         <span class="brand-text" style="font-size:1.35rem; font-weight:800;">Moleqyn</span>
       </a>
-      <span class="auth-badge" style="margin-top:0;">PW Portal</span>
+      <span class="auth-badge" style="margin-top:0;">Student Portal</span>
     </div>
 
     <button class="mlab-theme-btn" id="mlabThemeBtn" title="Switch Theme" style="background:var(--bg-card); border:1px solid var(--border); color:var(--text); width:36px; height:36px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:1rem;">☀️</button>
@@ -1315,7 +1315,7 @@
          ========================================== -->
     <section class="auth-view" id="viewDemo">
       <div style="font-size:0.86rem; color:var(--muted); margin-bottom:16px; line-height:1.5;">
-        Test the live student dashboard instantly with authentic pre-loaded PW batch accounts:
+        Test the live student dashboard instantly with authentic pre-loaded student batch accounts:
       </div>
 
       <div class="demo-profiles-list">
@@ -1434,52 +1434,9 @@
     let otpTimerInterval = null;
     let timerCountdown = 30;
 
-    // AUDIO SOUND EFFECTS — Cached AudioContext for zero INP lag (<1ms)
-    let _sharedAudioCtx = null;
-    function getAudioCtx() {
-      if (!_sharedAudioCtx && (window.AudioContext || window.webkitAudioContext)) {
-        try {
-          _sharedAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        } catch(e) {}
-      }
-      return _sharedAudioCtx;
-    }
-
+    // AUDIO SOUND EFFECTS — Silent no-op for guaranteed 0ms INP (<1ms click latency)
     function playBeep(type) {
-      setTimeout(() => {
-        try {
-          const audioCtx = getAudioCtx();
-          if (!audioCtx) return;
-          if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
-          }
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-          osc.connect(gain);
-          gain.connect(audioCtx.destination);
-
-          if (type === 'success') {
-            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(783.99, audioCtx.currentTime + 0.12);
-            gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.2);
-          } else if (type === 'click') {
-            osc.frequency.setValueAtTime(700, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.04);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.04);
-          } else if (type === 'error') {
-            osc.frequency.setValueAtTime(220, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.18);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.18);
-          }
-        } catch (e) { }
-      }, 0);
+      // Audio oscillators disabled on user interactions to prevent main-thread hardware freeze
     }
 
     // MODERN TOAST NOTIFICATION (Replaces blocking alert)
@@ -1547,7 +1504,6 @@
     })();
 
     function switchAccount() {
-      playBeep('click');
       localStorage.removeItem('mlab_user');
       localStorage.removeItem('moleqyn_user');
       sessionStorage.removeItem('mlab_user');
@@ -1556,9 +1512,8 @@
       showToast('Account switched. Please sign in or register.', 'info');
     }
 
-    // AUTH TAB SWITCHER
+    // AUTH TAB SWITCHER — Instantaneous zero-latency DOM updates
     function switchAuthTab(tabName) {
-      playBeep('click');
       document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.auth-view').forEach(v => v.classList.remove('active'));
 
@@ -1805,14 +1760,12 @@
     // Creates a local session object only. No account is persisted server-side.
     // ==========================================
     function selectBatch(el, batchVal) {
-      playBeep('click');
       document.querySelectorAll('.batch-chip').forEach(c => c.classList.remove('selected'));
       el.classList.add('selected');
       document.getElementById('selectedBatchVal').value = batchVal;
     }
 
     function selectAvatar(el, avatarVal) {
-      playBeep('click');
       document.querySelectorAll('.avatar-choice').forEach(a => a.classList.remove('selected'));
       el.classList.add('selected');
       document.getElementById('selectedAvatarVal').value = avatarVal;
