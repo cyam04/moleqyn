@@ -1,10 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="Moleqyn Learn â€“ Complete CBSE & ICSE Chemistry Notes for Class 1 to 12. Visual notes, interactive diagrams, simulations and practice questions."/>
-  <title>Moleqyn | Learn Chemistry â€“ Class 1 to 12</title>
+  <meta name="description" content="Moleqyn Learn - Complete CBSE &amp; ICSE Chemistry Notes for Class 1 to 12. Visual notes, interactive diagrams, simulations and practice questions."/>
+  <title>Moleqyn | Learn Chemistry &ndash; Class 1 to 12</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
@@ -15,7 +15,6 @@
         document.documentElement.removeAttribute('data-theme');
         document.documentElement.classList.remove('light-mode');
       } else {
-        // Default to high-end clean light mode as shown in user reference image
         document.documentElement.setAttribute('data-theme', 'day');
         document.documentElement.classList.add('light-mode');
       }
@@ -48,7 +47,7 @@
       --shadow-hover: 0 16px 36px rgba(37, 99, 235, 0.25);
     }
 
-    /* DAY THEME TOKENS â€” MATCHING USER REFERENCE SCREENSHOT */
+    /* DAY THEME TOKENS - MATCHING USER REFERENCE SCREENSHOT */
     :root[data-theme="day"],
     html.light-mode {
       --primary: #2563eb;
@@ -71,7 +70,9 @@
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
+    html, body {
+      overflow-x: hidden;
+      width: 100%;
       background: var(--bg-base);
       color: var(--text-main);
       font-family: var(--font-body);
@@ -80,6 +81,22 @@
       -webkit-font-smoothing: antialiased;
       transition: background 0.25s, color 0.25s;
     }
+
+    /* SVG Icons Helper */
+    .svg-icon {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      stroke-width: 2;
+      stroke: currentColor;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+    .svg-icon-sm { width: 14px; height: 14px; stroke-width: 2.2; }
+    .svg-icon-lg { width: 24px; height: 24px; }
 
     /* =========================================
        1. TOP NAVBAR
@@ -110,9 +127,9 @@
       color: inherit;
     }
 
-    .brand-icon-svg {
-      width: 34px;
-      height: 34px;
+    .brand-logo-svg {
+      width: 32px;
+      height: 32px;
       color: var(--primary);
     }
 
@@ -228,7 +245,7 @@
       border: 1px solid var(--border);
       border-radius: var(--radius-pill);
       padding: 7px 16px;
-      min-width: 280px;
+      min-width: 270px;
       box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
     }
 
@@ -239,10 +256,6 @@
       color: var(--text-main);
       font-size: 0.85rem;
       width: 100%;
-    }
-
-    .global-search-pill input::placeholder {
-      color: var(--text-muted);
     }
 
     .theme-toggle-btn {
@@ -298,6 +311,7 @@
       max-width: 1320px;
       margin: 1.5rem auto 1.5rem;
       padding: 0 1.5rem;
+      box-sizing: border-box;
     }
 
     .hero-banner-card {
@@ -390,13 +404,13 @@
     }
 
     .feature-pill-icon {
-      font-size: 1.15rem;
       width: 28px;
       height: 28px;
       display: grid;
       place-items: center;
       border-radius: 8px;
       background: rgba(255, 255, 255, 0.1);
+      color: #38bdf8;
     }
 
     .feature-pill-text strong {
@@ -442,13 +456,14 @@
       border: 1px solid #fde68a;
       display: grid;
       place-items: center;
-      font-size: 1.5rem;
+      color: #d97706;
       flex-shrink: 0;
     }
 
     :root[data-theme="day"] .trophy-badge {
       background: #fffbeb;
       border-color: #fef08a;
+      color: #d97706;
     }
 
     .progress-main {
@@ -586,9 +601,9 @@
       padding: 16px 22px;
       display: flex;
       align-items: center;
-      gap: 20px;
+      gap: 16px;
       box-shadow: var(--shadow-card);
-      overflow-x: auto;
+      min-width: 0;
     }
 
     .class-header-meta {
@@ -608,7 +623,6 @@
       color: var(--primary);
       display: grid;
       place-items: center;
-      font-size: 1.35rem;
     }
 
     .class-header-text h3 {
@@ -625,13 +639,24 @@
       white-space: nowrap;
     }
 
-    .class-pills-scroll {
+    .class-pills-scroll-wrapper {
       display: flex;
       align-items: center;
       gap: 8px;
       flex: 1;
+      min-width: 0;
+      position: relative;
+    }
+
+    .class-pills-scroll {
+      display: flex;
+      align-items: center;
+      gap: 8px;
       overflow-x: auto;
       scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      padding: 4px 0;
+      width: 100%;
     }
 
     .class-pills-scroll::-webkit-scrollbar {
@@ -652,6 +677,7 @@
       font-weight: 700;
       cursor: pointer;
       white-space: nowrap;
+      flex-shrink: 0;
       transition: all 0.2s;
     }
 
@@ -948,7 +974,6 @@
       color: var(--primary);
       display: grid;
       place-items: center;
-      font-size: 0.85rem;
       transition: transform 0.2s, background 0.2s, color 0.2s;
     }
 
@@ -985,7 +1010,7 @@
       border: 1px solid var(--border);
       border-radius: 24px;
       width: 100%;
-      max-width: 820px;
+      max-width: 840px;
       max-height: 90vh;
       display: flex;
       flex-direction: column;
@@ -1140,7 +1165,7 @@
 
     .formula-vault-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 10px;
       margin-bottom: 20px;
     }
@@ -1149,7 +1174,7 @@
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 10px 14px;
+      padding: 12px 14px;
       font-family: var(--font-mono);
       font-size: 0.82rem;
       color: var(--primary);
@@ -1320,7 +1345,7 @@
   <!-- 1. TOP NAVBAR -->
   <header class="top-navbar">
     <a href="index.html" class="brand-group" aria-label="Moleqyn Home">
-      <svg class="brand-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <svg class="brand-logo-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
         <ellipse cx="12" cy="12" rx="9" ry="3.5" transform="rotate(30 12 12)"/>
         <ellipse cx="12" cy="12" rx="9" ry="3.5" transform="rotate(90 12 12)"/>
         <ellipse cx="12" cy="12" rx="9" ry="3.5" transform="rotate(150 12 12)"/>
@@ -1328,26 +1353,31 @@
       </svg>
       <div class="brand-text-block">
         <span class="brand-name">Moleqyn</span>
-        <span class="brand-tagline">Learn â€¢ Explore â€¢ Experiment</span>
+        <span class="brand-tagline">Learn &bull; Explore &bull; Experiment</span>
       </div>
     </a>
 
     <ul class="nav-links">
       <li><a href="index.html" class="nav-item-link">Home</a></li>
       <li class="nav-dropdown">
-        <a class="nav-item-link">Virtual Labs â–¾</a>
+        <a class="nav-item-link">Virtual Labs &#9662;</a>
         <div class="nav-dropdown-content">
-          <a href="simulators.html" class="nav-drop-item">ðŸ§ª All 15 Virtual Simulators</a>
-          <a href="sim_atomverse.html" class="nav-drop-item">âš›ï¸ AtomVerse Quantum Lab</a>
-          <a href="experiments.html" class="nav-drop-item">ðŸ“” NCERT Guided Practicals</a>
-          <a href="periodic-table.html" class="nav-drop-item">ðŸ”¢ 118-Element Periodic Table</a>
-          <a href="reaction.html" class="nav-drop-item">âš—ï¸ Reaction Balancer & Lab</a>
-          <a href="ai-tutor.html" class="nav-drop-item">ðŸ¤– AI Chemistry Tutor</a>
+          <a href="simulators.html" class="nav-drop-item">All 15 Virtual Simulators</a>
+          <a href="sim_atomverse.html" class="nav-drop-item">AtomVerse Quantum Lab</a>
+          <a href="experiments.html" class="nav-drop-item">NCERT Guided Practicals</a>
+          <a href="periodic-table.html" class="nav-drop-item">118-Element Periodic Table</a>
+          <a href="reaction.html" class="nav-drop-item">Reaction Balancer &amp; Lab</a>
+          <a href="ai-tutor.html" class="nav-drop-item">AI Chemistry Tutor</a>
         </div>
       </li>
-      <li><a href="learn.html" class="nav-item-link active">ðŸ“– Learn â–¾</a></li>
+      <li>
+        <a href="learn.html" class="nav-item-link active">
+          <svg class="svg-icon svg-icon-sm" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          Learn &#9662;
+        </a>
+      </li>
       <li><a href="resources.html" class="nav-item-link">Resources</a></li>
-      <li><a href="quiz.html" class="nav-item-link">Quiz â–¾</a></li>
+      <li><a href="quiz.html" class="nav-item-link">Quiz &#9662;</a></li>
       <li><a href="dashboard.html" class="nav-item-link">Progress</a></li>
       <li><a href="about.html" class="nav-item-link">About</a></li>
       <li><a href="contact.html" class="nav-item-link">Contact</a></li>
@@ -1355,13 +1385,17 @@
 
     <div class="nav-tools">
       <div class="global-search-pill">
-        <span>ðŸ”</span>
-        <input type="text" id="globalNavSearch" placeholder="Search chapters, subtopics or conceptsâ€¦"/>
+        <svg class="svg-icon svg-icon-sm" style="color:var(--text-muted);" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="globalNavSearch" placeholder="Search chapters, subtopics or concepts..."/>
       </div>
-      <button class="theme-toggle-btn" id="themeBtn" title="Switch Theme">â˜€ï¸</button>
+      <button class="theme-toggle-btn" id="themeBtn" title="Switch Theme">
+        <svg class="svg-icon svg-icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      </button>
       <a href="dashboard.html" class="user-profile-pill">
-        <div class="user-avatar-circle">ðŸ‘¤</div>
-        <span>Student â–¾</span>
+        <div class="user-avatar-circle">
+          <svg class="svg-icon svg-icon-sm" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <span>Student &#9662;</span>
       </a>
     </div>
   </header>
@@ -1373,11 +1407,13 @@
       <div class="hero-content">
         <div class="hero-pretitle">LEARN CHEMISTRY</div>
         <h1 class="hero-headline">Explore the World of<br/><span>Chemistry</span></h1>
-        <p class="hero-subtitle">From atoms to amazing reactions â€” learn every chapter with visual notes, interactive diagrams, simulations and practice questions, all in one place.</p>
+        <p class="hero-subtitle">From atoms to amazing reactions &mdash; learn every chapter with visual notes, interactive diagrams, simulations and practice questions, all in one place.</p>
         
         <div class="hero-pills-row">
           <div class="hero-feature-pill">
-            <div class="feature-pill-icon">ðŸ“–</div>
+            <div class="feature-pill-icon">
+              <svg class="svg-icon" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </div>
             <div class="feature-pill-text">
               <strong>Concept Notes</strong>
               <small>Easy to understand</small>
@@ -1385,7 +1421,9 @@
           </div>
 
           <div class="hero-feature-pill">
-            <div class="feature-pill-icon">ðŸ–¼ï¸</div>
+            <div class="feature-pill-icon">
+              <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
             <div class="feature-pill-text">
               <strong>Interactive Diagrams</strong>
               <small>See chemistry come alive</small>
@@ -1393,7 +1431,9 @@
           </div>
 
           <div class="hero-feature-pill">
-            <div class="feature-pill-icon">ðŸ§ª</div>
+            <div class="feature-pill-icon">
+              <svg class="svg-icon" viewBox="0 0 24 24"><path d="M10 2v7.31L4.66 18.2A2 2 0 0 0 6.4 21h11.2a2 2 0 0 0 1.74-2.8L14 9.31V2"/></svg>
+            </div>
             <div class="feature-pill-text">
               <strong>Simulators</strong>
               <small>Explore and experiment</small>
@@ -1401,7 +1441,9 @@
           </div>
 
           <div class="hero-feature-pill">
-            <div class="feature-pill-icon">ðŸ“</div>
+            <div class="feature-pill-icon">
+              <svg class="svg-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            </div>
             <div class="feature-pill-text">
               <strong>Practice Questions</strong>
               <small>Build your skills</small>
@@ -1415,7 +1457,9 @@
   <!-- 3. PROGRESS & STUDY MODES ROW -->
   <section class="controls-wrapper">
     <div class="progress-card">
-      <div class="trophy-badge">ðŸ†</div>
+      <div class="trophy-badge">
+        <svg class="svg-icon svg-icon-lg" viewBox="0 0 24 24"><path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"/><path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/><path d="M4 3h16v6a8 8 0 0 1-16 0V3z"/><path d="M12 17v4"/><path d="M8 21h8"/></svg>
+      </div>
       <div class="progress-main">
         <div class="progress-title-row">
           <span class="progress-label">Your Learning Progress</span>
@@ -1426,24 +1470,31 @@
         </div>
       </div>
       <button class="mark-all-mastered-btn" onclick="quickMarkCurrentClass()">
-        <span>ðŸ·ï¸</span> Mark as Mastered
+        <svg class="svg-icon svg-icon-sm" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        <span>Mark as Mastered</span>
       </button>
     </div>
 
     <div class="study-modes-card">
       <button class="mode-btn active" data-mode="concepts" onclick="setStudyMode('concepts')">
-        <span>ðŸ“–</span> Concepts
+        <svg class="svg-icon svg-icon-sm" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span>Concepts</span>
       </button>
       <button class="mode-btn" data-mode="formulas" onclick="setStudyMode('formulas')">
-        <span>ðŸ“„</span> Formulas
+        <svg class="svg-icon svg-icon-sm" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <span>Formulas</span>
       </button>
       <button class="mode-btn" data-mode="simulators" onclick="setStudyMode('simulators')">
-        <span>â–·</span> Simulators
+        <svg class="svg-icon svg-icon-sm" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        <span>Simulators</span>
       </button>
       <button class="mode-btn" data-mode="flashcards" onclick="setStudyMode('flashcards')">
-        <span>ðŸ—‚ï¸</span> Flashcards
+        <svg class="svg-icon svg-icon-sm" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 15h10M7 9h6"/></svg>
+        <span>Flashcards</span>
       </button>
-      <button class="mode-nav-arrow" title="Next Mode" onclick="cycleNextMode()">â€º</button>
+      <button class="mode-nav-arrow" title="Next Mode" onclick="cycleNextMode()">
+        <svg class="svg-icon svg-icon-sm" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
     </div>
   </section>
 
@@ -1451,26 +1502,30 @@
   <section class="class-selector-wrapper">
     <div class="class-selector-card">
       <div class="class-header-meta">
-        <div class="grad-cap-badge">ðŸŽ“</div>
+        <div class="grad-cap-badge">
+          <svg class="svg-icon svg-icon-lg" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+        </div>
         <div class="class-header-text">
           <h3>Select Your Class</h3>
           <p>Choose a class to explore Chemistry chapters</p>
         </div>
       </div>
 
-      <div class="class-pills-scroll" id="classPillsContainer">
-        <button class="class-pill-btn" data-class="1" onclick="selectClass(1)">ðŸŒ± Class 1</button>
-        <button class="class-pill-btn" data-class="2" onclick="selectClass(2)">â˜€ï¸ Class 2</button>
-        <button class="class-pill-btn" data-class="3" onclick="selectClass(3)">ðŸƒ Class 3</button>
-        <button class="class-pill-btn" data-class="4" onclick="selectClass(4)">ðŸ§ª Class 4</button>
-        <button class="class-pill-btn" data-class="5" onclick="selectClass(5)">âš›ï¸ Class 5</button>
-        <button class="class-pill-btn" data-class="6" onclick="selectClass(6)">ðŸ§Š Class 6</button>
-        <button class="class-pill-btn active" data-class="7" onclick="selectClass(7)">âš›ï¸ Class 7</button>
-        <button class="class-pill-btn" data-class="8" onclick="selectClass(8)">ðŸ“– Class 8</button>
-        <button class="class-pill-btn" data-class="9" onclick="selectClass(9)">âš™ï¸ Class 9</button>
-        <button class="class-pill-btn" data-class="10" onclick="selectClass(10)">ðŸ“¦ Class 10</button>
-        <button class="class-pill-btn" data-class="11" onclick="selectClass(11)">ðŸ–Šï¸ Class 11</button>
-        <button class="class-pill-btn" data-class="12" onclick="selectClass(12)">ðŸŽ¯ Class 12</button>
+      <div class="class-pills-scroll-wrapper">
+        <div class="class-pills-scroll" id="classPillsContainer">
+          <button class="class-pill-btn" data-class="1" onclick="selectClass(1)">Class 1</button>
+          <button class="class-pill-btn" data-class="2" onclick="selectClass(2)">Class 2</button>
+          <button class="class-pill-btn" data-class="3" onclick="selectClass(3)">Class 3</button>
+          <button class="class-pill-btn" data-class="4" onclick="selectClass(4)">Class 4</button>
+          <button class="class-pill-btn" data-class="5" onclick="selectClass(5)">Class 5</button>
+          <button class="class-pill-btn" data-class="6" onclick="selectClass(6)">Class 6</button>
+          <button class="class-pill-btn active" data-class="7" onclick="selectClass(7)">Class 7</button>
+          <button class="class-pill-btn" data-class="8" onclick="selectClass(8)">Class 8</button>
+          <button class="class-pill-btn" data-class="9" onclick="selectClass(9)">Class 9</button>
+          <button class="class-pill-btn" data-class="10" onclick="selectClass(10)">Class 10</button>
+          <button class="class-pill-btn" data-class="11" onclick="selectClass(11)">Class 11</button>
+          <button class="class-pill-btn" data-class="12" onclick="selectClass(12)">Class 12</button>
+        </div>
       </div>
     </div>
   </section>
@@ -1479,14 +1534,14 @@
   <main class="chapters-main-wrapper">
     <div class="section-headline-bar">
       <div class="section-title-group">
-        <h2 id="currentClassTitle">Class 7 â€“ Chemistry Chapters</h2>
+        <h2 id="currentClassTitle">Class 7 &ndash; Chemistry Chapters</h2>
         <p>Click on any chapter to explore its subtopics, notes, visuals, examples and more.</p>
       </div>
 
       <div class="section-filters-group">
         <div class="chapter-search-box">
-          <span>ðŸ”</span>
-          <input type="text" id="chapterSearchInput" placeholder="Search in Class 7 Chemistryâ€¦"/>
+          <svg class="svg-icon svg-icon-sm" style="color:var(--text-muted);" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="chapterSearchInput" placeholder="Search in Class 7 Chemistry..."/>
         </div>
 
         <button class="branch-filter-pill active" data-branch="all" onclick="filterBranch('all')">All Chapters</button>
@@ -1495,7 +1550,8 @@
         <button class="branch-filter-pill branch-pill-peach" data-branch="organic" onclick="filterBranch('organic')">Organic</button>
 
         <button class="order-select-btn" id="orderSortBtn" onclick="toggleChapterSort()">
-          <span>â˜·</span> <span id="sortBtnText">Chapter Order â–¾</span>
+          <svg class="svg-icon svg-icon-sm" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          <span id="sortBtnText">Chapter Order &#9662;</span>
         </button>
       </div>
     </div>
@@ -1517,14 +1573,14 @@
             <p id="modalSub">Reversibility, chemical reactions, rusting of iron, crystallisation</p>
           </div>
         </div>
-        <button class="modal-close-btn" onclick="closeChapterModal()" title="Close">âœ•</button>
+        <button class="modal-close-btn" onclick="closeChapterModal()" title="Close">&times;</button>
       </div>
 
       <div class="modal-tabs-nav">
-        <button class="modal-tab-btn active" data-tab="notes" onclick="switchModalTab('notes')">ðŸ“– Concept Notes</button>
-        <button class="modal-tab-btn" data-tab="formulas" onclick="switchModalTab('formulas')">âš¡ Key Formulas &amp; Reactions</button>
-        <button class="modal-tab-btn" data-tab="simulator" onclick="switchModalTab('simulator')">ðŸ§ª Virtual Lab</button>
-        <button class="modal-tab-btn" data-tab="quiz" onclick="switchModalTab('quiz')">ðŸŽ¯ 30s Flash Quiz</button>
+        <button class="modal-tab-btn active" data-tab="notes" onclick="switchModalTab('notes')">Concept Notes &amp; Theory</button>
+        <button class="modal-tab-btn" data-tab="formulas" onclick="switchModalTab('formulas')">Key Formulas &amp; Reactions</button>
+        <button class="modal-tab-btn" data-tab="simulator" onclick="switchModalTab('simulator')">Virtual Lab Experiment</button>
+        <button class="modal-tab-btn" data-tab="quiz" onclick="switchModalTab('quiz')">Self-Check Practice</button>
       </div>
 
       <div class="modal-body-scroll" id="modalBodyScroll">
@@ -1533,10 +1589,11 @@
 
       <div class="modal-footer">
         <div style="font-size:0.8rem; color:var(--text-muted);">
-          <span>â±ï¸ 6 min read</span> â€¢ <span style="color:var(--primary); font-weight:600;">NCERT &amp; ICSE Aligned</span>
+          <span><svg class="svg-icon svg-icon-xs" style="width:13px;height:13px;display:inline-block;vertical-align:-2px;margin-right:4px;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 8 min read</span> &bull; <span style="color:var(--primary); font-weight:600;">NCERT &amp; ICSE Comprehensive Edition</span>
         </div>
         <button class="mark-chapter-mastered-btn" id="modalMasterBtn" onclick="toggleMasterChapter()">
-          <span>âœ“</span> Mark as Mastered (+15 XP)
+          <svg class="svg-icon svg-icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Mark as Mastered (+15 XP)</span>
         </button>
       </div>
     </div>
@@ -1548,79 +1605,82 @@
   <!-- Shared Nav JS -->
   <script src="js/shared-nav.js"></script>
 
-  <!-- CHAPTER DATA & APPLICATION LOGIC -->
+  <!-- CHAPTER DATA & COMPREHENSIVE CURRICULUM -->
   <script>
-    // Chapter database covering Class 1 to Class 12
+    // Chapter database covering Class 1 to Class 12 with comprehensive notes, reactions, and explanations
     const CHAPTER_DATA = {
       1: [
-        { num: '01', title: 'Living & Non-Living Things', desc: 'Air, water, living organisms, and everyday nature around us.', subtopics: ['Living vs non-living characteristics', 'Needs of living things (Air, Water, Food)', 'Plant and animal habitats', 'Natural vs man-made materials'], badge: 'badge-color-1', diff: 'Easy', branch: 'physical', sim: 'sim_particle.html', simName: 'States of Matter Simulator' },
-        { num: '02', title: 'Water All Around Us', desc: 'Rain, rivers, drinking water, states of water and importance of water conservation.', subtopics: ['Sources of water (Rain, Groundwater, Rivers)', 'Three forms of water (Ice, Water, Steam)', 'Saving clean drinking water', 'Water cycle basics'], badge: 'badge-color-4', diff: 'Easy', branch: 'inorganic', sim: 'sim_particle.html', simName: 'Particle Phase Transitions' },
-        { num: '03', title: 'Everyday Materials', desc: 'Wood, plastic, paper, glass, cloth and metals used in our daily life.', subtopics: ['Identifying materials around us', 'Properties: Hard vs soft, rough vs smooth', 'Waterproof vs absorbent materials', 'Recycling materials'], badge: 'badge-color-2', diff: 'Easy', branch: 'physical' },
-        { num: '04', title: 'Sun, Light & Weather', desc: 'Solar heat, sunlight, shadow formation, temperature and seasonal changes.', subtopics: ['The Sun as our prime light and heat source', 'Day and night cycles', 'How shadows are formed', 'Four seasons and weather'], badge: 'badge-color-6', diff: 'Easy', branch: 'physical' }
+        { num: '01', title: 'Living & Non-Living Things', desc: 'Air, water, living organisms, and everyday nature around us.', subtopics: ['Living vs non-living characteristics (Growth, breathing, nutrition)', 'Needs of living organisms: Clean air, fresh water, and food energy', 'Plant and animal habitats in nature', 'Natural vs man-made materials and conservation'], badge: 'badge-color-1', diff: 'Easy', branch: 'physical', sim: 'sim_particle.html', simName: 'States of Matter Simulator' },
+        { num: '02', title: 'Water All Around Us', desc: 'Rain, rivers, drinking water, states of water and importance of water conservation.', subtopics: ['Sources of freshwater: Rainwater, mountain glaciers, groundwater', 'Three forms of water in nature: Ice, liquid water, water vapour', 'Clean drinking water and hygiene habits', 'Water cycle in our daily atmosphere'], badge: 'badge-color-4', diff: 'Easy', branch: 'inorganic', sim: 'sim_particle.html', simName: 'Particle Phase Transitions' },
+        { num: '03', title: 'Everyday Materials Around Us', desc: 'Wood, plastic, paper, glass, cloth and metals used in our daily life.', subtopics: ['Identifying materials: Natural wood, cotton vs synthetic plastic', 'Material properties: Hard vs soft, flexible vs rigid', 'Waterproof materials vs absorbent cloths', 'Importance of reducing, reusing, and recycling'], badge: 'badge-color-2', diff: 'Easy', branch: 'physical' },
+        { num: '04', title: 'Sun, Light & Weather', desc: 'Solar heat, sunlight, shadow formation, temperature and seasonal changes.', subtopics: ['The Sun as our ultimate energy and light source', 'How shadows are formed by opaque objects', 'Warmth and evaporation caused by solar heat', 'Four seasons: Summer, monsoon, autumn, and winter'], badge: 'badge-color-6', diff: 'Easy', branch: 'physical' }
       ],
       2: [
-        { num: '01', title: 'Solids, Liquids & Gases', desc: 'Observing everyday objects, ice melting to water, and boiling steam.', subtopics: ['Properties of solids (fixed shape)', 'Properties of liquids (flow, take container shape)', 'Gases around us (invisible, fill space)', 'Melting and freezing'], badge: 'badge-color-1', diff: 'Easy', branch: 'physical', sim: 'sim_particle.html', simName: 'States of Matter Simulator' },
-        { num: '02', title: 'Air & Atmosphere', desc: 'Moving air (wind), oxygen needed for burning candles, and clean breathing air.', subtopics: ['Air is everywhere and has weight', 'Wind and breeze', 'Air supports burning', 'Keeping our air fresh and pollution-free'], badge: 'badge-color-5', diff: 'Easy', branch: 'physical', sim: 'sim_gaslaws.html', simName: 'Gas Laws Simulator' },
-        { num: '03', title: 'Rocks, Soil & Minerals', desc: 'Pebbles, granite, clay, sand, loamy soil, and building materials.', subtopics: ['Types of rocks (Granite, Marble, Sandstone)', 'How rocks break down into soil', 'Soil layers: Topsoil and humus', 'Minerals and metals from the Earth'], badge: 'badge-color-3', diff: 'Easy', branch: 'inorganic' },
-        { num: '04', title: 'Plants, Leaves & Chlorophyll', desc: 'Green leaves making food with sunlight, roots absorbing water and minerals.', subtopics: ['Parts of a green plant', 'Leaves as food factories', 'Chlorophyll and sunlight', 'Roots absorbing water from soil'], badge: 'badge-color-8', diff: 'Easy', branch: 'organic' }
+        { num: '01', title: 'Solids, Liquids & Gases', desc: 'Observing everyday objects, ice melting to water, and boiling steam.', subtopics: ['Properties of solids: Fixed shape, definite volume', 'Properties of liquids: Flow freely, take container shape', 'Properties of gases: Invisible, fill entire available volume', 'State changes: Melting ice and condensing steam'], badge: 'badge-color-1', diff: 'Easy', branch: 'physical', sim: 'sim_particle.html', simName: 'States of Matter Simulator' },
+        { num: '02', title: 'Air & Atmosphere Basics', desc: 'Moving air (wind), oxygen needed for burning candles, and clean breathing air.', subtopics: ['Air is everywhere, occupies space, and exerts pressure', 'Wind energy and gentle breezes', 'Experiment: Inverted glass over burning candle', 'Keeping our environment and school air clean'], badge: 'badge-color-5', diff: 'Easy', branch: 'physical', sim: 'sim_gaslaws.html', simName: 'Gas Laws Simulator' },
+        { num: '03', title: 'Rocks, Soil & Minerals', desc: 'Pebbles, granite, clay, sand, loamy soil, and building materials.', subtopics: ['Types of rocks: Granite, marble, sandstone, limestone', 'Weathering of rocks into fine soil particles', 'Soil composition: Sand, silt, clay, and dark humus', 'Metals extracted from ores in the ground'], badge: 'badge-color-3', diff: 'Easy', branch: 'inorganic' },
+        { num: '04', title: 'Plant Life & Food Factory', desc: 'Green leaves making food with sunlight, roots absorbing water and minerals.', subtopics: ['Main parts of a plant: Root, stem, leaf, flower, seed', 'Chlorophyll: Green pigment absorbing sunlight', 'Roots absorbing water and mineral salts from soil', 'Plants giving out oxygen for all living beings'], badge: 'badge-color-8', diff: 'Easy', branch: 'organic' }
       ],
       3: [
-        { num: '01', title: 'Forms of Matter & Phase Change', desc: 'Evaporation, condensation, melting, freezing and the water cycle.', subtopics: ['Solid to liquid (Melting of ice)', 'Liquid to gas (Evaporation and boiling)', 'Gas to liquid (Condensation on cold glasses)', 'The complete natural water cycle'], badge: 'badge-color-1', diff: 'Easy', branch: 'physical', sim: 'sim_particle.html', simName: 'Particle Simulator' },
-        { num: '02', title: 'Water Purification & Filtration', desc: 'Sedimentation, decantation, boiling, and clean water technologies.', subtopics: ['Soluble vs insoluble impurities in water', 'Sedimentation and decantation in beakers', 'Filtration using filter paper', 'Boiling and chlorination for safe drinking'], badge: 'badge-color-4', diff: 'Easy', branch: 'inorganic' },
-        { num: '03', title: 'Soil Science & Compost', desc: 'Sandy soil, clayey soil, loamy garden soil, earthworms and organic compost.', subtopics: ['Components of fertile garden soil', 'Water retention capacity in different soils', 'Role of earthworms in soil fertility', 'Making organic kitchen compost'], badge: 'badge-color-8', diff: 'Easy', branch: 'organic' },
-        { num: '04', title: 'Heat, Temperature & Expansion', desc: 'Measuring temperature, thermal expansion of liquids, and thermometers.', subtopics: ['Concept of hotness and coldness', 'Clinical and laboratory thermometers', 'Expansion of liquids on heating', 'Good vs bad conductors of heat'], badge: 'badge-color-6', diff: 'Easy', branch: 'physical', sim: 'sim_calorimetry.html', simName: 'Calorimetry Simulator' }
+        { num: '01', title: 'Forms of Matter & Phase Change', desc: 'Evaporation, condensation, melting, freezing and the natural water cycle.', subtopics: ['Interconversion: Solid to liquid (Melting), liquid to gas (Evaporation)', 'Gas to liquid (Condensation on cold glasses)', 'Liquid to solid (Freezing at 0 degrees Celsius)', 'Continuous water cycle in nature: Clouds, rain, rivers'], badge: 'badge-color-1', diff: 'Easy', branch: 'physical', sim: 'sim_particle.html', simName: 'Particle Simulator' },
+        { num: '02', title: 'Water Purification & Filtration', desc: 'Sedimentation, decantation, boiling, and clean water technologies.', subtopics: ['Soluble vs insoluble impurities in water', 'Sedimentation and decantation method in beakers', 'Filtration using fine mesh and filter paper', 'Boiling and chlorination for killing germs'], badge: 'badge-color-4', diff: 'Easy', branch: 'inorganic' },
+        { num: '03', title: 'Soil Science & Compost', desc: 'Sandy soil, clayey soil, loamy garden soil, earthworms and organic compost.', subtopics: ['Physical properties of sandy, clayey, and loamy soils', 'Water percolation rate in different soils', 'Earthworms as farmer friends making vermicompost', 'Nutrient recycling from organic kitchen waste'], badge: 'badge-color-8', diff: 'Easy', branch: 'organic' },
+        { num: '04', title: 'Heat, Temperature & Expansion', desc: 'Measuring temperature, thermal expansion of liquids, and thermometers.', subtopics: ['Concept of thermal energy and temperature', 'Clinical and laboratory thermometers in Celsius', 'Thermal expansion of metals and liquids on heating', 'Good conductors (Metals) vs insulators (Wood, Plastic)'], badge: 'badge-color-6', diff: 'Easy', branch: 'physical', sim: 'sim_calorimetry.html', simName: 'Calorimetry Simulator' }
       ],
       4: [
-        { num: '01', title: 'Matter, Mass & Volume', desc: 'Measuring mass in grams, volume in millilitres, and basic density concepts.', subtopics: ['Definition of matter (occupies space and has mass)', 'Measuring mass using balances', 'Measuring liquid volume using cylinders', 'Floating and sinking: Density basics'], badge: 'badge-color-1', diff: 'Easy', branch: 'physical', sim: 'sim_particle.html', simName: 'States of Matter Simulator' },
-        { num: '02', title: 'Solutions, Solute & Solvent', desc: 'Sugar dissolving in water, saturated solutions, and factors affecting solubility.', subtopics: ['Solute, solvent and solution definitions', 'Soluble vs insoluble substances', 'Effect of temperature on solubility', 'Suspensions vs clear solutions'], badge: 'badge-color-2', diff: 'Easy', branch: 'physical' },
-        { num: '03', title: 'Air Composition & Respiration', desc: 'Nitrogen (78%), Oxygen (21%), Carbon dioxide, respiration and photosynthesis balance.', subtopics: ['Major gases in atmospheric air', 'Oxygen needed for animal respiration', 'Carbon dioxide used by green plants', 'Combustion consumes oxygen and releases COâ‚‚'], badge: 'badge-color-5', diff: 'Easy', branch: 'inorganic', sim: 'sim_gaslaws.html', simName: 'Gas Laws Simulator' },
-        { num: '04', title: 'Natural Resources & Fuels', desc: 'Renewable vs non-renewable resources: Coal, petroleum, solar, wind energy.', subtopics: ['Fossil fuels formed over millions of years', 'Coal and petroleum extraction', 'Conservation of petroleum and electricity', 'Clean renewable energy alternatives'], badge: 'badge-color-7', diff: 'Easy', branch: 'physical' }
+        { num: '01', title: 'Matter, Mass & Volume', desc: 'Measuring mass in grams, volume in millilitres, and basic density concepts.', subtopics: ['Definition: Matter occupies space and has mass', 'Measuring mass using beam balance and electronic scales', 'Measuring liquid volume using graduated cylinders', 'Buoyancy and density: Why heavy ships float and needles sink'], badge: 'badge-color-1', diff: 'Easy', branch: 'physical', sim: 'sim_particle.html', simName: 'States of Matter Simulator' },
+        { num: '02', title: 'Solutions, Solute & Solvent', desc: 'Sugar dissolving in water, saturated solutions, and factors affecting solubility.', subtopics: ['Components of a solution: Solute (dissolved) and Solvent (medium)', 'Aqueous solutions vs non-aqueous solutions', 'Saturated solution: No more solute can dissolve at given temperature', 'Effect of stirring and heat on dissolution speed'], badge: 'badge-color-2', diff: 'Easy', branch: 'physical' },
+        { num: '03', title: 'Air Composition & Respiration', desc: 'Nitrogen (78%), Oxygen (21%), Carbon dioxide, respiration and photosynthesis balance.', subtopics: ['Main gases: Nitrogen 78%, Oxygen 21%, Argon 0.9%, Carbon dioxide 0.04%', 'Inhaled air (more oxygen) vs exhaled air (more CO2 and moisture)', 'Lime water test turning milky with exhaled carbon dioxide', 'Plants balancing atmospheric oxygen and carbon dioxide'], badge: 'badge-color-5', diff: 'Easy', branch: 'inorganic', sim: 'sim_gaslaws.html', simName: 'Gas Laws Simulator' },
+        { num: '04', title: 'Natural Resources & Fuels', desc: 'Renewable vs non-renewable resources: Coal, petroleum, solar, wind energy.', subtopics: ['Fossil fuels formed over millions of years under heat and pressure', 'Petroleum refining into LPG, petrol, kerosene, and bitumen', 'Greenhouse effect and atmospheric pollution from burning coal', 'Solar, hydro, and wind energy as sustainable alternatives'], badge: 'badge-color-7', diff: 'Easy', branch: 'physical' }
       ],
       5: [
-        { num: '01', title: 'Physical & Chemical Changes (Intro)', desc: 'Reversible physical changes vs irreversible chemical transformations in everyday life.', subtopics: ['Physical changes (Tearing paper, melting wax, freezing water)', 'Chemical changes (Burning wood, rusting nails, cooking food)', 'Signs of a chemical reaction: Color change, gas bubbles', 'Reversibility comparison'], badge: 'badge-color-1', diff: 'Easy', branch: 'physical', sim: 'reaction.html', simName: 'Universal Reaction Balancer' },
-        { num: '02', title: 'Acids & Bases in Daily Life', desc: 'Lemon juice (citric acid), vinegar (acetic acid), baking soda and soap bases.', subtopics: ['Sour taste of natural acids', 'Bitter taste and slippery touch of bases', 'Testing with red and blue litmus paper', 'Neutralisation: Acid + Base = Salt + Water'], badge: 'badge-color-2', diff: 'Easy', branch: 'inorganic', sim: 'sim_titration.html', simName: 'Acid-Base Titration Lab' },
-        { num: '03', title: 'Water Distillation & Purification', desc: 'Pure water distillation, dissolved salts in ocean water, and water desalination.', subtopics: ['Distillation apparatus: Boiling and condensing', 'Pure distilled water vs mineral tap water', 'Desalination of seawater', 'Preventing groundwater contamination'], badge: 'badge-color-4', diff: 'Easy', branch: 'physical' },
-        { num: '04', title: 'Fuels, Burning & Fire Safety', desc: 'The fire triangle (Fuel, Oxygen, Heat), fire extinguishers and safety protocols.', subtopics: ['Three conditions needed for combustion', 'LPG cylinders and CNG vehicles', 'How carbon dioxide fire extinguishers work', 'Electrical and oil fire safety rules'], badge: 'badge-color-6', diff: 'Easy', branch: 'physical', sim: 'sim_flametest.html', simName: 'Flame Test Simulator' }
+        { num: '01', title: 'Physical & Chemical Changes (Intro)', desc: 'Reversible physical changes vs irreversible chemical transformations in everyday life.', subtopics: ['Physical change: Only physical properties change; no new substance formed', 'Chemical change: New substance with different chemical nature formed', 'Examples: Melting ice (physical) vs burning candle wax (chemical)', 'Observing reaction signs: Color change, gas bubbling, heat release'], badge: 'badge-color-1', diff: 'Easy', branch: 'physical', sim: 'reaction.html', simName: 'Universal Reaction Balancer' },
+        { num: '02', title: 'Acids & Bases in Daily Life', desc: 'Lemon juice (citric acid), vinegar (acetic acid), baking soda and soap bases.', subtopics: ['Sour taste of natural acids (Citric, Tartaric, Acetic, Lactic)', 'Bitter taste and soapy touch of bases (Sodium hydroxide, Soap solution)', 'Testing with natural litmus paper (Red turns blue in base, blue turns red in acid)', 'Neutralisation: Acid + Base = Salt + Water'], badge: 'badge-color-2', diff: 'Easy', branch: 'inorganic', sim: 'sim_titration.html', simName: 'Acid-Base Titration Lab' },
+        { num: '03', title: 'Water Distillation & Purification', desc: 'Pure water distillation, dissolved salts in ocean water, and water desalination.', subtopics: ['Principle of distillation: Boiling to steam and condensing to pure water', 'Pure distilled water (non-conductor) vs tap water (contains dissolved ions)', 'Desalination of sea water in coastal cities', 'Preventing groundwater contamination from factory effluents'], badge: 'badge-color-4', diff: 'Easy', branch: 'physical' },
+        { num: '04', title: 'Fuels, Burning & Fire Safety', desc: 'The fire triangle (Fuel, Oxygen, Heat), fire extinguishers and safety protocols.', subtopics: ['Fire Triangle: Combustible fuel, continuous oxygen supply, ignition temperature', 'LPG cylinders in homes and CNG buses in clean transport', 'Carbon dioxide fire extinguishers cutting off oxygen supply', 'Never using water on electrical and kerosene fires'], badge: 'badge-color-6', diff: 'Easy', branch: 'physical', sim: 'sim_flametest.html', simName: 'Flame Test Simulator' }
       ],
       6: [
-        { num: '01', title: 'Nature & States of Matter', desc: 'Particle arrangement, compressibility, kinetic movement and states of matter.', subtopics: ['Three states of matter: Solid, liquid and gas', 'Particle packaging and intermolecular spacing', 'Diffusion of liquids and gases', 'Thermal expansion on heating'], badge: 'badge-color-1', diff: 'Easy', branch: 'physical', sim: 'sim_particle.html', simName: 'States of Matter Simulator' },
-        { num: '02', title: 'Materials Around Us & Sorting', desc: 'Classification by appearance, lustre, hardness, solubility and density.', subtopics: ['Lustrous metals vs non-lustrous materials', 'Soluble vs insoluble substances in water', 'Transparency: Opaque, translucent, and transparent', 'Floating vs sinking based on density'], badge: 'badge-color-2', diff: 'Easy', branch: 'inorganic' },
-        { num: '03', title: 'Separation of Substances', desc: 'Handpicking, winnowing, sieving, sedimentation, filtration and evaporation.', subtopics: ['Separation of solid-solid mixtures (Threshing, Winnowing)', 'Separation of insoluble solids from liquids (Filtration, Decantation)', 'Separation of soluble solids (Evaporation, Crystallisation)', 'Centrifugation and paper chromatography basics'], badge: 'badge-color-3', diff: 'Easy', branch: 'physical' },
-        { num: '04', title: 'Air & Atmospheric Chemistry', desc: 'Atmospheric layers, oxygen supporting combustion, nitrogen, and carbon cycle.', subtopics: ['Composition of atmospheric air', 'Oxygen as supporter of combustion', 'Nitrogen diluting atmospheric oxygen', 'Carbon dioxide and the greenhouse effect'], badge: 'badge-color-5', diff: 'Easy', branch: 'inorganic', sim: 'sim_gaslaws.html', simName: 'Gas Laws Simulator' }
+        { num: '01', title: 'Nature & States of Matter', desc: 'Particle arrangement, compressibility, kinetic movement and states of matter.', subtopics: ['Three states of matter: Solid, liquid and gas characteristics', 'Kinetic particle model: Constant motion and intermolecular spaces', 'Compressibility of gases vs incompressibility of solids and liquids', 'Diffusion of liquids and aroma of incense in air'], badge: 'badge-color-1', diff: 'Easy', branch: 'physical', sim: 'sim_particle.html', simName: 'States of Matter Simulator' },
+        { num: '02', title: 'Materials Around Us & Sorting', desc: 'Classification by appearance, lustre, hardness, solubility and density.', subtopics: ['Lustrous metallic objects vs non-lustrous materials', 'Hardness test: Scratching with nails or diamond tools', 'Solubility in water: Soluble sugar/salt vs insoluble sand/chalk', 'Transparency: Transparent glass, translucent tracing paper, opaque cardboard'], badge: 'badge-color-2', diff: 'Easy', branch: 'inorganic' },
+        { num: '03', title: 'Separation of Substances', desc: 'Handpicking, winnowing, sieving, sedimentation, filtration and evaporation.', subtopics: ['Handpicking impurities and threshing grain from stalks', 'Winnowing by wind separating lighter husk from heavier grains', 'Sedimentation and decantation for muddy water', 'Filtration through fine filter paper and evaporation to dryness'], badge: 'badge-color-3', diff: 'Easy', branch: 'physical' },
+        { num: '04', title: 'Air & Atmospheric Chemistry', desc: 'Atmospheric layers, oxygen supporting combustion, nitrogen, and carbon cycle.', subtopics: ['Atmospheric composition: Nitrogen 78%, Oxygen 21%, Carbon dioxide, dust', 'Experimental verification of oxygen supporting burning candles', 'Nitrogen diluting atmospheric oxygen to prevent rapid combustion', 'Photosynthesis and respiration gas exchange balance in nature'], badge: 'badge-color-5', diff: 'Easy', branch: 'inorganic', sim: 'sim_gaslaws.html', simName: 'Gas Laws Simulator' }
       ],
-      // CLASS 7: EXACTLY MATCHING USER REFERENCE SCREENSHOT!
+      // CLASS 7: EXACTLY AS IN USER REFERENCE SCREENSHOT!
       7: [
         { 
           num: '01', 
           title: 'Physical & Chemical Changes', 
           desc: 'Reversibility, chemical reactions, rusting of iron, crystallisation and energy changes.', 
           subtopics: [
-            'Physical changes: Change in shape, size, state without new substance formation (Reversible)',
-            'Chemical changes: Formation of one or more new substances with different chemical properties',
-            'Rusting of Iron: 4Fe + 3Oâ‚‚ + 2xHâ‚‚O â†’ 2Feâ‚‚Oâ‚ƒÂ·xHâ‚‚O (Requires both moisture and oxygen)',
-            'Prevention of Rusting: Galvanisation (Zinc coating), painting, greasing, and stainless steel alloying',
-            'Burning of Magnesium ribbon: 2Mg + Oâ‚‚ â†’ 2MgO (Dazzling white flame; MgO + Hâ‚‚O â†’ Mg(OH)â‚‚ basic)',
-            'Reaction between Copper Sulphate & Iron: CuSOâ‚„ (blue) + Fe â†’ FeSOâ‚„ (green) + Cu (brown deposit)',
-            'Crystallisation: Pure solid substance crystals obtained from saturated hot solution'
+            'Physical changes: Change in physical properties (shape, size, state) without new substance formation (Mostly reversible)',
+            'Chemical changes: Formation of one or more entirely new substances with different chemical properties (Irreversible)',
+            'Rusting of Iron: 4Fe + 3O2 + 2xH2O -> 2Fe2O3.xH2O (Requires presence of both oxygen and moisture)',
+            'Prevention of Rusting: Galvanisation (Coating zinc on iron sheets), painting, greasing, and stainless steel alloying',
+            'Burning of Magnesium Ribbon: 2Mg + O2 -> 2MgO (Produces dazzling white flame; MgO + H2O -> Mg(OH)2 basic)',
+            'Displacement reaction: CuSO4 (blue) + Fe -> FeSO4 (light green) + Cu (reddish-brown deposit on nail)',
+            'Reaction of Baking Soda with Vinegar: CH3COOH + NaHCO3 -> CH3COONa + H2O + CO2 (Effervescence)',
+            'Crystallisation: Physical purification method to obtain pure crystals of a substance from saturated hot solution'
           ], 
           badge: 'badge-color-1', 
           diff: 'Easy', 
           branch: 'physical',
           thumbSvg: 'fire_ice',
           sim: 'reaction.html',
-          simName: 'Universal Reaction Lab'
+          simName: 'Universal Chemical Reaction Lab'
         },
         { 
           num: '02', 
           title: 'Acids, Bases & Salts', 
           desc: 'Types of acids and bases, natural indicators, neutralisation and the role of salts in everyday life.', 
           subtopics: [
-            'Mineral acids (HCl, Hâ‚‚SOâ‚„, HNOâ‚ƒ) vs Organic acids (Citric, Acetic, Lactic, Tartaric)',
-            'Bases & Alkalis: Bitter taste, soapy feel, soluble bases are alkalis (NaOH, KOH, Ca(OH)â‚‚)',
-            'Natural Indicators: Litmus (Lichens, red in acid, blue in base), Turmeric (turns reddish-brown in base), China rose petals',
-            'Synthetic Indicators: Phenolphthalein (colorless in acid, pink in base), Methyl orange',
-            'Neutralisation Reaction: Acid + Base â†’ Salt + Water + Heat (Exothermic)',
-            'Everyday Applications: Antacid tablets for indigestion, Calamine lotion for ant stings (formic acid), Factory waste treatment'
+            'Mineral acids (Hydrochloric acid HCl, Sulphuric acid H2SO4, Nitric acid HNO3) vs Organic acids (Citric, Acetic, Lactic, Tartaric)',
+            'Bases & Alkalis: Bitter taste, soapy feel; Water-soluble bases are called alkalis (NaOH, KOH, Ca(OH)2)',
+            'Natural Indicators: Litmus (Extracted from lichens; red in acid, blue in base), Turmeric paper (turns reddish-brown in base)',
+            'China Rose (Hibiscus) Indicator: Turns dark pink/magenta in acidic solutions and green in basic solutions',
+            'Synthetic Indicators: Phenolphthalein (Colorless in acid, deep pink in base), Methyl orange (Red in acid, yellow in base)',
+            'Neutralisation Reaction: Acid + Base -> Salt + Water + Heat (Exothermic reaction)',
+            'Everyday Applications: Antacids (Milk of Magnesia Mg(OH)2) for hyperacidity, Calamine lotion (Zinc carbonate) for ant stings (Formic acid)',
+            'Soil pH Treatment: Adding quicklime (CaO) or slaked lime (Ca(OH)2) to acidic soils; Adding organic compost to basic soils'
           ], 
           badge: 'badge-color-2', 
           diff: 'Easy', 
@@ -1634,12 +1694,14 @@
           title: 'The World of Metals & Non-metals', 
           desc: 'Properties, reactivity, uses, alloys and comparison of metals and non-metals.', 
           subtopics: [
-            'Physical properties of Metals: Malleability, ductility, sonorous, electrical and thermal conductivity',
-            'Physical properties of Non-metals: Brittle, dull appearance, poor conductors (Exceptions: Graphite, Iodine, Diamond)',
-            'Chemical Reaction with Oxygen: Metals form basic oxides (e.g., MgO), non-metals form acidic oxides (e.g., SOâ‚‚)',
-            'Reaction with Water: Active metals (Na, K) react violently; Iron reacts slowly with steam',
-            'Reactivity Series: Displacement reactions where a more reactive metal displaces a less reactive one',
-            'Alloys and Modern Applications: Brass (Cu+Zn), Bronze (Cu+Sn), Stainless Steel (Fe+Cr+Ni+C)'
+            'Malleability: Property of metals allowing them to be beaten into thin sheets (Gold and Silver are most malleable)',
+            'Ductility: Property of metals allowing them to be drawn into thin wires (1 g of gold can be drawn into 2 km wire)',
+            'Thermal & Electrical Conductivity: Free valence electrons; Silver and Copper are best electrical conductors',
+            'Non-metals: Brittle, dull appearance, poor conductors of heat and electricity (Exceptions: Graphite conducts electricity, Diamond is hardest)',
+            'Chemical Reaction with Oxygen: Metals form basic oxides (2Mg + O2 -> 2MgO); Non-metals form acidic oxides (S + O2 -> SO2)',
+            'Reaction with Water: Active metals (Na, K) react vigorously with cold water releasing hydrogen gas (Stored under kerosene)',
+            'Reactivity Series: K > Na > Ca > Mg > Al > Zn > Fe > Pb > [H] > Cu > Hg > Ag > Au',
+            'Alloys and Modern Metallurgy: Brass (60% Cu + 40% Zn), Bronze (90% Cu + 10% Sn), Stainless Steel (74% Fe + 18% Cr + 8% Ni)'
           ], 
           badge: 'badge-color-3', 
           diff: 'Easy', 
@@ -1653,12 +1715,14 @@
           title: 'Water: Chemical Nature & Wastewater', 
           desc: 'Water as a universal solvent, hardness of water, sewage and wastewater treatment.', 
           subtopics: [
-            'Water as a polar universal solvent: Hydrogen bonding and high dielectric constant',
-            'Hard water vs Soft water: Hardness caused by dissolved calcium and magnesium hydrogencarbonates and chlorides',
-            'Wastewater Story: Sewage collection, contaminants, BOD and COD indicators',
-            'Wastewater Treatment Plant (WWTP): Bar screens, grit chambers, clarifiers, and aerobic bacteria aeration',
-            'Sludge treatment: Anaerobic decomposition producing biogas and compost',
-            'Water conservation techniques: Rainwater harvesting, drip irrigation, and sanitation hygiene'
+            'Polar molecular nature of water: Bent shape (104.5 degrees) and high dielectric constant dissolving ionic lattices',
+            'Hard water vs Soft water: Temporary hardness (Calcium and Magnesium bicarbonates) vs Permanent hardness (Sulphates, Chlorides)',
+            'Removal of hardness: Boiling removes temporary hardness; Washing soda (Na2CO3) precipitation removes permanent hardness',
+            'Wastewater Story: Liquid sewage waste from households, hospitals, industries; Organic and pathogen contaminants',
+            'Wastewater Treatment Plant (WWTP) Stages: Bar screens (floating debris), Grit chamber (sand settling), Primary clarifier',
+            'Aerobic Secondary Treatment: Air pumped into aeration tanks where aerobic bacteria consume organic waste',
+            'Anaerobic Sludge Digesters: Biogas (Methane) generation for electricity; Dried sludge used as rich agricultural manure',
+            'Sanitation & Hygiene: Open drainage hazards, water-borne diseases (Cholera, Typhoid, Dysentery), rainwater harvesting'
           ], 
           badge: 'badge-color-4', 
           diff: 'Easy', 
@@ -1672,12 +1736,15 @@
           title: 'Carbon and its Compounds', 
           desc: 'Covalent bonds, hydrocarbons, functional groups and everyday applications.', 
           subtopics: [
-            'Tetravalency and Catenation: Unique ability of carbon to form stable covalent chains and rings',
-            'Allotropes of Carbon: Diamond (tetrahedral spÂ³), Graphite (hexagonal layers spÂ²), Fullerenes (Câ‚†â‚€)',
-            'Hydrocarbons: Alkanes (C_nH_{2n+2}), Alkenes (C_nH_{2n}), Alkynes (C_nH_{2n-2})',
-            'Saturated vs Unsaturated Hydrocarbons: Bromine water decolourisation test',
-            'Functional Groups: Alcohols (-OH), Aldehydes (-CHO), Ketones (>C=O), Carboxylic acids (-COOH)',
-            'Everyday carbon compounds: Ethanol, ethanoic acid, soaps and detergents micelle formation'
+            'Tetravalency and Catenation: Unique ability of carbon to form four stable covalent bonds and long self-linking chains',
+            'Allotropes of Carbon: Diamond (Tetrahedral 3D network, hardest substance), Graphite (Hexagonal layered sheets, conducts electricity), Fullerenes C60',
+            'Saturated Hydrocarbons (Alkanes): General formula C_nH_{2n+2} (Methane CH4, Ethane C2H6, Propane C3H8, Butane C4H10)',
+            'Unsaturated Hydrocarbons: Alkenes C_nH_{2n} (Ethene C2H4) and Alkynes C_nH_{2n-2} (Ethyne C2H2)',
+            'Distinguishing Saturated vs Unsaturated: Unsaturated hydrocarbons decolourise reddish-brown bromine water',
+            'Functional Groups in Organic Chemistry: Alcohols (-OH), Aldehydes (-CHO), Ketones (>C=O), Carboxylic acids (-COOH)',
+            'Ethanol (Ethyl Alcohol C2H5OH): Properties, combustion, oxidation to ethanoic acid, industrial uses',
+            'Ethanoic Acid (Acetic Acid CH3COOH): 5-8% solution is vinegar; Esterification reaction with ethanol forming sweet esters',
+            'Soaps and Synthetic Detergents: Hydrophilic ionic head + Hydrophobic hydrocarbon tail; Micelle formation cleansing mechanism'
           ], 
           badge: 'badge-color-5', 
           diff: 'Medium', 
@@ -1691,12 +1758,13 @@
           title: 'Combustion, Flame & Fuels', 
           desc: 'Ignition temperature, fire triangle, calorific value and fuels in daily life.', 
           subtopics: [
-            'Combustion: Chemical process where a substance reacts with oxygen releasing heat and light',
-            'Types of combustion: Rapid combustion, spontaneous combustion, and explosive combustion',
-            'Ignition temperature: Lowest temperature at which a substance catches fire; Inflammable substances',
-            'Structure of a Flame: Non-luminous outer blue zone (complete combustion, hottest), middle luminous yellow zone, dark inner zone',
-            'Calorific Value: Amount of heat energy produced on complete combustion of 1 kg of fuel (kJ/kg)',
-            'Harmful products of burning fuels: Carbon monoxide (poisonous), unburnt carbon particles (asthma), acid rain (SOâ‚‚, NOâ‚‚)'
+            'Combustion: Chemical exothermic reaction where a fuel oxidises releasing substantial thermal and light energy',
+            'Types of Combustion: Rapid combustion (LPG gas burner), Spontaneous combustion (White phosphorus in air), Explosion (Fireworks)',
+            'Ignition Temperature: Lowest temperature at which a substance catches fire; Inflammable substances have very low ignition points',
+            'Fire Triangle: Combustible Fuel + Oxygen + Heat reaching ignition temperature (Removing any one stops the fire)',
+            'Structure of a Candle Flame: Outermost blue non-luminous zone (Complete combustion, hottest), Middle yellow luminous zone, Dark innermost unburnt wax zone',
+            'Calorific Value: Amount of heat energy released on complete combustion of 1 kg of fuel (Expressed in kJ/kg; Hydrogen = 150,000 kJ/kg)',
+            'Harmful Combustion Byproducts: Carbon monoxide CO (toxic silent killer), unburnt soot particulates (respiratory asthma), SO2 and NO2 (Acid rain)'
           ], 
           badge: 'badge-color-6', 
           diff: 'Easy', 
@@ -1710,12 +1778,13 @@
           title: 'Light & Spectroscopy', 
           desc: 'Reflection, refraction, dispersion, scatter and the spectrum.', 
           subtopics: [
-            'Rectilinear propagation and laws of reflection: Angle of incidence = Angle of reflection',
-            'Spherical Mirrors: Concave (converging, forms real/virtual images) and Convex mirrors (diverging, rear-view)',
-            'Refraction of Light: Bending of light rays when transitioning between optical media of different densities',
-            'Dispersion of White Light through a Glass Prism: Separation into 7 colors (VIBGYOR spectrum)',
-            'Rainbow formation: Total internal reflection and dispersion through raindrops',
-            'Atomic Emission Spectroscopy: Each chemical element produces a unique spectral fingerprint'
+            'Rectilinear propagation: Light travels in straight lines; Pinhole camera inversion principle',
+            'Laws of Reflection: Angle of incidence (i) equals angle of reflection (r); Incident ray, reflected ray, and normal lie in same plane',
+            'Spherical Mirrors: Concave mirrors (Converging; used by dentists, solar furnaces, torches) and Convex mirrors (Diverging rear-view mirrors)',
+            'Refraction of Light: Bending of light rays at the boundary between two optical media of different refractive indices (Snells Law)',
+            'Dispersion through a Triangular Glass Prism: White light splitting into constituent seven colors: VIBGYOR (Red bends least, Violet bends most)',
+            'Rainbow Formation: Dispersion, refraction, and internal reflection of sunlight inside spherical atmospheric water droplets',
+            'Spectroscopy in Chemistry: Continuous spectrum vs atomic emission line spectrum (Every element has a unique spectral fingerprint)'
           ], 
           badge: 'badge-color-7', 
           diff: 'Easy', 
@@ -1729,12 +1798,14 @@
           title: 'Nutrition in Plants', 
           desc: 'Photosynthesis, food transport and the role of micronutrients and minerals.', 
           subtopics: [
-            'Autotrophic nutrition: Plants synthesize food from carbon dioxide and water using sunlight and chlorophyll',
-            'Chemical Equation of Photosynthesis: 6COâ‚‚ + 6Hâ‚‚O + Sunlight â†’ Câ‚†Hâ‚â‚‚Oâ‚† (Glucose) + 6Oâ‚‚',
-            'Role of Stomata: Guard cells regulating gaseous exchange and transpiration',
-            'Testing for Starch in leaves: Iodine solution turning blue-black',
-            'Heterotrophic plants: Parasites (Cuscuta), Insectivorous (Pitcher plant), Saprotrophs (Fungi), Symbiosis (Lichens)',
-            'Soil nutrient replenishment: Nitrogen-fixing Rhizobium bacteria in leguminous root nodules, NPK fertilisers'
+            'Autotrophic Nutrition: Green plants synthesizing chemical carbohydrates from carbon dioxide and water using sunlight energy',
+            'Chemical Equation of Photosynthesis: 6CO2 + 6H2O + Sunlight (Chlorophyll) -> C6H12O6 (Glucose) + 6O2',
+            'Role of Stomata: Microscopic pores on leaf surfaces flanked by guard cells regulating transpiration and gas exchange',
+            'Testing for Starch in Leaves: Boiling in alcohol to decolourise, adding drops of Iodine solution turning blue-black',
+            'Heterotrophic Modes: Parasites (Cuscuta absorbing host sap), Insectivorous (Pitcher plant trapping insects for nitrogen)',
+            'Saprotrophs: Fungi secreting digestive enzymes on dead decaying organic matter and absorbing nutrients',
+            'Symbiotic Association: Lichens (Mutualistic partnership between green alga and fungus)',
+            'Replenishing Soil Nutrients: Symbiotic Rhizobium bacteria in leguminous root nodules fixing atmospheric nitrogen, NPK fertilisers'
           ], 
           badge: 'badge-color-8', 
           diff: 'Easy', 
@@ -1745,48 +1816,49 @@
         }
       ],
       8: [
-        { num: '01', title: 'Particulate Nature of Matter', desc: 'Curiosity Ch 7 / ICSE â€“ Atoms, molecules, radicals, atomic mass, valency, and molecular mass calculation.', subtopics: ['Atoms as indivisible units of chemical reaction', 'Molecules of elements vs molecules of compounds', 'Monoatomic, diatomic, polyatomic radicals', 'Calculating formula molecular masses'], badge: 'badge-color-1', diff: 'Easy', branch: 'physical', sim: 'sim_particle.html', simName: 'Particle Simulator' },
-        { num: '02', title: 'Elements, Compounds & Mixtures', desc: 'Curiosity Ch 8 / NCERT â€“ Purity, chemical synthesis, fractional distillation, chromatography, and alloys.', subtopics: ['Pure substances vs homogeneous/heterogeneous mixtures', 'Chemical compounds with fixed composition by mass', 'Chromatography for pigment separation', 'Fractional distillation of petroleum'], badge: 'badge-color-2', diff: 'Easy', branch: 'inorganic', sim: 'periodic-table.html', simName: 'Periodic Table' },
-        { num: '03', title: 'Coal, Petroleum & Fossil Fuels', desc: 'Carbonisation of vegetation, fractional distillation of crude oil, petrochemicals, and conservation.', subtopics: ['Formation of coal (Anthracite, Bituminous, Lignite)', 'Destructive distillation of coal: Coke, coal tar, coal gas', 'Fractional distillation fractions: Petrol, kerosene, diesel', 'Alternative green energy and fuel conservation'], badge: 'badge-color-3', diff: 'Easy', branch: 'organic' },
-        { num: '04', title: 'Combustion, Flame & Fuels', desc: 'Ignition temperature, fire triangle, flame structure zones, calorific value, and emissions.', subtopics: ['Luminous vs non-luminous flame zones', 'Complete vs incomplete combustion hazards', 'Calorific value comparison of fuels', 'Greenhouse gases and global warming'], badge: 'badge-color-6', diff: 'Easy', branch: 'physical', sim: 'sim_flametest.html', simName: 'Flame Test Simulator' },
-        { num: '05', title: 'Chemical Effects of Electric Current', desc: 'Electrolytes, ions, electrolysis of water, electroplating copper, and Faraday basics.', subtopics: ['Conductors vs non-conductors of electricity in liquids', 'Ionization of acids, bases, and salts', 'Electrolysis of water: Hydrogen at cathode, oxygen at anode', 'Electroplating copper on iron spoons'], badge: 'badge-color-4', diff: 'Medium', branch: 'physical', sim: 'sim_electro.html', simName: 'Electrochemistry Lab' }
+        { num: '01', title: 'Particulate Nature of Matter', desc: 'Curiosity Ch 7 / ICSE - Atoms, molecules, radicals, atomic mass, valency, and molecular mass calculation.', subtopics: ['Atoms as indivisible units of chemical reaction', 'Molecules of elements (O2, N2, P4, S8) vs molecules of compounds (H2O, NH3, CH4)', 'Monoatomic and polyatomic radicals (Ammonium NH4+, Sulphate SO4^2-, Nitrate NO3-)', 'Valency concept and writing molecular formulas by criss-cross method', 'Molecular mass calculation from atomic masses of constituent atoms'], badge: 'badge-color-1', diff: 'Easy', branch: 'physical', sim: 'sim_particle.html', simName: 'Particle Simulator' },
+        { num: '02', title: 'Elements, Compounds & Mixtures', desc: 'Curiosity Ch 8 / NCERT - Purity, chemical synthesis, fractional distillation, chromatography, and alloys.', subtopics: ['Pure substances (Elements, Compounds) vs Impure mixtures', 'Homogeneous mixtures (True solutions, brass) vs Heterogeneous mixtures (Colloids, suspensions)', 'Paper chromatography: Separation of ink pigments based on differential adsorption', 'Separation of miscible liquids by fractional distillation (Petroleum, alcohol-water)'], badge: 'badge-color-2', diff: 'Easy', branch: 'inorganic', sim: 'periodic-table.html', simName: 'Periodic Table' },
+        { num: '03', title: 'Coal, Petroleum & Fossil Fuels', desc: 'Carbonisation of vegetation, fractional distillation of crude oil, petrochemicals, and conservation.', subtopics: ['Carbonisation: Slow biochemical conversion of buried dead vegetation into coal over millions of years', 'Varieties of coal: Anthracite (highest carbon ~90%), Bituminous, Lignite, Peat', 'Destructive distillation of coal: Coke (smokeless fuel), Coal tar (dyes, perfumes), Coal gas', 'Fractional distillation of crude petroleum: Petroleum gas, petrol, kerosene, diesel, lubricating oil, bitumen'], badge: 'badge-color-3', diff: 'Easy', branch: 'organic' },
+        { num: '04', title: 'Combustion, Flame & Fuels', desc: 'Ignition temperature, fire triangle, flame structure zones, calorific value, and emissions.', subtopics: ['Combustion conditions: Fuel + Air + Ignition temperature', 'Luminous yellow flame (incomplete combustion, sooty) vs Non-luminous blue flame (complete combustion, hot)', 'Zones of candle flame: Dark inner, luminous middle, non-luminous outer mantle', 'Calorific values of solid, liquid, and gaseous fuels; CNG and LPG advantages', 'Environmental hazards: Greenhouse effect, carbon monoxide poisoning, acid rain damage'], badge: 'badge-color-6', diff: 'Easy', branch: 'physical', sim: 'sim_flametest.html', simName: 'Flame Test Simulator' },
+        { num: '05', title: 'Chemical Effects of Electric Current', desc: 'Electrolytes, ions, electrolysis of water, electroplating copper, and Faraday basics.', subtopics: ['Electrical conductivity in liquids: Strong electrolytes vs weak electrolytes vs non-electrolytes', 'Electrolysis of acidified water: 2H2O -> 2H2 (at cathode) + O2 (at anode) in 2:1 volume ratio', 'Electroplating: Depositing a superior metal layer (Copper, Silver, Chromium) on an inferior base metal', 'Industrial applications: Galvanisation, gold plating, extraction of aluminum by Hall-Heroult process'], badge: 'badge-color-4', diff: 'Medium', branch: 'physical', sim: 'sim_electro.html', simName: 'Electrochemistry Lab' }
       ],
       9: [
-        { num: '01', title: 'Matter in Our Surroundings', desc: 'CBSE Ch 1 / ICSE â€“ Kinetic molecular theory, states of matter, latent heat of fusion/vaporisation, evaporation.', subtopics: ['Kinetic molecular theory postulates', 'Effect of temperature and pressure on state transitions', 'Latent heat of fusion and vaporisation', 'Factors affecting rate of evaporation: Surface area, humidity, wind'], badge: 'badge-color-1', diff: 'Easy', branch: 'physical', sim: 'sim_particle.html', simName: 'States of Matter Simulator' },
-        { num: '02', title: 'Is Matter Around Us Pure?', desc: 'CBSE Ch 2 / ICSE â€“ True solutions, colloids, suspensions, Tyndall effect, separation techniques.', subtopics: ['Classification: Elements, compounds, homogeneous vs heterogeneous', 'Colloidal properties: Brownian motion and Tyndall effect', 'Solubility curves and mass percentage concentrations', 'Centrifugation, chromatography, separating funnel'], badge: 'badge-color-2', diff: 'Easy', branch: 'physical' },
-        { num: '03', title: 'Atoms & Molecules (Mole Concept)', desc: 'CBSE Ch 3 / ICSE â€“ Law of Conservation of Mass, Law of Constant Proportions, Daltonâ€™s atomic theory, Mole concept.', subtopics: ['Laws of chemical combination (Lavoisier & Proust)', 'Dalton atomic theory postulates and limitations', 'Writing chemical formulas using criss-cross valency method', 'Mole concept calculations: n = m/M = N/N_A'], badge: 'badge-color-5', diff: 'Medium', branch: 'physical', sim: 'reaction.html', simName: 'Reaction & Stoichiometry Lab' },
-        { num: '04', title: 'Structure of the Atom', desc: 'CBSE Ch 4 / ICSE â€“ Thomsonâ€™s plum pudding model, Rutherfordâ€™s Î±-scattering experiment, Bohrâ€™s orbital model.', subtopics: ['Subatomic particles: Electron, proton, and neutron discoveries', 'Rutherford gold foil experiment: Discovery of atomic nucleus', 'Bohr model: Discrete orbits and energy quantization', 'Valence electrons, isotopes and isobars with applications'], badge: 'badge-color-4', diff: 'Medium', branch: 'physical', sim: 'sim_atomverse.html', simName: 'AtomVerse 3D Quantum Lab' },
-        { num: '05', title: 'The Language of Chemistry & Gas Laws', desc: 'ICSE Class 9 Ch 1, 5, 7 â€“ Chemical symbols, valency, balancing equations, Boyleâ€™s Law, Charlesâ€™s Law.', subtopics: ['Valency and radical nomenclature', 'Balancing chemical equations algebraically', 'Boyleâ€™s Law: Pâ‚Vâ‚ = Pâ‚‚Vâ‚‚ at constant temperature', 'Charlesâ€™s Law: Vâ‚/Tâ‚ = Vâ‚‚/Tâ‚‚ at constant pressure; Absolute zero (-273.15Â°C)'], badge: 'badge-color-6', diff: 'Medium', branch: 'physical', sim: 'sim_gaslaws.html', simName: 'Ideal Gas Laws Simulator' }
+        { num: '01', title: 'Matter in Our Surroundings', desc: 'CBSE Ch 1 / ICSE - Kinetic molecular theory, states of matter, latent heat of fusion/vaporisation, evaporation.', subtopics: ['Postulates of kinetic molecular theory of matter', 'Solid, liquid, and gaseous states compared on shape, volume, density, and kinetic energy', 'Latent heat of fusion (Heat absorbed per kg at melting point without temperature rise)', 'Latent heat of vaporisation (334 kJ/kg for ice, 2260 kJ/kg for steam)', 'Evaporation: Surface phenomenon causing cooling; Factors affecting rate (Temperature, surface area, humidity, wind speed)'], badge: 'badge-color-1', diff: 'Easy', branch: 'physical', sim: 'sim_particle.html', simName: 'States of Matter Simulator' },
+        { num: '02', title: 'Is Matter Around Us Pure?', desc: 'CBSE Ch 2 / ICSE - True solutions, colloids, suspensions, Tyndall effect, separation techniques.', subtopics: ['True solution: Homogeneous, particle size < 1 nm, no Tyndall effect, does not settle', 'Colloidal solution: Heterogeneous, particle size 1-1000 nm, exhibits Tyndall effect and Brownian motion', 'Suspension: Heterogeneous, particle size > 1000 nm, visible to naked eye, settles under gravity', 'Separation techniques: Centrifugation, fractional distillation, separating funnel, crystallisation'], badge: 'badge-color-2', diff: 'Easy', branch: 'physical' },
+        { num: '03', title: 'Atoms & Molecules (Mole Concept)', desc: 'CBSE Ch 3 / ICSE - Law of Conservation of Mass, Law of Constant Proportions, Daltons atomic theory, Mole concept.', subtopics: ['Law of Conservation of Mass (Lavoisier) and Law of Definite Proportions (Proust)', 'Daltons Atomic Theory: Postulates, merits, and modern modifications', 'Chemical formula derivation using crossover valencies and polyatomic ion radicals', 'Mole Concept: 1 mole = 6.022 x 10^23 entities (Avogadro number N_A)', 'Molar volume of any ideal gas at STP = 22.4 litres; Stoichiometric mole-mass conversions'], badge: 'badge-color-5', diff: 'Medium', branch: 'physical', sim: 'reaction.html', simName: 'Reaction & Stoichiometry Lab' },
+        { num: '04', title: 'Structure of the Atom', desc: 'CBSE Ch 4 / ICSE - Thomsons plum pudding model, Rutherfords alpha-scattering experiment, Bohrs orbital model.', subtopics: ['Discovery of subatomic particles: Electron (J.J. Thomson cathode rays), Proton (Goldstein canal rays), Neutron (Chadwick)', 'Rutherfords Alpha Particle Scattering Experiment: Discovery of dense positive atomic nucleus', 'Bohrs Model of the Atom: Quantized circular orbits where electrons revolve without radiating energy', 'Electronic distribution: 2n^2 rule (K=2, L=8, M=18, N=32); Valence electrons and octet rule', 'Isotopes (Same Z, different A, e.g., C-12 and C-14) vs Isobars (Same A, different Z, e.g., Ar-40 and Ca-40)'], badge: 'badge-color-4', diff: 'Medium', branch: 'physical', sim: 'sim_atomverse.html', simName: 'AtomVerse 3D Quantum Lab' },
+        { num: '05', title: 'The Language of Chemistry & Gas Laws', desc: 'ICSE Class 9 Ch 1, 5, 7 - Chemical symbols, valency, balancing equations, Boyles Law, Charless Law.', subtopics: ['Writing and balancing chemical equations with stoichiometric state symbols', 'Boyles Law: Pressure is inversely proportional to volume at constant temperature: P1 V1 = P2 V2', 'Charless Law: Volume is directly proportional to absolute Kelvin temperature at constant pressure: V1/T1 = V2/T2', 'Combined Gas Equation: (P1 V1)/T1 = (P2 V2)/T2; Absolute zero (-273.15 deg C) where molecular motion ceases'], badge: 'badge-color-6', diff: 'Medium', branch: 'physical', sim: 'sim_gaslaws.html', simName: 'Ideal Gas Laws Simulator' }
       ],
       10: [
-        { num: '01', title: 'Chemical Reactions & Equations', desc: 'CBSE Ch 1 / ICSE â€“ Combination, decomposition, displacement, double displacement, redox, precipitation, rancidity.', subtopics: ['Writing balanced chemical equations with state symbols', 'Types of chemical reactions with experimental evidence', 'Oxidation and reduction in terms of electron transfer and oxygen/hydrogen', 'Corrosion of metals and food rancidity prevention antioxidants'], badge: 'badge-color-1', diff: 'Easy', branch: 'physical', sim: 'reaction.html', simName: 'Universal Chemical Reaction Lab' },
-        { num: '02', title: 'Acids, Bases & Salts (Class 10)', desc: 'CBSE Ch 2 / ICSE â€“ pH scale, chlor-alkali process, bleaching powder, baking soda, washing soda, Plaster of Paris.', subtopics: ['Arrhenius definition: Hâº(aq) and OHâ»(aq) ions in solution', 'pH scale and universal indicator color chart', 'Chlor-alkali electrolysis: 2NaCl + 2Hâ‚‚O â†’ 2NaOH + Clâ‚‚ + Hâ‚‚', 'Preparation and uses of Bleaching powder, Baking soda, Washing soda, POP'], badge: 'badge-color-2', diff: 'Easy', branch: 'inorganic', sim: 'sim_titration.html', simName: 'Acid-Base Titration Lab' },
-        { num: '03', title: 'Metals & Non-metals & Metallurgy', desc: 'CBSE Ch 3 / ICSE Ch 7 â€“ Reactivity series, ionic bond formation, roasting, calcination, electrolytic refining.', subtopics: ['Physical and chemical properties of metals vs non-metals', 'Ionic bonding: Electron transfer in NaCl and MgClâ‚‚ crystal lattices', 'Extraction of metals: Roasting of sulphide ores, calcination of carbonates', 'Thermite reaction and electrolytic refining of blister copper'], badge: 'badge-color-3', diff: 'Medium', branch: 'inorganic', sim: 'periodic-table.html', simName: 'Periodic Table Explorer' },
-        { num: '04', title: 'Carbon & Its Compounds', desc: 'CBSE Ch 4 / ICSE â€“ Covalent bonding, catenation, homologous series, IUPAC naming, soaps & detergents micelle.', subtopics: ['Tetravalency and catenation of carbon', 'Nomenclature of alkanes, alkenes, alkynes, alcohols, aldehydes, acids', 'Combustion, oxidation, addition and substitution reactions', 'Soaps vs synthetic detergents: Micelle mechanism in hard water'], badge: 'badge-color-5', diff: 'Medium', branch: 'organic', sim: 'nomenclature.html', simName: 'IUPAC Nomenclature Engine' },
-        { num: '05', title: 'Study of Compounds: HCl, NHâ‚ƒ, HNOâ‚ƒ & Hâ‚‚SOâ‚„', desc: 'ICSE Class 10 Ch 8 â€“ Fountain experiments, Haber process, Ostwald process, Contact process.', subtopics: ['Hydrogen chloride gas preparation and acidic fountain experiment', 'Ammonia gas: Haber process synthesis and basic fountain experiment', 'Nitric acid: Ostwald catalytic oxidation of ammonia; Aqua regia', 'Sulphuric acid: Contact process; Dehydrating and oxidising properties'], badge: 'badge-color-6', diff: 'Hard', branch: 'inorganic', sim: 'reaction.html', simName: 'Universal Chemical Reaction Lab' }
+        { num: '01', title: 'Chemical Reactions & Equations', desc: 'CBSE Ch 1 / ICSE - Combination, decomposition, displacement, double displacement, redox, precipitation, rancidity.', subtopics: ['Balancing chemical equations algebraically maintaining atom conservation', 'Combination reactions (e.g., CaO + H2O -> Ca(OH)2 + Heat, exothermic slaking)', 'Decomposition reactions: Thermal (FeSO4, Pb(NO3)2), Electrolytic (H2O), Photolytic (AgCl, AgBr)', 'Displacement & Double Displacement (Precipitation reactions: Na2SO4 + BaCl2 -> BaSO4 ppt + 2NaCl)', 'Redox reactions: Classical and electronic concepts of oxidation (gain of O, loss of e-) and reduction', 'Corrosion (Rusting of iron, green patina on copper) and rancidity prevention with antioxidants and nitrogen flushing'], badge: 'badge-color-1', diff: 'Easy', branch: 'physical', sim: 'reaction.html', simName: 'Universal Chemical Reaction Lab' },
+        { num: '02', title: 'Acids, Bases & Salts (Class 10)', desc: 'CBSE Ch 2 / ICSE - pH scale, chlor-alkali process, bleaching powder, baking soda, washing soda, Plaster of Paris.', subtopics: ['Arrhenius definition: Acids furnish H+(aq) ions, bases furnish OH-(aq) ions in aqueous solution', 'pH Scale: -log[H+]; Acidic (pH < 7), Neutral (pH = 7), Alkaline (pH > 7); Universal indicator spectrum', 'Chlor-alkali electrolysis: 2NaCl + 2H2O -> 2NaOH + Cl2(g) at anode + H2(g) at cathode', 'Bleaching Powder: Ca(OH)2 + Cl2 -> CaOCl2 + H2O (Oxidising agent and disinfectant)', 'Baking Soda NaHCO3 and Washing Soda Na2CO3.10H2O preparation by Solvay process', 'Plaster of Paris: CaSO4.0.5H2O obtained by heating Gypsum CaSO4.2H2O at 373 K'], badge: 'badge-color-2', diff: 'Easy', branch: 'inorganic', sim: 'sim_titration.html', simName: 'Acid-Base Titration Lab' },
+        { num: '03', title: 'Metals & Non-metals & Metallurgy', desc: 'CBSE Ch 3 / ICSE Ch 7 - Reactivity series, ionic bond formation, roasting, calcination, electrolytic refining.', subtopics: ['Physical properties comparison and chemical reactivity with oxygen, water, and dilute acids', 'Ionic bonding: Complete electron transfer in NaCl and MgCl2 crystal lattices; High melting point and conductivity in molten state', 'Occurrence of metals: Minerals, ores, gangue matrix', 'Metallurgical extraction: Roasting of sulphide ores (in excess air), Calcination of carbonate ores (in limited air)', 'Thermite welding reaction: Fe2O3 + 2Al -> 2Fe(molten) + Al2O3 + Heat', 'Electrolytic refining of copper using acidified CuSO4 electrolyte with impure anode and pure cathode'], badge: 'badge-color-3', diff: 'Medium', branch: 'inorganic', sim: 'periodic-table.html', simName: 'Periodic Table Explorer' },
+        { num: '04', title: 'Carbon & Its Compounds', desc: 'CBSE Ch 4 / ICSE - Covalent bonding, catenation, homologous series, IUPAC naming, soaps & detergents micelle.', subtopics: ['Covalent bonding: Single, double, and triple bonds (H2, O2, N2, CH4 electron dot structures)', 'Versatile nature of carbon: Catenation and tetravalency leading to millions of organic compounds', 'Homologous series: Same functional group, differing by -CH2- unit and 14 u molecular mass', 'Chemical reactions: Combustion, oxidation by alkaline KMnO4, addition to alkenes, substitution in alkanes', 'Ethanol and Ethanoic Acid: Esterification, saponification, reaction with sodium and carbonates', 'Cleansing action of soaps: Hydrophobic hydrocarbon tails dissolve in oil droplet, hydrophilic heads in water forming micelle'], badge: 'badge-color-5', diff: 'Medium', branch: 'organic', sim: 'nomenclature.html', simName: 'IUPAC Nomenclature Engine' },
+        { num: '05', title: 'Study of Compounds: HCl, NH3, HNO3 & H2SO4', desc: 'ICSE Class 10 Ch 8 - Fountain experiments, Haber process, Ostwald process, Contact process.', subtopics: ['Hydrogen Chloride: Laboratory preparation from NaCl and conc. H2SO4; Acidic blue fountain experiment', 'Ammonia Gas: Laboratory preparation from NH4Cl and Ca(OH)2; Haber process synthesis; Basic red fountain experiment', 'Nitric Acid: Ostwald catalytic oxidation of ammonia; Oxidising properties on copper and carbon; Aqua Regia (3 HCl : 1 HNO3)', 'Sulphuric Acid: Contact Process (V2O5 catalyst); Dehydrating action charring sugar to carbon sponge; Oxidising action'], badge: 'badge-color-6', diff: 'Hard', branch: 'inorganic', sim: 'reaction.html', simName: 'Universal Chemical Reaction Lab' },
+        { num: '06', title: 'Periodic Classification of Elements', desc: 'Historical development, Mendeleevs Periodic Table, Modern Periodic Law, periodic trends across periods and groups.', subtopics: ['Dobereiners Triads and Newlands Law of Octaves historical models', 'Mendeleevs Periodic Table: Merits, predictive power (Eka-aluminum, Eka-silicon), and anomalous pairs', 'Modern Periodic Law (Moseley): Properties of elements are periodic functions of their atomic numbers Z', 'Periodic trends in Modern Table: Valency, Atomic radius, Metallic character, Non-metallic character, Electronegativity'], badge: 'badge-color-2', diff: 'Easy', branch: 'inorganic', sim: 'periodic-table.html', simName: 'Periodic Table Explorer' }
       ],
       11: [
-        { num: '01', title: 'Some Basic Concepts of Chemistry', desc: 'CBSE/ISC Unit 1 â€“ Mole concept, molarity, molality, mole fraction, stoichiometry, limiting reagent, empirical formulas.', subtopics: ['Significant figures and dimensional analysis', 'Mole concept and molar masses', 'Empirical and molecular formula calculations', 'Limiting reagent and percentage yield in stoichiometric reactions'], badge: 'badge-color-1', diff: 'Medium', branch: 'physical', sim: 'reaction.html', simName: 'Universal Reaction Lab' },
-        { num: '02', title: 'Structure of Atom (Class 11)', desc: 'CBSE/ISC Unit 2 â€“ de Broglie relation, Heisenberg uncertainty, quantum numbers (n, l, ml, ms), Aufbau, Hund, Pauli.', subtopics: ['Dual nature of matter: de Broglie wavelength Î» = h/mv', 'Heisenberg uncertainty principle: Î”x Â· Î”p â‰¥ h/4Ï€', 'Four quantum numbers: Principal, Azimuthal, Magnetic, Spin', 'Aufbau principle, Hundâ€™s rule of maximum multiplicity, Pauli exclusion'], badge: 'badge-color-4', diff: 'Hard', branch: 'physical', sim: 'sim_atomverse.html', simName: 'AtomVerse 3D Quantum Lab' },
-        { num: '03', title: 'Classification & Periodicity', desc: 'CBSE/ISC Unit 3 â€“ Modern Periodic Law, s/p/d/f blocks, atomic radii, ionization enthalpy, electron gain enthalpy.', subtopics: ['Modern Periodic Law based on atomic number Z', 'Division into s, p, d, f blocks with electron configurations', 'Periodic trends: Atomic and ionic radii, lanthanoid contraction', 'Ionization enthalpy, electron gain enthalpy, and Pauling electronegativity'], badge: 'badge-color-2', diff: 'Medium', branch: 'inorganic', sim: 'periodic-table.html', simName: 'Interactive Periodic Table' },
-        { num: '04', title: 'Chemical Bonding & VSEPR', desc: 'CBSE/ISC Unit 4 â€“ Lewis structures, VSEPR theory, hybridization (sp, sp2, sp3, sp3d), dipole moments, MOT.', subtopics: ['Ionic vs covalent bonding and lattice enthalpies', 'VSEPR theory: Predicting 3D shapes from electron pairs', 'Orbital hybridization: sp, spÂ², spÂ³, spÂ³d, spÂ³dÂ² geometries', 'Molecular Orbital Theory: Bond order and magnetic character for Oâ‚‚, Nâ‚‚, Bâ‚‚'], badge: 'badge-color-5', diff: 'Hard', branch: 'physical', sim: 'sim_bonding.html', simName: 'Chemical Bonding & VSEPR Lab' },
-        { num: '05', title: 'Chemical Thermodynamics', desc: 'CBSE/ISC Unit 5 â€“ First law, Enthalpy Î”H, Hessâ€™s Law, Entropy Î”S, Gibbs free energy Î”G, spontaneity criteria.', subtopics: ['System, surroundings, and state functions (U, H, S, G)', 'First law: Î”U = q + w; Work of expansion w = -P_ext Î”V', 'Hessâ€™s Law of constant heat summation', 'Second and Third laws: Entropy, Gibbs equation Î”G = Î”H - TÎ”S'], badge: 'badge-color-3', diff: 'Hard', branch: 'physical', sim: 'sim_calorimetry.html', simName: 'Calorimetry & Enthalpy Lab' },
-        { num: '06', title: 'Chemical & Ionic Equilibrium', desc: 'CBSE/ISC Unit 6 â€“ Law of mass action, Kc, Kp, Le Chatelierâ€™s principle, pH, buffer solutions, Henderson equation.', subtopics: ['Dynamic equilibrium and equilibrium constants Kc and Kp', 'Le Chatelierâ€™s principle: Effect of temperature, pressure, concentration', 'Ostwald dilution law for weak electrolytes; pH = -log[Hâº]', 'Buffer solutions: Acidic and basic buffers, Henderson-Hasselbalch equation'], badge: 'badge-color-6', diff: 'Hard', branch: 'physical', sim: 'sim_equilibrium.html', simName: 'Chemical Equilibrium Lab' },
-        { num: '07', title: 'Redox Reactions', desc: 'CBSE/ISC Unit 7 â€“ Oxidation number rules, balancing redox by ion-electron method, electrochemical series.', subtopics: ['Classical and electronic concepts of oxidation and reduction', 'Rules for calculating oxidation number in complex compounds', 'Balancing redox reactions in acidic and basic media by ion-electron method', 'Electrochemical series and standard reduction potentials'], badge: 'badge-color-7', diff: 'Medium', branch: 'physical', sim: 'sim_electro.html', simName: 'Electrochemistry Cell Lab' },
-        { num: '08', title: 'Organic Chemistry: Principles', desc: 'CBSE/ISC Unit 8 â€“ IUPAC nomenclature, structural & stereoisomerism, inductive, electromeric, resonance effects.', subtopics: ['IUPAC systematic nomenclature of branched and functional hydrocarbons', 'Structural isomerism (Chain, Position, Functional, Metamerism, Tautomerism)', 'Electronic displacements: Inductive, Electromeric, Resonance, Hyperconjugation', 'Homolytic vs heterolytic fission; Carbocations, carbanions, free radicals'], badge: 'badge-color-5', diff: 'Hard', branch: 'organic', sim: 'nomenclature.html', simName: 'IUPAC Nomenclature Engine' },
-        { num: '09', title: 'Hydrocarbons (Alkanes to Aromatic)', desc: 'CBSE/ISC Unit 9 â€“ Free radical halogenation, Markovnikov rule, anti-Markovnikov peroxide effect, Huckelâ€™s rule.', subtopics: ['Alkanes: Wurtz reaction, Corey-House, free radical chlorination mechanism', 'Alkenes: Dehydration of alcohols, Markovnikov and Kharasch peroxide addition', 'Alkynes: Acidity of terminal alkynes, ozonolysis, cyclic polymerisation', 'Aromatic Hydrocarbons: Benzene structure, Huckelâ€™s (4n+2)Ï€ rule, EAS mechanism'], badge: 'badge-color-8', diff: 'Hard', branch: 'organic', sim: 'sim_molecules.html', simName: '3D Molecule & Hybridization Lab' }
+        { num: '01', title: 'Some Basic Concepts of Chemistry', desc: 'CBSE/ISC Unit 1 - Mole concept, molarity, molality, mole fraction, stoichiometry, limiting reagent, empirical formulas.', subtopics: ['Dimensional analysis and significant figures rules', 'Atomic mass, molecular mass, formula unit mass, and molar mass', 'Empirical formula and Molecular formula determination from mass percentages', 'Stoichiometry of chemical equations: Mass-mass, mass-volume, and mole-mole relationships', 'Limiting reagent concept determining theoretical yield and percentage yield of reactions', 'Solution concentration terms: Molarity (M), Molality (m), Mole fraction (x), Mass percentage (% w/w)'], badge: 'badge-color-1', diff: 'Medium', branch: 'physical', sim: 'reaction.html', simName: 'Universal Reaction Lab' },
+        { num: '02', title: 'Structure of Atom (Class 11)', desc: 'CBSE/ISC Unit 2 - de Broglie relation, Heisenberg uncertainty, quantum numbers (n, l, ml, ms), Aufbau, Hund, Pauli.', subtopics: ['Dual nature of matter and radiation: de Broglie wavelength lambda = h / (m v)', 'Heisenberg Uncertainty Principle: Delta x . Delta p >= h / (4 pi)', 'Schrodinger wave equation and physical significance of wave function psi and probability density psi^2', 'Four Quantum Numbers: Principal (n), Azimuthal (l), Magnetic (ml), Spin (ms)', 'Shapes of atomic orbitals: s (spherical), p (dumb-bell), d (double dumb-bell), and radial/angular nodes', 'Rules for filling electrons: Aufbau Principle, Pauli Exclusion Principle, Hunds Rule of Maximum Multiplicity', 'Electronic configurations of Cr (3d5 4s1) and Cu (3d10 4s1) stability of half-filled and fully-filled subshells'], badge: 'badge-color-4', diff: 'Hard', branch: 'physical', sim: 'sim_atomverse.html', simName: 'AtomVerse 3D Quantum Lab' },
+        { num: '03', title: 'Classification & Periodicity', desc: 'CBSE/ISC Unit 3 - Modern Periodic Law, s/p/d/f blocks, atomic radii, ionization enthalpy, electron gain enthalpy.', subtopics: ['Modern Periodic Law and long form of periodic table structure', 'Division into s, p, d, and f blocks based on outer electronic configuration', 'Periodic trends: Covalent, metallic, and van der Waals atomic and ionic radii', 'Lanthanoid contraction and screening/shielding effect', 'Ionization Enthalpy (Delta_i H): Factors affecting and anomalies across periods (B < Be, O < N)', 'Electron Gain Enthalpy (Delta_eg H): Halogens trends (Cl > F due to compact 2p interelectronic repulsion)', 'Electronegativity: Pauling scale and Mulliken scale; Periodic trends in chemical reactivity and valency'], badge: 'badge-color-2', diff: 'Medium', branch: 'inorganic', sim: 'periodic-table.html', simName: 'Interactive Periodic Table' },
+        { num: '04', title: 'Chemical Bonding & VSEPR', desc: 'CBSE/ISC Unit 4 - Lewis structures, VSEPR theory, hybridization (sp, sp2, sp3, sp3d), dipole moments, MOT.', subtopics: ['Octet rule, formal charge calculation, and resonance structures', 'Ionic bond formation, Born-Haber cycle, and lattice enthalpy', 'VSEPR Theory: Repulsion order: Lone pair - Lone pair > Lone pair - Bond pair > Bond pair - Bond pair', 'Predicting 3D geometry: Linear, trigonal planar, tetrahedral, trigonal bipyramidal, octahedral', 'Valence Bond Theory: Overlap of atomic orbitals (sigma and pi bonds); Dipole moment and percentage ionic character', 'Hybridization: sp (BeCl2), sp2 (BCl3), sp3 (CH4), sp3d (PCl5), sp3d2 (SF6)', 'Molecular Orbital Theory (MOT): Bonding and antibonding molecular orbitals; Bond order and magnetic character for H2, He2, Li2, B2, C2, N2, O2'], badge: 'badge-color-5', diff: 'Hard', branch: 'physical', sim: 'sim_bonding.html', simName: 'Chemical Bonding & VSEPR Lab' },
+        { num: '05', title: 'Chemical Thermodynamics', desc: 'CBSE/ISC Unit 5 - First law, Enthalpy Delta H, Hesss Law, Entropy Delta S, Gibbs free energy Delta G, spontaneity criteria.', subtopics: ['Concepts of system, surroundings, open, closed, isolated systems; State functions vs path functions', 'First Law of Thermodynamics: Delta U = q + w; Work of expansion w = -P_ext Delta V; Reversible isothermal work', 'Enthalpy (H = U + PV): Exothermic (Delta H < 0) vs Endothermic (Delta H > 0); Heat capacities Cp and Cv', 'Hesss Law of Constant Heat Summation and standard enthalpy of formation, combustion, atomization', 'Second Law of Thermodynamics: Spontaneous processes and concept of Entropy (S); Third law of thermodynamics', 'Gibbs Free Energy: Delta G = Delta H - T Delta S; Criteria for spontaneity (Delta G < 0) and equilibrium (Delta G = 0)'], badge: 'badge-color-3', diff: 'Hard', branch: 'physical', sim: 'sim_calorimetry.html', simName: 'Calorimetry & Enthalpy Lab' },
+        { num: '06', title: 'Chemical & Ionic Equilibrium', desc: 'CBSE/ISC Unit 6 - Law of mass action, Kc, Kp, Le Chateliers principle, pH, buffer solutions, Henderson equation.', subtopics: ['Law of Mass Action and equilibrium constants Kc and Kp; Relationship Kp = Kc (RT)^Delta n', 'Le Chateliers Principle: Effect of concentration, temperature, and pressure on equilibrium position', 'Arrhenius, Bronsted-Lowry, and Lewis concepts of acids and bases; Conjugate acid-base pairs', 'Ionization of water and ionic product Kw; pH scale definition: pH = -log[H3O+]', 'Ionization of weak acids and bases; Ostwalds dilution law', 'Common ion effect, Buffer solutions, Henderson-Hasselbalch equation: pH = pKa + log([Salt]/[Acid])', 'Solubility Product constant (Ksp) and common ion effect in qualitative salt analysis precipitation'], badge: 'badge-color-6', diff: 'Hard', branch: 'physical', sim: 'sim_equilibrium.html', simName: 'Chemical Equilibrium Lab' },
+        { num: '07', title: 'Redox Reactions', desc: 'CBSE/ISC Unit 7 - Oxidation number rules, balancing redox by ion-electron method, electrochemical series.', subtopics: ['Classical and electronic concepts of oxidation and reduction', 'Rules for determining oxidation numbers of elements in molecules and polyatomic ions', 'Balancing redox reactions: Oxidation Number Method and Ion-Electron (Half-reaction) Method in acidic and basic media', 'Redox titrations: Potassium permanganate KMnO4 and Potassium dichromate K2Cr2O7 standardization', 'Electrochemical cells: Oxidation at anode, reduction at cathode; Standard hydrogen electrode (SHE) and EMF series'], badge: 'badge-color-7', diff: 'Medium', branch: 'physical', sim: 'sim_electro.html', simName: 'Electrochemistry Cell Lab' },
+        { num: '08', title: 'Organic Chemistry: Principles', desc: 'CBSE/ISC Unit 8 - IUPAC nomenclature, structural & stereoisomerism, inductive, electromeric, resonance effects.', subtopics: ['IUPAC systematic nomenclature of acyclic, cyclic, aromatic, and polyfunctional organic compounds', 'Structural Isomerism: Chain, Position, Functional group, Metamerism, Tautomerism (Keto-enol)', 'Stereoisomerism: Geometrical (Cis-trans) and Optical isomerism (Chirality, enantiomers)', 'Electronic Displacements: Inductive effect (+I, -I), Electromeric effect, Resonance effect (+R, -R), Hyperconjugation', 'Homolytic fission (Free radicals) vs Heterolytic fission (Carbocations, Carbanions); Stability order: 3 deg > 2 deg > 1 deg'], badge: 'badge-color-5', diff: 'Hard', branch: 'organic', sim: 'nomenclature.html', simName: 'IUPAC Nomenclature Engine' },
+        { num: '09', title: 'Hydrocarbons (Alkanes to Aromatic)', desc: 'CBSE/ISC Unit 9 - Free radical halogenation, Markovnikov rule, anti-Markovnikov peroxide effect, Huckels rule.', subtopics: ['Alkanes: Preparation by Wurtz reaction, Kolbe electrolysis; Free radical chlorination mechanism', 'Conformations of Ethane: Sawhorse and Newman projections (Staggered vs Eclipsed stability)', 'Alkenes: Preparation by alcohol dehydration and dehydrohalogenation; Markovnikov addition and Kharasch peroxide effect', 'Alkynes: Acidity of terminal alkynes (sp hybridized CH); Addition of hydrogen, halogens, and water (Hydration to carbonyls)', 'Aromatic Hydrocarbons: Benzene structure, resonance energy, Huckels (4n+2) pi electron rule for aromaticity', 'Electrophilic Aromatic Substitution (EAS) mechanism: Nitration, Sulphonation, Halogenation, Friedel-Crafts alkylation/acylation'], badge: 'badge-color-8', diff: 'Hard', branch: 'organic', sim: 'sim_molecules.html', simName: '3D Molecule & Hybridization Lab' }
       ],
       12: [
-        { num: '01', title: 'Solutions (Physical Chemistry)', desc: 'CBSE/ISC Unit 1 â€“ Raoultâ€™s Law, Henryâ€™s Law, ideal vs non-ideal, 4 colligative properties, van â€˜t Hoff factor.', subtopics: ['Types of solutions and concentration expressions', 'Henryâ€™s Law for gas solubility in liquids (P = K_H Â· x)', 'Raoultâ€™s Law: Ideal solutions vs positive/negative azeotropes', 'Colligative properties: Î”T_b = K_b Â· m, Î”T_f = K_f Â· m, Ï€ = iCRT'], badge: 'badge-color-1', diff: 'Medium', branch: 'physical', sim: 'sim_particle.html', simName: 'Particle Simulator' },
-        { num: '02', title: 'Electrochemistry (Class 12)', desc: 'CBSE/ISC Unit 2 â€“ Galvanic cells, Nernst Equation, Kohlrauschâ€™s law, Faradayâ€™s laws, lead-acid battery, corrosion.', subtopics: ['Daniell cell: Anode oxidation, cathode reduction, salt bridge function', 'Nernst Equation: E_cell = EÂ°_cell - (0.0591/n) log Q at 298 K', 'Kohlrauschâ€™s law of independent migration of ions', 'Faradayâ€™s laws of electrolysis: m = ZIt; Primary vs secondary batteries'], badge: 'badge-color-4', diff: 'Hard', branch: 'physical', sim: 'sim_electro.html', simName: 'Electrochemistry Cell Lab' },
-        { num: '03', title: 'Chemical Kinetics', desc: 'CBSE/ISC Unit 3 â€“ Rate law, order & molecularity, integrated rate equations, half-life, Arrhenius equation.', subtopics: ['Average and instantaneous reaction rates; Factors influencing rates', 'Rate law, order (0, 1st, 2nd) and molecularity distinctions', 'Integrated rate equations for zero and first order reactions', 'Arrhenius equation: k = A e^(-Ea/RT); Activation energy determination'], badge: 'badge-color-3', diff: 'Hard', branch: 'physical', sim: 'sim_halflife.html', simName: 'Radioactive Decay & Kinetics Lab' },
-        { num: '04', title: 'd- and f-Block Elements', desc: 'CBSE/ISC Unit 4 â€“ Transition metals, variable oxidation states, catalytic properties, lanthanoid contraction, KMnOâ‚„.', subtopics: ['Electronic configurations of 3d series: Cr (3dâµ4sÂ¹) and Cu (3dÂ¹â°4sÂ¹)', 'Paramagnetism, colored ion formation, catalytic and interstitial alloys', 'Lanthanoid contraction and consequence on 4d and 5d atomic radii', 'Preparation and oxidising properties of KMnOâ‚„ and Kâ‚‚Crâ‚‚Oâ‚‡'], badge: 'badge-color-2', diff: 'Hard', branch: 'inorganic', sim: 'periodic-table.html', simName: '118-Element Periodic Table' },
-        { num: '05', title: 'Coordination Compounds', desc: 'CBSE/ISC Unit 5 â€“ Wernerâ€™s coordination theory, IUPAC nomenclature, CFT crystal field splitting, synergic bonding.', subtopics: ['Central metal atom, coordination number, ligands (denticity, ambidentate)', 'IUPAC systematic nomenclature of mononuclear coordination complexes', 'Crystal Field Theory: Octahedral (t_2g, e_g) and tetrahedral splitting', 'Spectrochemical series, low-spin vs high-spin complexes, synergic Ï€-bonding'], badge: 'badge-color-5', diff: 'Hard', branch: 'inorganic', sim: 'nomenclature.html', simName: 'IUPAC Nomenclature Engine' },
-        { num: '06', title: 'Haloalkanes and Haloarenes', desc: 'CBSE/ISC Unit 6 â€“ S_N1 vs S_N2 mechanisms, Saytzeff elimination, Grignard reagents, nucleophilic substitution.', subtopics: ['Preparation from alcohols, alkenes, and halogen exchange (Finkelstein, Swarts)', 'Mechanisms: S_N1 (carbocation intermediate, racemisation) vs S_N2 (backside attack)', 'Elimination reactions: Saytzeff rule vs substitution competition', 'Electrophilic aromatic substitution of chlorobenzene and DDT environmental impact'], badge: 'badge-color-6', diff: 'Hard', branch: 'organic', sim: 'sim_molecules.html', simName: '3D Molecule Builder' },
-        { num: '07', title: 'Alcohols, Phenols and Ethers', desc: 'CBSE/ISC Unit 7 â€“ Hydroboration-oxidation, Lucas test, Kolbe reaction, Reimer-Tiemann, Williamson synthesis.', subtopics: ['Preparation: Hydroboration-oxidation and hydration of alkenes', 'Lucas reagent test distinguishing 1Â°, 2Â°, 3Â° alcohols', 'Acidity of phenols compared to alcohols (Resonance stabilisation of phenoxide)', 'Named reactions: Kolbe synthesis, Reimer-Tiemann, Williamson ether synthesis'], badge: 'badge-color-7', diff: 'Hard', branch: 'organic', sim: 'reaction.html', simName: 'Universal Chemical Reaction Lab' },
-        { num: '08', title: 'Aldehydes, Ketones & Carboxylic Acids', desc: 'CBSE/ISC Unit 8 â€“ Nucleophilic addition, Aldol condensation, Cannizzaro reaction, Tollensâ€™ & Fehlingâ€™s tests.', subtopics: ['Carbonyl group structure and polarity', 'Nucleophilic addition reactions: HCN, NaHSOâ‚ƒ, Grignard reagents, hydrazine', 'Distinguishing tests: Tollensâ€™ silver mirror test and Fehlingâ€™s solution test', 'Named reactions: Aldol condensation, Cannizzaro reaction, Hell-Volhard-Zelinsky'], badge: 'badge-color-8', diff: 'Hard', branch: 'organic', sim: 'reaction.html', simName: 'Universal Chemical Reaction Lab' },
-        { num: '09', title: 'Amines & Nitrogen Compounds', desc: 'CBSE/ISC Unit 9 â€“ Gabriel phthalimide, Hoffmann bromamide, Hinsberg test, Diazonium salts reactions.', subtopics: ['Structure and basicity of amines (gas phase vs aqueous inductive/solvation)', 'Gabriel phthalimide synthesis of pure aliphatic primary amines', 'Hoffmann bromamide degradation reaction decreasing chain length by 1 carbon', 'Hinsberg test distinguishing 1Â°, 2Â°, 3Â° amines; Diazotisation reactions'], badge: 'badge-color-3', diff: 'Hard', branch: 'organic', sim: 'sim_molecules.html', simName: '3D Molecular Viewer' },
-        { num: '10', title: 'Biomolecules (Biochemistry)', desc: 'CBSE/ISC Unit 10 â€“ D/L Glucose structure, Haworth projections, amino acids, peptide bonds, DNA/RNA double helix.', subtopics: ['Carbohydrates: Monosaccharides, Haworth cyclic structures of Î± and Î² glucose', 'Disaccharides: Glycosidic linkage in sucrose, maltose, lactose; Reducing sugars', 'Amino acids: Zwitterion structure, isoelectric point, essential amino acids', 'Proteins: Peptide bond, denaturation; DNA double helix Watson-Crick model'], badge: 'badge-color-4', diff: 'Hard', branch: 'organic', sim: 'sim_molecules.html', simName: '3D Molecular Viewer' }
+        { num: '01', title: 'Solutions (Physical Chemistry)', desc: 'CBSE/ISC Unit 1 - Raoults Law, Henrys Law, ideal vs non-ideal, 4 colligative properties, van t Hoff factor.', subtopics: ['Concentration terms: Molarity, Molality, Mole fraction, ppm; Temperature dependence comparison', 'Henrys Law for gas solubility in liquids: P = K_H . x; Scuba diving and carbonated beverage applications', 'Raoults Law: Ideal solutions (Delta H_mix = 0, Delta V_mix = 0) vs Non-ideal solutions (Positive and Negative deviations; Azeotropes)', 'Colligative Properties: Relative lowering of vapour pressure: (P1 deg - P1) / P1 deg = x2', 'Elevation in Boiling Point: Delta T_b = K_b . m; Depression in Freezing Point: Delta T_f = K_f . m', 'Osmotic Pressure: pi = CRT; Reverse osmosis for water desalination', 'Abnormal molecular mass and van t Hoff factor (i): Dissociation (i > 1) and Association (i < 1)'], badge: 'badge-color-1', diff: 'Medium', branch: 'physical', sim: 'sim_particle.html', simName: 'Particle Simulator' },
+        { num: '02', title: 'Electrochemistry (Class 12)', desc: 'CBSE/ISC Unit 2 - Galvanic cells, Nernst Equation, Kohlrauschs law, Faradays laws, lead-acid battery, corrosion.', subtopics: ['Galvanic Cells: Daniell cell representation, Zn(s)|Zn2+(aq)||Cu2+(aq)|Cu(s); Function of salt bridge', 'Nernst Equation: E_cell = E_cell deg - (0.0591 / n) log Q at 298 K; Calculation of equilibrium constant Kc and Delta G deg', 'Conductance in electrolytic solutions: Specific conductance (kappa), Molar conductivity (Lambda_m = kappa . 1000 / M)', 'Kohlrauschs Law of Independent Migration of Ions: Lambda_m deg = nu_+ lambda_+ deg + nu_- lambda_- deg', 'Faradays Laws of Electrolysis: 1st Law: m = Z I t; 2nd Law: m1/E1 = m2/E2; Faraday constant F = 96485 C/mol e-', 'Commercial Batteries: Primary (Dry cell, Mercury cell) vs Secondary (Lead-acid storage battery, Nickel-cadmium cell)', 'Hydrogen-Oxygen Fuel Cells (Efficiency ~70%, clean water emission) and Electrochemical mechanism of rust corrosion'], badge: 'badge-color-4', diff: 'Hard', branch: 'physical', sim: 'sim_electro.html', simName: 'Electrochemistry Cell Lab' },
+        { num: '03', title: 'Chemical Kinetics', desc: 'CBSE/ISC Unit 3 - Rate law, order & molecularity, integrated rate equations, half-life, Arrhenius equation.', subtopics: ['Average and instantaneous reaction rates; Factors influencing rate (Concentration, temperature, catalyst, surface area)', 'Rate Law and Specific Rate Constant (k); Order of reaction (0, 1st, 2nd, fractional) vs Molecularity (Theoretical whole number)', 'Integrated Rate Equation for Zero Order Reactions: k = ([R]0 - [R]) / t; Half-life t_1/2 = [R]0 / 2k', 'Integrated Rate Equation for First Order Reactions: k = (2.303 / t) log([R]0 / [R]); Half-life t_1/2 = 0.693 / k (Independent of initial concentration)', 'Pseudo-first order reactions (e.g., Acidic hydrolysis of ethyl acetate and inversion of cane sugar)', 'Temperature dependence of reaction rates: Arrhenius Equation: k = A e^(-Ea / RT); log(k2/k1) = (Ea / 2.303 R) [1/T1 - 1/T2]', 'Collision Theory of Chemical Reactions: Collision frequency, steric orientation factor (P), and activation energy threshold'], badge: 'badge-color-3', diff: 'Hard', branch: 'physical', sim: 'sim_halflife.html', simName: 'Radioactive Decay & Kinetics Lab' },
+        { num: '04', title: 'd- and f-Block Elements', desc: 'CBSE/ISC Unit 4 - Transition metals, variable oxidation states, catalytic properties, lanthanoid contraction, KMnO4.', subtopics: ['Position and general electronic configuration (n-1)d^{1-10} ns^{1-2}; Anomalous configurations of Cr (3d5 4s1) and Cu (3d10 4s1)', 'General characteristics of 3d transition metals: High melting points, metallic bonding, enthalpy of atomization', 'Variable oxidation states due to participation of both (n-1)d and ns electrons; Manganese exhibits +2 to +7', 'Formation of colored ions due to d-d transitions in crystal fields; Magnetic properties: Spin-only formula mu = sqrt(n(n+2)) BM', 'Catalytic properties (V2O5, Fe, Ni) and interstitial alloy formation (Steel, Brass, Bronze)', 'Lanthanoids: Electronic configuration, +3 characteristic oxidation state, and Lanthanoid Contraction (Consequence on 4d and 5d identical atomic radii)', 'Preparation, structure, and oxidising properties of Potassium Permanganate KMnO4 and Potassium Dichromate K2Cr2O7'], badge: 'badge-color-2', diff: 'Hard', branch: 'inorganic', sim: 'periodic-table.html', simName: '118-Element Periodic Table' },
+        { num: '05', title: 'Coordination Compounds', desc: 'CBSE/ISC Unit 5 - Werners coordination theory, IUPAC nomenclature, CFT crystal field splitting, synergic bonding.', subtopics: ['Werners Coordination Theory: Primary valency (Ionizable, satisfied by anions) vs Secondary valency (Non-ionizable, directional coordination number)', 'Definitions: Coordination entity, Central metal atom, Ligands (Unidentate, Bidentate, Polydentate EDTA, Ambidentate NO2-, SCN-)', 'IUPAC systematic nomenclature of mononuclear coordination complexes and formulas', 'Isomerism: Structural (Ionization, Hydrate, Linkage, Coordination) and Stereoisomerism (Geometrical cis/trans, Optical d/l enantiomers)', 'Valence Bond Theory: Inner orbital (d2sp3, low spin, diamagnetic) vs Outer orbital complexes (sp3d2, high spin, paramagnetic)', 'Crystal Field Theory (CFT): Crystal field splitting in octahedral complexes (t_2g lower triplet, e_g upper doublet) and tetrahedral complexes', 'Spectrochemical series: Weak field ligands vs Strong field ligands (CN-, CO cause large Delta_o pairing electrons)', 'Metal Carbonyls: Synergic bonding mechanism (sigma donation from CO to metal + pi back-bonding from metal d to empty pi* of CO)'], badge: 'badge-color-5', diff: 'Hard', branch: 'inorganic', sim: 'nomenclature.html', simName: 'IUPAC Nomenclature Engine' },
+        { num: '06', title: 'Haloalkanes and Haloarenes', desc: 'CBSE/ISC Unit 6 - S_N1 vs S_N2 mechanisms, Saytzeff elimination, Grignard reagents, nucleophilic substitution.', subtopics: ['Classification into alkyl, allylic, benzylic, vinylic, and aryl halides', 'Methods of preparation: From alcohols using SOCl2 (Darzens process, best method), Markovnikov addition to alkenes, Halogen exchange (Finkelstein, Swarts)', 'Nucleophilic Substitution Reactions: S_N2 Mechanism (One step, bimolecular, backside attack, complete inversion of configuration Walden inversion)', 'S_N1 Mechanism (Two steps, unimolecular, carbocation intermediate, racemisation with partial retention and inversion)', 'Elimination Reactions: Dehydrohalogenation; Saytzeff (Zaitsev) Rule: More substituted alkene is the major product', 'Reaction with Metals: Formation of Grignard Reagents R-Mg-X; Wurtz-Fittig and Fittig reactions', 'Low reactivity of Haloarenes towards nucleophilic substitution: Resonance stabilization, sp2 hybrid carbon, instability of phenyl cation', 'Environmental effects of Polyhalogen compounds: Chloroform (CHCl3), Iodoform (CHI3), Carbon tetrachloride (CCl4), Freons (CFCs), DDT'], badge: 'badge-color-6', diff: 'Hard', branch: 'organic', sim: 'sim_molecules.html', simName: '3D Molecule Builder' },
+        { num: '07', title: 'Alcohols, Phenols and Ethers', desc: 'CBSE/ISC Unit 7 - Hydroboration-oxidation, Lucas test, Kolbe reaction, Reimer-Tiemann, Williamson synthesis.', subtopics: ['Alcohols: Preparation by hydration of alkenes, hydroboration-oxidation (anti-Markovnikov alcohol), reduction of aldehydes/ketones/esters', 'Distinguishing 1 deg, 2 deg, 3 deg alcohols: Lucas Test (HCl + anhydrous ZnCl2; 3 deg turbidity instant, 2 deg in 5 mins, 1 deg on heating)', 'Acidity of Phenols: Phenol is significantly more acidic than alcohols due to resonance stabilization of phenoxide ion', 'Electrophilic aromatic substitution of Phenol: Bromination with bromine water giving white precipitate of 2,4,6-tribromophenol', 'Named Reactions: Kolbes Reaction (Phenol + NaOH + CO2 -> Salicylic acid), Reimer-Tiemann Reaction (Phenol + CHCl3 + KOH -> Salicylaldehyde)', 'Ethers: Williamsons Ether Synthesis (Sodium alkoxide R-ONa + primary alkyl halide R-X -> Ether R-O-R)', 'Cleavage of C-O bond in ethers by concentrated HI: Major products with asymmetric ethers containing tertiary vs primary alkyl groups'], badge: 'badge-color-7', diff: 'Hard', branch: 'organic', sim: 'reaction.html', simName: 'Universal Chemical Reaction Lab' },
+        { num: '08', title: 'Aldehydes, Ketones & Carboxylic Acids', desc: 'CBSE/ISC Unit 8 - Nucleophilic addition, Aldol condensation, Cannizzaro reaction, Tollens & Fehlings tests.', subtopics: ['Structure and polarity of carbonyl group (>C=O); Nucleophilic addition mechanism', 'Addition reactions: HCN (Cyanohydrin), NaHSO3 (Bisulphite adduct for purification), Grignard reagents, Alcohols (Hemiacetals, Acetals)', 'Oxidation reactions: Distinction using Tollens Reagent (Ammoniacal silver nitrate -> Silver mirror) and Fehlings Solution (Red Cu2O precipitate)', 'Haloform Reaction (Iodoform test): Methyl ketones (CH3-C=O) give yellow precipitate of CHI3 with I2 + NaOH', 'Aldol Condensation: Carbonyl compounds possessing alpha-hydrogen in presence of dilute alkali form beta-hydroxy aldehydes', 'Cannizzaro Reaction: Aldehydes lacking alpha-hydrogen (HCHO, Benzaldehyde) undergo disproportionation in 50% KOH into alcohol + carboxylate', 'Carboxylic Acids: Acidic strength comparison; Electron withdrawing groups (-NO2, -Cl) increase acidity; Hell-Volhard-Zelinsky (HVZ) alpha-halogenation'], badge: 'badge-color-8', diff: 'Hard', branch: 'organic', sim: 'reaction.html', simName: 'Universal Chemical Reaction Lab' },
+        { num: '09', title: 'Amines & Nitrogen Compounds', desc: 'CBSE/ISC Unit 9 - Gabriel phthalimide, Hoffmann bromamide, Hinsberg test, Diazonium salts reactions.', subtopics: ['Classification of amines into primary (1 deg), secondary (2 deg), tertiary (3 deg) and quaternary ammonium salts', 'Basicity of Amines: Gas phase order (3 deg > 2 deg > 1 deg > NH3) vs Aqueous solution order (2 deg > 1 deg > 3 deg for methyl; 2 deg > 3 deg > 1 deg for ethyl)', 'Aromatic amines (Aniline): Weaker base than aliphatic amines due to delocalization of lone pair into benzene ring', 'Methods of Preparation: Gabriel Phthalimide Synthesis (Pure aliphatic primary amines only) and Hoffmann Bromamide Degradation', 'Distinguishing Tests: Carbylamine Reaction (Isocyanide test for primary amines; Foul offensive smell), Hinsberg Test (Benzenesulphonyl chloride)', 'Arenediazonium Salts: Diazotisation of aniline (NaNO2 + HCl at 0-5 deg C -> C6H5N2+ Cl-); Sandmeyer and Gattermann reactions; Azo dye coupling'], badge: 'badge-color-3', diff: 'Hard', branch: 'organic', sim: 'sim_molecules.html', simName: '3D Molecular Viewer' },
+        { num: '10', title: 'Biomolecules (Biochemistry)', desc: 'CBSE/ISC Unit 10 - D/L Glucose structure, Haworth projections, amino acids, peptide bonds, DNA/RNA double helix.', subtopics: ['Carbohydrates: Monosaccharides (Aldoses, Ketoses); Evidence for open-chain structure of Glucose (HI reduction, oxime, gluconic acid)', 'Cyclic structure of Glucose: Haworth projections of alpha-D-glucopyranose and beta-D-glucopyranose differing at C1 anomeric carbon; Mutarotation', 'Disaccharides: Glycosidic linkage in Sucrose (Invert sugar, non-reducing), Maltose (alpha-1,4-linkage, reducing), Lactose (beta-1,4-linkage)', 'Polysaccharides: Starch (Water-soluble amylose + branched amylopectin), Cellulose (unbranched beta-D-glucose polymer), Glycogen (animal starch)', 'Amino Acids: Classification into essential and non-essential; Zwitterion dipolar structure at Isoelectric Point (pI)', 'Proteins: Peptide linkage (-CO-NH-); Primary, Secondary (alpha-Helix and beta-Pleated sheets stabilized by H-bonds), Tertiary, Quaternary structures', 'Denaturation of Proteins: Coagulation of egg white, curdling of milk; Secondary/tertiary structures destroyed while primary sequence remains intact', 'Nucleic Acids: Nucleotides (Pentose sugar + Nitrogenous purine/pyrimidine base + Phosphate group)', 'Watson-Crick Double Helix Model of DNA: Complementary base pairing A=T (2 H-bonds) and G===C (3 H-bonds); Replication, Transcription, Translation'], badge: 'badge-color-4', diff: 'Hard', branch: 'organic', sim: 'sim_molecules.html', simName: '3D Molecular Viewer' }
       ]
     };
 
@@ -1833,230 +1905,142 @@
       const pct = Math.min(100, Math.round((xp / 500) * 100));
       const xpText = document.getElementById('liveXpText');
       const barFill = document.getElementById('liveProgressBar');
-      if (xpText) xpText.textContent = `${xp} / 500 XP`;
-      if (barFill) barFill.style.width = `${pct}%`;
+      if (xpText) xpText.textContent = xp + " / 500 XP";
+      if (barFill) barFill.style.width = pct + "%";
     }
 
-    // SVG Thumbnails generator corresponding to each theme
+    // High quality SVG Thumbnail generator
     function getThumbnailSvg(type, num) {
-      // Return high quality stylized SVG illustration for each card
       if (type === 'fire_ice') {
-        return `<svg class="thumb-canvas-svg" viewBox="0 0 320 160" preserveAspectRatio="xMidYMid slice">
-          <defs>
-            <linearGradient id="gFi_${num}" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#0a192f"/>
-              <stop offset="50%" stop-color="#1e3a8a"/>
-              <stop offset="100%" stop-color="#311004"/>
-            </linearGradient>
-            <linearGradient id="iceGrad_${num}" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#67e8f9" stop-opacity="0.9"/>
-              <stop offset="100%" stop-color="#0284c7" stop-opacity="0.6"/>
-            </linearGradient>
-            <linearGradient id="fireGrad_${num}" x1="0" y1="1" x2="0" y2="0">
-              <stop offset="0%" stop-color="#ea580c"/>
-              <stop offset="70%" stop-color="#facc15"/>
-              <stop offset="100%" stop-color="#ffffff"/>
-            </linearGradient>
-          </defs>
-          <rect width="320" height="160" fill="url(#gFi_${num})"/>
-          <!-- Ice crystals on left -->
-          <polygon points="50,45 85,25 110,60 75,80" fill="url(#iceGrad_${num})" stroke="#e0f2fe" stroke-width="1.5"/>
-          <polygon points="90,70 125,50 145,85 110,105" fill="url(#iceGrad_${num})" stroke="#bae6fd" stroke-width="1"/>
-          <polygon points="40,80 70,65 85,95 55,110" fill="url(#iceGrad_${num})" stroke="#a5f3fc" stroke-width="1"/>
-          <!-- Fire flames on right -->
-          <path d="M220,130 C200,90 220,60 235,35 C245,65 260,80 275,70 C285,100 260,130 220,130 Z" fill="url(#fireGrad_${num})"/>
-          <path d="M235,130 C225,105 235,85 245,65 C250,85 260,95 255,130 Z" fill="#ffffff" opacity="0.85"/>
-        </svg>`;
+        return '<svg class="thumb-canvas-svg" viewBox="0 0 320 160" preserveAspectRatio="xMidYMid slice">' +
+          '<defs>' +
+            '<linearGradient id="gFi_' + num + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0a192f"/><stop offset="50%" stop-color="#1e3a8a"/><stop offset="100%" stop-color="#311004"/></linearGradient>' +
+            '<linearGradient id="iceGrad_' + num + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#67e8f9" stop-opacity="0.9"/><stop offset="100%" stop-color="#0284c7" stop-opacity="0.6"/></linearGradient>' +
+            '<linearGradient id="fireGrad_' + num + '" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#ea580c"/><stop offset="70%" stop-color="#facc15"/><stop offset="100%" stop-color="#ffffff"/></linearGradient>' +
+          '</defs>' +
+          '<rect width="320" height="160" fill="url(#gFi_' + num + ')"/>' +
+          '<polygon points="50,45 85,25 110,60 75,80" fill="url(#iceGrad_' + num + ')" stroke="#e0f2fe" stroke-width="1.5"/>' +
+          '<polygon points="90,70 125,50 145,85 110,105" fill="url(#iceGrad_' + num + ')" stroke="#bae6fd" stroke-width="1"/>' +
+          '<polygon points="40,80 70,65 85,95 55,110" fill="url(#iceGrad_' + num + ')" stroke="#a5f3fc" stroke-width="1"/>' +
+          '<path d="M220,130 C200,90 220,60 235,35 C245,65 260,80 275,70 C285,100 260,130 220,130 Z" fill="url(#fireGrad_' + num + ')"/>' +
+          '<path d="M235,130 C225,105 235,85 245,65 C250,85 260,95 255,130 Z" fill="#ffffff" opacity="0.85"/>' +
+        '</svg>';
       } else if (type === 'acids_bases') {
-        return `<svg class="thumb-canvas-svg" viewBox="0 0 320 160" preserveAspectRatio="xMidYMid slice">
-          <defs>
-            <linearGradient id="gAb_${num}" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#1e1b4b"/>
-              <stop offset="100%" stop-color="#022c22"/>
-            </linearGradient>
-          </defs>
-          <rect width="320" height="160" fill="url(#gAb_${num})"/>
-          <!-- Beakers & tubes with lemon slice -->
-          <circle cx="255" cy="80" r="38" fill="#facc15" stroke="#fef08a" stroke-width="3"/>
-          <circle cx="255" cy="80" r="30" fill="none" stroke="#ca8a04" stroke-width="1.5" stroke-dasharray="8 6"/>
-          <!-- Test tube 1 Pink -->
-          <rect x="75" y="30" width="22" height="85" rx="11" fill="rgba(255,255,255,0.15)" stroke="#f472b6" stroke-width="1.5"/>
-          <path d="M76,65 L96,65 L96,104 A10,10 0 0,1 76,104 Z" fill="#ec4899" opacity="0.85"/>
-          <!-- Test tube 2 Cyan -->
-          <rect x="115" y="20" width="22" height="95" rx="11" fill="rgba(255,255,255,0.15)" stroke="#38bdf8" stroke-width="1.5"/>
-          <path d="M116,50 L136,50 L136,104 A10,10 0 0,1 116,104 Z" fill="#0284c7" opacity="0.85"/>
-          <!-- Beaker Yellow -->
-          <path d="M155,45 L195,45 L190,120 L160,120 Z" fill="rgba(255,255,255,0.12)" stroke="#fef08a" stroke-width="1.5"/>
-          <path d="M157,75 L193,75 L189,119 L161,119 Z" fill="#eab308" opacity="0.75"/>
-        </svg>`;
+        return '<svg class="thumb-canvas-svg" viewBox="0 0 320 160" preserveAspectRatio="xMidYMid slice">' +
+          '<defs>' +
+            '<linearGradient id="gAb_' + num + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1e1b4b"/><stop offset="100%" stop-color="#022c22"/></linearGradient>' +
+          '</defs>' +
+          '<rect width="320" height="160" fill="url(#gAb_' + num + ')"/>' +
+          '<circle cx="255" cy="80" r="38" fill="#facc15" stroke="#fef08a" stroke-width="3"/>' +
+          '<circle cx="255" cy="80" r="30" fill="none" stroke="#ca8a04" stroke-width="1.5" stroke-dasharray="8 6"/>' +
+          '<rect x="75" y="30" width="22" height="85" rx="11" fill="rgba(255,255,255,0.15)" stroke="#f472b6" stroke-width="1.5"/>' +
+          '<path d="M76,65 L96,65 L96,104 A10,10 0 0,1 76,104 Z" fill="#ec4899" opacity="0.85"/>' +
+          '<rect x="115" y="20" width="22" height="95" rx="11" fill="rgba(255,255,255,0.15)" stroke="#38bdf8" stroke-width="1.5"/>' +
+          '<path d="M116,50 L136,50 L136,104 A10,10 0 0,1 116,104 Z" fill="#0284c7" opacity="0.85"/>' +
+          '<path d="M155,45 L195,45 L190,120 L160,120 Z" fill="rgba(255,255,255,0.12)" stroke="#fef08a" stroke-width="1.5"/>' +
+          '<path d="M157,75 L193,75 L189,119 L161,119 Z" fill="#eab308" opacity="0.75"/>' +
+        '</svg>';
       } else if (type === 'metals_ores') {
-        return `<svg class="thumb-canvas-svg" viewBox="0 0 320 160" preserveAspectRatio="xMidYMid slice">
-          <defs>
-            <linearGradient id="gMet_${num}" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#1c1917"/>
-              <stop offset="100%" stop-color="#451a03"/>
-            </linearGradient>
-            <linearGradient id="goldCube_${num}" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#fde047"/>
-              <stop offset="100%" stop-color="#b45309"/>
-            </linearGradient>
-          </defs>
-          <rect width="320" height="160" fill="url(#gMet_${num})"/>
-          <!-- Gold Pyrite Crystals -->
-          <polygon points="120,40 170,25 185,75 135,90" fill="url(#goldCube_${num})" stroke="#fef08a" stroke-width="1"/>
-          <polygon points="170,25 210,50 185,75" fill="#f59e0b"/>
-          <polygon points="135,90 185,75 170,125 120,140" fill="#78350f"/>
-          <!-- Silver Ore on left -->
-          <polygon points="60,65 95,50 105,95 70,110" fill="#cbd5e1" stroke="#f1f5f9" stroke-width="1"/>
-          <polygon points="95,50 120,70 105,95" fill="#94a3b8"/>
-        </svg>`;
+        return '<svg class="thumb-canvas-svg" viewBox="0 0 320 160" preserveAspectRatio="xMidYMid slice">' +
+          '<defs>' +
+            '<linearGradient id="gMet_' + num + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1c1917"/><stop offset="100%" stop-color="#451a03"/></linearGradient>' +
+            '<linearGradient id="goldCube_' + num + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#fde047"/><stop offset="100%" stop-color="#b45309"/></linearGradient>' +
+          '</defs>' +
+          '<rect width="320" height="160" fill="url(#gMet_' + num + ')"/>' +
+          '<polygon points="120,40 170,25 185,75 135,90" fill="url(#goldCube_' + num + ')" stroke="#fef08a" stroke-width="1"/>' +
+          '<polygon points="170,25 210,50 185,75" fill="#f59e0b"/>' +
+          '<polygon points="135,90 185,75 170,125 120,140" fill="#78350f"/>' +
+          '<polygon points="60,65 95,50 105,95 70,110" fill="#cbd5e1" stroke="#f1f5f9" stroke-width="1"/>' +
+          '<polygon points="95,50 120,70 105,95" fill="#94a3b8"/>' +
+        '</svg>';
       } else if (type === 'water_ripples') {
-        return `<svg class="thumb-canvas-svg" viewBox="0 0 320 160" preserveAspectRatio="xMidYMid slice">
-          <defs>
-            <radialGradient id="gWat_${num}" cx="50%" cy="60%" r="70%">
-              <stop offset="0%" stop-color="#38bdf8"/>
-              <stop offset="45%" stop-color="#0284c7"/>
-              <stop offset="100%" stop-color="#082f49"/>
-            </radialGradient>
-          </defs>
-          <rect width="320" height="160" fill="url(#gWat_${num})"/>
-          <!-- Ripples -->
-          <ellipse cx="160" cy="115" rx="110" ry="24" fill="none" stroke="#bae6fd" stroke-width="1.2" opacity="0.4"/>
-          <ellipse cx="160" cy="115" rx="75" ry="16" fill="none" stroke="#e0f2fe" stroke-width="1.8" opacity="0.6"/>
-          <ellipse cx="160" cy="115" rx="40" ry="9" fill="none" stroke="#ffffff" stroke-width="2.2" opacity="0.8"/>
-          <!-- Droplet suspended -->
-          <path d="M160,45 C150,65 142,75 142,88 A18,18 0 0,0 178,88 C178,75 170,65 160,45 Z" fill="#ffffff" opacity="0.95"/>
-          <ellipse cx="155" cy="80" rx="4" ry="7" fill="#ffffff" opacity="0.8" transform="rotate(-20 155 80)"/>
-        </svg>`;
+        return '<svg class="thumb-canvas-svg" viewBox="0 0 320 160" preserveAspectRatio="xMidYMid slice">' +
+          '<defs>' +
+            '<radialGradient id="gWat_' + num + '" cx="50%" cy="60%" r="70%"><stop offset="0%" stop-color="#38bdf8"/><stop offset="45%" stop-color="#0284c7"/><stop offset="100%" stop-color="#082f49"/></radialGradient>' +
+          '</defs>' +
+          '<rect width="320" height="160" fill="url(#gWat_' + num + ')"/>' +
+          '<ellipse cx="160" cy="115" rx="110" ry="24" fill="none" stroke="#bae6fd" stroke-width="1.2" opacity="0.4"/>' +
+          '<ellipse cx="160" cy="115" rx="75" ry="16" fill="none" stroke="#e0f2fe" stroke-width="1.8" opacity="0.6"/>' +
+          '<ellipse cx="160" cy="115" rx="40" ry="9" fill="none" stroke="#ffffff" stroke-width="2.2" opacity="0.8"/>' +
+          '<path d="M160,45 C150,65 142,75 142,88 A18,18 0 0,0 178,88 C178,75 170,65 160,45 Z" fill="#ffffff" opacity="0.95"/>' +
+          '<ellipse cx="155" cy="80" rx="4" ry="7" fill="#ffffff" opacity="0.8" transform="rotate(-20 155 80)"/>' +
+        '</svg>';
       } else if (type === 'molecules_3d') {
-        return `<svg class="thumb-canvas-svg" viewBox="0 0 320 160" preserveAspectRatio="xMidYMid slice">
-          <defs>
-            <linearGradient id="gMol_${num}" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#0f172a"/>
-              <stop offset="100%" stop-color="#1e1b4b"/>
-            </linearGradient>
-            <radialGradient id="cBall_${num}" cx="35%" cy="35%" r="65%">
-              <stop offset="0%" stop-color="#64748b"/>
-              <stop offset="100%" stop-color="#0f172a"/>
-            </radialGradient>
-            <radialGradient id="hBall_${num}" cx="35%" cy="35%" r="65%">
-              <stop offset="0%" stop-color="#ffffff"/>
-              <stop offset="100%" stop-color="#94a3b8"/>
-            </radialGradient>
-            <radialGradient id="oBall_${num}" cx="35%" cy="35%" r="65%">
-              <stop offset="0%" stop-color="#f87171"/>
-              <stop offset="100%" stop-color="#b91c1c"/>
-            </radialGradient>
-          </defs>
-          <rect width="320" height="160" fill="url(#gMol_${num})"/>
-          <!-- Bonds -->
-          <line x1="80" y1="100" x2="135" y2="70" stroke="#94a3b8" stroke-width="7" stroke-linecap="round"/>
-          <line x1="135" y1="70" x2="190" y2="100" stroke="#94a3b8" stroke-width="7" stroke-linecap="round"/>
-          <line x1="190" y1="100" x2="245" y2="70" stroke="#94a3b8" stroke-width="7" stroke-linecap="round"/>
-          <line x1="135" y1="70" x2="135" y2="25" stroke="#94a3b8" stroke-width="6" stroke-linecap="round"/>
-          <line x1="245" y1="70" x2="280" y2="90" stroke="#94a3b8" stroke-width="6" stroke-linecap="round"/>
-          <!-- Atoms -->
-          <circle cx="80" cy="100" r="16" fill="url(#cBall_${num})" stroke="#cbd5e1" stroke-width="1.5"/>
-          <circle cx="135" cy="70" r="18" fill="url(#cBall_${num})" stroke="#cbd5e1" stroke-width="1.5"/>
-          <circle cx="190" cy="100" r="18" fill="url(#cBall_${num})" stroke="#cbd5e1" stroke-width="1.5"/>
-          <circle cx="245" cy="70" r="17" fill="url(#oBall_${num})" stroke="#fca5a5" stroke-width="1.5"/>
-          <circle cx="135" cy="25" r="12" fill="url(#hBall_${num})" stroke="#ffffff" stroke-width="1.5"/>
-          <circle cx="280" cy="90" r="12" fill="url(#hBall_${num})" stroke="#ffffff" stroke-width="1.5"/>
-        </svg>`;
+        return '<svg class="thumb-canvas-svg" viewBox="0 0 320 160" preserveAspectRatio="xMidYMid slice">' +
+          '<defs>' +
+            '<linearGradient id="gMol_' + num + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0f172a"/><stop offset="100%" stop-color="#1e1b4b"/></linearGradient>' +
+            '<radialGradient id="cBall_' + num + '" cx="35%" cy="35%" r="65%"><stop offset="0%" stop-color="#64748b"/><stop offset="100%" stop-color="#0f172a"/></radialGradient>' +
+            '<radialGradient id="hBall_' + num + '" cx="35%" cy="35%" r="65%"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#94a3b8"/></radialGradient>' +
+            '<radialGradient id="oBall_' + num + '" cx="35%" cy="35%" r="65%"><stop offset="0%" stop-color="#f87171"/><stop offset="100%" stop-color="#b91c1c"/></radialGradient>' +
+          '</defs>' +
+          '<rect width="320" height="160" fill="url(#gMol_' + num + ')"/>' +
+          '<line x1="80" y1="100" x2="135" y2="70" stroke="#94a3b8" stroke-width="7" stroke-linecap="round"/>' +
+          '<line x1="135" y1="70" x2="190" y2="100" stroke="#94a3b8" stroke-width="7" stroke-linecap="round"/>' +
+          '<line x1="190" y1="100" x2="245" y2="70" stroke="#94a3b8" stroke-width="7" stroke-linecap="round"/>' +
+          '<circle cx="80" cy="100" r="16" fill="url(#cBall_' + num + ')" stroke="#cbd5e1" stroke-width="1.5"/>' +
+          '<circle cx="135" cy="70" r="18" fill="url(#cBall_' + num + ')" stroke="#cbd5e1" stroke-width="1.5"/>' +
+          '<circle cx="190" cy="100" r="18" fill="url(#cBall_' + num + ')" stroke="#cbd5e1" stroke-width="1.5"/>' +
+          '<circle cx="245" cy="70" r="17" fill="url(#oBall_' + num + ')" stroke="#fca5a5" stroke-width="1.5"/>' +
+          '<circle cx="135" cy="25" r="12" fill="url(#hBall_' + num + ')" stroke="#ffffff" stroke-width="1.5"/>' +
+          '<circle cx="280" cy="90" r="12" fill="url(#hBall_' + num + ')" stroke="#ffffff" stroke-width="1.5"/>' +
+        '</svg>';
       } else if (type === 'dual_flames') {
-        return `<svg class="thumb-canvas-svg" viewBox="0 0 320 160" preserveAspectRatio="xMidYMid slice">
-          <defs>
-            <linearGradient id="gFlm_${num}" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#020617"/>
-              <stop offset="100%" stop-color="#180c04"/>
-            </linearGradient>
-            <linearGradient id="blueFlame_${num}" x1="0" y1="1" x2="0" y2="0">
-              <stop offset="0%" stop-color="#0284c7"/>
-              <stop offset="60%" stop-color="#38bdf8"/>
-              <stop offset="100%" stop-color="#ffffff"/>
-            </linearGradient>
-            <linearGradient id="orangeFlame_${num}" x1="0" y1="1" x2="0" y2="0">
-              <stop offset="0%" stop-color="#c2410c"/>
-              <stop offset="60%" stop-color="#f59e0b"/>
-              <stop offset="100%" stop-color="#ffffff"/>
-            </linearGradient>
-          </defs>
-          <rect width="320" height="160" fill="url(#gFlm_${num})"/>
-          <!-- Blue Bunsen Flame on left -->
-          <path d="M100,135 C80,105 85,75 105,45 C120,70 135,90 125,135 Z" fill="url(#blueFlame_${num})" opacity="0.9"/>
-          <path d="M105,135 C95,115 100,95 107,75 C115,95 120,110 115,135 Z" fill="#ffffff" opacity="0.9"/>
-          <!-- Orange Roaring Fire on right -->
-          <path d="M210,135 C185,95 205,65 220,35 C235,70 260,85 245,135 Z" fill="url(#orangeFlame_${num})"/>
-          <path d="M220,135 C210,110 215,90 223,65 C230,90 238,105 230,135 Z" fill="#fef08a"/>
-        </svg>`;
+        return '<svg class="thumb-canvas-svg" viewBox="0 0 320 160" preserveAspectRatio="xMidYMid slice">' +
+          '<defs>' +
+            '<linearGradient id="gFlm_' + num + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#020617"/><stop offset="100%" stop-color="#180c04"/></linearGradient>' +
+            '<linearGradient id="blueFlame_' + num + '" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#0284c7"/><stop offset="60%" stop-color="#38bdf8"/><stop offset="100%" stop-color="#ffffff"/></linearGradient>' +
+            '<linearGradient id="orangeFlame_' + num + '" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#c2410c"/><stop offset="60%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#ffffff"/></linearGradient>' +
+          '</defs>' +
+          '<rect width="320" height="160" fill="url(#gFlm_' + num + ')"/>' +
+          '<path d="M100,135 C80,105 85,75 105,45 C120,70 135,90 125,135 Z" fill="url(#blueFlame_' + num + ')" opacity="0.9"/>' +
+          '<path d="M105,135 C95,115 100,95 107,75 C115,95 120,110 115,135 Z" fill="#ffffff" opacity="0.9"/>' +
+          '<path d="M210,135 C185,95 205,65 220,35 C235,70 260,85 245,135 Z" fill="url(#orangeFlame_' + num + ')"/>' +
+          '<path d="M220,135 C210,110 215,90 223,65 C230,90 238,105 230,135 Z" fill="#fef08a"/>' +
+        '</svg>';
       } else if (type === 'prism_spectrum') {
-        return `<svg class="thumb-canvas-svg" viewBox="0 0 320 160" preserveAspectRatio="xMidYMid slice">
-          <defs>
-            <linearGradient id="gPrs_${num}" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#090d16"/>
-              <stop offset="100%" stop-color="#111827"/>
-            </linearGradient>
-          </defs>
-          <rect width="320" height="160" fill="url(#gPrs_${num})"/>
-          <!-- Prism Glass Triangle -->
-          <polygon points="120,120 170,35 220,120" fill="rgba(255,255,255,0.14)" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
-          <!-- Incident white beam -->
-          <line x1="20" y1="85" x2="145" y2="78" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round"/>
-          <!-- Rainbow Dispersed rays -->
-          <polygon points="180,82 320,40 320,48" fill="#ef4444" opacity="0.8"/>
-          <polygon points="182,85 320,55 320,63" fill="#f97316" opacity="0.8"/>
-          <polygon points="184,88 320,70 320,78" fill="#facc15" opacity="0.8"/>
-          <polygon points="186,91 320,85 320,93" fill="#22c55e" opacity="0.8"/>
-          <polygon points="188,94 320,100 320,108" fill="#06b6d4" opacity="0.8"/>
-          <polygon points="190,97 320,115 320,123" fill="#3b82f6" opacity="0.8"/>
-          <polygon points="192,100 320,130 320,138" fill="#a855f7" opacity="0.8"/>
-        </svg>`;
+        return '<svg class="thumb-canvas-svg" viewBox="0 0 320 160" preserveAspectRatio="xMidYMid slice">' +
+          '<defs>' +
+            '<linearGradient id="gPrs_' + num + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#090d16"/><stop offset="100%" stop-color="#111827"/></linearGradient>' +
+          '</defs>' +
+          '<rect width="320" height="160" fill="url(#gPrs_' + num + ')"/>' +
+          '<polygon points="120,120 170,35 220,120" fill="rgba(255,255,255,0.14)" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>' +
+          '<line x1="20" y1="85" x2="145" y2="78" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round"/>' +
+          '<polygon points="180,82 320,40 320,48" fill="#ef4444" opacity="0.8"/>' +
+          '<polygon points="182,85 320,55 320,63" fill="#f97316" opacity="0.8"/>' +
+          '<polygon points="184,88 320,70 320,78" fill="#facc15" opacity="0.8"/>' +
+          '<polygon points="186,91 320,85 320,93" fill="#22c55e" opacity="0.8"/>' +
+          '<polygon points="188,94 320,100 320,108" fill="#06b6d4" opacity="0.8"/>' +
+          '<polygon points="190,97 320,115 320,123" fill="#3b82f6" opacity="0.8"/>' +
+          '<polygon points="192,100 320,130 320,138" fill="#a855f7" opacity="0.8"/>' +
+        '</svg>';
       } else if (type === 'plant_soil') {
-        return `<svg class="thumb-canvas-svg" viewBox="0 0 320 160" preserveAspectRatio="xMidYMid slice">
-          <defs>
-            <linearGradient id="gPlt_${num}" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#052e16"/>
-              <stop offset="60%" stop-color="#14532d"/>
-              <stop offset="100%" stop-color="#271c10"/>
-            </linearGradient>
-            <linearGradient id="leafGrad_${num}" x1="0" y1="1" x2="1" y2="0">
-              <stop offset="0%" stop-color="#15803d"/>
-              <stop offset="100%" stop-color="#4ade80"/>
-            </linearGradient>
-          </defs>
-          <rect width="320" height="160" fill="url(#gPlt_${num})"/>
-          <!-- Sun glow from top right -->
-          <circle cx="280" cy="20" r="60" fill="#fef08a" opacity="0.25"/>
-          <!-- Soil hill -->
-          <path d="M0,140 Q160,115 320,140 L320,160 L0,160 Z" fill="#38240f"/>
-          <!-- Stem -->
-          <path d="M160,130 Q160,85 160,60" stroke="#86efac" stroke-width="4.5" stroke-linecap="round" fill="none"/>
-          <!-- Left leaf -->
-          <path d="M160,85 C130,85 120,60 115,55 C128,80 145,95 160,90 Z" fill="url(#leafGrad_${num})"/>
-          <!-- Right leaf -->
-          <path d="M160,75 C190,75 205,50 210,45 C195,70 178,85 160,80 Z" fill="url(#leafGrad_${num})"/>
-        </svg>`;
+        return '<svg class="thumb-canvas-svg" viewBox="0 0 320 160" preserveAspectRatio="xMidYMid slice">' +
+          '<defs>' +
+            '<linearGradient id="gPlt_' + num + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#052e16"/><stop offset="60%" stop-color="#14532d"/><stop offset="100%" stop-color="#271c10"/></linearGradient>' +
+            '<linearGradient id="leafGrad_' + num + '" x1="0" y1="1" x2="1" y2="0"><stop offset="0%" stop-color="#15803d"/><stop offset="100%" stop-color="#4ade80"/></linearGradient>' +
+          '</defs>' +
+          '<rect width="320" height="160" fill="url(#gPlt_' + num + ')"/>' +
+          '<circle cx="280" cy="20" r="60" fill="#fef08a" opacity="0.25"/>' +
+          '<path d="M0,140 Q160,115 320,140 L320,160 L0,160 Z" fill="#38240f"/>' +
+          '<path d="M160,130 Q160,85 160,60" stroke="#86efac" stroke-width="4.5" stroke-linecap="round" fill="none"/>' +
+          '<path d="M160,85 C130,85 120,60 115,55 C128,80 145,95 160,90 Z" fill="url(#leafGrad_' + num + ')"/>' +
+          '<path d="M160,75 C190,75 205,50 210,45 C195,70 178,85 160,80 Z" fill="url(#leafGrad_' + num + ')"/>' +
+        '</svg>';
       } else {
-        // High quality default chemical gradient with atoms
-        return `<svg class="thumb-canvas-svg" viewBox="0 0 320 160" preserveAspectRatio="xMidYMid slice">
-          <defs>
-            <linearGradient id="gDef_${num}" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#0f172a"/>
-              <stop offset="50%" stop-color="#1e3a8a"/>
-              <stop offset="100%" stop-color="#3b0764"/>
-            </linearGradient>
-          </defs>
-          <rect width="320" height="160" fill="url(#gDef_${num})"/>
-          <ellipse cx="160" cy="80" rx="80" ry="28" fill="none" stroke="rgba(56,189,248,0.4)" stroke-width="2" transform="rotate(35 160 80)"/>
-          <ellipse cx="160" cy="80" rx="80" ry="28" fill="none" stroke="rgba(168,85,247,0.4)" stroke-width="2" transform="rotate(-35 160 80)"/>
-          <circle cx="160" cy="80" r="14" fill="#38bdf8" stroke="#ffffff" stroke-width="2"/>
-          <circle cx="100" cy="50" r="6" fill="#a855f7"/>
-          <circle cx="220" cy="110" r="6" fill="#f43f5e"/>
-        </svg>`;
+        return '<svg class="thumb-canvas-svg" viewBox="0 0 320 160" preserveAspectRatio="xMidYMid slice">' +
+          '<defs>' +
+            '<linearGradient id="gDef_' + num + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0f172a"/><stop offset="50%" stop-color="#1e3a8a"/><stop offset="100%" stop-color="#3b0764"/></linearGradient>' +
+          '</defs>' +
+          '<rect width="320" height="160" fill="url(#gDef_' + num + ')"/>' +
+          '<ellipse cx="160" cy="80" rx="80" ry="28" fill="none" stroke="rgba(56,189,248,0.4)" stroke-width="2" transform="rotate(35 160 80)"/>' +
+          '<ellipse cx="160" cy="80" rx="80" ry="28" fill="none" stroke="rgba(168,85,247,0.4)" stroke-width="2" transform="rotate(-35 160 80)"/>' +
+          '<circle cx="160" cy="80" r="14" fill="#38bdf8" stroke="#ffffff" stroke-width="2"/>' +
+          '<circle cx="100" cy="50" r="6" fill="#a855f7"/>' +
+          '<circle cx="220" cy="110" r="6" fill="#f43f5e"/>' +
+        '</svg>';
       }
     }
 
-    // Default thumbnails mapping for Class 7 to match user's screenshot exactly
     const CLASS7_THUMBS = ['fire_ice', 'acids_bases', 'metals_ores', 'water_ripples', 'molecules_3d', 'dual_flames', 'prism_spectrum', 'plant_soil'];
 
     function renderChaptersGrid() {
@@ -2064,7 +2048,6 @@
       const currentList = CHAPTER_DATA[activeClass] || [];
       const masteredList = getMasteredList();
 
-      // Apply branch and search filters
       let filtered = currentList.filter(item => {
         const matchesBranch = activeBranch === 'all' || item.branch === activeBranch;
         const q = searchQuery.toLowerCase().trim();
@@ -2075,25 +2058,22 @@
         return matchesBranch && matchesSearch;
       });
 
-      // Sorting
       if (!sortAscending) {
         filtered = [...filtered].reverse();
       }
 
       if (filtered.length === 0) {
-        grid.innerHTML = `
-          <div style="grid-column: 1 / -1; padding: 4rem 1rem; text-align: center; background: var(--bg-card); border: 1px dashed var(--border); border-radius: var(--radius-card);">
-            <div style="font-size: 2.5rem; margin-bottom: 10px;">ðŸ”</div>
-            <h3 style="font-family: var(--font-display); font-size: 1.25rem; margin-bottom: 6px;">No chapters found matching "${searchQuery}"</h3>
-            <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 16px;">Try clearing filters or search for another concept.</p>
-            <button class="branch-filter-pill active" onclick="clearFilters()" style="margin: 0 auto;">Reset Filters</button>
-          </div>
-        `;
+        grid.innerHTML = '<div style="grid-column: 1 / -1; padding: 4rem 1rem; text-align: center; background: var(--bg-card); border: 1px dashed var(--border); border-radius: var(--radius-card);">' +
+          '<div style="margin-bottom: 10px; color: var(--text-muted);"><svg style="width:40px;height:40px;stroke:currentColor;fill:none;stroke-width:1.8;display:inline-block;" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>' +
+          '<h3 style="font-family: var(--font-display); font-size: 1.25rem; margin-bottom: 6px;">No chapters found matching "' + searchQuery + '"</h3>' +
+          '<p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 16px;">Try clearing filters or search for another concept.</p>' +
+          '<button class="branch-filter-pill active" onclick="clearFilters()" style="margin: 0 auto;">Reset Filters</button>' +
+        '</div>';
         return;
       }
 
       grid.innerHTML = filtered.map((ch, idx) => {
-        const chapterId = `c_${activeClass}_${ch.num}`;
+        const chapterId = 'c_' + activeClass + '_' + ch.num;
         const isMastered = masteredList.includes(chapterId);
         
         let thumbType = ch.thumbSvg;
@@ -2106,30 +2086,31 @@
           }
         }
 
-        const badgeClass = ch.badge || `badge-color-${(idx % 8) + 1}`;
+        const badgeClass = ch.badge || ('badge-color-' + ((idx % 8) + 1));
         const subtopicCount = ch.subtopics ? ch.subtopics.length : 6;
         const diffClass = ch.diff === 'Hard' ? 'diff-hard' : ch.diff === 'Medium' ? 'diff-med' : 'diff-easy';
 
-        return `
-          <div class="chapter-card ${isMastered ? 'mastered' : ''}" onclick="openChapterModal('${activeClass}', '${ch.num}')">
-            <div class="card-thumb">
-              ${getThumbnailSvg(thumbType, `${activeClass}_${ch.num}`)}
-              <div class="card-num-badge ${badgeClass}">${ch.num}</div>
-              <div class="mastered-tick-badge">âœ“ Mastered</div>
-            </div>
-            
-            <div class="card-body-content">
-              <h3 class="card-title">${ch.title}</h3>
-              <p class="card-description">${ch.desc}</p>
-              
-              <div class="card-footer-meta">
-                <span class="meta-subtopics">ðŸ“– ${subtopicCount} Subtopics</span>
-                <span class="meta-difficulty ${diffClass}">â— ${ch.diff || 'Easy'}</span>
-                <div class="card-arrow-btn">âž”</div>
-              </div>
-            </div>
-          </div>
-        `;
+        return '<div class="chapter-card ' + (isMastered ? 'mastered' : '') + '" onclick="openChapterModal(\'' + activeClass + '\', \'' + ch.num + '\')">' +
+          '<div class="card-thumb">' +
+            getThumbnailSvg(thumbType, activeClass + '_' + ch.num) +
+            '<div class="card-num-badge ' + badgeClass + '">' + ch.num + '</div>' +
+            '<div class="mastered-tick-badge">&check; Mastered</div>' +
+          '</div>' +
+          '<div class="card-body-content">' +
+            '<h3 class="card-title">' + ch.title + '</h3>' +
+            '<p class="card-description">' + ch.desc + '</p>' +
+            '<div class="card-footer-meta">' +
+              '<span class="meta-subtopics">' +
+                '<svg class="svg-icon svg-icon-sm" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>' +
+                subtopicCount + ' Subtopics' +
+              '</span>' +
+              '<span class="meta-difficulty ' + diffClass + '">&bull; ' + (ch.diff || 'Easy') + '</span>' +
+              '<div class="card-arrow-btn">' +
+                '<svg class="svg-icon svg-icon-sm" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
       }).join('');
     }
 
@@ -2141,7 +2122,7 @@
       const searchBox = document.getElementById('chapterSearchInput');
       if (searchBox) {
         searchBox.value = '';
-        searchBox.placeholder = `Search in Class ${cls} Chemistryâ€¦`;
+        searchBox.placeholder = 'Search in Class ' + cls + ' Chemistry...';
       }
 
       document.querySelectorAll('.class-pill-btn').forEach(btn => {
@@ -2154,7 +2135,7 @@
 
       const titleEl = document.getElementById('currentClassTitle');
       if (titleEl) {
-        titleEl.textContent = `Class ${cls} â€“ Chemistry Chapters`;
+        titleEl.textContent = 'Class ' + cls + ' \u2013 Chemistry Chapters';
       }
 
       renderChaptersGrid();
@@ -2179,7 +2160,7 @@
     function toggleChapterSort() {
       sortAscending = !sortAscending;
       const text = document.getElementById('sortBtnText');
-      if (text) text.textContent = sortAscending ? 'Chapter Order â–¾' : 'Reverse Order â–´';
+      if (text) text.innerHTML = sortAscending ? 'Chapter Order &#9662;' : 'Reverse Order &#9652;';
       renderChaptersGrid();
     }
 
@@ -2209,88 +2190,82 @@
     function renderFormulasView() {
       const grid = document.getElementById('chaptersGrid');
       const list = CHAPTER_DATA[activeClass] || [];
-      grid.innerHTML = `
-        <div style="grid-column:1/-1; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-card); padding:24px; box-shadow:var(--shadow-card);">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
-            <div>
-              <h3 style="font-family:var(--font-display); font-size:1.35rem; color:var(--text-main);">âš¡ Class ${activeClass} Formula &amp; Equation Cheat Sheet</h3>
-              <p style="color:var(--text-muted); font-size:0.85rem;">Click on ANY formula to copy it directly to your clipboard for homework or board exam notes.</p>
-            </div>
-            <button class="branch-filter-pill active" onclick="setStudyMode('concepts')">â† Back to Chapters</button>
-          </div>
-          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:12px;">
-            ${list.map(ch => `
-              <div style="background:var(--bg-surface); border:1px solid var(--border); border-radius:12px; padding:14px;">
-                <div style="font-family:var(--font-heading); font-weight:700; font-size:0.9rem; color:var(--primary); margin-bottom:8px;">${ch.num}. ${ch.title}</div>
-                <div style="display:flex; flex-direction:column; gap:6px;">
-                  ${ch.subtopics.slice(0, 3).map(st => `
-                    <div class="formula-chip-interactive" onclick="copyFormula(this, '${st.replace(/'/g, "\\'")}')">
-                      <span>${st.substring(0, 48)}â€¦</span>
-                      <span>ðŸ“‹</span>
-                    </div>
-                  `).join('')}
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      `;
+      grid.innerHTML = '<div style="grid-column:1/-1; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-card); padding:24px; box-shadow:var(--shadow-card);">' +
+        '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">' +
+          '<div>' +
+            '<h3 style="font-family:var(--font-display); font-size:1.35rem; color:var(--text-main);">Class ' + activeClass + ' Formula &amp; Equation Vault</h3>' +
+            '<p style="color:var(--text-muted); font-size:0.85rem;">Click on ANY formula or balanced reaction to copy it directly to your clipboard for homework or board exam notes.</p>' +
+          '</div>' +
+          '<button class="branch-filter-pill active" onclick="setStudyMode(\'concepts\')">&larr; Back to Chapters</button>' +
+        '</div>' +
+        '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:12px;">' +
+          list.map(ch => {
+            return '<div style="background:var(--bg-surface); border:1px solid var(--border); border-radius:12px; padding:14px;">' +
+              '<div style="font-family:var(--font-heading); font-weight:700; font-size:0.9rem; color:var(--primary); margin-bottom:8px;">' + ch.num + '. ' + ch.title + '</div>' +
+              '<div style="display:flex; flex-direction:column; gap:6px;">' +
+                ch.subtopics.slice(0, 3).map(st => {
+                  return '<div class="formula-chip-interactive" onclick="copyFormula(this, \'' + st.replace(/'/g, "\\'") + '\')">' +
+                    '<span>' + st.substring(0, 48) + '&hellip;</span>' +
+                    '<svg class="svg-icon svg-icon-sm" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>' +
+                  '</div>';
+                }).join('') +
+              '</div>' +
+            '</div>';
+          }).join('') +
+        '</div>' +
+      '</div>';
     }
 
     function renderSimulatorsView() {
       const grid = document.getElementById('chaptersGrid');
       const list = (CHAPTER_DATA[activeClass] || []).filter(c => c.sim);
-      grid.innerHTML = `
-        <div style="grid-column:1/-1; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-card); padding:24px; box-shadow:var(--shadow-card);">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
-            <div>
-              <h3 style="font-family:var(--font-display); font-size:1.35rem; color:var(--text-main);">ðŸ§ª Virtual Simulators for Class ${activeClass}</h3>
-              <p style="color:var(--text-muted); font-size:0.85rem;">Direct interactive laboratory engines linked to this curriculum.</p>
-            </div>
-            <button class="branch-filter-pill active" onclick="setStudyMode('concepts')">â† Back to Chapters</button>
-          </div>
-          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:16px;">
-            ${list.map(ch => `
-              <div class="sim-launch-cta-box" style="margin:0;">
-                <div class="sim-cta-info">
-                  <h4>${ch.simName || 'Interactive Virtual Lab'}</h4>
-                  <p>Aligned with <strong>${ch.title}</strong></p>
-                </div>
-                <a href="${ch.sim}" class="sim-cta-launch-btn">Launch Lab â–¶</a>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      `;
+      grid.innerHTML = '<div style="grid-column:1/-1; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-card); padding:24px; box-shadow:var(--shadow-card);">' +
+        '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">' +
+          '<div>' +
+            '<h3 style="font-family:var(--font-display); font-size:1.35rem; color:var(--text-main);">Virtual Simulators for Class ' + activeClass + '</h3>' +
+            '<p style="color:var(--text-muted); font-size:0.85rem;">Direct interactive laboratory engines linked to this curriculum.</p>' +
+          '</div>' +
+          '<button class="branch-filter-pill active" onclick="setStudyMode(\'concepts\')">&larr; Back to Chapters</button>' +
+        '</div>' +
+        '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:16px;">' +
+          list.map(ch => {
+            return '<div class="sim-launch-cta-box" style="margin:0;">' +
+              '<div class="sim-cta-info">' +
+                '<h4>' + (ch.simName || 'Interactive Virtual Lab') + '</h4>' +
+                '<p>Aligned with <strong>' + ch.title + '</strong></p>' +
+              '</div>' +
+              '<a href="' + ch.sim + '" class="sim-cta-launch-btn">Launch Lab &rarr;</a>' +
+            '</div>';
+          }).join('') +
+        '</div>' +
+      '</div>';
     }
 
     function renderFlashcardsView() {
       const grid = document.getElementById('chaptersGrid');
       const list = CHAPTER_DATA[activeClass] || [];
-      grid.innerHTML = `
-        <div style="grid-column:1/-1; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-card); padding:24px; box-shadow:var(--shadow-card);">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
-            <div>
-              <h3 style="font-family:var(--font-display); font-size:1.35rem; color:var(--text-main);">ðŸ—‚ï¸ 30-Second Rapid Revision Flashcards (Class ${activeClass})</h3>
-              <p style="color:var(--text-muted); font-size:0.85rem;">Test your retention in seconds before exams.</p>
-            </div>
-            <button class="branch-filter-pill active" onclick="setStudyMode('concepts')">â† Back to Chapters</button>
-          </div>
-          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:14px;">
-            ${list.map(ch => `
-              <div class="flashcard-interactive-card" style="margin:0;">
-                <div style="font-size:0.75rem; font-weight:700; color:var(--primary); text-transform:uppercase; margin-bottom:6px;">Chapter ${ch.num} â€¢ ${ch.title}</div>
-                <div class="flashcard-q">Q: What is the primary chemical principle behind ${ch.title}?</div>
-                <button class="reveal-ans-btn" onclick="toggleFlashcardAnswer(this)">Show Answer â–¾</button>
-                <div class="flashcard-answer-box">
-                  <strong>Key Takeaway:</strong> ${ch.desc}<br/>
-                  <em>Key Syllabus:</em> ${ch.subtopics[0] || 'Core concepts and applications.'}
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      `;
+      grid.innerHTML = '<div style="grid-column:1/-1; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-card); padding:24px; box-shadow:var(--shadow-card);">' +
+        '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">' +
+          '<div>' +
+            '<h3 style="font-family:var(--font-display); font-size:1.35rem; color:var(--text-main);">Rapid Revision Flashcards (Class ' + activeClass + ')</h3>' +
+            '<p style="color:var(--text-muted); font-size:0.85rem;">Test your retention in seconds before exams.</p>' +
+          '</div>' +
+          '<button class="branch-filter-pill active" onclick="setStudyMode(\'concepts\')">&larr; Back to Chapters</button>' +
+        '</div>' +
+        '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:14px;">' +
+          list.map(ch => {
+            return '<div class="flashcard-interactive-card" style="margin:0;">' +
+              '<div style="font-size:0.75rem; font-weight:700; color:var(--primary); text-transform:uppercase; margin-bottom:6px;">Chapter ' + ch.num + ' &bull; ' + ch.title + '</div>' +
+              '<div class="flashcard-q">Q: What is the primary chemical principle behind ' + ch.title + '?</div>' +
+              '<button class="reveal-ans-btn" onclick="toggleFlashcardAnswer(this)">Show Answer &#9662;</button>' +
+              '<div class="flashcard-answer-box">' +
+                '<strong>Key Takeaway:</strong> ' + ch.desc + '<br/>' +
+                '<em>Key Syllabus:</em> ' + (ch.subtopics[0] || 'Core concepts and applications.') +
+              '</div>' +
+            '</div>';
+          }).join('') +
+        '</div>' +
+      '</div>';
     }
 
     // Modal Interaction
@@ -2310,11 +2285,11 @@
       if (titleEl) titleEl.textContent = ch.title;
       if (subEl) subEl.textContent = ch.desc;
 
-      const chapterId = `c_${cls}_${num}`;
+      const chapterId = 'c_' + cls + '_' + num;
       const isMastered = getMasteredList().includes(chapterId);
       if (masterBtn) {
         masterBtn.classList.toggle('active', isMastered);
-        masterBtn.innerHTML = isMastered ? '<span>âœ“</span> Mastered (+15 XP Claimed)' : '<span>âœ“</span> Mark as Mastered (+15 XP)';
+        masterBtn.innerHTML = isMastered ? '&check; Mastered (+15 XP Claimed)' : '<svg class="svg-icon svg-icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Mark as Mastered (+15 XP)';
       }
 
       switchModalTab('notes');
@@ -2345,65 +2320,56 @@
       const body = document.getElementById('modalBodyScroll');
 
       if (tab === 'notes') {
-        body.innerHTML = `
-          <div style="margin-bottom: 20px;">
-            <h4 style="font-family: var(--font-heading); font-size: 0.95rem; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">1. NCERT &amp; State Boards Syllabus Subtopics</h4>
-            <ul class="subtopics-list-group">
-              ${ch.subtopics.map((st, i) => `
-                <li class="subtopic-item-card">
-                  <div class="subtopic-bullet-num">${i + 1}</div>
-                  <div>${st}</div>
-                </li>
-              `).join('')}
-            </ul>
-          </div>
-
-          <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; margin-bottom: 16px;">
-            <h4 style="font-family: var(--font-display); font-size: 1rem; color: #f59e0b; margin-bottom: 6px;">ðŸ’¡ Board &amp; Competitive Exam Tips</h4>
-            <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6;">Examiners consistently ask for balanced chemical equations with correct physical state symbols ((s), (l), (g), (aq)). Always mention observation indicators like effervescence, precipitate color, or temperature change.</p>
-          </div>
-        `;
+        body.innerHTML = '<div style="margin-bottom: 20px;">' +
+          '<h4 style="font-family: var(--font-heading); font-size: 0.95rem; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">1. NCERT &amp; State Boards Syllabus Subtopics</h4>' +
+          '<ul class="subtopics-list-group">' +
+            ch.subtopics.map((st, i) => {
+              return '<li class="subtopic-item-card">' +
+                '<div class="subtopic-bullet-num">' + (i + 1) + '</div>' +
+                '<div>' + st + '</div>' +
+              '</li>';
+            }).join('') +
+          '</ul>' +
+        '</div>' +
+        '<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; margin-bottom: 16px;">' +
+          '<h4 style="font-family: var(--font-display); font-size: 1rem; color: #f59e0b; margin-bottom: 6px;">Board &amp; Competitive Exam Tips</h4>' +
+          '<p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6;">Examiners consistently ask for balanced chemical equations with correct physical state symbols ((s), (l), (g), (aq)). Always mention observation indicators like effervescence, precipitate color, or temperature change.</p>' +
+        '</div>';
       } else if (tab === 'formulas') {
-        body.innerHTML = `
-          <div style="margin-bottom: 16px;">
-            <h4 style="font-family: var(--font-heading); font-size: 0.95rem; color: var(--primary); margin-bottom: 8px;">Key Reactions &amp; Formula Vault</h4>
-            <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 16px;">Click on any formula or equation chip to copy it directly.</p>
-            <div class="formula-vault-grid">
-              ${ch.subtopics.map(st => `
-                <div class="formula-chip-interactive" onclick="copyFormula(this, '${st.replace(/'/g, "\\'")}')">
-                  <span>${st.substring(0, 45)}â€¦</span>
-                  <span>ðŸ“‹</span>
-                </div>
-              `).join('')}
-            </div>
-          </div>
-        `;
+        body.innerHTML = '<div style="margin-bottom: 16px;">' +
+          '<h4 style="font-family: var(--font-heading); font-size: 0.95rem; color: var(--primary); margin-bottom: 8px;">Key Reactions &amp; Formula Vault</h4>' +
+          '<p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 16px;">Click on any formula or equation chip to copy it directly.</p>' +
+          '<div class="formula-vault-grid">' +
+            ch.subtopics.map(st => {
+              return '<div class="formula-chip-interactive" onclick="copyFormula(this, \'' + st.replace(/'/g, "\\'") + '\')">' +
+                '<span>' + st.substring(0, 45) + '&hellip;</span>' +
+                '<svg class="svg-icon svg-icon-sm" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>' +
+              '</div>';
+            }).join('') +
+          '</div>' +
+        '</div>';
       } else if (tab === 'simulator') {
-        body.innerHTML = `
-          <div class="sim-launch-cta-box">
-            <div class="sim-cta-info">
-              <h4>${ch.simName || 'Moleqyn Virtual Lab Simulator'}</h4>
-              <p>Experience real-time particle dynamics, reaction rates, and visual evidence for <strong>${ch.title}</strong>.</p>
-            </div>
-            <a href="${ch.sim || 'simulators.html'}" class="sim-cta-launch-btn">Open Virtual Lab â–¶</a>
-          </div>
-          <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 18px;">
-            <h5 style="font-family: var(--font-heading); font-size: 0.9rem; margin-bottom: 6px;">Why use the Virtual Lab?</h5>
-            <p style="font-size: 0.84rem; color: var(--text-muted); line-height: 1.6;">Unlike textbook reading, interacting with the virtual laboratory lets you manipulate temperature, concentrations, and reactants without real-world chemical risk. This anchors intuitive visual memory for school practical exams.</p>
-          </div>
-        `;
+        body.innerHTML = '<div class="sim-launch-cta-box">' +
+          '<div class="sim-cta-info">' +
+            '<h4>' + (ch.simName || 'Moleqyn Virtual Lab Simulator') + '</h4>' +
+            '<p>Experience real-time particle dynamics, reaction rates, and visual evidence for <strong>' + ch.title + '</strong>.</p>' +
+          '</div>' +
+          '<a href="' + (ch.sim || 'simulators.html') + '" class="sim-cta-launch-btn">Open Virtual Lab &rarr;</a>' +
+        '</div>' +
+        '<div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 18px;">' +
+          '<h5 style="font-family: var(--font-heading); font-size: 0.9rem; margin-bottom: 6px;">Why use the Virtual Lab?</h5>' +
+          '<p style="font-size: 0.84rem; color: var(--text-muted); line-height: 1.6;">Unlike textbook reading, interacting with the virtual laboratory lets you manipulate temperature, concentrations, and reactants without real-world chemical risk. This anchors intuitive visual memory for school practical exams.</p>' +
+        '</div>';
       } else if (tab === 'quiz') {
-        body.innerHTML = `
-          <div class="flashcard-interactive-card">
-            <div class="flashcard-q">Q: What is the most critical difference or observation in ${ch.title}?</div>
-            <button class="reveal-ans-btn" onclick="toggleFlashcardAnswer(this)">Show Answer &amp; Explanation â–¾</button>
-            <div class="flashcard-answer-box">
-              <strong>Comprehensive Answer:</strong><br/>
-              ${ch.desc}<br/>
-              <em>Detailed breakdown:</em> ${ch.subtopics[0] || 'Core theoretical and practical aspects.'}
-            </div>
-          </div>
-        `;
+        body.innerHTML = '<div class="flashcard-interactive-card">' +
+          '<div class="flashcard-q">Q: What is the most critical difference or observation in ' + ch.title + '?</div>' +
+          '<button class="reveal-ans-btn" onclick="toggleFlashcardAnswer(this)">Show Answer &amp; Explanation &#9662;</button>' +
+          '<div class="flashcard-answer-box">' +
+            '<strong>Comprehensive Answer:</strong><br/>' +
+            ch.desc + '<br/>' +
+            '<em>Detailed breakdown:</em> ' + (ch.subtopics[0] || 'Core theoretical and practical aspects.') +
+          '</div>' +
+        '</div>';
       }
     }
 
@@ -2412,21 +2378,25 @@
       if (!box) return;
       const isOpen = box.style.display === 'block';
       box.style.display = isOpen ? 'none' : 'block';
-      btn.textContent = isOpen ? 'Show Answer & Explanation â–¾' : 'Hide Answer â–´';
+      btn.innerHTML = isOpen ? 'Show Answer &amp; Explanation &#9662;' : 'Hide Answer &#9652;';
     }
 
     function copyFormula(chip, text) {
-      navigator.clipboard.writeText(text).then(() => {
-        showToast('Copied to clipboard!');
-      }).catch(() => {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast('Copied to clipboard!');
+        }).catch(() => {
+          showToast('Copied text!');
+        });
+      } else {
         showToast('Copied text!');
-      });
+      }
     }
 
     function toggleMasterChapter() {
       if (!currentModalChapter) return;
       const { cls, num } = currentModalChapter;
-      const chapterId = `c_${cls}_${num}`;
+      const chapterId = 'c_' + cls + '_' + num;
       let list = getMasteredList();
 
       const btn = document.getElementById('modalMasterBtn');
@@ -2435,7 +2405,7 @@
         saveMasteredList(list);
         if (btn) {
           btn.classList.remove('active');
-          btn.innerHTML = '<span>âœ“</span> Mark as Mastered (+15 XP)';
+          btn.innerHTML = '<svg class="svg-icon svg-icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Mark as Mastered (+15 XP)';
         }
         showToast('Marked as unread');
       } else {
@@ -2444,9 +2414,9 @@
         addLearnedXP(15);
         if (btn) {
           btn.classList.add('active');
-          btn.innerHTML = '<span>âœ“</span> Mastered (+15 XP Claimed)';
+          btn.innerHTML = '&check; Mastered (+15 XP Claimed)';
         }
-        showToast('ðŸŽ‰ Chapter Mastered! +15 XP Awarded!');
+        showToast('Chapter Mastered! +15 XP Awarded!');
       }
       renderChaptersGrid();
     }
@@ -2457,7 +2427,7 @@
       let added = 0;
 
       list.forEach(ch => {
-        const id = `c_${activeClass}_${ch.num}`;
+        const id = 'c_' + activeClass + '_' + ch.num;
         if (!mastered.includes(id)) {
           mastered.push(id);
           added++;
@@ -2467,9 +2437,9 @@
       if (added > 0) {
         saveMasteredList(mastered);
         addLearnedXP(added * 15);
-        showToast(`ðŸŽ‰ Mastered all Class ${activeClass} chapters! +${added * 15} XP!`);
+        showToast('Mastered all Class ' + activeClass + ' chapters! +' + (added * 15) + ' XP!');
       } else {
-        showToast(`All Class ${activeClass} chapters are already mastered!`);
+        showToast('All Class ' + activeClass + ' chapters are already mastered!');
       }
       renderChaptersGrid();
     }
@@ -2489,21 +2459,16 @@
     document.addEventListener('DOMContentLoaded', () => {
       const themeBtn = document.getElementById('themeBtn');
       if (themeBtn) {
-        const isDay = document.documentElement.getAttribute('data-theme') === 'day';
-        themeBtn.innerText = isDay ? 'ðŸŒ™' : 'â˜€ï¸';
-
         themeBtn.addEventListener('click', () => {
           const currentlyDay = document.documentElement.getAttribute('data-theme') === 'day';
           if (currentlyDay) {
             document.documentElement.removeAttribute('data-theme');
             document.documentElement.classList.remove('light-mode');
-            themeBtn.innerText = 'â˜€ï¸';
             localStorage.setItem('mlab-theme', 'dark');
             localStorage.setItem('ml-theme', 'dark');
           } else {
             document.documentElement.setAttribute('data-theme', 'day');
             document.documentElement.classList.add('light-mode');
-            themeBtn.innerText = 'ðŸŒ™';
             localStorage.setItem('mlab-theme', 'light');
             localStorage.setItem('ml-theme', 'light');
           }
