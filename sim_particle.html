@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -704,6 +704,16 @@
                 <div class="data-label">Thermodynamic Phase</div>
                 <div class="data-value" id="phaseDisplay" style="color: var(--text-main); font-size: 1.35rem;">Liquid</div>
             </div>
+
+            <div class="data-box">
+                <div class="data-label">Mean Free Path (λ)</div>
+                <div class="data-value" id="freePathDisplay" style="font-size: 1.05rem; color: #63e6ff;">0.32 nm</div>
+            </div>
+
+            <div class="data-box">
+                <div class="data-label">Avg Kinetic Energy (Ek = 3/2 kT)</div>
+                <div class="data-value" id="keDisplay" style="font-size: 1.05rem; color: #38ef7d;">6.17 × 10⁻²¹ J</div>
+            </div>
         </aside>
 
     </div>
@@ -711,7 +721,7 @@
     <script>
         // Theme Toggle Logic
         document.addEventListener("DOMContentLoaded", function () {
-            const themeBtn = document.getElementById('themeBtn');
+            const themeBtn = document.getElementById('mlabThemeBtn');
             if (themeBtn) {
                 const isLight = document.documentElement.getAttribute('data-theme') === 'day' || document.documentElement.classList.contains('light-mode');
                 themeBtn.innerText = isLight ? '🌙' : '☀️';
@@ -962,12 +972,23 @@
             currentTemp = tVal;
             tempValue.innerText = `${tVal}°C`;
 
-            // RMS Velocity calculation: v_rms = sqrt(3*R*T / M)
             const T_K = tVal + 273.15;
             const M_kg = (currentSubstance.mass || 18) / 1000;
             const R = 8.314;
             const v_rms = Math.round(Math.sqrt((3 * R * T_K) / M_kg));
             speedDisplay.innerText = `${v_rms} m/s`;
+
+            const kB = 1.380649e-23;
+            const avgKE = (1.5 * kB * T_K * 1e21).toFixed(2);
+            const keEl = document.getElementById('keDisplay');
+            if (keEl) keEl.innerText = `${avgKE} × 10⁻²¹ J`;
+
+            const freePathEl = document.getElementById('freePathDisplay');
+            if (freePathEl) {
+                if (currentPhase === 'gas') freePathEl.innerText = `${Math.round(68 * (T_K / 298))} nm`;
+                else if (currentPhase === 'liquid') freePathEl.innerText = `0.32 nm`;
+                else freePathEl.innerText = `0.11 nm (lattice)`;
+            }
 
             // Auto-phase detection from melting and boiling points
             if (tVal < currentSubstance.mp) {
@@ -1006,6 +1027,19 @@
         btns.solid.addEventListener('click', () => setPhase('solid', true));
         btns.liquid.addEventListener('click', () => setPhase('liquid', true));
         btns.gas.addEventListener('click', () => setPhase('gas', true));
+
+        function resetExperiment() {
+            const select = document.getElementById('substanceSelect');
+            if (select) select.value = 'water';
+            if (typeof SUBSTANCES !== 'undefined' && SUBSTANCES.water) {
+                applySubstance(SUBSTANCES.water);
+            }
+            const customInput = document.getElementById('customMatterInput');
+            if (customInput) customInput.value = '';
+            if (tempSlider) tempSlider.value = 25;
+            updateThermodynamics(25);
+            initParticles();
+        }
 
         function generateParticleReport() {
             let modal = document.getElementById('particleReportModal');
@@ -1046,8 +1080,8 @@
                             <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#8ea3bf;">Molar Mass (M)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;">${s.mass} g/mol</td></tr>
                             <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#8ea3bf;">Root-Mean-Square Velocity (v_rms)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-weight:bold;color:#00f0ff;">${document.getElementById('speedDisplay').textContent}</td></tr>
                             <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#8ea3bf;">Intermolecular Force (IMF)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;color:#ffd166;">${s.imf}</td></tr>
-                            <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#8ea3bf;">Mean Free Path (λ)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;">${document.getElementById('freePathDisplay').textContent}</td></tr>
-                            <tr><td style="padding:8px 12px;color:#8ea3bf;">Average Kinetic Energy (Ek = 3/2 kT)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;color:#38ef7d;">${document.getElementById('keDisplay').textContent}</td></tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#8ea3bf;">Mean Free Path (λ)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;">${document.getElementById('freePathDisplay') ? document.getElementById('freePathDisplay').textContent : '0.32 nm'}</td></tr>
+                            <tr><td style="padding:8px 12px;color:#8ea3bf;">Average Kinetic Energy (Ek = 3/2 kT)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;color:#38ef7d;">${document.getElementById('keDisplay') ? document.getElementById('keDisplay').textContent : '6.17 × 10⁻²¹ J'}</td></tr>
                         </table>
                     </div>
 

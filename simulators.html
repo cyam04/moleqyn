@@ -1327,7 +1327,7 @@
         <!-- Page Header -->
         <header class="page-header reveal active">
             <div class="header-pill">
-                <span>⚡</span> 14 Interactive Engines Available
+                <span>⚡</span> 15 Interactive Engines Available
             </div>
             <h1 class="page-title">Chemistry <span>Simulators</span></h1>
             <p class="page-subtitle">Explore real-time particle engines, quantum orbital visualizers, and NCERT-aligned virtual experiments designed for Class 6 to 12 &amp; competitive exams.</p>
@@ -1343,15 +1343,15 @@
             </div>
 
             <div class="filter-pills" id="filterPills">
-                <button class="filter-pill active" data-filter="all">All Simulators <span class="pill-count">14</span></button>
-                <button class="filter-pill" data-filter="quantum">⚛️ Quantum &amp; Atomic <span class="pill-count">4</span></button>
+                <button class="filter-pill active" data-filter="all">All Simulators <span class="pill-count">15</span></button>
+                <button class="filter-pill" data-filter="quantum">⚛️ Quantum &amp; Atomic <span class="pill-count">5</span></button>
                 <button class="filter-pill" data-filter="physical">🌡️ Physical Chemistry <span class="pill-count">8</span></button>
                 <button class="filter-pill" data-filter="organic">🧪 Organic &amp; 3D <span class="pill-count">3</span></button>
                 <button class="filter-pill" data-filter="board">📋 Board Practicals <span class="pill-count">4</span></button>
             </div>
 
             <div style="display:flex; justify-content:space-between; align-items:center; max-width:1220px; margin: 0 auto; width:100%; padding:0 4px;">
-                <span class="search-result-status" id="resultStatus">Showing all 14 interactive simulators</span>
+                <span class="search-result-status" id="resultStatus">Showing all 15 interactive simulators</span>
                 <button id="resetFiltersBtn" style="display:none; background:none; border:none; color:var(--primary); font-size:0.85rem; font-weight:600; cursor:pointer; text-decoration:underline;">Reset filters</button>
             </div>
         </div>
@@ -1510,7 +1510,18 @@
                 </div>
                 <h3>IUPAC Nomenclature Engine</h3>
                 <p>Interactive 2D carbon backbone builder. Apply longest chain, lowest locant rule, functional group priority order, and Class 12 coordination complexes naming.</p>
-                <button class="launch-btn" onclick="window.location.href='nomenclature.html'">Launch Nomenclature Lab ▶</button>
+                <button class="launch-btn" onclick="launchSim('nomenclature.html', 'IUPAC Nomenclature Engine')">Launch Nomenclature Lab ▶</button>
+            </div>
+
+            <!-- Card 14: Interactive Periodic Table & Orbital Explorer -->
+            <div class="sim-card card-periodic reveal delay-1" data-category="quantum atomic inorganic foundational" data-classes="class-9 class-10 class-11 class-12">
+                <div class="sim-card-header">
+                    <div class="sim-icon">🔢</div>
+                    <span class="badge badge-class">Class 9 to 12 &amp; Competitive</span>
+                </div>
+                <h3>Interactive Periodic Table &amp; Orbital Explorer</h3>
+                <p>Comprehensive 118-element periodic explorer. View Aufbau principle electron configurations, periodic trends (electronegativity, radius, IE), and elemental discovery data.</p>
+                <button class="launch-btn" onclick="launchSim('periodic-table.html', 'Interactive Periodic Table & Orbitals')">Launch Periodic Explorer ▶</button>
             </div>
 
         </div>
