@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -127,6 +127,8 @@
       z-index: 1000;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
       transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      flex-wrap: nowrap !important;
+      white-space: nowrap !important;
     }
 
     .mlab-nav.scrolled {
@@ -160,6 +162,19 @@
       list-style: none;
       align-items: center;
       gap: 0.35rem;
+      flex-wrap: nowrap !important;
+      white-space: nowrap !important;
+    }
+
+    @media (max-width: 1100px) {
+      .mlab-nav { padding: 8px 18px; width: 98%; }
+      .mlab-links { gap: 0.2rem; }
+      .mlab-links > li > a { font-size: 0.82rem; padding: 6px 10px; }
+    }
+
+    @media (max-width: 900px) {
+      .mlab-links > li:nth-child(4) /* About us */ { display: none; }
+      .mlab-links > li:nth-child(5) /* Student Portal */ { display: none; }
     }
 
     .mlab-links > li > a {
