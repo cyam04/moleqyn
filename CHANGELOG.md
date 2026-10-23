@@ -1138,4 +1138,37 @@ LESSON: Progressive Enhancement & Network Resilience
   - Static client-side chemistry simulators paired with service worker caching create resilient educational software that runs reliably even without internet.
 
 ---
-*Moleqyn CHANGELOG | Comprehensive Record: v1.0 Foundation → v5.3 Production Suite | Last Updated: 2026-10-12*
+
+### CHANGE 6.0 — Learn Chemistry Hub Overhaul & Interactive 3D VSEPR Molecular Workbench
+
+**DATE:** 2026-10-23 15:20 IST
+**FILE:** learn.html, index.html, simulators.html, experiments.html, CHANGELOG.md
+**WHY:** 
+1. Fix top navbar links wrapping into multiple vertical lines on desktop and tablet views across key platform pages.
+2. Synchronize and bulletproof Dark Mode and Light (Day) Mode toggles across all pages, preventing duplicate event listener clashes on `#themeBtn` and harmonizing storage keys (`ml-theme`, `mlab-theme`, `mlab_theme`).
+3. Overhaul the Learn Hub Hero banner: completely replace generic rotating wireframes with a scientifically authentic, interactive 3D VSEPR Molecular Workbench.
+4. Establish a gamified learning matrix with 4 study modes (Visual Concept Notes, Reaction & Formula Vault, 15 Simulators, Self-Check Quizzes) and chapter reader modal architecture.
+
+FEATURES:
+  - **Interactive 3D VSEPR Molecular Workbench**:
+    - Live 3D Canvas engine with mouse & touch drag inspection (360° perspective rotation with inertia damping).
+    - Authentic VSEPR geometries:
+      - **H₂O**: Bent geometry (104.5°), sp³ hybridization, polar dipole moment (μ = 1.85 D), and dual lone-pair electron clouds.
+      - **CO₂**: Linear geometry (180.0°), sp hybridization (2σ, 2π), double covalent bonds, symmetric zero dipole balance.
+      - **CH₄**: Regular 3D tetrahedral geometry (109.5°), sp³ hybridization.
+      - **C₆H₆**: Planar hexagonal resonance ring (120.0°), sp² aromatic hybridization with delocalized π-electron cloud animation.
+      - **NaCl**: Ionic crystal lattice pair with glowing electrostatic electron transfer wave (Na⁺ cation and Cl⁻ anion).
+    - Smooth spring physics interpolation when switching molecules (atoms morph gracefully into new coordinates).
+    - Live Heads-Up Display (HUD) overlay displaying Geometry, Bond Angle, Hybridization, and Dipole Moment.
+    - Maxwell-Boltzmann Thermal Mode toggle (simulating 300K vs 600K vibrational excitation modes).
+  - **Navbar Single-Line Lock**:
+    - Applied strict `flex-wrap: nowrap !important; white-space: nowrap !important;` constraints to prevent multi-line wrapping across all major pages.
+  - **Bulletproof Theme Synchronization**:
+    - Added `_hasSharedThemeListener` safeguards to prevent duplicate toggle handlers.
+    - Unified attribute toggling (`data-theme="day"` / `light-mode` / `dark-mode`) and storage sync.
+
+LESSON: Authentic Domain Physics vs Generic Visuals
+  - Educational web applications gain maximum credibility when interactive visuals reflect real domain physics (VSEPR bond angles, dipole moments, hybridization, and thermal vibrations) rather than generic rotating icons.
+
+---
+*Moleqyn CHANGELOG | Comprehensive Record: v1.0 Foundation → v6.0 Production Suite | Last Updated: 2026-10-23*
