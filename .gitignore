@@ -8,3 +8,10 @@
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Reference study materials & raw notes (Local input only - Never committed to GitHub/Vercel)
+notes_input/
+reference_notes/
+raw_notes/
+*.pdf
+
