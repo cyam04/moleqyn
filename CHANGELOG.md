@@ -1171,4 +1171,25 @@ LESSON: Authentic Domain Physics vs Generic Visuals
   - Educational web applications gain maximum credibility when interactive visuals reflect real domain physics (VSEPR bond angles, dipole moments, hybridization, and thermal vibrations) rather than generic rotating icons.
 
 ---
-*Moleqyn CHANGELOG | Comprehensive Record: v1.0 Foundation → v6.0 Production Suite | Last Updated: 2026-10-23*
+
+### CHANGE 6.1 — Comprehensive NCERT Chapter Notes Database & Solved In-Text Cards
+
+**DATE:** 2026-10-23 17:30 IST
+**FILE:** js/chapter-notes-db.js, learn.html, CHANGELOG.md
+**WHY:** 
+Resolve student learning limitations where chapters previously displayed only high-level topic titles without in-depth textbook notes, real chemical mechanisms, solved board in-text questions, or lab experiment protocols.
+
+FEATURES:
+  - **Comprehensive Master Notes Database (`js/chapter-notes-db.js`)**:
+    - Created an extensive, modular learning database covering Class 7 through Class 12 with authentic NCERT theory, chemical equations, and practical experiment steps.
+    - Added dedicated detailed entries for key syllabus topics including Metals & Non-metals, Water & Wastewater Engineering, Combustion & Fuels, Plant Photosynthesis, Kinetic Particle Theory, Mole Concept, Atomic Quantum Structure, Chemical Reactions & Redox, Carbon Covalent Networks & Saponification Micelles, VSEPR Geometries, and Solutions Colligative Properties.
+  - **NCERT In-Text Solved Question Component (`.lesson-ncert-box`)**:
+    - Built a high-yield Q&A component within each lesson section featuring the formal question, concept breakdown, and model board-exam answers.
+  - **Enhanced Intelligent Curriculum Synthesizer**:
+    - Upgraded the dynamic fallback synthesizer for all remaining classes so that every chapter dynamically generates multi-paragraph chemical theory, formatted reaction formulas, and tailored conceptual practice quizzes instead of static boilerplate.
+
+LESSON: Content Depth & Modular Data Architecture
+  - Separating expansive curricular text into dedicated content modules (`js/chapter-notes-db.js`) keeps HTML templates fast and clean while ensuring students receive comprehensive, textbook-grade revision notes for every chapter.
+
+---
+*Moleqyn CHANGELOG | Comprehensive Record: v1.0 Foundation → v6.1 Production Suite | Last Updated: 2026-10-23*

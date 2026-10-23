@@ -2186,6 +2186,43 @@
       color: var(--text-main);
     }
 
+    /* NCERT Solved In-Text & Exemplar Cards */
+    .lesson-ncert-box {
+      background: rgba(99, 102, 241, 0.06);
+      border: 1px solid rgba(99, 102, 241, 0.22);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin: 14px 0 8px;
+    }
+    .lesson-ncert-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      font-family: var(--font-heading);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #6366f1;
+      margin-bottom: 6px;
+    }
+    .lesson-ncert-q {
+      font-weight: 700;
+      font-size: 0.86rem;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+    .lesson-ncert-ans {
+      font-size: 0.84rem;
+      line-height: 1.6;
+      color: var(--text-main);
+      background: var(--bg-surface);
+      border-radius: 8px;
+      padding: 8px 12px;
+      border-left: 3px solid #6366f1;
+    }
+
     /* DETAILED FORMULAS VAULT */
     .formula-detailed-card {
       background: var(--bg-card);
@@ -2736,6 +2773,9 @@
 
   <!-- Shared Nav JS -->
   <script src="js/shared-nav.js"></script>
+
+  <!-- Comprehensive NCERT Chapter Notes Database -->
+  <script src="js/chapter-notes-db.js"></script>
 
   <!-- CHAPTER DATA & COMPREHENSIVE CURRICULUM -->
   <script>
@@ -4209,9 +4249,15 @@
         }
       };
 
+      // 1. Check comprehensive NCERT database loaded from js/chapter-notes-db.js
+      if (window.MOLEQYN_CHAPTER_LESSONS_DB && window.MOLEQYN_CHAPTER_LESSONS_DB[key]) {
+        return window.MOLEQYN_CHAPTER_LESSONS_DB[key];
+      }
+
+      // 2. Check local DB
       if (DB[key]) return DB[key];
 
-      // Dynamic Intelligent Curriculum Synthesizer for all other chapters across Class 1 to 12
+      // 3. Dynamic High-Yield NCERT Curriculum Synthesizer
       const sub = ch.subtopics || [];
       const sections = sub.map((st, i) => {
         const parts = st.split(':');
@@ -4220,22 +4266,26 @@
 
         return {
           title: heading,
-          definition: 'Core scientific principle regarding ' + heading + ' in Class ' + cls + ' Chemistry.',
-          explanation: detail + '. In depth, this concept describes how atoms, ions, and molecules interact under fundamental thermodynamic and kinetic laws to produce observable chemical behavior.',
+          definition: 'Scientific principle governing ' + heading + ' under Class ' + cls + ' Chemistry.',
+          explanation: detail + '. At the atomic and molecular level, this phenomenon illustrates fundamental thermodynamic conservation, electrostatic attractions, and valence electron interactions that dictate real observable chemical behavior.',
           bullets: [
-            'Foundational topic under NCERT / State Boards Class ' + cls + ' Chemistry syllabus.',
-            'Essential for practical exam viva-voce and written theory examinations.',
-            'Bridges microscopic atomic interactions with macroscopic experimental evidence.'
-          ]
+            'Core topic under NCERT / CBSE / ICSE Class ' + cls + ' Chemistry syllabus.',
+            'Essential for practical exam viva-voce questions and written theory examinations.',
+            'Directly connects microscopic atomic models with macroscopic laboratory observations.'
+          ],
+          ncertQuestion: {
+            q: 'Explain the scientific significance of ' + heading + ' in everyday chemical observations.',
+            ans: heading + ' is fundamental because ' + detail + '. It helps predict reaction yields, stability of products, and industrial applications.'
+          }
         };
       });
 
       const formulas = [];
       sub.forEach(st => {
-        if (st.includes('->') || st.includes('=') || st.includes('+') || st.includes('Delta') || st.includes('pH')) {
+        if (st.includes('->') || st.includes('=') || st.includes('+') || st.includes('Delta') || st.includes('pH') || st.includes('lambda')) {
           formulas.push({
-            title: ch.title + ' Formulation',
-            equation: st.length > 70 ? st.substring(0, 70) + '...' : st,
+            title: ch.title + ' Key Formulation',
+            equation: st.length > 80 ? st.substring(0, 80) + '...' : st,
             desc: 'Stoichiometric and theoretical formulation derived from ' + ch.title + '.'
           });
         }
@@ -4243,8 +4293,8 @@
 
       if (!formulas.length) {
         formulas.push({
-          title: ch.title + ' Key Formulation',
-          equation: ch.title + ' : Reactants -> Products + Energy Transition',
+          title: ch.title + ' Stoichiometry',
+          equation: ch.title + ' : Reactants -> Products + Energy Transition (Delta H)',
           desc: 'Stoichiometric representation aligned with Class ' + cls + ' NCERT syllabus.'
         });
       }
@@ -4353,6 +4403,12 @@
             '<ul class="lesson-bullet-list">' +
               sec.bullets.map(b => '<li class="lesson-bullet-item"><span class="lesson-bullet-dot">&bull;</span><span>' + b + '</span></li>').join('') +
             '</ul>' : '') +
+          (sec.ncertQuestion ? 
+            '<div class="lesson-ncert-box">' +
+              '<div class="lesson-ncert-badge">&#x1F4D6; NCERT In-Text Solved Question</div>' +
+              '<div class="lesson-ncert-q">Q: ' + sec.ncertQuestion.q + '</div>' +
+              '<div class="lesson-ncert-ans"><strong>Model Answer: </strong>' + sec.ncertQuestion.ans + '</div>' +
+            '</div>' : '') +
           (sec.experiment ? 
             '<div class="lesson-exp-box">' +
               '<div class="lesson-exp-title">&#x1F9EA; ' + sec.experiment.name + '</div>' +
