@@ -1214,8 +1214,31 @@ FEATURES:
   - **White-Labeling & Integrity**:
     - 100% white-labeled under "Moleqyn Master Study Notes • NCERT Aligned" with zero external institute references, watermarks, or third-party proprietary mentions.
 
-LESSON: Systematic Curricular Completeness
-  - Providing an unbroken learning continuum from foundational primary science (Class 1) to advanced competitive senior chemistry (Class 12) positions Moleqyn as a unified, world-class virtual science laboratory and educational reference suite.
+### CHANGE 6.3 — Upfront Student Profile Onboarding & Batch Profile Management Overhaul
+
+**DATE:** 2026-10-24 08:12 IST
+**FILE:** login.html, dashboard.html, CHANGELOG.md
+**WHY:** 
+Eliminate legacy dummy student accounts ("Student (+91 xxxx)" with synthetic `@sms.moleqyn` emails) by implementing an upfront onboarding step (Name, real Email, Target Batch, and Avatar) during first-time login, fixing floating navbar header overlap, and delivering a modern 1-click batch switching hub with live ID card preview.
+
+FEATURES:
+  - **Upfront First-Time Student Onboarding (`login.html`)**:
+    - Introduced Step 3 Profile Setup in the Phone OTP flow (`#onboardStep`), prompting new students for their real Full Name, optional genuine Email, Target Batch, and Avatar before entering the dashboard.
+    - Added smart detection for returning students to bypass onboarding if an authenticated personalized profile already exists.
+    - Expanded Target Batch chips across registration and onboarding to comprehensively cover Classes 6 through 12 (Arjuna JEE, Lakshya Board+JEE, Yakeen NEET, Udaan Class 10, Neev Class 9, Junior Scientist).
+    - Removed synthetic `@sms.moleqyn` placeholder emails.
+  - **Header Spacing & Zero-Overlap Layout (`dashboard.html`)**:
+    - Increased `body { padding-top: 114px }` and configured `.dash-container { margin-top: 16px }` to provide a generous ~54px buffer below the floating glass navbar, preventing any text clipping on the top greeting banner across viewports.
+  - **Modern Student Identity Live Preview (`#tabProfile`)**:
+    - Designed an interactive glassmorphic Identity Card displaying the active student avatar with status ring, real name, batch pill, contact badges, academic rank level, and earned XP.
+    - Live updates in real time as the user edits their name, clicks different batch cards, or selects avatars.
+  - **1-Click Interactive Batch Switcher (`dashboard.html`)**:
+    - Replaced basic dropdown with an interactive 6-card visual grid featuring authentic curriculum metadata, icons, and active checkmark badges.
+    - Added an 8-option lively animated avatar picker.
+    - Added instant cross-component synchronization updating sidebar card, top greeting banner, navbar tags, and `localStorage` with audio feedback and luxury toast alerts.
+
+LESSON: User Agency & Upfront Personalization
+  - Prompting students for their authentic identity and academic targets upfront dramatically increases engagement and ownership compared to assigning automated placeholder identifiers.
 
 ---
-*Moleqyn CHANGELOG | Comprehensive Record: v1.0 Foundation → v6.2 Master Study Curriculum Suite | Last Updated: 2026-10-23*
+*Moleqyn CHANGELOG | Comprehensive Record: v1.0 Foundation → v6.3 Student Onboarding & Batch Hub | Last Updated: 2026-10-24*

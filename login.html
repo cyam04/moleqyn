@@ -1169,22 +1169,112 @@
         </button>
       </div>
 
-      <!-- GOOGLE 1-TAP IN PHONE VIEW -->
-      <div class="social-divider">
-        <span>OR CONTINUE WITH</span>
+      <!-- STEP 3: FIRST-TIME STUDENT ONBOARDING (NAME & BATCH SETUP) -->
+      <div id="onboardStep" class="hidden">
+        <div style="text-align:center; margin-bottom:18px;">
+          <div style="display:inline-flex; align-items:center; gap:6px; background:rgba(0,240,255,0.12); border:1px solid rgba(0,240,255,0.3); color:var(--primary); font-size:0.75rem; font-weight:700; padding:4px 12px; border-radius:14px; margin-bottom:8px;">
+            <span>✨ Complete Your Student Profile</span>
+          </div>
+          <div style="font-family:'Space Grotesk',sans-serif; font-size:1.25rem; font-weight:700; color:var(--text);">Welcome to Moleqyn! 🚀</div>
+          <div style="font-size:0.82rem; color:var(--muted); margin-top:3px;">
+            Pehle apna naam aur target batch chuniye taaki aapka chemistry lab aur DPPs personalize ho sakein.
+          </div>
+        </div>
+
+        <form id="onboardForm" onsubmit="event.preventDefault(); completePhoneOnboarding();">
+          <div class="form-group">
+            <label class="form-label" for="onboardName">
+              <span>Student Full Name <span class="req">*</span></span>
+            </label>
+            <div class="input-wrapper">
+              <span class="input-icon">👤</span>
+              <input type="text" id="onboardName" class="form-input" placeholder="e.g. Shyam Raj" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="onboardEmail">
+              <span>Email Address <span style="font-size:0.74rem; color:var(--muted);">(Optional for reports)</span></span>
+            </label>
+            <div class="input-wrapper">
+              <span class="input-icon">✉️</span>
+              <input type="email" id="onboardEmail" class="form-input" placeholder="e.g. shyam@gmail.com" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <span>Target Batch &amp; Academic Stream <span class="req">*</span></span>
+            </label>
+            <div class="batch-selector-grid">
+              <div class="batch-chip selected" onclick="selectOnboardBatch(this, 'Class 11 Science • Arjuna JEE')">
+                <div class="batch-chip-name">⚡ Arjuna JEE</div>
+                <div class="batch-chip-sub">Class 11 • JEE 2027</div>
+              </div>
+              <div class="batch-chip" onclick="selectOnboardBatch(this, 'Class 12 Science • Lakshya Board+JEE')">
+                <div class="batch-chip-name">🎯 Lakshya JEE</div>
+                <div class="batch-chip-sub">Class 12 • Boards+JEE</div>
+              </div>
+              <div class="batch-chip" onclick="selectOnboardBatch(this, 'Class 12 Medical • Yakeen NEET')">
+                <div class="batch-chip-name">🩺 Yakeen NEET</div>
+                <div class="batch-chip-sub">Class 12 • Medical</div>
+              </div>
+              <div class="batch-chip" onclick="selectOnboardBatch(this, 'Class 10 CBSE • Udaan Batch')">
+                <div class="batch-chip-name">📘 Udaan Board</div>
+                <div class="batch-chip-sub">Class 10 • 95%+ Target</div>
+              </div>
+              <div class="batch-chip" onclick="selectOnboardBatch(this, 'Class 9 Science • Neev Foundation')">
+                <div class="batch-chip-name">🧪 Neev Foundation</div>
+                <div class="batch-chip-sub">Class 9 • Olympiad/NTSE</div>
+              </div>
+              <div class="batch-chip" onclick="selectOnboardBatch(this, 'Class 6-8 • Junior Scientist')">
+                <div class="batch-chip-name">🔬 Junior Scientist</div>
+                <div class="batch-chip-sub">Class 6–8 Discovery Lab</div>
+              </div>
+            </div>
+            <input type="hidden" id="onboardBatchVal" value="Class 11 Science • Arjuna JEE" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Pick Your Avatar</label>
+            <div class="avatar-picker-row">
+              <div class="avatar-choice selected" onclick="selectOnboardAvatar(this, '👨‍🔬')">👨‍🔬</div>
+              <div class="avatar-choice" onclick="selectOnboardAvatar(this, '👩‍🔬')">👩‍🔬</div>
+              <div class="avatar-choice" onclick="selectOnboardAvatar(this, '⚡')">⚡</div>
+              <div class="avatar-choice" onclick="selectOnboardAvatar(this, '🧪')">🧪</div>
+              <div class="avatar-choice" onclick="selectOnboardAvatar(this, '⚛️')">⚛️</div>
+              <div class="avatar-choice" onclick="selectOnboardAvatar(this, '🚀')">🚀</div>
+              <div class="avatar-choice" onclick="selectOnboardAvatar(this, '🩺')">🩺</div>
+              <div class="avatar-choice" onclick="selectOnboardAvatar(this, '🎓')">🎓</div>
+            </div>
+            <input type="hidden" id="onboardAvatarVal" value="👨‍🔬" />
+          </div>
+
+          <button class="btn-submit" type="submit" id="btnCompleteOnboard">
+            <span>Launch My Chemistry Lab</span>
+            <span>🚀</span>
+          </button>
+        </form>
       </div>
-      <button class="btn-google" type="button" onclick="openGoogleModal()">
-        <svg width="18" height="18" viewBox="0 0 18 18">
-          <path fill="#4285F4"
-            d="M17.64 9.2c0-.63-.06-1.25-.16-1.84H9v3.49h4.84a4.14 4.14 0 0 1-1.8 2.71v2.26h2.92c1.71-1.57 2.68-3.89 2.68-6.62z" />
-          <path fill="#34A853"
-            d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.91-2.26c-.8.54-1.83.86-3.05.86-2.34 0-4.33-1.58-5.04-3.71H.96v2.33C2.44 15.98 5.48 18 9 18z" />
-          <path fill="#FBBC05" d="M3.96 10.71a5.41 5.41 0 0 1 0-3.42V4.96H.96a9 9 0 0 0 0 8.08l3-2.33z" />
-          <path fill="#EA4335"
-            d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.59C13.46.89 11.43 0 9 0 5.48 0 2.44 2.02.96 4.96l3 2.33c.71-2.13 2.7-3.71 5.04-3.71z" />
-        </svg>
-        <span>Google Account</span>
-      </button>
+
+      <!-- GOOGLE 1-TAP IN PHONE VIEW -->
+      <div id="phoneSocialSection">
+        <div class="social-divider">
+          <span>OR CONTINUE WITH</span>
+        </div>
+        <button class="btn-google" type="button" onclick="openGoogleModal()">
+          <svg width="18" height="18" viewBox="0 0 18 18">
+            <path fill="#4285F4"
+              d="M17.64 9.2c0-.63-.06-1.25-.16-1.84H9v3.49h4.84a4.14 4.14 0 0 1-1.8 2.71v2.26h2.92c1.71-1.57 2.68-3.89 2.68-6.62z" />
+            <path fill="#34A853"
+              d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.91-2.26c-.8.54-1.83.86-3.05.86-2.34 0-4.33-1.58-5.04-3.71H.96v2.33C2.44 15.98 5.48 18 9 18z" />
+            <path fill="#FBBC05" d="M3.96 10.71a5.41 5.41 0 0 1 0-3.42V4.96H.96a9 9 0 0 0 0 8.08l3-2.33z" />
+            <path fill="#EA4335"
+              d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.59C13.46.89 11.43 0 9 0 5.48 0 2.44 2.02.96 4.96l3 2.33c.71-2.13 2.7-3.71 5.04-3.71z" />
+          </svg>
+          <span>Google Account</span>
+        </button>
+      </div>
     </section>
 
     <!-- ==========================================
@@ -1276,15 +1366,23 @@
             </div>
             <div class="batch-chip" onclick="selectBatch(this, 'Class 12 Science • Lakshya Board+JEE')">
               <div class="batch-chip-name">🎯 Lakshya JEE</div>
-              <div class="batch-chip-sub">Class 12 • Boards</div>
+              <div class="batch-chip-sub">Class 12 • Boards+JEE</div>
             </div>
-            <div class="batch-chip" onclick="selectBatch(this, 'Class 12 Droppers • Yakeen NEET')">
+            <div class="batch-chip" onclick="selectBatch(this, 'Class 12 Medical • Yakeen NEET')">
               <div class="batch-chip-name">🩺 Yakeen NEET</div>
-              <div class="batch-chip-sub">Medical Aspirants</div>
+              <div class="batch-chip-sub">Class 12 • Medical</div>
             </div>
             <div class="batch-chip" onclick="selectBatch(this, 'Class 10 CBSE • Udaan Batch')">
               <div class="batch-chip-name">📘 Udaan Board</div>
-              <div class="batch-chip-sub">Class 10 Boards 95%+</div>
+              <div class="batch-chip-sub">Class 10 • 95%+ Target</div>
+            </div>
+            <div class="batch-chip" onclick="selectBatch(this, 'Class 9 Science • Neev Foundation')">
+              <div class="batch-chip-name">🧪 Neev Foundation</div>
+              <div class="batch-chip-sub">Class 9 • Olympiad/NTSE</div>
+            </div>
+            <div class="batch-chip" onclick="selectBatch(this, 'Class 6-8 • Junior Scientist')">
+              <div class="batch-chip-name">🔬 Junior Scientist</div>
+              <div class="batch-chip-sub">Class 6–8 Discovery Lab</div>
             </div>
           </div>
           <input type="hidden" id="selectedBatchVal" value="Class 11 Science • Arjuna JEE" />
@@ -1578,6 +1676,10 @@
     function editPhone() {
       playBeep('click');
       document.getElementById('otpStep').classList.add('hidden');
+      const onboardStep = document.getElementById('onboardStep');
+      if (onboardStep) onboardStep.classList.add('hidden');
+      const phoneSoc = document.getElementById('phoneSocialSection');
+      if (phoneSoc) phoneSoc.classList.remove('hidden');
       document.getElementById('phoneStep').classList.remove('hidden');
       document.getElementById('smsToast').classList.remove('show');
       if (otpTimerInterval) clearInterval(otpTimerInterval);
@@ -1653,6 +1755,58 @@
       }
     }
 
+    let pendingPhoneMob = '';
+
+    function selectOnboardBatch(chip, batchVal) {
+      playBeep('click');
+      document.querySelectorAll('#onboardStep .batch-chip').forEach(c => c.classList.remove('selected'));
+      chip.classList.add('selected');
+      document.getElementById('onboardBatchVal').value = batchVal;
+    }
+
+    function selectOnboardAvatar(choice, av) {
+      playBeep('click');
+      document.querySelectorAll('#onboardStep .avatar-choice').forEach(c => c.classList.remove('selected'));
+      choice.classList.add('selected');
+      document.getElementById('onboardAvatarVal').value = av;
+    }
+
+    function completePhoneOnboarding() {
+      const name = document.getElementById('onboardName').value.trim();
+      const email = document.getElementById('onboardEmail').value.trim();
+      const batchVal = document.getElementById('onboardBatchVal').value || 'Class 11 Science • Arjuna JEE';
+      const avatarVal = document.getElementById('onboardAvatarVal').value || '👨‍🔬';
+
+      if (!name) {
+        playBeep('error');
+        showToast('Please enter your full name.', 'error');
+        return;
+      }
+
+      playBeep('success');
+      const mob = pendingPhoneMob || document.getElementById('phoneInput').value.trim() || '9876543210';
+      const user = {
+        name: name,
+        email: email || '',
+        phone: "+91 " + mob,
+        class: batchVal,
+        avatar: avatarVal,
+        level: 1,
+        xp: "100 XP (Welcome)",
+        streak: 1,
+        labsCompleted: 0,
+        timeSpent: "0 mins",
+        chapterMastery: 0,
+        isNewUser: true,
+        isLoggedIn: true,
+        loginMethod: "phone_otp",
+        loginTime: new Date().toLocaleTimeString()
+      };
+
+      showToast(`Welcome to Moleqyn, ${name}! Entering your lab...`, 'success');
+      commitSessionAndRedirect(user);
+    }
+
     function verifyAndLogin() {
       let entered = '';
       for (let i = 1; i <= 6; i++) {
@@ -1672,27 +1826,37 @@
       }
 
       playBeep('success');
-      showToast('OTP Verified Successfully! Launching Dashboard...', 'success');
       const mob = document.getElementById('phoneInput').value.trim() || '9876543210';
-      const user = {
-        name: "Student (+91 " + mob.slice(-4) + ")",
-        email: mob + "@sms.moleqyn",
-        phone: "+91 " + mob,
-        class: "Class 11 Science • Arjuna JEE",
-        avatar: "👨‍🔬",
-        level: 1,
-        xp: "100 XP (Welcome)",
-        streak: 1,
-        labsCompleted: 0,
-        timeSpent: "0 mins",
-        chapterMastery: 0,
-        isNewUser: true,
-        isLoggedIn: true,
-        loginMethod: "phone_otp",
-        loginTime: new Date().toLocaleTimeString()
-      };
+      pendingPhoneMob = mob;
 
-      commitSessionAndRedirect(user);
+      // Check if existing user with THIS exact mobile number already has a configured full name
+      const savedStr = localStorage.getItem('mlab_user') || localStorage.getItem('moleqyn_user');
+      let existing = null;
+      try { if (savedStr) existing = JSON.parse(savedStr); } catch(e){}
+
+      const phoneDigits = mob.replace(/\D/g, '');
+      const existingPhoneDigits = (existing && existing.phone) ? existing.phone.replace(/\D/g, '') : '';
+      const isSamePhone = existingPhoneDigits && (existingPhoneDigits.endsWith(phoneDigits) || phoneDigits.endsWith(existingPhoneDigits));
+
+      if (isSamePhone && existing && existing.name && !existing.name.startsWith('Student (+91')) {
+        showToast(`Welcome back, ${existing.name}! Launching Dashboard...`, 'success');
+        existing.isLoggedIn = true;
+        commitSessionAndRedirect(existing);
+        return;
+      }
+
+      // First-time student: Show Step 3 Onboarding (Ask Name, Real Email & Batch Upfront)
+      document.getElementById('otpStep').classList.add('hidden');
+      const phoneSoc = document.getElementById('phoneSocialSection');
+      if (phoneSoc) phoneSoc.classList.add('hidden');
+      const onboardStep = document.getElementById('onboardStep');
+      onboardStep.classList.remove('hidden');
+      document.getElementById('smsToast').classList.remove('show');
+      showToast('OTP Verified! Complete your student profile below.', 'success');
+      setTimeout(() => {
+        const inp = document.getElementById('onboardName');
+        if (inp) inp.focus();
+      }, 150);
     }
 
     // ==========================================
