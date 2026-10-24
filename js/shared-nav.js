@@ -286,4 +286,53 @@
     }
 
   });
+
+  /* ================================================================
+     OWNER ACCESS BACKDOOR (Strictly Private - No public links shown)
+     1. Keyboard shortcut: Ctrl + Shift + A (or Alt + A)
+     2. Secret trigger: Click brand logo 5 times in 3 seconds
+  ================================================================ */
+  (function setupOwnerSecretBackdoor() {
+    function promptOwnerLogin() {
+      var key = prompt("🔒 Moleqyn Owner Master Access:\nEnter authorization key to open Admin Hub:");
+      if (!key) return;
+      var savedKey = localStorage.getItem('moleqyn_owner_key') || 'moleqyn2026';
+      if (key.trim() === savedKey || key.trim() === '2026' || key.trim() === 'moleqyn@2026') {
+        sessionStorage.setItem('moleqyn_admin_auth', 'true');
+        window.location.href = 'admin.html';
+      } else {
+        alert("⛔ Access Denied: Invalid Owner Master Key.");
+      }
+    }
+
+    // 1. Keyboard Shortcut (Ctrl+Shift+A or Alt+A)
+    window.addEventListener('keydown', function(e) {
+      if ((e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) ||
+          (e.altKey && (e.key === 'A' || e.key === 'a'))) {
+        e.preventDefault();
+        promptOwnerLogin();
+      }
+    });
+
+    // 2. Secret 5-Clicks on Moleqyn Brand Logo
+    var clickCount = 0;
+    var clickTimer = null;
+    document.addEventListener('DOMContentLoaded', function() {
+      var brandLogos = document.querySelectorAll('.mlab-brand, .brand-wrap, a[href="index.html"].mlab-brand');
+      brandLogos.forEach(function(el) {
+        el.addEventListener('click', function(e) {
+          clickCount++;
+          if (clickCount === 1) {
+            clickTimer = setTimeout(function() { clickCount = 0; }, 3000);
+          }
+          if (clickCount >= 5) {
+            e.preventDefault();
+            clickCount = 0;
+            clearTimeout(clickTimer);
+            promptOwnerLogin();
+          }
+        });
+      });
+    });
+  })();
 })();
