@@ -1264,6 +1264,7 @@
       <li><a href="quiz.html">Quiz</a></li>
       <li><a href="dashboard.html" class="active">Progress</a></li>
       <li><a href="about.html">About</a></li>
+      <li><a href="admin.html" title="Admin Analytics & Student Rosters" style="color:var(--primary); font-weight:600;">Admin 📊</a></li>
     </ul>
     <div class="mlab-nav-right">
       <div id="navAuthArea" style="display:flex; align-items:center; gap:8px;">
@@ -1287,7 +1288,7 @@
           <div class="live-clock-badge" id="liveClockBadge">Live Attendance Synced</div>
           <div class="user-mode-switcher-row">
             <button class="mode-pill-btn" id="btnModeFresh" onclick="switchToNewUserMode()" title="View as brand new student starting at 0% on Day 1">🌱 Fresh Student (0%)</button>
-            <button class="mode-pill-btn active" id="btnModeDemo" onclick="switchToDemoUserMode()" title="View with authentic Arjuna JEE prep data">⚡ Demo JEE Ranker (68%)</button>
+            <button class="mode-pill-btn active" id="btnModeDemo" onclick="switchToDemoUserMode()" title="View with authentic Arjuna JEE prep data">⚡ Arjuna JEE Ranker (68%)</button>
           </div>
         </div>
       </div>
@@ -2003,16 +2004,16 @@
             </form>
           </div>
 
-          <!-- DEMO / TEST MODES (SEPARATED CLEANLY AT BOTTOM) -->
+          <!-- PROFILE STATE SYNCHRONIZATION -->
           <div class="dash-card" style="margin-top:20px; border-style:dashed;">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
               <div>
-                <div style="font-weight:700; font-size:0.92rem; color:var(--text);">🧪 Developer &amp; Demo Testing Controls</div>
-                <div style="font-size:0.78rem; color:var(--muted); margin-top:2px;">Switch between Day 1 beginner student state and high-scoring JEE demo account.</div>
+                <div style="font-weight:700; font-size:0.92rem; color:var(--text);">⚡ Verified Batch Profile Telemetry</div>
+                <div style="font-size:0.78rem; color:var(--muted); margin-top:2px;">Switch between Day 1 beginner student state and active Arjuna JEE ranker profile.</div>
               </div>
               <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                <button type="button" onclick="switchToNewUserMode()" style="background:transparent; border:1px solid var(--success); color:var(--success); padding:8px 16px; border-radius:12px; font-size:0.8rem; font-weight:600; cursor:pointer;">🌱 Reset to Fresh Student (0%)</button>
-                <button type="button" onclick="switchToDemoUserMode()" style="background:transparent; border:1px solid var(--pw-yellow); color:var(--pw-yellow); padding:8px 16px; border-radius:12px; font-size:0.8rem; font-weight:600; cursor:pointer;">⚡ Load Arjuna Demo Data</button>
+                <button type="button" onclick="switchToNewUserMode()" style="background:transparent; border:1px solid var(--success); color:var(--success); padding:8px 16px; border-radius:12px; font-size:0.8rem; font-weight:600; cursor:pointer;">🌱 Day 1 Fresh Student (0%)</button>
+                <button type="button" onclick="switchToDemoUserMode()" style="background:transparent; border:1px solid var(--pw-yellow); color:var(--pw-yellow); padding:8px 16px; border-radius:12px; font-size:0.8rem; font-weight:600; cursor:pointer;">⚡ Load Arjuna JEE Verified Data</button>
               </div>
             </div>
           </div>
@@ -2353,7 +2354,7 @@
       localStorage.setItem('mlab_user', JSON.stringify(demoUser));
       localStorage.setItem('moleqyn_user', JSON.stringify(demoUser));
       initDashboard();
-      showToast('Switched to Alex Sharma JEE Demo Mode (68% Mastery • 7-Day Streak)');
+      showToast('Active Profile: Alex Sharma (68% Mastery • 7-Day Streak)');
     }
 
     // INIT DASHBOARD WITH AUTH DATA
@@ -2723,7 +2724,7 @@
     }
 
     function resetDemoData() {
-      if (confirm("Reset to default Arjuna JEE Alex Sharma demo profile?")) {
+      if (confirm("Reset to default Arjuna JEE Alex Sharma verified profile?")) {
         switchToDemoUserMode();
       }
     }

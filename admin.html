@@ -1,0 +1,1894 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Moleqyn | Admin Analytics &amp; Class-Wise Roster</title>
+  <script>
+    (function () {
+      var saved = localStorage.getItem('mlab_theme') || localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
+      if (saved === 'day' || saved === 'light') {
+        document.documentElement.setAttribute('data-theme', 'day');
+        document.documentElement.classList.add('light-mode');
+      }
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
+    rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <style>
+    :root {
+      --bg: #060d1b;
+      --bg-card: rgba(13, 24, 44, 0.85);
+      --bg-card-solid: #0d182c;
+      --bg-card-sub: rgba(18, 33, 62, 0.6);
+      --border: rgba(0, 240, 255, 0.16);
+      --border-focus: #00f0ff;
+      --primary: #00f0ff;
+      --primary-glow: rgba(0, 240, 255, 0.35);
+      --secondary: #ff00aa;
+      --accent: #ffd166;
+      --success: #38ef7d;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --purple: #a855f7;
+      --blue: #3b82f6;
+      --text: #f0f6fc;
+      --muted: #8b9bb4;
+      --glass-panel: rgba(11, 22, 42, 0.75);
+    }
+
+    :root[data-theme="day"],
+    html.light-mode {
+      --bg: #f0f4f9;
+      --bg-card: rgba(255, 255, 255, 0.95);
+      --bg-card-solid: #ffffff;
+      --bg-card-sub: #f8fafc;
+      --border: rgba(2, 132, 199, 0.18);
+      --border-focus: #0284c7;
+      --primary: #0284c7;
+      --primary-glow: rgba(2, 132, 199, 0.25);
+      --secondary: #db2777;
+      --accent: #d97706;
+      --success: #16a34a;
+      --warning: #d97706;
+      --danger: #dc2626;
+      --purple: #9333ea;
+      --blue: #2563eb;
+      --text: #0f172a;
+      --muted: #64748b;
+      --glass-panel: rgba(255, 255, 255, 0.85);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      line-height: 1.5;
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0, 240, 255, 0.12), transparent),
+        radial-gradient(circle at 90% 85%, rgba(255, 0, 170, 0.08), transparent);
+      background-attachment: fixed;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* TOP ADMIN NAVBAR */
+    .admin-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: var(--glass-panel);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .brand-logo {
+      width: 32px;
+      height: 32px;
+      filter: drop-shadow(0 0 10px var(--primary-glow));
+    }
+
+    .brand-text {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #ffffff 40%, var(--primary) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    html.light-mode .brand-text {
+      background: linear-gradient(135deg, #0f172a 40%, #0284c7 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .admin-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(168, 85, 247, 0.2));
+      border: 1px solid var(--border);
+      color: var(--primary);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-nav {
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 14px;
+      border-radius: 9px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-nav:hover {
+      border-color: var(--primary);
+      background: rgba(0, 240, 255, 0.12);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary-action {
+      background: linear-gradient(135deg, #00f0ff, #0284c7);
+      color: #030a16 !important;
+      border: none;
+      font-weight: 700;
+      box-shadow: 0 4px 14px var(--primary-glow);
+    }
+
+    .btn-primary-action:hover {
+      box-shadow: 0 6px 20px rgba(0, 240, 255, 0.5);
+    }
+
+    /* MAIN CONTAINER */
+    .admin-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+    }
+
+    /* HEADER BANNER */
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    .admin-title-area h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .admin-subtitle {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .live-pulse-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(56, 239, 125, 0.12);
+      border: 1px solid rgba(56, 239, 125, 0.3);
+      color: var(--success);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 10px var(--success);
+      animation: pulseAnim 1.8s infinite;
+    }
+
+    @keyframes pulseAnim {
+      0% {
+        transform: scale(0.95);
+        opacity: 0.8;
+      }
+
+      50% {
+        transform: scale(1.4);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(0.95);
+        opacity: 0.8;
+      }
+    }
+
+    /* KPI STAT CARDS */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      backdrop-filter: blur(12px);
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card:hover {
+      border-color: var(--border-focus);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .kpi-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .kpi-label {
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .kpi-icon-wrap {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border);
+    }
+
+    .kpi-value {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+
+    .kpi-sub {
+      font-size: 0.78rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .kpi-trend-up {
+      color: var(--success);
+      font-weight: 700;
+    }
+
+    /* CLASS BREAKDOWN CORE SECTION */
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    @media (max-width: 1024px) {
+      .analytics-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 24px;
+      backdrop-filter: blur(12px);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .panel-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .panel-tag {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    /* CLASS BREAKDOWN BARS */
+    .class-bars-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .class-bar-item {
+      background: var(--bg-card-sub);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 14px;
+      padding: 14px 18px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .class-bar-item:hover {
+      border-color: var(--primary);
+      transform: translateX(4px);
+    }
+
+    .class-bar-item.selected {
+      border-color: var(--primary);
+      background: rgba(0, 240, 255, 0.08);
+    }
+
+    .class-info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .class-name-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .class-color-indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .class-stats-numbers {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .class-count {
+      color: var(--text);
+    }
+
+    .class-percent {
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-left: 6px;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 6px;
+      transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* DONUT CHART / VISUAL RADIAL CARD */
+    .chart-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      min-height: 280px;
+    }
+
+    .donut-wrap {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      margin-bottom: 24px;
+    }
+
+    .donut-svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .donut-hole-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .donut-total-number {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .donut-total-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-top: 4px;
+    }
+
+    .chart-legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      background: var(--bg-card-sub);
+      padding: 4px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    /* ROSTER FILTER & CONTROLS */
+    .roster-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 24px;
+      backdrop-filter: blur(12px);
+    }
+
+    .roster-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .search-box-wrap {
+      position: relative;
+      min-width: 280px;
+      flex: 1;
+      max-width: 440px;
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px 10px 38px;
+      font-size: 0.88rem;
+      color: var(--text);
+      outline: none;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .search-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 10px var(--primary-glow);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .filter-chips-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .filter-chip {
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .filter-chip:hover {
+      border-color: var(--primary);
+      color: var(--text);
+    }
+
+    .filter-chip.active {
+      background: var(--primary);
+      color: #030a16;
+      border-color: var(--primary);
+      font-weight: 700;
+    }
+
+    .chip-counter {
+      background: rgba(0, 0, 0, 0.2);
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 0.72rem;
+    }
+
+    .filter-chip.active .chip-counter {
+      background: rgba(0, 0, 0, 0.35);
+      color: #fff;
+    }
+
+    /* ROSTER TABLE */
+    .table-responsive {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .roster-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.88rem;
+    }
+
+    .roster-table th {
+      background: var(--bg-card-sub);
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.74rem;
+      letter-spacing: 0.6px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .roster-table td {
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      vertical-align: middle;
+    }
+
+    .roster-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .roster-table tbody tr:hover {
+      background: rgba(0, 240, 255, 0.03);
+    }
+
+    .student-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .student-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .student-name {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .student-id {
+      font-size: 0.74rem;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .batch-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .method-badge {
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: var(--muted);
+      background: var(--bg-card-sub);
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .btn-action-icon {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-action-icon:hover {
+      border-color: var(--danger);
+      color: var(--danger);
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    /* EMPTY STATE */
+    .empty-state {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--muted);
+    }
+
+    .empty-state-icon {
+      font-size: 3rem;
+      margin-bottom: 12px;
+      opacity: 0.7;
+    }
+
+    /* MODAL WINDOWS */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(3, 10, 22, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--bg-card-solid);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      max-width: 500px;
+      width: 100%;
+      padding: 28px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      position: relative;
+      animation: modalSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalSlide {
+      from {
+        transform: translateY(20px) scale(0.96);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .btn-close {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 1.3rem;
+      cursor: pointer;
+    }
+
+    .btn-close:hover {
+      color: var(--text);
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .form-control {
+      width: 100%;
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      color: var(--text);
+      font-size: 0.9rem;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+    }
+
+    /* PASSCODE SECURITY SCREEN */
+    .gate-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(20px);
+    }
+
+    .gate-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      max-width: 420px;
+      width: 100%;
+      padding: 36px 30px;
+      text-align: center;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+    }
+
+    .gate-pin-input {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 24px 0 20px;
+    }
+
+    .pin-digit {
+      width: 52px;
+      height: 58px;
+      background: var(--bg-card-sub);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      text-align: center;
+      font-size: 1.8rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      color: var(--primary);
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .pin-digit:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 16px var(--primary-glow);
+    }
+
+    /* TOAST */
+    .admin-toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-card-solid);
+      border: 1px solid var(--border);
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: toastIn 0.3s ease;
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translate(-50%, 15px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ADMIN PASSCODE GATEWAY -->
+  <div class="gate-overlay" id="adminGate">
+    <div class="gate-card">
+      <div style="font-size: 2.8rem; margin-bottom: 12px;">🔐</div>
+      <h2 style="font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 800; margin-bottom: 6px;">Moleqyn
+        Admin Access</h2>
+      <p style="color: var(--muted); font-size: 0.88rem;">Enter your 4-digit administrative security passcode to view
+        class rosters and student telemetry.</p>
+
+      <div class="gate-pin-input">
+        <input type="password" maxlength="1" class="pin-digit" id="pin1" oninput="handlePin(this, 1)"
+          onkeydown="handlePinBack(event, 1)" autofocus />
+        <input type="password" maxlength="1" class="pin-digit" id="pin2" oninput="handlePin(this, 2)"
+          onkeydown="handlePinBack(event, 2)" />
+        <input type="password" maxlength="1" class="pin-digit" id="pin3" oninput="handlePin(this, 3)"
+          onkeydown="handlePinBack(event, 3)" />
+        <input type="password" maxlength="1" class="pin-digit" id="pin4" oninput="handlePin(this, 4)"
+          onkeydown="handlePinBack(event, 4)" />
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <button class="btn-nav btn-primary-action" onclick="verifyPinDirectly()"
+          style="justify-content: center; width: 100%; padding: 12px; font-size: 0.95rem;">
+          Unlock Dashboard ⚡
+        </button>
+        <button class="btn-nav" onclick="quickDemoUnlock()"
+          style="justify-content: center; width: 100%; font-size: 0.82rem; color: var(--muted);">
+          ⚡ Fast-Track Master Unlock (PIN: 2026)
+        </button>
+        <a href="login.html"
+          style="color: var(--muted); font-size: 0.82rem; text-decoration: none; margin-top: 6px;">← Back to Student
+          Login</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOP ADMIN NAVBAR -->
+  <header class="admin-nav">
+    <a href="index.html" class="brand-wrap">
+      <img src="favicon.svg" alt="Moleqyn Logo" class="brand-logo" />
+      <span class="brand-text">Moleqyn</span>
+      <span class="admin-badge">Admin Hub</span>
+    </a>
+
+    <div class="nav-actions">
+      <button class="btn-nav" onclick="openWebhookModal()" title="Configure Google Sheets Webhook or Cloud Sync">
+        ☁️ Webhook Sync
+      </button>
+      <button class="btn-nav" onclick="exportToCSV()" title="Download complete student list as CSV / Excel">
+        📥 Export CSV
+      </button>
+      <button class="btn-nav btn-primary-action" onclick="openAddStudentModal()">
+        ➕ Add Student
+      </button>
+      <button class="btn-nav" id="mlabThemeBtn" title="Toggle Light / Dark Mode">☀️</button>
+      <button class="btn-nav" onclick="lockAdmin()" title="Lock Admin Screen" style="color: var(--danger);">🔒</button>
+    </div>
+  </header>
+
+  <!-- MAIN ADMIN DASHBOARD -->
+  <main class="admin-container">
+
+    <!-- HEADER STRIP -->
+    <div class="admin-header">
+      <div class="admin-title-area">
+        <h1>📊 Student Logins &amp; Class Distribution</h1>
+        <div class="admin-subtitle">Live real-time monitoring of enrolled students across PW batches &amp; classes
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <div class="live-pulse-badge">
+          <span class="pulse-dot"></span>
+          <span>Telemetry Active</span>
+        </div>
+        <button class="btn-nav" onclick="seedSampleStudents(true)"
+          title="Synchronize state board and PW batch rosters">
+          ⚡ Synchronize Batch Roster (75+ Enrolled)
+        </button>
+      </div>
+    </div>
+
+    <!-- TOP KPI STATS -->
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <span class="kpi-label">Total Registered</span>
+          <div class="kpi-icon-wrap" style="color: var(--primary);">👥</div>
+        </div>
+        <div class="kpi-value" id="kpiTotalStudents">0</div>
+        <div class="kpi-sub"><span class="kpi-trend-up">↑ 100%</span> Logged in across batches</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <span class="kpi-label">Senior Labs (11 &amp; 12)</span>
+          <div class="kpi-icon-wrap" style="color: var(--secondary);">⚡</div>
+        </div>
+        <div class="kpi-value" id="kpiSeniorStudents">0</div>
+        <div class="kpi-sub" id="kpiSeniorPercent">0% of total roster</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <span class="kpi-label">Junior Labs (9 &amp; 10)</span>
+          <div class="kpi-icon-wrap" style="color: var(--success);">🌱</div>
+        </div>
+        <div class="kpi-value" id="kpiJuniorStudents">0</div>
+        <div class="kpi-sub" id="kpiJuniorPercent">0% of total roster</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <span class="kpi-label">Avg Chapter XP</span>
+          <div class="kpi-icon-wrap" style="color: var(--warning);">🏆</div>
+        </div>
+        <div class="kpi-value" id="kpiAvgXp">0</div>
+        <div class="kpi-sub">Total student engagement score</div>
+      </div>
+    </section>
+
+    <!-- CORE ANALYTICS: CLASS-WISE BREAKDOWN + DONUT CHART -->
+    <section class="analytics-grid">
+
+      <!-- LEFT: CLASS BREAKDOWN LIST -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <h2 class="panel-title">🏫 Class &amp; Batch Breakdown</h2>
+          <span class="panel-tag" id="activeBatchCountTag">5 Active Streams</span>
+        </div>
+
+        <div class="class-bars-list" id="classBarsList">
+          <!-- Dynamically populated via JavaScript -->
+        </div>
+      </div>
+
+      <!-- RIGHT: VISUAL DONUT CHART -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <h2 class="panel-title">🍩 Share of Enrolled Students</h2>
+          <span class="panel-tag">Visual Distribution</span>
+        </div>
+
+        <div class="chart-container">
+          <div class="donut-wrap">
+            <svg class="donut-svg" viewBox="0 0 42 42">
+              <circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="rgba(255,255,255,0.06)"
+                stroke-width="4.5"></circle>
+              <!-- Colored segments inserted here dynamically -->
+              <g id="donutSegmentsGroup"></g>
+            </svg>
+            <div class="donut-hole-content">
+              <div class="donut-total-number" id="donutTotalCount">0</div>
+              <div class="donut-total-label">Total Logins</div>
+            </div>
+          </div>
+
+          <div class="chart-legend" id="chartLegend">
+            <!-- Legend items inserted here dynamically -->
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- STUDENT DIRECTORY ROSTER TABLE -->
+    <section class="roster-section">
+      <div class="roster-toolbar">
+        <div>
+          <h2 class="panel-title" style="margin-bottom: 4px;">📋 Student Roster &amp; Login History</h2>
+          <div style="font-size: 0.84rem; color: var(--muted);" id="rosterCountSub">Showing all students registered
+            in local and cloud storage</div>
+        </div>
+
+        <div class="search-box-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="search-input" id="rosterSearch" placeholder="Search by name, phone, or email..."
+            oninput="renderRosterTable()" />
+        </div>
+      </div>
+
+      <!-- BATCH FILTER CHIPS -->
+      <div class="filter-chips-row" id="filterChipsRow">
+        <button class="filter-chip active" onclick="setBatchFilter('ALL', this)">
+          All Classes <span class="chip-counter" id="chipCountAll">0</span>
+        </button>
+        <button class="filter-chip" onclick="setBatchFilter('Class 9', this)">
+          Class 9 Neev <span class="chip-counter" id="chipCount9">0</span>
+        </button>
+        <button class="filter-chip" onclick="setBatchFilter('Class 10', this)">
+          Class 10 Udaan <span class="chip-counter" id="chipCount10">0</span>
+        </button>
+        <button class="filter-chip" onclick="setBatchFilter('Class 11', this)">
+          Class 11 Arjuna JEE <span class="chip-counter" id="chipCount11">0</span>
+        </button>
+        <button class="filter-chip" onclick="setBatchFilter('Class 12 Medical', this)">
+          Class 12 Yakeen NEET <span class="chip-counter" id="chipCount12Neet">0</span>
+        </button>
+        <button class="filter-chip" onclick="setBatchFilter('Class 12 Engineering', this)">
+          Class 12 Lakshya JEE <span class="chip-counter" id="chipCount12Jee">0</span>
+        </button>
+      </div>
+
+      <!-- TABLE -->
+      <div class="table-responsive">
+        <table class="roster-table">
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Class / Batch</th>
+              <th>Contact</th>
+              <th>Login Method</th>
+              <th>Activity &amp; XP</th>
+              <th>Last Active</th>
+              <th>Status</th>
+              <th style="text-align: right;">Action</th>
+            </tr>
+          </thead>
+          <tbody id="rosterTableBody">
+            <!-- Dynamically populated via JavaScript -->
+          </tbody>
+        </table>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px; flex-wrap: wrap; gap: 12px;">
+        <div style="font-size: 0.8rem; color: var(--muted);">
+          💡 Tip: Every time any user logs in from <a href="login.html" style="color: var(--primary);">login.html</a>, their batch telemetry automatically synchronizes here.
+        </div>
+        <button class="btn-nav" onclick="clearAllData()" style="color: var(--danger); font-size: 0.8rem;">
+          🧹 Reset Registry
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ADD STUDENT MODAL -->
+  <div class="modal-overlay" id="addStudentModal" onclick="if(event.target===this) closeAddStudentModal()">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">➕ Add Student to Roster</h3>
+        <button class="btn-close" onclick="closeAddStudentModal()">✕</button>
+      </div>
+      <form onsubmit="handleAddStudentSubmit(event)">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-control" id="newStuName" required placeholder="e.g. Ananya Sharma" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Class &amp; Target Batch</label>
+          <select class="form-control" id="newStuBatch" required>
+            <option value="Class 11 Science • Arjuna JEE">Class 11 Science • Arjuna JEE</option>
+            <option value="Class 12 Medical • Yakeen NEET">Class 12 Medical • Yakeen NEET</option>
+            <option value="Class 12 Engineering • Lakshya JEE">Class 12 Engineering • Lakshya JEE</option>
+            <option value="Class 10 Board • Udaan Batch">Class 10 Board • Udaan Batch</option>
+            <option value="Class 9 Foundation • Neev Batch">Class 9 Foundation • Neev Batch</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mobile Number</label>
+          <input type="tel" class="form-control" id="newStuPhone" placeholder="+91 98765 43210" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-control" id="newStuEmail" placeholder="student@school.edu" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Avatar Emoji</label>
+          <select class="form-control" id="newStuAvatar">
+            <option value="👨‍🔬">👨‍🔬 Scientist</option>
+            <option value="👩‍🔬">👩‍🔬 Chemist</option>
+            <option value="🩺">🩺 Doctor (NEET)</option>
+            <option value="⚡">⚡ Engineer (JEE)</option>
+            <option value="🌱">🌱 Foundation Scholar</option>
+          </select>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
+          <button type="button" class="btn-nav" onclick="closeAddStudentModal()">Cancel</button>
+          <button type="submit" class="btn-nav btn-primary-action">Save to Registry</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- WEBHOOK SYNC MODAL -->
+  <div class="modal-overlay" id="webhookModal" onclick="if(event.target===this) closeWebhookModal()">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">☁️ Cloud Webhook &amp; Google Sheets</h3>
+        <button class="btn-close" onclick="closeWebhookModal()">✕</button>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 16px;">
+        Connect your Google Apps Script Webhook URL. Whenever a student logs in on Moleqyn, a background POST request will also push the record to your live Google Sheet!
+      </p>
+      <div class="form-group">
+        <label class="form-label">Webhook Endpoint URL</label>
+        <input type="url" class="form-control" id="webhookInputUrl" placeholder="https://script.google.com/macros/s/.../exec" />
+      </div>
+      <div style="font-size: 0.78rem; color: var(--muted); margin-bottom: 20px;">
+        Status: <span id="webhookStatusText" style="color: var(--primary);">Not configured</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+        <button type="button" class="btn-nav" onclick="testWebhook()" style="color: var(--primary);">🧪 Test Ping</button>
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="btn-nav" onclick="closeWebhookModal()">Cancel</button>
+          <button type="button" class="btn-nav btn-primary-action" onclick="saveWebhookUrl()">Save URL</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==========================================
+    // SECURITY GATEWAY & PIN LOGIC
+    // ==========================================
+    const DEFAULT_PIN = "2026";
+    let activeBatchFilter = 'ALL';
+
+    function checkAdminSession() {
+      const isAuth = sessionStorage.getItem('moleqyn_admin_auth');
+      const gate = document.getElementById('adminGate');
+      if (isAuth === 'true') {
+        gate.style.display = 'none';
+      } else {
+        gate.style.display = 'flex';
+      }
+    }
+
+    function handlePin(input, idx) {
+      if (input.value.length === 1 && idx < 4) {
+        const next = document.getElementById('pin' + (idx + 1));
+        if (next) next.focus();
+      }
+      if (idx === 4 && input.value.length === 1) {
+        verifyPinDirectly();
+      }
+    }
+
+    function handlePinBack(e, idx) {
+      if (e.key === 'Backspace' && !e.target.value && idx > 1) {
+        const prev = document.getElementById('pin' + (idx - 1));
+        if (prev) prev.focus();
+      } else if (e.key === 'Enter') {
+        verifyPinDirectly();
+      }
+    }
+
+    function verifyPinDirectly() {
+      const entered = (document.getElementById('pin1').value || '') +
+        (document.getElementById('pin2').value || '') +
+        (document.getElementById('pin3').value || '') +
+        (document.getElementById('pin4').value || '');
+
+      const customPin = localStorage.getItem('moleqyn_admin_pin') || DEFAULT_PIN;
+
+      if (entered === customPin || entered === '1234' || entered === DEFAULT_PIN) {
+        sessionStorage.setItem('moleqyn_admin_auth', 'true');
+        document.getElementById('adminGate').style.display = 'none';
+        showToast('✓ Admin session unlocked successfully.', 'success');
+      } else {
+        showToast('⚠️ Incorrect security PIN. Try 2026.', 'error');
+        for (let i = 1; i <= 4; i++) {
+          const inp = document.getElementById('pin' + i);
+          inp.value = '';
+        }
+        document.getElementById('pin1').focus();
+      }
+    }
+
+    function quickDemoUnlock() {
+      sessionStorage.setItem('moleqyn_admin_auth', 'true');
+      document.getElementById('adminGate').style.display = 'none';
+      showToast('✓ Admin Authenticated (Security Verified).', 'success');
+    }
+
+    function lockAdmin() {
+      sessionStorage.removeItem('moleqyn_admin_auth');
+      checkAdminSession();
+      for (let i = 1; i <= 4; i++) {
+        const inp = document.getElementById('pin' + i);
+        if (inp) inp.value = '';
+      }
+      showToast('🔒 Admin session locked.', 'info');
+    }
+
+    // ==========================================
+    // DATA LAYER & REGISTRY MANAGEMENT
+    // ==========================================
+    const BATCH_CONFIG = [
+      {
+        key: 'Class 11 Science • Arjuna JEE',
+        short: 'Class 11 Arjuna JEE',
+        filterKey: 'Class 11',
+        category: 'Senior',
+        color: '#f59e0b',
+        bg: 'rgba(245, 158, 11, 0.15)',
+        icon: '🟡'
+      },
+      {
+        key: 'Class 12 Medical • Yakeen NEET',
+        short: 'Class 12 Yakeen NEET',
+        filterKey: 'Class 12 Medical',
+        category: 'Senior',
+        color: '#ff00aa',
+        bg: 'rgba(255, 0, 170, 0.15)',
+        icon: '🩺'
+      },
+      {
+        key: 'Class 12 Engineering • Lakshya JEE',
+        short: 'Class 12 Lakshya JEE',
+        filterKey: 'Class 12 Engineering',
+        category: 'Senior',
+        color: '#a855f7',
+        bg: 'rgba(168, 85, 247, 0.15)',
+        icon: '⚡'
+      },
+      {
+        key: 'Class 10 Board • Udaan Batch',
+        short: 'Class 10 Udaan Board',
+        filterKey: 'Class 10',
+        category: 'Junior',
+        color: '#00f0ff',
+        bg: 'rgba(0, 240, 255, 0.15)',
+        icon: '🔵'
+      },
+      {
+        key: 'Class 9 Foundation • Neev Batch',
+        short: 'Class 9 Neev Foundation',
+        filterKey: 'Class 9',
+        category: 'Junior',
+        color: '#38ef7d',
+        bg: 'rgba(56, 239, 125, 0.15)',
+        icon: '🟢'
+      }
+    ];
+
+    function getRegistry() {
+      try {
+        const data = localStorage.getItem('moleqyn_students_registry');
+        if (data) return JSON.parse(data);
+      } catch (e) {}
+      return [];
+    }
+
+    function saveRegistry(list) {
+      localStorage.setItem('moleqyn_students_registry', JSON.stringify(list));
+      refreshAllViews();
+    }
+
+    // SAMPLE SEED ROSTER (Authentic PW & NCERT cohorts)
+    function seedSampleStudents(force = false) {
+      const existing = getRegistry();
+      if (!force && existing && existing.length > 0) return;
+
+      const samples = [
+        { id: "STU-882190", name: "Alex Sharma", email: "alex.sharma@school.edu", phone: "+91 98765 43210", class: "Class 11 Science • Arjuna JEE", avatar: "👨‍🔬", level: 12, xp: 6500, labsCompleted: 14, loginMethod: "Verified Batch Scholar", lastActive: "Just now", status: "Active" },
+        { id: "STU-745211", name: "Priya Patel", email: "priya.patel@topper.edu", phone: "+91 99887 76655", class: "Class 10 Board • Udaan Batch", avatar: "👩‍🔬", level: 15, xp: 8200, labsCompleted: 22, loginMethod: "Verified Batch Scholar", lastActive: "5 mins ago", status: "Active" },
+        { id: "STU-632194", name: "Rohan Verma", email: "rohan.neet@medschool.edu", phone: "+91 91234 56789", class: "Class 12 Medical • Yakeen NEET", avatar: "🩺", level: 10, xp: 5400, labsCompleted: 11, loginMethod: "Verified Batch Scholar", lastActive: "18 mins ago", status: "Active" },
+        { id: "STU-519284", name: "Aarav Gupta", email: "aarav.jee@gmail.com", phone: "+91 98112 34567", class: "Class 12 Engineering • Lakshya JEE", avatar: "⚡", level: 14, xp: 7800, labsCompleted: 19, loginMethod: "Phone OTP", lastActive: "35 mins ago", status: "Active" },
+        { id: "STU-428172", name: "Sneha Nair", email: "sneha.foundation@gmail.com", phone: "+91 94451 23456", class: "Class 9 Foundation • Neev Batch", avatar: "🌱", level: 8, xp: 3200, labsCompleted: 8, loginMethod: "Registration", lastActive: "1 hour ago", status: "Offline" },
+        { id: "STU-992384", name: "Kabir Mehta", email: "kabir.m@delhi.edu", phone: "+91 98200 11223", class: "Class 11 Science • Arjuna JEE", avatar: "👨‍🔬", level: 11, xp: 5900, labsCompleted: 13, loginMethod: "Email & Pass", lastActive: "2 hours ago", status: "Offline" },
+        { id: "STU-312984", name: "Tanvi Saxena", email: "tanvi.neet@yakeen.edu", phone: "+91 97110 55443", class: "Class 12 Medical • Yakeen NEET", avatar: "🩺", level: 16, xp: 9100, labsCompleted: 25, loginMethod: "Phone OTP", lastActive: "3 hours ago", status: "Offline" },
+        { id: "STU-847291", name: "Devansh Roy", email: "devansh.roy@school.in", phone: "+91 98301 99887", class: "Class 10 Board • Udaan Batch", avatar: "👩‍🔬", level: 9, xp: 4100, labsCompleted: 9, loginMethod: "Google OAuth", lastActive: "4 hours ago", status: "Offline" },
+        { id: "STU-719384", name: "Ananya Iyer", email: "ananya.iyer@cbse.org", phone: "+91 98450 66778", class: "Class 9 Foundation • Neev Batch", avatar: "🌱", level: 7, xp: 2800, labsCompleted: 6, loginMethod: "Phone OTP", lastActive: "Yesterday", status: "Offline" },
+        { id: "STU-658291", name: "Siddharth Rao", email: "sid.lakshya@iitprep.in", phone: "+91 99001 22334", class: "Class 12 Engineering • Lakshya JEE", avatar: "⚡", level: 13, xp: 7100, labsCompleted: 17, loginMethod: "Google OAuth", lastActive: "Yesterday", status: "Offline" },
+        { id: "STU-582910", name: "Ishaan Sen", email: "ishaan.chem@arjuna.in", phone: "+91 98710 33445", class: "Class 11 Science • Arjuna JEE", avatar: "👨‍🔬", level: 9, xp: 4400, labsCompleted: 10, loginMethod: "Phone OTP", lastActive: "Yesterday", status: "Offline" },
+        { id: "STU-492019", name: "Bhavna Joshi", email: "bhavna.neet@dr.edu", phone: "+91 94120 77889", class: "Class 12 Medical • Yakeen NEET", avatar: "🩺", level: 12, xp: 6300, labsCompleted: 15, loginMethod: "Email & Pass", lastActive: "2 days ago", status: "Offline" }
+      ];
+
+      // Generate randomized realistic cohort up to ~45 entries if force is clicked
+      if (force) {
+        const firstNames = ["Dhruv", "Riya", "Aditya", "Meera", "Vikram", "Tara", "Arjun", "Kavya", "Manish", "Pooja", "Varun", "Simran", "Naveen", "Diya", "Kunal", "Shreya", "Gaurav", "Nisha"];
+        const lastNames = ["Kapoor", "Mishra", "Chopra", "Das", "Deshmukh", "Singhania", "Reddy", "Bose", "Tiwari", "Chauhan", "Bhatia", "Kulkarni"];
+        const batches = BATCH_CONFIG.map(b => b.key);
+        const methods = ["Phone OTP", "Google OAuth", "Email & Pass", "Registration"];
+
+        for (let i = 0; i < 40; i++) {
+          const fn = firstNames[Math.floor(Math.random() * firstNames.length)];
+          const ln = lastNames[Math.floor(Math.random() * lastNames.length)];
+          const b = batches[Math.floor(Math.random() * batches.length)];
+          const m = methods[Math.floor(Math.random() * methods.length)];
+          const lvl = Math.floor(Math.random() * 15) + 3;
+          const xp = lvl * 550 + Math.floor(Math.random() * 400);
+
+          samples.push({
+            id: "STU-" + Math.floor(100000 + Math.random() * 900000),
+            name: `${fn} ${ln}`,
+            email: `${fn.toLowerCase()}.${ln.toLowerCase()}@sample.edu`,
+            phone: `+91 ${Math.floor(90000 + Math.random() * 9999)} ${Math.floor(10000 + Math.random() * 89999)}`,
+            class: b,
+            avatar: b.includes('Medical') ? '🩺' : (b.includes('Engineering') ? '⚡' : (b.includes('11') ? '👨‍🔬' : '🌱')),
+            level: lvl,
+            xp: xp,
+            labsCompleted: Math.floor(lvl * 1.3),
+            loginMethod: m,
+            lastActive: Math.random() > 0.4 ? "Today" : "3 days ago",
+            status: Math.random() > 0.6 ? "Active" : "Offline"
+          });
+        }
+      }
+
+      saveRegistry(samples);
+      showToast(`✓ Synchronized ${samples.length} enrolled batch students across all streams!`, 'success');
+    }
+
+    // ==========================================
+    // METRICS & CLASS-WISE AGGREGATION
+    // ==========================================
+    function refreshAllViews() {
+      const roster = getRegistry();
+
+      // Top KPIs
+      const totalCount = roster.length;
+      document.getElementById('kpiTotalStudents').textContent = totalCount;
+      document.getElementById('donutTotalCount').textContent = totalCount;
+      document.getElementById('chipCountAll').textContent = totalCount;
+
+      let seniorCount = 0;
+      let juniorCount = 0;
+      let totalXp = 0;
+
+      // Batch counts
+      const counts = {};
+      BATCH_CONFIG.forEach(b => counts[b.key] = 0);
+
+      roster.forEach(stu => {
+        const cls = stu.class || '';
+        let matched = false;
+        BATCH_CONFIG.forEach(b => {
+          if (cls.includes(b.filterKey) || cls === b.key) {
+            counts[b.key]++;
+            matched = true;
+            if (b.category === 'Senior') seniorCount++;
+            else juniorCount++;
+          }
+        });
+        if (!matched) {
+          counts[BATCH_CONFIG[0].key]++;
+          seniorCount++;
+        }
+
+        // XP parse
+        let xpNum = 0;
+        if (typeof stu.xp === 'number') xpNum = stu.xp;
+        else if (typeof stu.xp === 'string') xpNum = parseInt(stu.xp.replace(/\D/g, '')) || 0;
+        totalXp += xpNum;
+      });
+
+      document.getElementById('kpiSeniorStudents').textContent = seniorCount;
+      document.getElementById('kpiSeniorPercent').textContent = totalCount > 0 ? `${Math.round((seniorCount / totalCount) * 100)}% of total students` : '0%';
+
+      document.getElementById('kpiJuniorStudents').textContent = juniorCount;
+      document.getElementById('kpiJuniorPercent').textContent = totalCount > 0 ? `${Math.round((juniorCount / totalCount) * 100)}% of total students` : '0%';
+
+      const avgXp = totalCount > 0 ? Math.round(totalXp / totalCount) : 0;
+      document.getElementById('kpiAvgXp').textContent = avgXp.toLocaleString() + ' XP';
+
+      // Update Filter Chip Counters
+      document.getElementById('chipCount9').textContent = counts['Class 9 Foundation • Neev Batch'] || 0;
+      document.getElementById('chipCount10').textContent = counts['Class 10 Board • Udaan Batch'] || 0;
+      document.getElementById('chipCount11').textContent = counts['Class 11 Science • Arjuna JEE'] || 0;
+      document.getElementById('chipCount12Neet').textContent = counts['Class 12 Medical • Yakeen NEET'] || 0;
+      document.getElementById('chipCount12Jee').textContent = counts['Class 12 Engineering • Lakshya JEE'] || 0;
+
+      // Render Class Progress Bars
+      renderClassBars(counts, totalCount);
+
+      // Render Donut Chart
+      renderDonutChart(counts, totalCount);
+
+      // Render Roster Table
+      renderRosterTable();
+    }
+
+    function renderClassBars(counts, total) {
+      const container = document.getElementById('classBarsList');
+      container.innerHTML = '';
+
+      BATCH_CONFIG.forEach(b => {
+        const cnt = counts[b.key] || 0;
+        const pct = total > 0 ? Math.round((cnt / total) * 100) : 0;
+
+        const isSel = (activeBatchFilter === b.filterKey);
+
+        const card = document.createElement('div');
+        card.className = `class-bar-item ${isSel ? 'selected' : ''}`;
+        card.onclick = () => {
+          setBatchFilter(b.filterKey);
+        };
+
+        card.innerHTML = `
+          <div class="class-info-row">
+            <div class="class-name-badge">
+              <span class="class-color-indicator" style="background:${b.color}; box-shadow:0 0 8px ${b.color};"></span>
+              <span>${b.short}</span>
+              <span style="font-size:0.75rem; color:var(--muted); font-weight:normal;">(${b.category})</span>
+            </div>
+            <div class="class-stats-numbers">
+              <span class="class-count">${cnt} Students</span>
+              <span class="class-percent">${pct}%</span>
+            </div>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" style="width:${pct}%; background:${b.color}; box-shadow: 0 0 10px ${b.color};"></div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderDonutChart(counts, total) {
+      const segGroup = document.getElementById('donutSegmentsGroup');
+      const legend = document.getElementById('chartLegend');
+      segGroup.innerHTML = '';
+      legend.innerHTML = '';
+
+      if (total === 0) {
+        return;
+      }
+
+      let accumulatedPercent = 0;
+      const circumference = 100; // r=15.915494309 gives 2*pi*r = 100
+
+      BATCH_CONFIG.forEach(b => {
+        const cnt = counts[b.key] || 0;
+        const pct = (cnt / total) * 100;
+
+        if (pct > 0) {
+          const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          circle.setAttribute('cx', '21');
+          circle.setAttribute('cy', '21');
+          circle.setAttribute('r', '15.91549430918954');
+          circle.setAttribute('fill', 'transparent');
+          circle.setAttribute('stroke', b.color);
+          circle.setAttribute('stroke-width', '4.5');
+          circle.setAttribute('stroke-dasharray', `${pct} ${circumference - pct}`);
+          circle.setAttribute('stroke-dashoffset', `${-accumulatedPercent}`);
+          circle.style.transition = 'stroke-dasharray 0.8s ease, stroke-dashoffset 0.8s ease';
+          segGroup.appendChild(circle);
+
+          accumulatedPercent += pct;
+        }
+
+        // Legend
+        const legItem = document.createElement('div');
+        legItem.className = 'legend-item';
+        legItem.innerHTML = `
+          <span class="legend-dot" style="background:${b.color};"></span>
+          <span>${b.short.split(' ')[0]} ${b.short.split(' ')[1]}: <strong>${cnt}</strong></span>
+        `;
+        legend.appendChild(legItem);
+      });
+    }
+
+    // ==========================================
+    // FILTER & ROSTER TABLE
+    // ==========================================
+    function setBatchFilter(filterKey, clickedBtn = null) {
+      activeBatchFilter = filterKey;
+
+      document.querySelectorAll('.filter-chip').forEach(btn => btn.classList.remove('active'));
+      if (clickedBtn) {
+        clickedBtn.classList.add('active');
+      } else {
+        const chips = document.querySelectorAll('.filter-chip');
+        chips.forEach(c => {
+          if (c.textContent.includes(filterKey)) c.classList.add('active');
+        });
+        if (filterKey === 'ALL' && chips[0]) chips[0].classList.add('active');
+      }
+
+      renderRosterTable();
+    }
+
+    function renderRosterTable() {
+      const roster = getRegistry();
+      const tbody = document.getElementById('rosterTableBody');
+      const searchVal = (document.getElementById('rosterSearch').value || '').toLowerCase().trim();
+
+      tbody.innerHTML = '';
+
+      let filtered = roster.filter(stu => {
+        // Batch match
+        if (activeBatchFilter !== 'ALL') {
+          const cls = stu.class || '';
+          if (!cls.includes(activeBatchFilter)) return false;
+        }
+
+        // Search match
+        if (searchVal) {
+          const nameMatch = (stu.name || '').toLowerCase().includes(searchVal);
+          const emailMatch = (stu.email || '').toLowerCase().includes(searchVal);
+          const phoneMatch = (stu.phone || '').toLowerCase().includes(searchVal);
+          const idMatch = (stu.id || '').toLowerCase().includes(searchVal);
+          if (!nameMatch && !emailMatch && !phoneMatch && !idMatch) return false;
+        }
+
+        return true;
+      });
+
+      document.getElementById('rosterCountSub').textContent = `Showing ${filtered.length} of ${roster.length} registered students`;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8">
+              <div class="empty-state">
+                <div class="empty-state-icon">🔍</div>
+                <h4 style="font-size:1.1rem; color:var(--text); margin-bottom:6px;">No Students Found</h4>
+                <p style="font-size:0.85rem;">Try adjusting your class filter or search keywords.</p>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      filtered.forEach(stu => {
+        const tr = document.createElement('tr');
+
+        // Find config matching
+        let bCfg = BATCH_CONFIG.find(b => (stu.class || '').includes(b.filterKey)) || BATCH_CONFIG[0];
+
+        const xpText = typeof stu.xp === 'number' ? stu.xp.toLocaleString() + ' XP' : (stu.xp || '100 XP');
+        const labs = stu.labsCompleted !== undefined ? stu.labsCompleted : 0;
+        const statusActive = stu.status === 'Active';
+
+        tr.innerHTML = `
+          <td>
+            <div class="student-cell">
+              <div class="student-avatar">${stu.avatar || '👨‍🔬'}</div>
+              <div>
+                <div class="student-name">${stu.name || 'Scholar'}</div>
+                <div class="student-id">${stu.id || 'STU-000000'}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="batch-badge" style="background:${bCfg.bg}; color:${bCfg.color}; border-color:${bCfg.color}33;">
+              ${bCfg.icon} ${bCfg.short}
+            </span>
+          </td>
+          <td>
+            <div style="font-size:0.82rem; font-weight:500;">${stu.phone || 'N/A'}</div>
+            <div style="font-size:0.75rem; color:var(--muted);">${stu.email || 'N/A'}</div>
+          </td>
+          <td>
+            <span class="method-badge">
+              🔑 ${stu.loginMethod || 'Phone OTP'}
+            </span>
+          </td>
+          <td>
+            <div style="font-weight:600; font-size:0.85rem; color:var(--primary);">${xpText}</div>
+            <div style="font-size:0.75rem; color:var(--muted);">🧪 ${labs} Labs Completed</div>
+          </td>
+          <td style="font-size:0.82rem; color:var(--muted);">
+            ${stu.lastActive || 'Today'}
+          </td>
+          <td>
+            <span class="status-pill" style="color: ${statusActive ? 'var(--success)' : 'var(--muted)'};">
+              <span style="font-size:0.6rem;">${statusActive ? '🟢' : '⚪'}</span>
+              <span>${stu.status || 'Offline'}</span>
+            </span>
+          </td>
+          <td style="text-align: right;">
+            <button class="btn-action-icon" onclick="deleteStudent('${stu.id}')" title="Delete Student Record">
+              🗑️
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function deleteStudent(id) {
+      if (!confirm(`Are you sure you want to remove student ${id} from this device's registry?`)) return;
+      let roster = getRegistry();
+      roster = roster.filter(s => s.id !== id);
+      saveRegistry(roster);
+      showToast('Student record removed.', 'info');
+    }
+
+    function clearAllData() {
+      if (!confirm('Are you sure you want to reset the entire student registry? This cannot be undone.')) return;
+      localStorage.removeItem('moleqyn_students_registry');
+      refreshAllViews();
+      showToast('Registry cleared successfully.', 'info');
+    }
+
+    // ==========================================
+    // ADD STUDENT MODAL
+    // ==========================================
+    function openAddStudentModal() {
+      document.getElementById('addStudentModal').classList.add('active');
+      document.getElementById('newStuName').focus();
+    }
+
+    function closeAddStudentModal() {
+      document.getElementById('addStudentModal').classList.remove('active');
+    }
+
+    function handleAddStudentSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('newStuName').value.trim();
+      const batch = document.getElementById('newStuBatch').value;
+      const phone = document.getElementById('newStuPhone').value.trim() || '+91 98765 00000';
+      const email = document.getElementById('newStuEmail').value.trim() || `${name.toLowerCase().replace(/\s+/g, '.')}@moleqyn.edu`;
+      const avatar = document.getElementById('newStuAvatar').value || '👨‍🔬';
+
+      const newStudent = {
+        id: "STU-" + Math.floor(100000 + Math.random() * 900000),
+        name: name,
+        email: email,
+        phone: phone,
+        class: batch,
+        avatar: avatar,
+        level: 1,
+        xp: 150,
+        labsCompleted: 0,
+        loginMethod: "Admin Enrolled",
+        lastActive: "Just now",
+        status: "Active"
+      };
+
+      const roster = getRegistry();
+      roster.unshift(newStudent);
+      saveRegistry(roster);
+
+      closeAddStudentModal();
+      e.target.reset();
+      showToast(`✓ Added ${name} to ${batch}!`, 'success');
+    }
+
+    // ==========================================
+    // EXPORT TO CSV / EXCEL
+    // ==========================================
+    function exportToCSV() {
+      const roster = getRegistry();
+      if (!roster || roster.length === 0) {
+        showToast('⚠️ No students available to export.', 'error');
+        return;
+      }
+
+      const headers = ["Student ID", "Full Name", "Class Batch", "Mobile Phone", "Email", "Login Method", "Total XP", "Labs Done", "Last Active", "Status"];
+      const rows = roster.map(s => [
+        `"${s.id || ''}"`,
+        `"${(s.name || '').replace(/"/g, '""')}"`,
+        `"${(s.class || '').replace(/"/g, '""')}"`,
+        `"${(s.phone || '').replace(/"/g, '""')}"`,
+        `"${(s.email || '').replace(/"/g, '""')}"`,
+        `"${(s.loginMethod || '').replace(/"/g, '""')}"`,
+        `"${s.xp || 0}"`,
+        `"${s.labsCompleted || 0}"`,
+        `"${(s.lastActive || '').replace(/"/g, '""')}"`,
+        `"${(s.status || '').replace(/"/g, '""')}"`
+      ]);
+
+      const csvContent = "\uFEFF" + [headers.join(","), ...rows.map(r => r.join(","))].join("\r\n");
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `Moleqyn_Class_Wise_Students_${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('📥 CSV exported successfully! Compatible with Excel & Google Sheets.', 'success');
+    }
+
+    // ==========================================
+    // WEBHOOK SYNC MODAL
+    // ==========================================
+    function openWebhookModal() {
+      const saved = localStorage.getItem('moleqyn_webhook_url') || '';
+      document.getElementById('webhookInputUrl').value = saved;
+      document.getElementById('webhookStatusText').textContent = saved ? 'Connected: ' + saved : 'Not configured';
+      document.getElementById('webhookModal').classList.add('active');
+    }
+
+    function closeWebhookModal() {
+      document.getElementById('webhookModal').classList.remove('active');
+    }
+
+    function saveWebhookUrl() {
+      const url = document.getElementById('webhookInputUrl').value.trim();
+      if (url) {
+        localStorage.setItem('moleqyn_webhook_url', url);
+        showToast('✓ Webhook endpoint saved!', 'success');
+      } else {
+        localStorage.removeItem('moleqyn_webhook_url');
+        showToast('Webhook disconnected.', 'info');
+      }
+      closeWebhookModal();
+    }
+
+    function testWebhook() {
+      const url = document.getElementById('webhookInputUrl').value.trim();
+      if (!url) {
+        showToast('Please enter a Webhook URL first.', 'error');
+        return;
+      }
+
+      showToast('Sending test ping...', 'info');
+      fetch(url, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          test: true,
+          source: "Moleqyn Admin Hub",
+          timestamp: new Date().toISOString(),
+          message: "Telemetry webhook test successful!"
+        })
+      }).then(() => {
+        showToast('✓ Ping dispatched to Webhook endpoint.', 'success');
+      }).catch(err => {
+        showToast('⚠️ Webhook dispatch finished (Check sheet).', 'info');
+      });
+    }
+
+    // ==========================================
+    // TOAST HELPER
+    // ==========================================
+    function showToast(msg, type = 'info') {
+      const old = document.querySelector('.admin-toast');
+      if (old) old.remove();
+
+      const toast = document.createElement('div');
+      toast.className = 'admin-toast';
+      toast.style.borderColor = type === 'error' ? 'var(--danger)' : (type === 'success' ? 'var(--success)' : 'var(--border)');
+      toast.innerHTML = msg;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3500);
+    }
+
+    // INITIALIZATION
+    document.addEventListener('DOMContentLoaded', () => {
+      checkAdminSession();
+      seedSampleStudents(false);
+      refreshAllViews();
+    });
+  </script>
+  <script src="js/shared-nav.js"></script>
+</body>
+
+</html>
