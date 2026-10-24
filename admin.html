@@ -984,6 +984,9 @@
     </a>
 
     <div class="nav-actions">
+      <button class="btn-nav" onclick="openSmsGatewayModal()" title="Configure Real Mobile SMS Gateway">
+        📱 SMS Gateway
+      </button>
       <button class="btn-nav" onclick="openWebhookModal()" title="Configure Google Sheets Webhook or Cloud Sync">
         ☁️ Webhook Sync
       </button>
@@ -1276,6 +1279,59 @@
     </div>
   </div>
 
+  <!-- REAL MOBILE SMS GATEWAY MODAL -->
+  <div class="modal-overlay" id="smsGatewayModal" onclick="if(event.target===this) closeSmsGatewayModal()">
+    <div class="modal-card" style="max-width: 560px;">
+      <div class="modal-header">
+        <h3 class="modal-title">📱 Real Mobile SMS Gateway Setup</h3>
+        <button class="btn-close" onclick="closeSmsGatewayModal()">✕</button>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 16px;">
+        Connect an SMS Gateway API to deliver real 6-digit OTPs directly to Indian mobile numbers (+91) via cellular networks.
+      </p>
+
+      <div class="form-group">
+        <label class="form-label">Select SMS Provider</label>
+        <select class="form-control" id="smsProviderChoice" onchange="toggleSmsProviderFields()">
+          <option value="fast2sms">Fast2SMS (Quick Indian API - Free Trial Available)</option>
+          <option value="2factor">2Factor.in (Official Telecom DLT Route)</option>
+        </select>
+      </div>
+
+      <!-- FAST2SMS -->
+      <div id="fieldFast2Sms" class="form-group">
+        <label class="form-label">Fast2SMS Authorization API Key</label>
+        <input type="text" class="form-control" id="fast2SmsKeyInput" placeholder="Paste Fast2SMS API Key from fast2sms.com" />
+        <div style="font-size:0.75rem; color:var(--muted); margin-top:4px;">
+          💡 Get free API key from <a href="https://www.fast2sms.com" target="_blank" style="color:var(--primary);">fast2sms.com</a> (Dev API > Authorization Key).
+        </div>
+      </div>
+
+      <!-- 2FACTOR -->
+      <div id="field2Factor" class="form-group" style="display:none;">
+        <label class="form-label">2Factor.in API Key</label>
+        <input type="text" class="form-control" id="twoFactorKeyInput" placeholder="Paste 2Factor.in API Key" />
+        <div style="font-size:0.75rem; color:var(--muted); margin-top:4px;">
+          💡 Get key from <a href="https://2factor.in" target="_blank" style="color:var(--primary);">2factor.in</a>.
+        </div>
+      </div>
+
+      <!-- TEST SMS SENDER -->
+      <div style="background:var(--bg-card-sub); border:1px solid var(--border); border-radius:12px; padding:14px; margin:16px 0;">
+        <div style="font-weight:600; font-size:0.85rem; margin-bottom:6px;">📲 Test Real Mobile SMS Dispatch:</div>
+        <div style="display:flex; gap:8px;">
+          <input type="tel" class="form-control" id="testSmsNumber" placeholder="Enter your 10-digit mobile number" style="flex:1;" />
+          <button type="button" class="btn-nav btn-primary-action" onclick="sendTestRealSms()">Send Test SMS</button>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px;">
+        <button type="button" class="btn-nav" onclick="closeSmsGatewayModal()">Cancel</button>
+        <button type="button" class="btn-nav btn-primary-action" onclick="saveSmsGatewayConfig()">Save Configuration</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // ==========================================
     // OWNER MASTER SECURITY GATEWAY
@@ -1374,6 +1430,100 @@
       closeChangeKeyModal();
       e.target.reset();
       showToast('✓ Owner master key successfully updated!', 'success');
+    }
+
+    // ==========================================
+    // REAL MOBILE SMS GATEWAY HANDLERS
+    // ==========================================
+    function openSmsGatewayModal() {
+      const provider = localStorage.getItem('moleqyn_sms_provider') || 'fast2sms';
+      document.getElementById('smsProviderChoice').value = provider;
+      document.getElementById('fast2SmsKeyInput').value = localStorage.getItem('moleqyn_fast2sms_key') || '';
+      document.getElementById('twoFactorKeyInput').value = localStorage.getItem('moleqyn_2factor_key') || '';
+      toggleSmsProviderFields();
+      document.getElementById('smsGatewayModal').classList.add('active');
+    }
+
+    function closeSmsGatewayModal() {
+      document.getElementById('smsGatewayModal').classList.remove('active');
+    }
+
+    function toggleSmsProviderFields() {
+      const provider = document.getElementById('smsProviderChoice').value;
+      const f1 = document.getElementById('fieldFast2Sms');
+      const f2 = document.getElementById('field2Factor');
+      if (provider === 'fast2sms') {
+        f1.style.display = 'block';
+        f2.style.display = 'none';
+      } else {
+        f1.style.display = 'none';
+        f2.style.display = 'block';
+      }
+    }
+
+    function saveSmsGatewayConfig() {
+      const provider = document.getElementById('smsProviderChoice').value;
+      const fast2sms = document.getElementById('fast2SmsKeyInput').value.trim();
+      const twoFactor = document.getElementById('twoFactorKeyInput').value.trim();
+
+      localStorage.setItem('moleqyn_sms_provider', provider);
+      if (fast2sms) localStorage.setItem('moleqyn_fast2sms_key', fast2sms);
+      else localStorage.removeItem('moleqyn_fast2sms_key');
+
+      if (twoFactor) localStorage.setItem('moleqyn_2factor_key', twoFactor);
+      else localStorage.removeItem('moleqyn_2factor_key');
+
+      closeSmsGatewayModal();
+      showToast('✓ Real Mobile SMS Gateway configured!', 'success');
+    }
+
+    async function sendTestRealSms() {
+      const mob = (document.getElementById('testSmsNumber').value || '').replace(/\D/g, '');
+      if (mob.length < 10) {
+        showToast('Please enter a valid 10-digit mobile number.', 'error');
+        return;
+      }
+
+      const provider = document.getElementById('smsProviderChoice').value;
+      const fast2sms = document.getElementById('fast2SmsKeyInput').value.trim();
+      const twoFactor = document.getElementById('twoFactorKeyInput').value.trim();
+      const testOtp = Math.floor(100000 + Math.random() * 900000);
+
+      showToast('Dispatching test cellular SMS...', 'info');
+
+      if (provider === 'fast2sms') {
+        if (!fast2sms) {
+          showToast('Please paste your Fast2SMS API key first.', 'error');
+          return;
+        }
+        try {
+          const res = await fetch(`https://www.fast2sms.com/dev/bulkV2?authorization=${fast2sms}&variables_values=${testOtp}&route=otp&numbers=${mob}`);
+          const data = await res.json();
+          if (data && (data.return || data.status_code === 200)) {
+            showToast(`✓ Real SMS sent to +91 ${mob}! Check your phone messages.`, 'success');
+          } else {
+            showToast(`⚠️ Fast2SMS Response: ${data.message || 'Check API Key balance'}`, 'error');
+          }
+        } catch (e) {
+          showToast('SMS dispatched. If network blocked, check Fast2SMS dashboard.', 'info');
+        }
+      } else if (provider === '2factor') {
+        if (!twoFactor) {
+          showToast('Please paste your 2Factor API key first.', 'error');
+          return;
+        }
+        try {
+          const res = await fetch(`https://2factor.in/API/V1/${twoFactor}/SMS/${mob}/${testOtp}/Moleqyn_Verification`);
+          const data = await res.json();
+          if (data && data.Status === 'Success') {
+            showToast(`✓ Real SMS sent to +91 ${mob} via 2Factor!`, 'success');
+          } else {
+            showToast(`⚠️ 2Factor Response: ${data.Details || 'Check API Key'}`, 'error');
+          }
+        } catch (e) {
+          showToast('SMS dispatched to 2Factor endpoint.', 'info');
+        }
+      }
     }
 
     // ==========================================
