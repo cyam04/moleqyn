@@ -1621,6 +1621,80 @@
     .footer-bottom-links a:hover {
       color: var(--primary);
     }
+
+    /* Founder Mini Badge on Homepage (Compact & Subtle) */
+    .founder-mini-card {
+      background: var(--bg-surface, #0e1424);
+      border: 1px solid var(--glass-border, rgba(0, 240, 255, 0.2));
+      border-radius: 16px;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      transition: all 0.25s ease;
+    }
+    .founder-mini-card:hover {
+      border-color: rgba(0, 240, 255, 0.45);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(0, 240, 255, 0.12);
+    }
+    html.light-mode .founder-mini-card, :root[data-theme="day"] .founder-mini-card {
+      background: #ffffff !important;
+      border-color: rgba(0, 0, 0, 0.1) !important;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06) !important;
+    }
+    .founder-mini-avatar-wrap {
+      position: relative;
+      width: 48px;
+      height: 48px;
+      min-width: 48px;
+      max-width: 48px;
+      flex-shrink: 0;
+    }
+    .founder-mini-avatar-img {
+      width: 48px !important;
+      height: 48px !important;
+      min-width: 48px !important;
+      max-width: 48px !important;
+      border-radius: 50% !important;
+      object-fit: cover !important;
+      aspect-ratio: 1/1 !important;
+      border: 2px solid var(--primary, #00f0ff) !important;
+      display: block !important;
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.35);
+    }
+    .founder-mini-badge {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: #10b981;
+      border: 2px solid var(--bg-surface, #0e1424);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 8px;
+      color: #fff;
+      font-weight: 900;
+    }
+    html.light-mode .founder-mini-badge, :root[data-theme="day"] .founder-mini-badge {
+      border-color: #ffffff !important;
+    }
+    @media (max-width: 768px) {
+      .founder-mini-card {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        padding: 16px !important;
+      }
+      .founder-mini-card-actions {
+        width: 100%;
+        justify-content: flex-start;
+      }
+    }
   </style>
 </head>
 
@@ -2032,44 +2106,46 @@
       </div>
     </section>
 
-    <!-- FOUNDER'S NOTE TO STUDENTS & EDUCATORS -->
-    <section class="founder-note-section reveal" style="max-width: 1100px; margin: 70px auto 40px; padding: 0 20px;">
-      <div class="founder-note-card">
-        <div class="founder-portrait-container">
-          <div class="founder-avatar-frame-pro">
-            <div class="founder-glow-halo"></div>
-            <div class="founder-conic-ring"></div>
-            <img src="images/shyam-raj.png" alt="Shyam Raj – Founder, Moleqyn" class="founder-avatar-img-pro" />
-            <div class="founder-badge-shield" title="Verified Chemistry Mentor">✓</div>
+    <!-- FOUNDER'S NOTE (Compact & Subtle Badge) -->
+    <section class="founder-note-section reveal" style="max-width: 860px; margin: 40px auto 30px; padding: 0 16px;">
+      <div class="founder-mini-card" style="background: var(--bg-surface, #0e1424); border: 1px solid var(--glass-border, rgba(0, 240, 255, 0.2)); border-radius: 16px; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.18); flex-wrap: wrap;">
+        
+        <!-- Left: Compact 48px Avatar + Quote -->
+        <div style="display: flex; align-items: center; gap: 14px; flex: 1; min-width: 250px;">
+          <div class="founder-mini-avatar-wrap" style="position: relative; width: 48px; height: 48px; min-width: 48px; max-width: 48px; flex-shrink: 0;">
+            <img src="images/shyam-raj.png" alt="Shyam Raj – Founder, Moleqyn" class="founder-mini-avatar-img" style="width: 48px; height: 48px; min-width: 48px; max-width: 48px; border-radius: 50%; object-fit: cover; aspect-ratio: 1/1; border: 2px solid #00f0ff; display: block;" />
+            <span class="founder-mini-badge" style="position: absolute; bottom: -2px; right: -2px; width: 14px; height: 14px; border-radius: 50%; background: #10b981; border: 2px solid var(--bg-surface, #0e1424); display: flex; align-items: center; justify-content: center; font-size: 8px; color: #fff; font-weight: 900;" title="Verified Mentor">✓</span>
           </div>
-          <span class="founder-mentor-chip">
-            <span class="dot"></span> Active Chemistry Mentor
-          </span>
+
+          <div style="display: flex; flex-direction: column; gap: 2px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 0.66rem; font-weight: 800; letter-spacing: 1.2px; color: #f59e0b; text-transform: uppercase;">Creator Note</span>
+              <span style="display: inline-flex; align-items: center; gap: 4px; font-size: 0.68rem; color: #10b981; font-weight: 700;">
+                <span style="width: 6px; height: 6px; border-radius: 50%; background: #10b981;"></span> Active Mentor
+              </span>
+            </div>
+            <p style="margin: 0; font-size: 0.85rem; line-height: 1.45; color: var(--text-main, #f8fafc); font-style: italic;">
+              "Chemistry becomes intuitive when students can see, touch, and experiment with atoms."
+            </p>
+            <div style="font-size: 0.76rem; color: var(--text-muted, #94a3b8);">
+              <strong style="color: var(--text-main, #ffffff); font-weight: 700;">Shyam Raj</strong> &bull; Founder, Moleqyn Open STEM Lab
+            </div>
+          </div>
         </div>
 
-        <div class="founder-content-pro">
-          <div class="founder-kicker">A Note From The Creator</div>
-          <h3 class="founder-quote-headline">
-            "Chemistry becomes intuitive when students can <span class="highlight">touch, see, and experiment</span> with atoms."
-          </h3>
-          <p class="founder-narrative">
-            "I built Moleqyn to eliminate the fear of abstract formulas. From Class 9 particle kinetics to Class 12 electrochemistry cells and NEET/JEE titrations, every simulation here is designed to give you instant clarity. Safe, accurate, and 100% free."
-          </p>
-          <div class="founder-footer-pro">
-            <div class="founder-identity">
-              <strong>Shyam Raj</strong>
-              <span>Founder &bull; Moleqyn Open STEM Initiative</span>
-            </div>
-            <div class="founder-actions-cluster">
-              <a href="https://wa.me/917782001734?text=Hello%20Shyam%20Raj,%20I%20have%20an%20inquiry%20regarding%20Moleqyn" target="_blank" class="btn-founder-secondary">
-                <span>💬 WhatsApp: +91 77820 01734</span>
-              </a>
-              <a href="contact.html" class="btn-founder-primary">
-                <span>Connect with Shyam ✉️</span>
-              </a>
-            </div>
-          </div>
+        <!-- Right: Compact Actions -->
+        <div class="founder-mini-card-actions" style="display: flex; align-items: center; gap: 8px; flex-shrink: 0; flex-wrap: wrap;">
+          <a href="about.html" style="font-size: 0.78rem; font-weight: 700; color: var(--primary, #00f0ff); text-decoration: none; padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(0, 240, 255, 0.25); background: rgba(0, 240, 255, 0.05); transition: 0.2s;">
+            About ➔
+          </a>
+          <a href="https://wa.me/917782001734?text=Hello%20Shyam%20Raj,%20I%20have%20an%20inquiry%20regarding%20Moleqyn" target="_blank" style="font-size: 0.78rem; font-weight: 700; color: #25d366; text-decoration: none; padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(37, 211, 102, 0.3); background: rgba(37, 211, 102, 0.08); display: inline-flex; align-items: center; gap: 5px; transition: 0.2s;">
+            <span>💬 WhatsApp</span>
+          </a>
+          <a href="contact.html" style="font-size: 0.78rem; font-weight: 700; color: #030a16; background: linear-gradient(135deg, #00f0ff, #00a8ff); text-decoration: none; padding: 6px 14px; border-radius: 8px; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 10px rgba(0, 240, 255, 0.25);">
+            <span>Connect ✉️</span>
+          </a>
         </div>
+
       </div>
     </section>
 
