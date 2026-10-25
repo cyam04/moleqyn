@@ -951,26 +951,31 @@
   <div class="gate-overlay" id="adminGate">
     <div class="gate-card">
       <div style="font-size: 2.8rem; margin-bottom: 12px;">🛡️</div>
-      <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.6rem; font-weight: 800; margin-bottom: 6px;">Owner Security Gateway</h2>
-      <p style="color: var(--muted); font-size: 0.88rem;">Restricted to the verified platform owner. Enter your private master key to decrypt student telemetry.</p>
+      <h2
+        style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.6rem; font-weight: 800; margin-bottom: 6px;">
+        Owner Security Gateway</h2>
+      <p style="color: var(--muted); font-size: 0.88rem;">Restricted to the verified platform owner. Enter your private
+        master key to decrypt student telemetry.</p>
 
       <div style="margin: 22px 0 16px; position: relative;">
         <input type="password" id="ownerMasterPass" class="form-control" placeholder="Enter Owner Master Key"
-          style="padding: 12px 42px 12px 16px; font-size: 1rem; text-align: center; letter-spacing: 1.5px;"
-          autofocus onkeydown="if(event.key==='Enter') verifyOwnerAccess()" />
+          style="padding: 12px 42px 12px 16px; font-size: 1rem; text-align: center; letter-spacing: 1.5px;" autofocus
+          onkeydown="if(event.key==='Enter') verifyOwnerAccess()" />
         <button type="button" onclick="toggleOwnerPassVis()"
           style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--muted); font-size: 1.1rem;">👁️</button>
       </div>
 
-      <div id="authErrorMsg" style="font-size: 0.82rem; color: var(--danger); min-height: 20px; margin-bottom: 14px; font-weight: 600;"></div>
+      <div id="authErrorMsg"
+        style="font-size: 0.82rem; color: var(--danger); min-height: 20px; margin-bottom: 14px; font-weight: 600;">
+      </div>
 
       <div style="display: flex; flex-direction: column; gap: 10px;">
         <button class="btn-nav btn-primary-action" onclick="verifyOwnerAccess()"
           style="justify-content: center; width: 100%; padding: 12px; font-size: 0.95rem;">
           Authenticate Access ⚡
         </button>
-        <a href="index.html"
-          style="color: var(--muted); font-size: 0.82rem; text-decoration: none; margin-top: 6px;">← Return to Safety</a>
+        <a href="index.html" style="color: var(--muted); font-size: 0.82rem; text-decoration: none; margin-top: 6px;">←
+          Return to Safety</a>
       </div>
     </div>
   </div>
@@ -987,8 +992,10 @@
       <button class="btn-nav" onclick="openSmsGatewayModal()" title="Configure Real Mobile SMS Gateway">
         📱 SMS Gateway
       </button>
-      <button class="btn-nav" onclick="openInquiriesModal()" title="Helpdesk &amp; Contact Inquiries" style="position:relative;">
-        📬 Inquiries <span id="inquiriesNavBadge" style="background:var(--primary); color:#030a16; font-size:0.72rem; font-weight:800; padding:1px 6px; border-radius:10px; margin-left:3px;">0</span>
+      <button class="btn-nav" onclick="openInquiriesModal()" title="Helpdesk &amp; Contact Inquiries"
+        style="position:relative;">
+        📬 Inquiries <span id="inquiriesNavBadge"
+          style="background:var(--primary); color:#030a16; font-size:0.72rem; font-weight:800; padding:1px 6px; border-radius:10px; margin-left:3px;">0</span>
       </button>
       <button class="btn-nav" onclick="openWebhookModal()" title="Configure Google Sheets Webhook or Cloud Sync">
         ☁️ Webhook Sync
@@ -1022,8 +1029,7 @@
           <span class="pulse-dot"></span>
           <span>Telemetry Active</span>
         </div>
-        <button class="btn-nav" onclick="seedSampleStudents(true)"
-          title="Synchronize state board and PW batch rosters">
+        <button class="btn-nav" onclick="seedSampleStudents(true)" title="Synchronize state board and PW batch rosters">
           ⚡ Synchronize Batch Roster (75+ Enrolled)
         </button>
       </div>
@@ -1171,9 +1177,11 @@
         </table>
       </div>
 
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px; flex-wrap: wrap; gap: 12px;">
+      <div
+        style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px; flex-wrap: wrap; gap: 12px;">
         <div style="font-size: 0.8rem; color: var(--muted);">
-          💡 Tip: Every time any user logs in from <a href="login.html" style="color: var(--primary);">login.html</a>, their batch telemetry automatically synchronizes here.
+          💡 Tip: Every time any user logs in from <a href="login.html" style="color: var(--primary);">login.html</a>,
+          their batch telemetry automatically synchronizes here.
         </div>
         <button class="btn-nav" onclick="clearAllData()" style="color: var(--danger); font-size: 0.8rem;">
           🧹 Reset Registry
@@ -1239,17 +1247,20 @@
         <button class="btn-close" onclick="closeWebhookModal()">✕</button>
       </div>
       <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 16px;">
-        Connect your Google Apps Script Webhook URL. Whenever a student logs in on Moleqyn, a background POST request will also push the record to your live Google Sheet!
+        Connect your Google Apps Script Webhook URL. Whenever a student logs in on Moleqyn, a background POST request
+        will also push the record to your live Google Sheet!
       </p>
       <div class="form-group">
         <label class="form-label">Webhook Endpoint URL</label>
-        <input type="url" class="form-control" id="webhookInputUrl" placeholder="https://script.google.com/macros/s/.../exec" />
+        <input type="url" class="form-control" id="webhookInputUrl"
+          placeholder="https://script.google.com/macros/s/.../exec" />
       </div>
       <div style="font-size: 0.78rem; color: var(--muted); margin-bottom: 20px;">
         Status: <span id="webhookStatusText" style="color: var(--primary);">Not configured</span>
       </div>
       <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
-        <button type="button" class="btn-nav" onclick="testWebhook()" style="color: var(--primary);">🧪 Test Ping</button>
+        <button type="button" class="btn-nav" onclick="testWebhook()" style="color: var(--primary);">🧪 Test
+          Ping</button>
         <div style="display: flex; gap: 8px;">
           <button type="button" class="btn-nav" onclick="closeWebhookModal()">Cancel</button>
           <button type="button" class="btn-nav btn-primary-action" onclick="saveWebhookUrl()">Save URL</button>
@@ -1268,7 +1279,8 @@
       <form onsubmit="handleChangeKeySubmit(event)">
         <div class="form-group">
           <label class="form-label">Current Master Key</label>
-          <input type="password" class="form-control" id="currMasterKey" required placeholder="Enter current master key" />
+          <input type="password" class="form-control" id="currMasterKey" required
+            placeholder="Enter current master key" />
         </div>
         <div class="form-group">
           <label class="form-label">New Secret Master Key</label>
@@ -1290,7 +1302,8 @@
         <button class="btn-close" onclick="closeSmsGatewayModal()">✕</button>
       </div>
       <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 16px;">
-        Connect an SMS Gateway API to deliver real 6-digit OTPs directly to Indian mobile numbers (+91) via cellular networks.
+        Connect an SMS Gateway API to deliver real 6-digit OTPs directly to Indian mobile numbers (+91) via cellular
+        networks.
       </p>
 
       <div class="form-group">
@@ -1304,9 +1317,11 @@
       <!-- FAST2SMS -->
       <div id="fieldFast2Sms" class="form-group">
         <label class="form-label">Fast2SMS Authorization API Key</label>
-        <input type="text" class="form-control" id="fast2SmsKeyInput" placeholder="Paste Fast2SMS API Key from fast2sms.com" />
+        <input type="text" class="form-control" id="fast2SmsKeyInput"
+          placeholder="Paste Fast2SMS API Key from fast2sms.com" />
         <div style="font-size:0.75rem; color:var(--muted); margin-top:4px;">
-          💡 Get free API key from <a href="https://www.fast2sms.com" target="_blank" style="color:var(--primary);">fast2sms.com</a> (Dev API > Authorization Key).
+          💡 Get free API key from <a href="https://www.fast2sms.com" target="_blank"
+            style="color:var(--primary);">fast2sms.com</a> (Dev API > Authorization Key).
         </div>
       </div>
 
@@ -1320,7 +1335,8 @@
       </div>
 
       <!-- TEST SMS SENDER -->
-      <div style="background:var(--bg-card-sub); border:1px solid var(--border); border-radius:12px; padding:14px; margin:16px 0;">
+      <div
+        style="background:var(--bg-card-sub); border:1px solid var(--border); border-radius:12px; padding:14px; margin:16px 0;">
         <div style="font-weight:600; font-size:0.85rem; margin-bottom:6px;">📲 Test Real Mobile SMS Dispatch:</div>
         <div style="display:flex; gap:8px;">
           <input type="tel" class="form-control" id="testSmsNumber" placeholder="7782001734" style="flex:1;" />
@@ -1330,7 +1346,8 @@
 
       <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px;">
         <button type="button" class="btn-nav" onclick="closeSmsGatewayModal()">Cancel</button>
-        <button type="button" class="btn-nav btn-primary-action" onclick="saveSmsGatewayConfig()">Save Configuration</button>
+        <button type="button" class="btn-nav btn-primary-action" onclick="saveSmsGatewayConfig()">Save
+          Configuration</button>
       </div>
     </div>
   </div>
@@ -1341,37 +1358,48 @@
       <div class="modal-header" style="flex-shrink: 0; margin-bottom: 14px;">
         <div style="display: flex; align-items: center; gap: 10px;">
           <h3 class="modal-title">📬 Helpdesk &amp; Contact Inquiries</h3>
-          <span id="inquiriesTotalCountChip" style="background: rgba(0,240,255,0.15); color: var(--primary); border: 1px solid var(--border); padding: 3px 9px; border-radius: 8px; font-size: 0.76rem; font-weight: 700;">0 Inquiries</span>
+          <span id="inquiriesTotalCountChip"
+            style="background: rgba(0,240,255,0.15); color: var(--primary); border: 1px solid var(--border); padding: 3px 9px; border-radius: 8px; font-size: 0.76rem; font-weight: 700;">0
+            Inquiries</span>
         </div>
         <button class="btn-close" onclick="closeInquiriesModal()">✕</button>
       </div>
 
       <!-- SETTINGS BAR: CONFIGURABLE RECIPIENT EMAIL & WEB3FORMS KEY -->
-      <div style="background: var(--bg-card-sub); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 14px; flex-shrink: 0;">
-        <div style="font-size: 0.82rem; font-weight: 700; color: var(--text); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+      <div
+        style="background: var(--bg-card-sub); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 14px; flex-shrink: 0;">
+        <div
+          style="font-size: 0.82rem; font-weight: 700; color: var(--text); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
           <span>📧 Real Email Delivery Configuration:</span>
-          <span style="font-size: 0.74rem; font-weight: 500; color: var(--muted);">Direct to Your Inbox via FormSubmit / Web3Forms</span>
+          <span style="font-size: 0.74rem; font-weight: 500; color: var(--muted);">Direct to Your Inbox via FormSubmit /
+            Web3Forms</span>
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: flex-end;">
           <div>
             <label class="form-label" style="font-size: 0.72rem; margin-bottom: 4px;">Owner Notification Email</label>
-            <input type="email" class="form-control" id="contactRecipientEmail" placeholder="smorgchemist07@gmail.com" />
+            <input type="email" class="form-control" id="contactRecipientEmail"
+              placeholder="smorgchemist07@gmail.com" />
           </div>
           <div>
-            <label class="form-label" style="font-size: 0.72rem; margin-bottom: 4px;">Web3Forms Access Key (Optional)</label>
+            <label class="form-label" style="font-size: 0.72rem; margin-bottom: 4px;">Web3Forms Access Key
+              (Optional)</label>
             <input type="text" class="form-control" id="web3FormsKeyInput" placeholder="Optional Access Key" />
           </div>
           <div>
-            <button type="button" class="btn-nav btn-primary-action" onclick="saveContactDeliveryConfig()" style="height: 38px;">Save Email</button>
+            <button type="button" class="btn-nav btn-primary-action" onclick="saveContactDeliveryConfig()"
+              style="height: 38px;">Save Email</button>
           </div>
         </div>
         <div style="font-size: 0.74rem; color: var(--muted); margin-top: 6px;">
-          💡 When visitors submit <a href="contact.html" target="_blank" style="color:var(--primary); text-decoration:none;">contact.html</a>, inquiry details are automatically delivered to this email and saved here!
+          💡 When visitors submit <a href="contact.html" target="_blank"
+            style="color:var(--primary); text-decoration:none;">contact.html</a>, inquiry details are automatically
+          delivered to this email and saved here!
         </div>
       </div>
 
       <!-- FILTER & ACTIONS TOOLBAR -->
-      <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; flex-shrink: 0;">
+      <div
+        style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; flex-shrink: 0;">
         <div style="display: flex; gap: 6px; flex-wrap: wrap;">
           <button class="filter-chip active" id="inquiryFilterAll" onclick="filterInquiries('ALL', this)">All</button>
           <button class="filter-chip" onclick="filterInquiries('student', this)">Students</button>
@@ -1380,14 +1408,18 @@
           <button class="filter-chip" onclick="filterInquiries('parent', this)">Parents</button>
         </div>
         <div style="display: flex; gap: 8px;">
-          <button type="button" class="btn-nav" onclick="exportInquiriesCSV()" title="Download inquiries CSV" style="font-size: 0.78rem;">📥 Export CSV</button>
-          <button type="button" class="btn-nav" onclick="seedSampleInquiries()" title="Load verified inquiries" style="font-size: 0.78rem;">⚡ Seed Inquiries</button>
-          <button type="button" class="btn-nav" onclick="clearAllInquiries()" title="Clear inquiries" style="font-size: 0.78rem; color: var(--danger);">🗑️ Clear</button>
+          <button type="button" class="btn-nav" onclick="exportInquiriesCSV()" title="Download inquiries CSV"
+            style="font-size: 0.78rem;">📥 Export CSV</button>
+          <button type="button" class="btn-nav" onclick="seedSampleInquiries()" title="Load verified inquiries"
+            style="font-size: 0.78rem;">⚡ Seed Inquiries</button>
+          <button type="button" class="btn-nav" onclick="clearAllInquiries()" title="Clear inquiries"
+            style="font-size: 0.78rem; color: var(--danger);">🗑️ Clear</button>
         </div>
       </div>
 
       <!-- INQUIRIES LIST (SCROLLABLE) -->
-      <div id="inquiriesListContainer" style="flex: 1; overflow-y: auto; padding-right: 4px; min-height: 220px; display: flex; flex-direction: column; gap: 10px;">
+      <div id="inquiriesListContainer"
+        style="flex: 1; overflow-y: auto; padding-right: 4px; min-height: 220px; display: flex; flex-direction: column; gap: 10px;">
         <!-- Populated dynamically via JS -->
       </div>
 
@@ -1646,7 +1678,7 @@
       try {
         const data = localStorage.getItem('moleqyn_students_registry');
         if (data) return JSON.parse(data);
-      } catch (e) {}
+      } catch (e) { }
       return [];
     }
 
