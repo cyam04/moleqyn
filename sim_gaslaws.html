@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Moleqyn | Ideal Gas Laws Simulator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
   <script>
     (function(){
       var saved = localStorage.getItem('mlab_theme') || 'dark';
@@ -104,7 +104,7 @@
     .mlab-nav-left { display: flex; align-items: center; gap: 14px; }
     .mlab-brand {
       display: inline-flex; align-items: center; gap: 10px; text-decoration: none;
-      font-family: 'Space Grotesk', sans-serif; font-size: 1.3rem; font-weight: 800;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.3rem; font-weight: 800;
       transition: transform 0.25s ease;
     }
     .mlab-brand:hover { transform: scale(1.02); }
@@ -118,7 +118,7 @@
       transform: rotate(15deg) scale(1.1); filter: drop-shadow(0 0 16px rgba(0, 240, 255, 0.8));
     }
     .mlab-brand-text {
-      font-family: 'Space Grotesk', sans-serif; font-size: 1.35rem; font-weight: 800; letter-spacing: -0.5px;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.35rem; font-weight: 800; letter-spacing: -0.5px;
       background: linear-gradient(135deg, #ffffff 45%, #00f0ff 100%);
       -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
       display: inline-block; text-transform: none;
@@ -136,7 +136,7 @@
     .mlab-dropdown-trigger {
       display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 10px;
       background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-      color: var(--text); font-family: 'Space Grotesk', sans-serif; font-size: 0.82rem; font-weight: 600;
+      color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.82rem; font-weight: 600;
       cursor: pointer; transition: all 0.2s;
     }
     .mlab-dropdown-trigger:hover { border-color: var(--primary); background: rgba(0, 212, 255, 0.1); }
@@ -189,12 +189,12 @@
 
     .page-wrap{padding:16px 24px;max-width:1300px;margin:0 auto;}
     .lab-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;}
-    .lab-title{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;}
+    .lab-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.4rem;font-weight:700;}
     .lab-title span{color:var(--primary);}
     
     /* LAW TABS */
     .law-tabs{display:flex;gap:8px;flex-wrap:wrap;}
-    .law-tab{padding:8px 18px;border-radius:20px;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--muted);cursor:pointer;font-family:'Space Grotesk',sans-serif;font-size:0.82rem;font-weight:600;transition:all 0.2s;}
+    .law-tab{padding:8px 18px;border-radius:20px;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--muted);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.82rem;font-weight:600;transition:all 0.2s;}
     .law-tab.active{background:var(--primary);color:#000;border-color:var(--primary);box-shadow:0 0 15px rgba(0,212,255,0.3);}
     
     /* MAIN GRID */
@@ -216,18 +216,18 @@
     
     /* CONTROLS */
     .ctrl-box{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:14px;}
-    .ctrl-box h3{font-family:'Space Grotesk',sans-serif;font-size:0.78rem;text-transform:uppercase;letter-spacing:1px;color:var(--primary);display:flex;justify-content:space-between;align-items:center;}
+    .ctrl-box h3{font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;text-transform:uppercase;letter-spacing:1px;color:var(--primary);display:flex;justify-content:space-between;align-items:center;}
     .variable-card{background:rgba(0,0,0,0.25);border:1px solid var(--border);border-radius:12px;padding:14px;transition:0.2s;}
     .variable-card.locked{opacity:0.65;border-style:dashed;}
     .var-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
-    .var-name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:0.88rem;display:flex;align-items:center;gap:6px;}
+    .var-name{font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:0.88rem;display:flex;align-items:center;gap:6px;}
     .var-val{font-family:'JetBrains Mono',monospace;font-size:1.05rem;font-weight:700;color:var(--primary);}
     .locked-badge{font-size:0.65rem;padding:2px 8px;border-radius:10px;background:rgba(255,215,0,0.15);color:var(--accent);border:1px solid var(--accent);font-weight:bold;}
     input[type=range]{width:100%;accent-color:var(--primary);cursor:pointer;}
     .var-range{display:flex;justify-content:space-between;font-size:0.68rem;color:var(--muted);margin-top:3px;}
     
     .aha-box{background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.25);border-radius:12px;padding:14px;font-size:0.8rem;color:var(--muted);line-height:1.6;}
-    .aha-box strong{color:var(--green);display:block;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px;}
+    .aha-box strong{color:var(--green);display:block;margin-bottom:4px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px;}
 
     @media(max-width:900px){
       .main-grid{grid-template-columns:1fr;}
@@ -270,7 +270,7 @@
     </div>
   </div>
   <div class="mlab-nav-right">
-    <button type="button" onclick="generateGasLawsReport()" style="background:linear-gradient(135deg,#00d4ff,#4ade80);color:#020b14;border:none;padding:7px 14px;border-radius:10px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:0.82rem;cursor:pointer;display:flex;align-items:center;gap:6px;transition:0.2s;box-shadow:0 0 15px rgba(0,212,255,0.3);">📄 Lab Report</button>
+    <button type="button" onclick="generateGasLawsReport()" style="background:linear-gradient(135deg,#00d4ff,#4ade80);color:#020b14;border:none;padding:7px 14px;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:0.82rem;cursor:pointer;display:flex;align-items:center;gap:6px;transition:0.2s;box-shadow:0 0 15px rgba(0,212,255,0.3);">📄 Lab Report</button>
     <a href="simulators.html" class="mlab-nav-link">Virtual Labs</a>
     <a href="experiments.html" class="mlab-nav-link">Experiments</a>
     <a href="learn.html" class="mlab-nav-link">Study Hub</a>
@@ -837,7 +837,7 @@ function generateGasLawsReport() {
     <div style="background:#0b192c;border:1px solid rgba(0,212,255,0.3);border-radius:16px;max-width:760px;width:100%;max-height:90vh;overflow-y:auto;padding:28px;color:#f0f4ff;box-shadow:0 25px 60px rgba(0,0,0,0.7);font-family:'Inter',sans-serif;">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid rgba(255,255,255,0.12);padding-bottom:16px;margin-bottom:20px;">
         <div>
-          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;color:#00d4ff;">⚗️ Ideal Gas Laws Experiment Certificate</div>
+          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1.4rem;font-weight:700;color:#00d4ff;">⚗️ Ideal Gas Laws Experiment Certificate</div>
           <div style="font-size:0.82rem;color:#8ea3bf;margin-top:2px;">Thermodynamic Equation of State & Kinetic Molecular Analysis</div>
         </div>
         <div style="text-align:right;">
@@ -854,7 +854,7 @@ function generateGasLawsReport() {
       </div>
 
       <div style="margin-bottom:18px;">
-        <h4 style="font-family:'Space Grotesk',sans-serif;color:#ffd700;font-size:0.92rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">1. Measured Thermodynamic Coordinates</h4>
+        <h4 style="font-family:'Plus Jakarta Sans',sans-serif;color:#ffd700;font-size:0.92rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">1. Measured Thermodynamic Coordinates</h4>
         <table style="width:100%;border-collapse:collapse;font-size:0.85rem;background:#071222;border-radius:8px;overflow:hidden;">
           <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#8ea3bf;">Pressure (P)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-weight:bold;color:#fb7185;">\${simState.P.toFixed(2)} atm</td></tr>
           <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#8ea3bf;">Volume (V)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-weight:bold;color:#00d4ff;">\${simState.V.toFixed(2)} L</td></tr>
@@ -864,7 +864,7 @@ function generateGasLawsReport() {
       </div>
 
       <div style="margin-bottom:18px;">
-        <h4 style="font-family:'Space Grotesk',sans-serif;color:#ffd700;font-size:0.92rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">2. Ideal Gas Law Verification (PV = nRT)</h4>
+        <h4 style="font-family:'Plus Jakarta Sans',sans-serif;color:#ffd700;font-size:0.92rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">2. Ideal Gas Law Verification (PV = nRT)</h4>
         <div style="background:#071222;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:0.88rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;">
           <div><span style="color:#8ea3bf;">P × V =</span> <strong style="color:#00d4ff;">\${pvProduct} L·atm</strong></div>
           <div><span style="color:#8ea3bf;">n × R × T =</span> <strong style="color:#4ade80;">\${nrtProduct} L·atm</strong></div>

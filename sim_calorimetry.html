@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Moleqyn | Calorimetry &amp; Enthalpy of Reaction Lab</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
   <script>
     (function(){
       var saved = localStorage.getItem('mlab_theme') || 'dark';
@@ -96,7 +96,7 @@
     .mlab-nav-left { display: flex; align-items: center; gap: 14px; }
     .mlab-brand {
       display: inline-flex; align-items: center; gap: 10px; text-decoration: none;
-      font-family: 'Space Grotesk', sans-serif; font-size: 1.3rem; font-weight: 800;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.3rem; font-weight: 800;
       transition: transform 0.25s ease;
     }
     .mlab-brand:hover { transform: scale(1.02); }
@@ -110,7 +110,7 @@
       transform: rotate(15deg) scale(1.1); filter: drop-shadow(0 0 16px rgba(0, 240, 255, 0.8));
     }
     .mlab-brand-text {
-      font-family: 'Space Grotesk', sans-serif; font-size: 1.35rem; font-weight: 800; letter-spacing: -0.5px;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.35rem; font-weight: 800; letter-spacing: -0.5px;
       background: linear-gradient(135deg, #ffffff 45%, #00f0ff 100%);
       -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
       display: inline-block; text-transform: none;
@@ -128,7 +128,7 @@
     .mlab-dropdown-trigger {
       display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 10px;
       background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-      color: var(--text); font-family: 'Space Grotesk', sans-serif; font-size: 0.82rem; font-weight: 600;
+      color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.82rem; font-weight: 600;
       cursor: pointer; transition: all 0.2s;
     }
     .mlab-dropdown-trigger:hover { border-color: var(--primary); background: rgba(0, 240, 255, 0.1); }
@@ -201,7 +201,7 @@
       overflow-y: auto;
     }
     .panel-title {
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 0.95rem;
       font-weight: 700;
       color: var(--muted);
@@ -260,7 +260,7 @@
       padding: 12px;
       border-radius: 10px;
       cursor: pointer;
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 0.95rem;
       transition: 0.2s;
     }
@@ -354,7 +354,7 @@
     </div>
   </div>
   <div class="mlab-nav-right">
-    <button type="button" onclick="generateCalorimetryReport()" style="background:linear-gradient(135deg,#00f0ff,#38ef7d);color:#07111f;border:none;padding:6px 14px;border-radius:10px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:0.82rem;cursor:pointer;display:flex;align-items:center;gap:6px;transition:0.2s;box-shadow:0 0 15px rgba(0,240,255,0.3);">📄 Lab Report</button>
+    <button type="button" onclick="generateCalorimetryReport()" style="background:linear-gradient(135deg,#00f0ff,#38ef7d);color:#07111f;border:none;padding:6px 14px;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:0.82rem;cursor:pointer;display:flex;align-items:center;gap:6px;transition:0.2s;box-shadow:0 0 15px rgba(0,240,255,0.3);">📄 Lab Report</button>
     <a href="simulators.html" class="mlab-nav-link">Virtual Labs</a>
     <a href="experiments.html" class="mlab-nav-link">Experiments</a>
     <a href="learn.html" class="mlab-nav-link">Study Hub</a>
@@ -414,7 +414,7 @@
 
   <!-- Right Analytics -->
   <aside class="analytics-panel">
-    <div style="font-family:'Space Grotesk',sans-serif; font-size:1.1rem; font-weight:700;">Thermodynamic Math</div>
+    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:1.1rem; font-weight:700;">Thermodynamic Math</div>
 
     <div class="stat-card">
       <div class="stat-item">
@@ -438,7 +438,7 @@
       In an insulated coffee-cup calorimeter, all enthalpy produced by the reaction is transferred directly into the aqueous solution.
     </div>
 
-    <button type="button" onclick="generateCalorimetryReport()" style="width:100%;margin-top:auto;background:linear-gradient(135deg,#00f0ff,#38ef7d);color:#07111f;border:none;padding:12px;border-radius:12px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;box-shadow:0 0 15px rgba(0,240,255,0.3);font-size:0.92rem;display:flex;align-items:center;justify-content:center;gap:8px;">📄 Generate Lab Certificate</button>
+    <button type="button" onclick="generateCalorimetryReport()" style="width:100%;margin-top:auto;background:linear-gradient(135deg,#00f0ff,#38ef7d);color:#07111f;border:none;padding:12px;border-radius:12px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;box-shadow:0 0 15px rgba(0,240,255,0.3);font-size:0.92rem;display:flex;align-items:center;justify-content:center;gap:8px;">📄 Generate Lab Certificate</button>
   </aside>
 
 </div>
@@ -618,7 +618,7 @@ function generateCalorimetryReport() {
     <div style="background:#0b192c;border:1px solid rgba(0,240,255,0.3);border-radius:16px;max-width:760px;width:100%;max-height:90vh;overflow-y:auto;padding:28px;color:#f0f4ff;box-shadow:0 25px 60px rgba(0,0,0,0.7);font-family:'Inter',sans-serif;">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid rgba(255,255,255,0.12);padding-bottom:16px;margin-bottom:20px;">
         <div>
-          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;color:#00f0ff;">⚗️ Calorimetry & Enthalpy Lab Certificate</div>
+          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1.4rem;font-weight:700;color:#00f0ff;">⚗️ Calorimetry & Enthalpy Lab Certificate</div>
           <div style="font-size:0.82rem;color:#8ea3bf;margin-top:2px;">Coffee-Cup Calorimeter Thermochemical Analysis</div>
         </div>
         <div style="text-align:right;">
@@ -635,7 +635,7 @@ function generateCalorimetryReport() {
       </div>
 
       <div style="margin-bottom:18px;">
-        <h4 style="font-family:'Space Grotesk',sans-serif;color:#ffd166;font-size:0.92rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">1. Temperature & Heat Measurements</h4>
+        <h4 style="font-family:'Plus Jakarta Sans',sans-serif;color:#ffd166;font-size:0.92rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">1. Temperature & Heat Measurements</h4>
         <table style="width:100%;border-collapse:collapse;font-size:0.85rem;background:#071222;border-radius:8px;overflow:hidden;">
           <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#8ea3bf;">Initial Temperature (T₁)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;">25.0 °C (298.15 K)</td></tr>
           <tr style="border-bottom:1px solid rgba(255,255,255,0.08);"><td style="padding:8px 12px;color:#8ea3bf;">Final Temperature (T₂)</td><td style="padding:8px 12px;font-family:'JetBrains Mono',monospace;font-weight:bold;color:#ff5376;">\${currentTemp.toFixed(1)} °C</td></tr>
@@ -646,7 +646,7 @@ function generateCalorimetryReport() {
       </div>
 
       <div style="margin-bottom:18px;">
-        <h4 style="font-family:'Space Grotesk',sans-serif;color:#ffd166;font-size:0.92rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">2. Thermochemical Enthalpy Profile</h4>
+        <h4 style="font-family:'Plus Jakarta Sans',sans-serif;color:#ffd166;font-size:0.92rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">2. Thermochemical Enthalpy Profile</h4>
         <div style="background:#071222;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:0.88rem;">
           <div style="color:\${isExo ? '#ff5376' : '#00f0ff'};font-weight:bold;margin-bottom:4px;">\${currentRxn.dhStr}</div>
           <div style="font-size:0.8rem;color:#8ea3bf;">Thermodynamic Type: <strong>\${currentRxn.type === 'exo' ? 'Exothermic (Heat Released to Solution)' : 'Endothermic (Heat Absorbed from Solution)'}</strong></div>
