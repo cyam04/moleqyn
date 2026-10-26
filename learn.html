@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -2440,8 +2440,9 @@
       </li>
       <li><a href="ai-tutor.html" class="nav-item-link">AI Tutor</a></li>
       <li><a href="periodic-table.html" class="nav-item-link">Periodic Table</a></li>
-      <li class="nav-item-desktop"><a href="junior-scientist.html" class="nav-item-link">Junior Lab</a></li>
+      <li class="nav-item-desktop"><a href="junior.html" class="nav-item-link">Junior Lab</a></li>
       <li class="nav-item-desktop"><a href="quiz.html" class="nav-item-link">Quiz</a></li>
+      <li class="nav-item-desktop"><a href="certificate.html" class="nav-item-link">Certificates</a></li>
     </ul>
 
     <div class="nav-tools">
@@ -2469,8 +2470,9 @@
     <a href="learn.html" class="drawer-link active">&#x1F4D6; Learn Chemistry (Class 1-12)</a>
     <a href="ai-tutor.html" class="drawer-link">&#x1F916; AI Chemistry Tutor</a>
     <a href="periodic-table.html" class="drawer-link">&#x1F522; 118-Element Periodic Table</a>
-    <a href="junior-scientist.html" class="drawer-link">&#x1F52C; Junior Scientist Lab</a>
+    <a href="junior.html" class="drawer-link">&#x1F52C; Junior Scientist Lab</a>
     <a href="quiz.html" class="drawer-link">&#x1F3C6; Chemistry Quizzes</a>
+    <a href="certificate.html" class="drawer-link">&#x1F393; Mastery Certificates</a>
     <a href="dashboard.html" class="drawer-link">&#x1F9D1;&#x200D;&#x1F393; Student Portal / Dashboard</a>
   </div>
 
@@ -4060,6 +4062,23 @@
         '</div>' +
       '</div>';
     }
+
+    // Flashcard Answer Toggle
+    function toggleFlashcardAnswer(btn) {
+      const box = btn.nextElementSibling;
+      if (!box) return;
+      const isVisible = box.style.display === 'block' || box.classList.contains('show');
+      if (isVisible) {
+        box.style.display = 'none';
+        box.classList.remove('show');
+        btn.innerHTML = 'Show Answer &#9662;';
+      } else {
+        box.style.display = 'block';
+        box.classList.add('show');
+        btn.innerHTML = 'Hide Answer &#9652;';
+      }
+    }
+    window.toggleFlashcardAnswer = toggleFlashcardAnswer;
 
     // Modal Interaction
     function openChapterModal(cls, num) {

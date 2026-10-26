@@ -3,7 +3,7 @@
    Provides offline caching for school computer labs & slow networks
 ================================================================ */
 
-const CACHE_NAME = 'moleqyn-cache-v4';
+const CACHE_NAME = 'moleqyn-cache-v5';
 
 const STATIC_ASSETS = [
   './',
@@ -21,6 +21,8 @@ const STATIC_ASSETS = [
   'quiz.html',
   'dashboard.html',
   'resources.html',
+  'certificate.html',
+  'admin.html',
   'login.html',
   'about.html',
   'contact.html',
@@ -41,6 +43,7 @@ const STATIC_ASSETS = [
   'js/shared-nav.js',
   'js/main.js',
   'js/matter-lab.js',
+  'js/supabase-client.js',
   'favicon.svg',
   'manifest.json'
 ];

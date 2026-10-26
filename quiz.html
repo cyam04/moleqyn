@@ -19,6 +19,9 @@
       }
     })();
   </script>
+  <!-- Supabase JS Client for Cloud Telemetry & Quiz Score Sync -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-client.js"></script>
 </head>
 <body class="page-body">
   <nav class="mlab-nav" id="mlabNav">
@@ -39,6 +42,7 @@
       <li><a href="resources.html">Resources</a></li>
       <li><a href="quiz.html" class="active">Quiz</a></li>
       <li><a href="dashboard.html">Progress</a></li>
+      <li><a href="certificate.html">🎓 Certificates</a></li>
       <li><a href="about.html">About</a></li>
       <li><a href="contact.html">Contact</a></li>
     </ul>
@@ -130,6 +134,38 @@
   'use strict';
   // ── QUESTION BANK ──────────────────────────────────────────────
   const QUESTION_BANK = {
+    electro: [
+      { q: 'In a Daniell Cell, which half-cell reaction occurs at the Zinc electrode (anode)?', opts: ['CuÂ²âº + 2eâ» â†’ Cu', 'Zn â†’ ZnÂ²âº + 2eâ»', 'ZnÂ²âº + 2eâ» â†’ Zn', '2Hâº + 2eâ» â†’ Hâ‚‚'], ans: 1, exp: 'At the anode, oxidation occurs: Zinc rod loses 2 electrons (Zn(s) â†’ ZnÂ²âº(aq) + 2eâ») and dissolves into solution.' },
+      { q: 'What is the standard cell potential (EÂ°cell) of a standard Zn-Cu Daniell Cell at 298 K?', opts: ['+0.76 V', '+0.34 V', '+1.10 V', '+1.56 V'], ans: 2, exp: 'EÂ°cell = EÂ°cathode - EÂ°anode = +0.34 V - (-0.76 V) = +1.10 V.' },
+      { q: 'What is the primary function of the inverted U-tube salt bridge containing KCl in agar jelly?', opts: ['To provide electrons to the cathode', 'To maintain electrical neutrality and complete internal circuit', 'To increase cell voltage above 2 V', 'To prevent current from flowing'], ans: 1, exp: 'The salt bridge allows migration of inert ions (Kâº to cathode, Clâ» to anode) to neutralize excess charge buildup, completing the electrical circuit.' },
+      { q: 'According to the Nernst Equation, increasing the concentration of [ZnÂ²âº] in a Daniell cell will:', opts: ['Increase cell potential (Ecell)', 'Decrease cell potential (Ecell)', 'Have no effect on Ecell', 'Reverse the cathode and anode'], ans: 1, exp: 'Ecell = EÂ°cell - (0.0592 / 2) log([ZnÂ²âº]/[CuÂ²âº]). When [ZnÂ²âº] increases, Q increases, so the subtracted term increases, decreasing Ecell.' },
+      { q: 'What is the equilibrium constant (Kc) relationship to standard cell potential EÂ°cell at 298 K?', opts: ['EÂ° = RT ln Kc', 'log Kc = (n Â· EÂ°) / 0.0591', 'Kc = nFEÂ°', 'log Kc = -0.0591 / (n Â· EÂ°)'], ans: 1, exp: 'At chemical equilibrium (Ecell = 0), the Nernst equation simplifies to log Kc = (n Â· EÂ°cell) / 0.0591.' },
+      { q: 'According to Faraday\'s First Law of Electrolysis, the mass (m) deposited is proportional to:', opts: ['Volume of electrolyte', 'Total electric charge (Q = I Â· t)', 'Temperature squared', 'Resistance of solution'], ans: 1, exp: 'Faraday\'s 1st Law states m = Z Â· Q = Z Â· I Â· t, where Z is the electrochemical equivalent of the substance.' },
+      { q: 'What is the Faraday constant (F), representing charge per mole of electrons?', opts: ['6.022 Ã— 10Â²Â³ C/mol', '96,485 C/mol', '8.314 J/(molÂ·K)', '1.602 Ã— 10â»Â¹â¹ C'], ans: 1, exp: '1 Faraday is the total charge carried by 1 mole of electrons: F = e Â· NA â‰ˆ 1.602 Ã— 10â»Â¹â¹ C Ã— 6.022 Ã— 10Â²Â³ â‰ˆ 96,485 C/mol.' }
+    ],
+    thermo: [
+      { q: 'Which gas law states that at constant temperature, pressure is inversely proportional to volume (P âˆ 1/V)?', opts: ['Charles\'s Law', 'Gay-Lussac\'s Law', 'Boyle\'s Law', 'Avogadro\'s Law'], ans: 2, exp: 'Robert Boyle discovered in 1662 that for a fixed mass of gas at constant temperature, P Â· V = constant (Boyle\'s Law).' },
+      { q: 'What is the value of the Universal Gas Constant (R) in SI units (JÂ·molâ»Â¹Â·Kâ»Â¹)?', opts: ['0.0821', '8.314', '62.36', '1.987'], ans: 1, exp: 'In SI units (PaÂ·mÂ³/(molÂ·K) or J/(molÂ·K)), R = 8.314 JÂ·molâ»Â¹Â·Kâ»Â¹.' },
+      { q: 'For a spontaneous reaction at constant temperature and pressure, the change in Gibbs Free Energy (Î”G) must be:', opts: ['Greater than zero (Î”G > 0)', 'Equal to zero (Î”G = 0)', 'Less than zero (Î”G < 0)', 'Always positive'], ans: 2, exp: 'A negative change in Gibbs free energy (Î”G < 0) is the thermodynamic criterion for spontaneity at constant T and P.' },
+      { q: 'At standard temperature and pressure (STP: 273.15 K, 1 bar), 1 mole of an ideal gas occupies:', opts: ['22.4 L', '22.71 L', '24.0 L', '11.2 L'], ans: 1, exp: 'Under IUPAC STP standard (1 bar, 273.15 K), molar volume Vm = 22.71 L. (Under old 1 atm STP it was 22.4 L).' },
+      { q: 'Hess\'s Law states that the total enthalpy change for a chemical reaction is:', opts: ['Dependent on the pathway taken', 'Independent of the pathway and depends only on initial and final states', 'Always equal to zero', 'Proportional to reaction rate'], ans: 1, exp: 'Enthalpy is a state function; hence total Î”H is identical whether a reaction occurs in a single step or multiple steps.' }
+    ],
+    bonding: [
+      { q: 'According to VSEPR theory, what is the geometric molecular shape of Methane (CHâ‚„)?', opts: ['Square planar', 'Tetrahedral (109.5Â°)', 'Trigonal bipyramidal', 'Linear'], ans: 1, exp: 'CHâ‚„ has 4 bond pairs and 0 lone pairs around carbon, giving an ideal tetrahedral geometry with bond angle 109.5Â°.' },
+      { q: 'What is the hybridization of carbon atoms in Ethene (Câ‚‚Hâ‚„)?', opts: ['sp', 'spÂ²', 'spÂ³', 'dspÂ²'], ans: 1, exp: 'In Câ‚‚Hâ‚„, each carbon forms 3 Ïƒ-bonds (trigonal planar) and 1 unhybridized p-orbital forms a Ï€-bond, meaning spÂ² hybridization.' },
+      { q: 'Water (Hâ‚‚O) has a bent / V-shape geometry with bond angle ~104.5Â° instead of 109.5Â° because:', opts: ['Oxygen has no lone pairs', 'Lone pair - lone pair repulsion is greater than bond pair - bond pair repulsion', 'Hydrogen atoms repel each other', 'Water is non-polar'], ans: 1, exp: 'VSEPR repulsion order: Lone Pair - Lone Pair > Lone Pair - Bond Pair > Bond Pair - Bond Pair. The 2 lone pairs on oxygen compress the H-O-H angle to 104.5Â°.' },
+      { q: 'Which of the following molecules has a dipole moment of ZERO (Î¼ = 0) despite having polar bonds?', opts: ['Hâ‚‚O', 'NHâ‚ƒ', 'COâ‚‚', 'HCl'], ans: 2, exp: 'COâ‚‚ is linear (O=C=O). The two equal C=O bond dipole vectors point in opposite directions (180Â°) and completely cancel out.' }
+    ],
+    periodicity: [
+      { q: 'Which element in the periodic table has the highest electronegativity value on the Pauling scale?', opts: ['Cesium (Cs)', 'Chlorine (Cl)', 'Fluorine (F)', 'Oxygen (O)'], ans: 2, exp: 'Fluorine (F) has the highest Pauling electronegativity of 4.0 due to its small atomic size and high effective nuclear charge.' },
+      { q: 'Why does Chlorine have a more negative Electron Gain Enthalpy than Fluorine?', opts: ['Chlorine is larger and less reactive', 'Fluorine has strong interelectronic repulsions in its compact 2p subshell', 'Chlorine has more protons', 'Fluorine is a noble gas'], ans: 1, exp: 'In Fluorine, adding an electron to the extremely compact 2p subshell causes significant electron-electron repulsion. In Chlorine, the 3p subshell has more space.' },
+      { q: 'Across a period from left to right, atomic radii generally decrease because:', opts: ['New shells are added', 'Effective nuclear charge (Zeff) increases, pulling electrons inward', 'Number of neutrons decreases', 'Shielding effect increases'], ans: 1, exp: 'Electrons are added to the same principal energy level while nuclear charge increases, increasing electrostatic pull and reducing atomic radius.' }
+    ],
+    organic: [
+      { q: 'What is the correct IUPAC name for CHâ‚ƒ-CH(OH)-CHâ‚‚-CHâ‚ƒ?', opts: ['2-Butanol (Butan-2-ol)', '1-Methylpropanol', '3-Butanol', 'Butyl alcohol'], ans: 0, exp: 'The longest carbon chain has 4 carbons (butane) with -OH on carbon 2, giving Butan-2-ol (or 2-butanol).' },
+      { q: 'Which functional group has the HIGHEST priority in IUPAC nomenclature numbering?', opts: ['Aldehyde (-CHO)', 'Ketone (>C=O)', 'Carboxylic Acid (-COOH)', 'Alcohol (-OH)'], ans: 2, exp: 'Carboxylic acids (-COOH) have the highest seniority among organic functional groups and always take C-1 position in chain numbering.' },
+      { q: 'Molecules with identical molecular formulas but different connectivity of atoms are called:', opts: ['Enantiomers', 'Structural (Constitutional) Isomers', 'Geometric Isomers', 'Conformers'], ans: 1, exp: 'Structural isomers possess the same molecular formula but different bonding sequences between atoms.' }
+    ],
     states: [
       { q: 'Which state of matter has a definite shape and definite volume?', opts: ['Gas', 'Liquid', 'Solid', 'Plasma'], ans: 2, exp: 'Solids have a definite shape because particles are tightly packed in fixed positions. They also have definite volume because particles cannot move freely.' },
       { q: 'What is the temperature at which ice melts to water at standard pressure?', opts: ['100°C', '37°C', '0°C', '-10°C'], ans: 2, exp: 'The melting point of ice (water) at standard atmospheric pressure is 0°C. At this temperature, solid and liquid water exist in equilibrium.' },
@@ -188,7 +224,7 @@
   });
 
   // ── STATE ──────────────────────────────────────────────────────
-  let currentTopic = 'states';
+  let currentTopic = 'electro';
   let questions = [];
   let currentQ = 0;
   let score = 0;
@@ -296,6 +332,63 @@
       const best = MLProgress.get('quiz-best-' + currentTopic, 0);
       if (pct > best) MLProgress.set('quiz-best-' + currentTopic, pct);
     }
+
+    // High mastery -> Show Certificate claim button
+    const certBtn = document.getElementById('btnQuizCert');
+    if (certBtn) {
+      certBtn.style.display = pct >= 80 ? 'inline-flex' : 'none';
+    }
+
+    const topicMap = {
+      electro: 'Electrochemistry & Daniell Cell Mastery',
+      thermo: 'Thermodynamics & Gas Laws Assessment',
+      bonding: 'Chemical Bonding & VSEPR Structure Exam',
+      periodicity: 'Periodic Classification & Trends Evaluation',
+      organic: 'Organic Chemistry & IUPAC Nomenclature Test',
+      states: 'States of Matter Diagnostic Test',
+      diffusion: 'Diffusion & Kinetic Theory Assessment',
+      solutions: 'Solutions, Colloids & Tyndall Effect',
+      atoms: 'Atoms, Molecules & Mole Concept',
+      reactions: 'Chemical Reactions & Stoichiometry Balancing',
+      mixed: 'Comprehensive Chemistry Grand Challenge'
+    };
+    const title = topicMap[currentTopic] || 'Chemistry Mastery Quiz';
+
+    // Sync score to Supabase Cloud
+    const savedUser = localStorage.getItem('moleqyn_user');
+    let studentName = 'Alex Sharma';
+    try { if (savedUser) studentName = JSON.parse(savedUser).name || studentName; } catch(e){}
+
+    if (window.MoleqynSupabase && typeof window.MoleqynSupabase.syncLabScore === 'function') {
+      window.MoleqynSupabase.syncLabScore({
+        studentName: studentName,
+        labTitle: 'Quiz: ' + title,
+        score: pct,
+        xpAwarded: Math.round(pct * 1.5)
+      });
+    }
+  }
+
+  function claimQuizCertificate() {
+    const savedUser = localStorage.getItem('moleqyn_user');
+    let studentName = 'Alex Sharma';
+    try { if (savedUser) studentName = JSON.parse(savedUser).name || studentName; } catch(e){}
+    const topicMap = {
+      electro: 'Electrochemistry & Daniell Cell Mastery',
+      thermo: 'Thermodynamics & Gas Laws Assessment',
+      bonding: 'Chemical Bonding & VSEPR Structure Exam',
+      periodicity: 'Periodic Classification & Trends Evaluation',
+      organic: 'Organic Chemistry & IUPAC Nomenclature Test',
+      states: 'States of Matter Diagnostic Test',
+      diffusion: 'Diffusion & Kinetic Theory Assessment',
+      solutions: 'Solutions, Colloids & Tyndall Effect',
+      atoms: 'Atoms, Molecules & Mole Concept',
+      reactions: 'Chemical Reactions & Stoichiometry Balancing',
+      mixed: 'Comprehensive Chemistry Grand Challenge'
+    };
+    const title = topicMap[currentTopic] || 'Chemistry Mastery Quiz';
+    const pct = Math.round(score / questions.length * 100);
+    window.open('certificate.html?student=' + encodeURIComponent(studentName) + '&topic=' + encodeURIComponent(title) + '&score=' + pct + '&autosync=1', '_blank');
   }
 
   function restartQuiz() {

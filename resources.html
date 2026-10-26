@@ -423,6 +423,7 @@
       <li><a href="resources.html" class="active">Resources</a></li>
       <li><a href="quiz.html">Quiz</a></li>
       <li><a href="dashboard.html">Progress</a></li>
+      <li><a href="certificate.html">🎓 Certificates</a></li>
       <li><a href="about.html">About</a></li>
       <li><a href="contact.html">Contact</a></li>
     </ul>
@@ -684,24 +685,314 @@
   </footer>
 
   <script src="js/shared-nav.js"></script>
-    <script>
-    // Floating navbar scroll handling
-    (function(){
-      var nav = document.getElementById('mlabNav');
-      if (nav) {
-        window.addEventListener('scroll', function(){
-          nav.classList.toggle('scrolled', window.scrollY > 50);
-        });
+
+  <script src="js/shared-nav.js"></script>
+  <script>
+    'use strict';
+
+    // Current filter state
+    let activeCategory = 'all';
+
+    function setCategory(btn, cat) {
+      activeCategory = cat;
+      document.querySelectorAll('.filter-pills .pill-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      filterResources();
+    }
+
+    function filterResources() {
+      const query = (document.getElementById('resourceSearch').value || '').toLowerCase().trim();
+      const selectedClass = document.getElementById('classFilter').value || 'all';
+      const cards = document.querySelectorAll('.resources-grid .resource-card');
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const cat = card.dataset.cat || '';
+        const classes = card.dataset.class || '';
+        const keywords = (card.dataset.keywords || '').toLowerCase();
+        const title = (card.querySelector('.res-title') ? card.querySelector('.res-title').textContent : '').toLowerCase();
+        const desc = (card.querySelector('.res-desc') ? card.querySelector('.res-desc').textContent : '').toLowerCase();
+
+        const matchCat = (activeCategory === 'all' || cat === activeCategory);
+        const matchClass = (selectedClass === 'all' || classes.includes(selectedClass));
+        const matchSearch = (!query || title.includes(query) || desc.includes(query) || keywords.includes(query));
+
+        if (matchCat && matchClass && matchSearch) {
+          card.style.display = 'flex';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      let noRes = document.getElementById('noResultsMsg');
+      if (visibleCount === 0) {
+        if (!noRes) {
+          noRes = document.createElement('div');
+          noRes.id = 'noResultsMsg';
+          noRes.className = 'no-results';
+          noRes.innerHTML = 'ðŸ” No chemistry resources matched your search filter. <button class="action-btn-outline" style="margin-left:10px; cursor:pointer;" onclick="resetFilters()">Reset Filters</button>';
+          document.getElementById('resourcesGrid').appendChild(noRes);
+        }
+        noRes.style.display = 'block';
+      } else if (noRes) {
+        noRes.style.display = 'none';
       }
-    })();
-  </script>
-</head><body><h2>Moleqyn Chemistry Resource</h2><hr/>' + content + '</body></html>');
+    }
+
+    function resetFilters() {
+      document.getElementById('resourceSearch').value = '';
+      document.getElementById('classFilter').value = 'all';
+      setCategory(document.querySelector('.filter-pills .pill-btn'), 'all');
+    }
+
+    // Rich Educational Documents for in-browser modal viewer
+    const resourceDocuments = {
+      titration: {
+        title: "ðŸ“˜ Acid-Base Titration: Standard Procedure & Viva Notes",
+        content: `
+          <h4>1. Aim of the Experiment</h4>
+          <p>To determine the molar concentration (molarity) of an unknown solution of Hydrochloric Acid (HCl) by titrating it against a standard 0.1 M Sodium Hydroxide (NaOH) solution using phenolphthalein indicator.</p>
+          
+          <h4>2. Principle &amp; Chemical Equation</h4>
+          <p>This is a neutralization reaction between a strong acid and a strong base:</p>
+          <div style="background:var(--panel-sub); padding:10px 14px; border-radius:8px; font-family:'JetBrains Mono',monospace; margin:8px 0;">
+            HCl(aq) + NaOH(aq) &rarr; NaCl(aq) + H<sub>2</sub>O(l)
+          </div>
+          <p>At the equivalence point, the moles of H<sup>+</sup> ions from the acid equal the moles of OH<sup>&minus;</sup> ions from the base.</p>
+
+          <h4>3. Indicator &amp; End-Point Color Shift</h4>
+          <table>
+            <thead><tr><th>Medium</th><th>pH Range</th><th>Phenolphthalein Color</th></tr></thead>
+            <tbody>
+              <tr><td>Acidic (HCl in conical flask)</td><td>&lt; 8.2</td><td>Colorless</td></tr>
+              <tr><td>Equivalence Point</td><td>8.3 â€“ 10.0</td><td>Permanent faint pink (lasting 30s)</td></tr>
+              <tr><td>Basic Excess (NaOH)</td><td>&gt; 10.0</td><td>Deep pink / magenta</td></tr>
+            </tbody>
+          </table>
+
+          <h4>4. Observation Table Template</h4>
+          <table>
+            <thead><tr><th>Trial #</th><th>Initial Burette (mL)</th><th>Final Burette (mL)</th><th>Titre Volume (mL)</th><th>Concordant Volume</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>0.00</td><td>10.40</td><td>10.40</td><td rowspan="3" style="vertical-align:middle; font-weight:bold; color:var(--primary);">10.10 mL</td></tr>
+              <tr><td>2</td><td>10.40</td><td>20.50</td><td>10.10</td></tr>
+              <tr><td>3</td><td>20.50</td><td>30.60</td><td>10.10</td></tr>
+            </tbody>
+          </table>
+
+          <h4>5. Key Calculation Formula</h4>
+          <div style="background:var(--panel-sub); padding:12px; border-radius:8px; font-family:'JetBrains Mono',monospace; margin:8px 0;">
+            M<sub>1</sub> &times; V<sub>1</sub> (Acid) = M<sub>2</sub> &times; V<sub>2</sub> (Base)<br/>
+            M<sub>HCl</sub> = (0.1 M &times; V<sub>NaOH</sub>) / 20.0 mL
+          </div>
+        `
+      },
+      periodic: {
+        title: "ðŸ”¢ Printable IUPAC Periodic Table & Orbitals Reference",
+        content: `
+          <h4>1. Organization of the Periodic Table</h4>
+          <p>The modern periodic table organizes 118 chemical elements in order of increasing atomic number (Z), based on Moseley's Periodic Law.</p>
+          
+          <h4>2. Blocks &amp; Subshell Electron Filling</h4>
+          <table>
+            <thead><tr><th>Block</th><th>Groups</th><th>Valence Subshell</th><th>Characteristic Properties</th></tr></thead>
+            <tbody>
+              <tr><td><strong>s-Block</strong></td><td>Groups 1 &amp; 2</td><td>ns<sup>1-2</sup></td><td>Reactive electropositive metals; form basic oxides.</td></tr>
+              <tr><td><strong>p-Block</strong></td><td>Groups 13 to 18</td><td>ns<sup>2</sup> np<sup>1-6</sup></td><td>Metals, metalloids, non-metals; variable oxidation states.</td></tr>
+              <tr><td><strong>d-Block</strong></td><td>Groups 3 to 12</td><td>(n-1)d<sup>1-10</sup> ns<sup>1-2</sup></td><td>Transition metals; catalytic properties, coloured ions.</td></tr>
+              <tr><td><strong>f-Block</strong></td><td>Lanthanoids &amp; Actinoids</td><td>(n-2)f<sup>1-14</sup> (n-1)d<sup>0-1</sup> ns<sup>2</sup></td><td>Inner transition elements; radioactive &amp; rare earth metals.</td></tr>
+            </tbody>
+          </table>
+
+          <h4>3. Core Periodic Trends Across Periods &amp; Down Groups</h4>
+          <table>
+            <thead><tr><th>Property</th><th>Across a Period (&rarr;)</th><th>Down a Group (&darr;)</th><th>Underlying Reason</th></tr></thead>
+            <tbody>
+              <tr><td>Atomic Radius</td><td>Decreases</td><td>Increases</td><td>Effective nuclear charge increases (&rarr;); extra shells added (&darr;).</td></tr>
+              <tr><td>Ionization Enthalpy</td><td>Increases</td><td>Decreases</td><td>Valence electrons held more tightly (&rarr;); shielding effect (&darr;).</td></tr>
+              <tr><td>Electronegativity</td><td>Increases (F = 4.0 max)</td><td>Decreases</td><td>Tendency to attract bonding electron pair increases.</td></tr>
+            </tbody>
+          </table>
+        `
+      },
+      formula: {
+        title: "ðŸ§® Chemical Formula & Valency Matrix (Criss-Cross Guide)",
+        content: `
+          <h4>1. The Criss-Cross Method</h4>
+          <p>Write symbols with positive ion (cation) on the left and negative ion (anion) on the right. Swap charges as subscripts, omitting charges and reducing ratios to simplest integers.</p>
+
+          <h4>2. Common Cations Table</h4>
+          <table>
+            <thead><tr><th>Mono-valent (+1)</th><th>Di-valent (+2)</th><th>Tri-valent (+3)</th><th>Tetra-valent (+4)</th></tr></thead>
+            <tbody>
+              <tr><td>Na<sup>+</sup> (Sodium)</td><td>Mg<sup>2+</sup> (Magnesium)</td><td>Al<sup>3+</sup> (Aluminium)</td><td>Sn<sup>4+</sup> (Tin IV)</td></tr>
+              <tr><td>K<sup>+</sup> (Potassium)</td><td>Ca<sup>2+</sup> (Calcium)</td><td>Fe<sup>3+</sup> (Iron III / Ferric)</td><td>Pb<sup>4+</sup> (Lead IV)</td></tr>
+              <tr><td>NH<sub>4</sub><sup>+</sup> (Ammonium)</td><td>Cu<sup>2+</sup> (Copper II)</td><td>Cr<sup>3+</sup> (Chromium III)</td><td>Pt<sup>4+</sup> (Platinum IV)</td></tr>
+              <tr><td>Ag<sup>+</sup> (Silver)</td><td>Zn<sup>2+</sup> (Zinc)</td><td>Fe<sup>3+</sup></td><td>C<sup>4+</sup> (Carbon)</td></tr>
+            </tbody>
+          </table>
+
+          <h4>3. Common Anions Table</h4>
+          <table>
+            <thead><tr><th>Mono-valent (-1)</th><th>Di-valent (-2)</th><th>Tri-valent (-3)</th></tr></thead>
+            <tbody>
+              <tr><td>Cl<sup>&minus;</sup> (Chloride)</td><td>O<sup>2&minus;</sup> (Oxide)</td><td>N<sup>3&minus;</sup> (Nitride)</td></tr>
+              <tr><td>OH<sup>&minus;</sup> (Hydroxide)</td><td>S<sup>2&minus;</sup> (Sulfide)</td><td>P<sup>3&minus;</sup> (Phosphide)</td></tr>
+              <tr><td>NO<sub>3</sub><sup>&minus;</sup> (Nitrate)</td><td>SO<sub>4</sub><sup>2&minus;</sup> (Sulfate)</td><td>PO<sub>4</sub><sup>3&minus;</sup> (Phosphate)</td></tr>
+              <tr><td>HCO<sub>3</sub><sup>&minus;</sup> (Bicarbonate)</td><td>CO<sub>3</sub><sup>2&minus;</sup> (Carbonate)</td><td>BO<sub>3</sub><sup>3&minus;</sup> (Borate)</td></tr>
+            </tbody>
+          </table>
+        `
+      },
+      nomenclature: {
+        title: "ðŸ·ï¸ IUPAC Organic Nomenclature Rules & Priority Sequence",
+        content: `
+          <h4>1. Fundamental IUPAC Framework</h4>
+          <div style="background:var(--panel-sub); padding:10px 14px; border-radius:8px; font-family:'JetBrains Mono',monospace; margin:8px 0;">
+            [Secondary Prefix] + [Primary Prefix] + [Root Word] + [Primary Suffix] + [Secondary Suffix]
+          </div>
+
+          <h4>2. Functional Group Seniority Hierarchy (Highest to Lowest)</h4>
+          <table>
+            <thead><tr><th>Rank</th><th>Functional Group</th><th>Formula</th><th>Suffix (Principal)</th><th>Prefix (Substituent)</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>Carboxylic Acid</td><td>-COOH</td><td>-oic acid</td><td>carboxy-</td></tr>
+              <tr><td>2</td><td>Sulfonic Acid</td><td>-SO<sub>3</sub>H</td><td>-sulfonic acid</td><td>sulfo-</td></tr>
+              <tr><td>3</td><td>Ester</td><td>-COOR</td><td>alkyl ...-oate</td><td>alkoxycarbonyl-</td></tr>
+              <tr><td>4</td><td>Acid Chloride</td><td>-COCl</td><td>-oyl chloride</td><td>chloroformyl-</td></tr>
+              <tr><td>5</td><td>Amide</td><td>-CONH<sub>2</sub></td><td>-amide</td><td>carbamoyl-</td></tr>
+              <tr><td>6</td><td>Nitrile</td><td>-CN</td><td>-nitrile</td><td>cyano-</td></tr>
+              <tr><td>7</td><td>Aldehyde</td><td>-CHO</td><td>-al</td><td>formyl- / oxo-</td></tr>
+              <tr><td>8</td><td>Ketone</td><td>&gt;C=O</td><td>-one</td><td>oxo- / keto-</td></tr>
+              <tr><td>9</td><td>Alcohol</td><td>-OH</td><td>-ol</td><td>hydroxy-</td></tr>
+              <tr><td>10</td><td>Amine</td><td>-NH<sub>2</sub></td><td>-amine</td><td>amino-</td></tr>
+              <tr><td>11</td><td>Alkene / Alkyne</td><td>C=C / C&equiv;C</td><td>-ene / -yne</td><td>-</td></tr>
+            </tbody>
+          </table>
+        `
+      },
+      viva: {
+        title: "ðŸŽ¯ Practical Board Viva Voce Examiner 100+ Q&A Bank",
+        content: `
+          <h4>Q1: Why is Phenolphthalein indicator suitable for strong acid-strong base titration?</h4>
+          <p><strong>Answer:</strong> The pH at the equivalence point of a strong acid vs strong base titration is 7.0, and near the end point it rises sharply from ~3.5 to ~10.5. The pH range of phenolphthalein is 8.3 â€“ 10.0, which falls completely within this sharp inflection interval.</p>
+
+          <h4>Q2: What is a standard solution?</h4>
+          <p><strong>Answer:</strong> A solution whose exact concentration (molarity, normality) is precisely known is called a standard solution. A primary standard (e.g. Oxalic acid, Anhydrous Sodium Carbonate) can be weighed directly.</p>
+
+          <h4>Q3: Why should the burette nozzle be free of air bubbles before taking the initial reading?</h4>
+          <p><strong>Answer:</strong> An air bubble trapped below the stopcock will get expelled during titration, causing the recorded burette volume reading to be greater than the actual volume delivered, introducing positive titration error.</p>
+
+          <h4>Q4: How do you avoid parallax error while reading a burette?</h4>
+          <p><strong>Answer:</strong> By keeping the eye strictly at the horizontal level of the liquid surface. For clear liquids read the bottom of the concave meniscus; for intensely coloured liquids (e.g. KMnO<sub>4</sub>) read the top of the meniscus.</p>
+        `
+      },
+      safety: {
+        title: "âš ï¸ Chemistry Laboratory Safety Rules & WHMIS Protocol",
+        content: `
+          <h4>1. The Golden Acid Dilution Rule</h4>
+          <p style="color:var(--secondary); font-weight:bold;">ALWAYS ADD ACID TO WATER SLOWLY WITH CONSTANT STIRRING (A &rarr; W). NEVER ADD WATER TO ACID!</p>
+          <p>The dissolution of concentrated H<sub>2</sub>SO<sub>4</sub> is violently exothermic. Adding water causes localized boiling and violent steam acid splattering.</p>
+
+          <h4>2. Bunsen Burner Flame Zones</h4>
+          <table>
+            <thead><tr><th>Flame Zone</th><th>Air Hole Position</th><th>Color</th><th>Temperature</th><th>Use</th></tr></thead>
+            <tbody>
+              <tr><td>Luminous (Safety)</td><td>Closed</td><td>Bright Yellow</td><td>~300Â°C</td><td>Standby / visibility only (deposits soot).</td></tr>
+              <tr><td>Non-Luminous (Roaring)</td><td>Fully Open</td><td>Pale Blue / Violet</td><td>~1000Â°C â€“ 1400Â°C</td><td>Fast heating, crucible ignition, flame tests.</td></tr>
+            </tbody>
+          </table>
+        `
+      },
+      gaslaws: {
+        title: "ðŸ’¨ Gas Laws & Thermodynamics Formula Cheatsheet",
+        content: `
+          <h4>1. Empirical Gas Laws</h4>
+          <table>
+            <thead><tr><th>Law</th><th>Constants</th><th>Mathematical Formula</th><th>Graphical Relationship</th></tr></thead>
+            <tbody>
+              <tr><td>Boyle's Law</td><td>T, n</td><td>P<sub>1</sub>V<sub>1</sub> = P<sub>2</sub>V<sub>2</sub></td><td>Rectangular hyperbola (Isotherm)</td></tr>
+              <tr><td>Charles's Law</td><td>P, n</td><td>V<sub>1</sub> / T<sub>1</sub> = V<sub>2</sub> / T<sub>2</sub></td><td>Straight line through origin (Isobar)</td></tr>
+              <tr><td>Gay-Lussac's Law</td><td>V, n</td><td>P<sub>1</sub> / T<sub>1</sub> = P<sub>2</sub> / T<sub>2</sub></td><td>Straight line (Isochore)</td></tr>
+              <tr><td>Avogadro's Law</td><td>P, T</td><td>V &prop; n (V<sub>m</sub> = 22.71 L at STP)</td><td>Linear</td></tr>
+            </tbody>
+          </table>
+
+          <h4>2. The Ideal Gas Equation</h4>
+          <div style="background:var(--panel-sub); padding:10px 14px; border-radius:8px; font-family:'JetBrains Mono',monospace; margin:8px 0;">
+            PV = nRT = (w / M) &times; RT<br/>
+            Density &rho; = (P &times; M) / (RT)
+          </div>
+        `
+      },
+      reactions: {
+        title: "âš–ï¸ Stoichiometry & Chemical Equation Balancing Guide",
+        content: `
+          <h4>1. Law of Conservation of Mass</h4>
+          <p>In every closed chemical system, mass is neither created nor destroyed. The number of atoms of each element must remain identical on both reactant and product sides.</p>
+
+          <h4>2. Step-by-Step Balancing Algorithm</h4>
+          <ol style="margin-left:20px; line-height:1.8;">
+            <li>Write skeletal unbalanced equation with correct molecular formulas.</li>
+            <li>Count atoms of each element on both sides.</li>
+            <li>Balance elements that appear in only ONE compound on each side first (usually metals, then non-metals).</li>
+            <li>Balance Hydrogen and Oxygen atoms last.</li>
+            <li>Ensure all coefficients are the lowest whole number integers and attach state symbols: (s), (l), (g), (aq).</li>
+          </ol>
+        `
+      },
+      teacher: {
+        title: "ðŸ§‘â€ðŸ« Smart Board Interactive Lesson Plan Pack for Educators",
+        content: `
+          <h4>1. 45-Minute Lesson Structure for Virtual Lab Class</h4>
+          <table>
+            <thead><tr><th>Time</th><th>Phase</th><th>Teacher Action</th><th>Student Action</th></tr></thead>
+            <tbody>
+              <tr><td>0 â€“ 7 min</td><td>Hook &amp; Curiosity</td><td>Display AtomVerse live orbit or titration colour change.</td><td>Hypothesize why color suddenly turns pink.</td></tr>
+              <tr><td>8 â€“ 22 min</td><td>Interactive Simulation</td><td>Run simulation with students adjusting concentration sliders.</td><td>Record readings in observation table template.</td></tr>
+              <tr><td>23 â€“ 35 min</td><td>Mathematical Analysis</td><td>Guide calculation using Nernst / M1V1 equations on smart board.</td><td>Solve numerical problems in pairs.</td></tr>
+              <tr><td>36 â€“ 45 min</td><td>Assessment &amp; Exit Ticket</td><td>Launch Moleqyn 5-question MCQ quiz arena.</td><td>Submit scores for classroom leaderboard review.</td></tr>
+            </tbody>
+          </table>
+        `
+      }
+    };
+
+    function openResourceViewer(docId) {
+      const doc = resourceDocuments[docId];
+      if (!doc) return;
+      document.getElementById('modalTitle').textContent = doc.title;
+      document.getElementById('modalBody').innerHTML = doc.content;
+      document.getElementById('viewerModal').style.display = 'flex';
+    }
+
+    function closeViewer() {
+      document.getElementById('viewerModal').style.display = 'none';
+    }
+
+    function printResourceContent() {
+      const content = document.getElementById('modalBody').innerHTML;
+      const title = document.getElementById('modalTitle').textContent;
+      const printWin = window.open('', '', 'width=850,height=650');
+      if (!printWin) {
+        window.print();
+        return;
+      }
+      printWin.document.write('<!DOCTYPE html><html><head><title>' + title + '</title><style>body{font-family:sans-serif;padding:30px;line-height:1.6;color:#1e293b;}table{width:100%;border-collapse:collapse;margin:15px 0;}th,td{border:1px solid #cbd5e1;padding:8px 12px;text-align:left;}th{background:#f1f5f9;}h4{color:#0284c7;margin:18px 0 6px 0;}</style></head><body><h2>Moleqyn Chemistry Resource</h2><h3>' + title + '</h3><hr/>' + content + '</body></html>');
       printWin.document.close();
       printWin.focus();
-      printWin.print();
-      printWin.close();
+      setTimeout(() => {
+        printWin.print();
+        printWin.close();
+      }, 250);
     }
+
+    // Close modal on escape key or backdrop click
+    window.addEventListener('keydown', e => { if (e.key === 'Escape') closeViewer(); });
+    document.getElementById('viewerModal').addEventListener('click', e => {
+      if (e.target === document.getElementById('viewerModal')) closeViewer();
+    });
   </script>
 </body>
 </html>
-
