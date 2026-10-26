@@ -291,4 +291,7 @@
     getConfig
   };
 
+  // Backward compatibility alias for lab simulators and quiz engines
+  window.MoleqynSupabase = window.MoleqynCloud;
+
 })(window);

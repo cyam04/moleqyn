@@ -354,18 +354,52 @@
     };
     const title = topicMap[currentTopic] || 'Chemistry Mastery Quiz';
 
-    // Sync score to Supabase Cloud
-    const savedUser = localStorage.getItem('moleqyn_user');
+    // Sync score & telemetry to Supabase Cloud & Admin Roster
     let studentName = 'Alex Sharma';
-    try { if (savedUser) studentName = JSON.parse(savedUser).name || studentName; } catch(e){}
+    let studentObj = null;
+    try {
+      const savedUser = localStorage.getItem('moleqyn_user') || localStorage.getItem('mlab_user');
+      if (savedUser) {
+        studentObj = JSON.parse(savedUser);
+        studentName = studentObj.name || studentName;
+      }
+    } catch(e){}
 
-    if (window.MoleqynSupabase && typeof window.MoleqynSupabase.syncLabScore === 'function') {
-      window.MoleqynSupabase.syncLabScore({
-        studentName: studentName,
-        labTitle: 'Quiz: ' + title,
-        score: pct,
-        xpAwarded: Math.round(pct * 1.5)
-      });
+    const earnedXp = Math.round(pct * 1.5);
+
+    // Update local student XP & telemetry
+    if (studentObj) {
+      studentObj.xp = (studentObj.xp || 100) + earnedXp;
+      studentObj.labsCompleted = (studentObj.labsCompleted || 0) + 1;
+      try {
+        localStorage.setItem('moleqyn_user', JSON.stringify(studentObj));
+        localStorage.setItem('mlab_user', JSON.stringify(studentObj));
+        let reg = JSON.parse(localStorage.getItem('moleqyn_students_registry') || '[]');
+        let sIdx = reg.findIndex(s => s.id === studentObj.id || s.phone === studentObj.phone);
+        if (sIdx !== -1) {
+          reg[sIdx].xp = studentObj.xp;
+          reg[sIdx].labsCompleted = studentObj.labsCompleted;
+          reg[sIdx].lastActive = 'Just now (Quiz)';
+          localStorage.setItem('moleqyn_students_registry', JSON.stringify(reg));
+        }
+      } catch(e){}
+    }
+
+    // Cloud Database Sync
+    const cloud = window.MoleqynCloud || window.MoleqynSupabase;
+    if (cloud) {
+      if (typeof cloud.syncLabScore === 'function') {
+        cloud.syncLabScore({
+          studentId: studentObj ? (studentObj.id || 'STU-LOCAL') : 'STU-GUEST',
+          studentName: studentName,
+          labTitle: 'Quiz: ' + title,
+          score: pct,
+          xpAwarded: earnedXp
+        });
+      }
+      if (studentObj && typeof cloud.syncStudent === 'function') {
+        cloud.syncStudent(studentObj);
+      }
     }
   }
 

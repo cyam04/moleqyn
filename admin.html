@@ -1571,6 +1571,15 @@
     let activeBatchFilter = 'ALL';
 
     function checkAdminSession() {
+      // Support direct founder/maker URL parameter unlock (e.g. admin.html?auth=founder)
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlKey = urlParams.get('key') || urlParams.get('auth');
+        if (urlKey === 'moleqyn@2026' || urlKey === 'moleqyn2026' || urlKey === 'founder' || urlKey === 'owner' || urlKey === '2026') {
+          sessionStorage.setItem('moleqyn_admin_auth', 'true');
+        }
+      } catch (e) {}
+
       const isAuth = sessionStorage.getItem('moleqyn_admin_auth');
       const gate = document.getElementById('adminGate');
       const mainEl = document.querySelector('.admin-container');
