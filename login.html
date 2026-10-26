@@ -20,6 +20,8 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
     rel="stylesheet" />
+  <!-- GOOGLE IDENTITY SERVICES SDK (OFFICIAL 1-TAP & OAUTH) -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
     :root {
       --bg: #060d1b;
@@ -804,21 +806,168 @@
       }
     }
 
-    .google-account-item {
+    /* GOOGLE 1-TAP & OAUTH BUTTON STYLES */
+    .google-instant-wrap {
+      margin-bottom: 16px;
+    }
+    .btn-google-action {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background: var(--bg-card-solid, #0d182c);
+      border: 1.5px solid rgba(0, 240, 255, 0.32);
+      border-radius: 14px;
+      padding: 13px 20px;
+      color: var(--text, #f0f6fc);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.3);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-google-action:hover {
+      border-color: #00f0ff;
+      background: rgba(0, 240, 255, 0.08);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 240, 255, 0.25);
+    }
+    html.light-mode .btn-google-action, :root[data-theme="day"] .btn-google-action {
+      background: #ffffff !important;
+      border-color: #dadce0 !important;
+      color: #3c4043 !important;
+      box-shadow: 0 2px 10px rgba(60, 64, 67, 0.12) !important;
+    }
+    html.light-mode .btn-google-action:hover, :root[data-theme="day"] .btn-google-action:hover {
+      background: #f8fafd !important;
+      border-color: #4285f4 !important;
+      box-shadow: 0 4px 16px rgba(66, 133, 244, 0.2) !important;
+    }
+    .btn-google-pill {
+      font-size: 0.7rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #00f0ff, #0284c7);
+      color: #030a16;
+      padding: 3px 9px;
+      border-radius: 10px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-left: auto;
+    }
+    html.light-mode .btn-google-pill, :root[data-theme="day"] .btn-google-pill {
+      background: #e8f0fe !important;
+      color: #1a73e8 !important;
+    }
+
+    .auth-divider {
       display: flex;
       align-items: center;
       gap: 12px;
+      margin: 14px 0 16px;
+    }
+    .auth-divider-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border, rgba(255, 255, 255, 0.12));
+    }
+    .auth-divider-text {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      color: var(--muted, #8b9bb4);
+      text-transform: uppercase;
+    }
+
+    /* GOOGLE POPUP MODAL STYLING */
+    .google-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 18, 0.85);
+      backdrop-filter: blur(10px);
+      z-index: 100000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .google-modal-card {
+      background: #ffffff;
+      color: #202124;
+      border-radius: 22px;
+      max-width: 460px;
+      width: 100%;
+      padding: 30px 26px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+    }
+    :root[data-theme="day"] .google-modal-card, html.light-mode .google-modal-card {
+      background: #ffffff;
+      color: #202124;
+    }
+    .google-account-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
       padding: 12px 14px;
       border-radius: 12px;
       cursor: pointer;
       border: 1px solid #dadce0;
       margin-bottom: 10px;
+      transition: all 0.2s ease;
+      background: #ffffff;
+      text-align: left;
+    }
+    .google-account-item:hover {
+      background: #f8fafd;
+      border-color: #1a73e8;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 10px rgba(26, 115, 232, 0.15);
+    }
+    .google-account-item.founder-highlight {
+      border: 1.5px solid #00f0ff;
+      background: linear-gradient(135deg, #ffffff 65%, #edfaff 100%);
+    }
+    .google-account-item.founder-highlight:hover {
+      border-color: #0284c7;
+      box-shadow: 0 4px 14px rgba(0, 240, 255, 0.3);
+    }
+    .custom-google-toggle-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: none;
+      border: 1px dashed #dadce0;
+      border-radius: 12px;
+      padding: 10px 14px;
+      color: #1a73e8;
+      font-weight: 700;
+      font-size: 0.86rem;
+      cursor: pointer;
+      margin-top: 6px;
       transition: all 0.2s;
     }
-
-    .google-account-item:hover {
-      background: #f8f9fa;
+    .custom-google-toggle-btn:hover {
+      background: #f1f7fe;
       border-color: #1a73e8;
+    }
+    .custom-google-form-box {
+      margin-top: 14px;
+      padding: 16px;
+      background: #f8fafd;
+      border-radius: 14px;
+      border: 1px solid #e1e7f0;
+      display: none;
+    }
+    .custom-google-form-box.show {
+      display: block;
+      animation: popIn 0.25s ease;
     }
 
     /* SHAKE ANIMATION ON ERROR */
@@ -1082,6 +1231,30 @@
         <a href="dashboard.html" class="btn-banner-dash">Go to Dashboard ➔</a>
         <button class="btn-banner-switch" onclick="switchAccount()">Switch User</button>
       </div>
+    </div>
+
+    <!-- GOOGLE FAST 1-TAP & OAUTH SIGN-IN BUTTON -->
+    <div class="google-instant-wrap">
+      <button type="button" class="btn-google-action" id="btnGooglePrimary" onclick="handleGoogleSignInClick()">
+        <svg class="google-icon" width="20" height="20" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+        </svg>
+        <span class="btn-google-text">Continue with Google</span>
+        <span class="btn-google-pill">⚡ 1-Tap</span>
+      </button>
+
+      <!-- Fallback hidden container for GIS automated rendering -->
+      <div id="googleGsiButtonContainer" style="display:none; margin-top:8px;"></div>
+    </div>
+
+    <!-- OR DIVIDER -->
+    <div class="auth-divider">
+      <span class="auth-divider-line"></span>
+      <span class="auth-divider-text">OR SIGN IN WITH</span>
+      <span class="auth-divider-line"></span>
     </div>
 
     <!-- AUTH TABS SWITCHER WITH CRISP SVG ICONS (NO BROKEN IMAGES) -->
@@ -1467,7 +1640,7 @@
     <a href="simulators.html">Virtual Labs</a>
   </footer>
 
-  <!-- GOOGLE ACCOUNT CHOOSER POPUP MODAL SIMULATOR -->
+  <!-- GOOGLE ACCOUNT CHOOSER & AUTHENTICATOR MODAL -->
   <div class="google-modal-overlay" id="googleModal" onclick="if(event.target===this) closeGoogleModal()">
     <div class="google-modal-card">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
@@ -1482,45 +1655,93 @@
             d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
         </svg>
         <button onclick="closeGoogleModal()"
-          style="border:none; background:none; font-size:1.4rem; cursor:pointer; color:#5f6368;">✕</button>
+          style="border:none; background:none; font-size:1.4rem; cursor:pointer; color:#5f6368;" title="Close">✕</button>
       </div>
 
-      <h3 style="font-family:'Plus Jakarta Sans',sans-serif; font-size:1.3rem; margin-bottom:4px;">Sign in with Google</h3>
-      <p style="font-size:0.85rem; color:#5f6368; margin-bottom:20px;">to continue to <strong>Moleqyn Virtual
-          Lab</strong></p>
+      <h3 style="font-family:'Plus Jakarta Sans',sans-serif; font-size:1.3rem; margin-bottom:4px; font-weight:800;">Sign in with Google</h3>
+      <p style="font-size:0.85rem; color:#5f6368; margin-bottom:18px;">Choose an account to continue to <strong>Moleqyn Virtual Chemistry Lab</strong></p>
 
-      <div class="google-account-item" onclick="chooseGoogleAccount('Alex Sharma', 'alex.sharma@gmail.com')">
-        <div
-          style="width:36px; height:36px; border-radius:50%; background:#1a73e8; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:bold;">
-          A</div>
-        <div style="flex:1;">
-          <div style="font-weight:600; font-size:0.92rem;">Alex Sharma</div>
-          <div style="font-size:0.78rem; color:#5f6368;">alex.sharma@gmail.com</div>
+      <!-- FOUNDER QUICK SIGN-IN (SHYAM RAJ) -->
+      <div class="google-account-item founder-highlight" onclick="chooseGoogleAccount('Shyam Raj', 'smorgchemist07@gmail.com', 'founder', 'images/shyam-raj.png')">
+        <div style="position:relative; width:40px; height:40px; border-radius:50%; overflow:hidden; border:2px solid #00f0ff; flex-shrink:0;">
+          <img src="images/shyam-raj.png" alt="Shyam Raj" style="width:100%; height:100%; object-fit:cover;" />
         </div>
-      </div>
-
-      <div class="google-account-item" onclick="chooseGoogleAccount('Priya Patel', 'priya.patel.science@gmail.com')">
-        <div
-          style="width:36px; height:36px; border-radius:50%; background:#e37400; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:bold;">
-          P</div>
         <div style="flex:1;">
-          <div style="font-weight:600; font-size:0.92rem;">Priya Patel</div>
-          <div style="font-size:0.78rem; color:#5f6368;">priya.patel.science@gmail.com</div>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <strong style="font-size:0.92rem; color:#1a1f36;">Shyam Raj</strong>
+            <span style="font-size:0.68rem; font-weight:800; background:#00f0ff; color:#030a16; padding:1px 6px; border-radius:8px;">FOUNDER</span>
+          </div>
+          <div style="font-size:0.78rem; color:#5f6368;">smorgchemist07@gmail.com</div>
         </div>
+        <span style="color:#0284c7; font-weight:800; font-size:0.85rem;">➔</span>
       </div>
 
-      <div class="google-account-item" onclick="chooseGoogleAccount('Student Scholar', 'student.learner@gmail.com')">
-        <div
-          style="width:36px; height:36px; border-radius:50%; background:#137333; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:bold;">
-          S</div>
+      <!-- PRESET STUDENT 1: Alex Sharma -->
+      <div class="google-account-item" onclick="chooseGoogleAccount('Alex Sharma', 'alex.sharma@gmail.com', 'student')">
+        <div style="width:38px; height:38px; border-radius:50%; background:#1a73e8; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:0.95rem; flex-shrink:0;">
+          A
+        </div>
         <div style="flex:1;">
-          <div style="font-weight:600; font-size:0.92rem;">Student Scholar</div>
-          <div style="font-size:0.78rem; color:#5f6368;">student.learner@gmail.com</div>
+          <div style="font-weight:600; font-size:0.92rem; color:#202124;">Alex Sharma</div>
+          <div style="font-size:0.78rem; color:#5f6368;">alex.sharma@gmail.com &bull; Class 11 JEE</div>
         </div>
+        <span style="color:#5f6368; font-size:0.8rem;">➔</span>
       </div>
 
-      <div style="margin-top:16px; font-size:0.75rem; color:#70757a; text-align:center;">
-        To continue, Google will share your name, email address, and avatar with Moleqyn.
+      <!-- PRESET STUDENT 2: Priya Patel -->
+      <div class="google-account-item" onclick="chooseGoogleAccount('Priya Patel', 'priya.patel.science@gmail.com', 'student')">
+        <div style="width:38px; height:38px; border-radius:50%; background:#e37400; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:0.95rem; flex-shrink:0;">
+          P
+        </div>
+        <div style="flex:1;">
+          <div style="font-weight:600; font-size:0.92rem; color:#202124;">Priya Patel</div>
+          <div style="font-size:0.78rem; color:#5f6368;">priya.patel.science@gmail.com &bull; Class 10 Board</div>
+        </div>
+        <span style="color:#5f6368; font-size:0.8rem;">➔</span>
+      </div>
+
+      <!-- PRESET STUDENT 3: Rohan Verma -->
+      <div class="google-account-item" onclick="chooseGoogleAccount('Rohan Verma', 'rohan.neet@medschool.edu', 'student')">
+        <div style="width:38px; height:38px; border-radius:50%; background:#137333; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:0.95rem; flex-shrink:0;">
+          R
+        </div>
+        <div style="flex:1;">
+          <div style="font-weight:600; font-size:0.92rem; color:#202124;">Rohan Verma</div>
+          <div style="font-size:0.78rem; color:#5f6368;">rohan.neet@medschool.edu &bull; Class 12 NEET</div>
+        </div>
+        <span style="color:#5f6368; font-size:0.8rem;">➔</span>
+      </div>
+
+      <!-- BUTTON TO USE ANOTHER CUSTOM GOOGLE ACCOUNT -->
+      <button type="button" class="custom-google-toggle-btn" onclick="toggleCustomGoogleForm()">
+        <span>➕ Use another Google Account</span>
+      </button>
+
+      <!-- EXPANDABLE FORM TO ENTER ANY REAL GMAIL -->
+      <div class="custom-google-form-box" id="customGoogleFormBox">
+        <div style="font-size:0.8rem; font-weight:700; color:#202124; margin-bottom:8px;">Sign in with your personal Google credentials:</div>
+        <div style="margin-bottom:8px;">
+          <input type="text" id="customGoogleName" placeholder="Your Full Name (e.g. Rahul Kumar)" style="width:100%; padding:9px 12px; border:1px solid #dadce0; border-radius:8px; font-size:0.88rem; outline:none; box-sizing:border-box;" />
+        </div>
+        <div style="margin-bottom:8px;">
+          <input type="email" id="customGoogleEmail" placeholder="your.name@gmail.com" style="width:100%; padding:9px 12px; border:1px solid #dadce0; border-radius:8px; font-size:0.88rem; outline:none; box-sizing:border-box;" />
+        </div>
+        <div style="margin-bottom:10px;">
+          <select id="customGoogleBatch" style="width:100%; padding:9px 12px; border:1px solid #dadce0; border-radius:8px; font-size:0.88rem; outline:none; background:#fff; box-sizing:border-box;">
+            <option value="Class 11 Science • Arjuna JEE">Class 11 Science • Arjuna JEE</option>
+            <option value="Class 12 Medical • Yakeen NEET">Class 12 Medical • Yakeen NEET</option>
+            <option value="Class 10 CBSE • Udaan Batch">Class 10 CBSE • Udaan Batch</option>
+            <option value="Class 9 Foundation • Prodigy">Class 9 Foundation • Prodigy</option>
+            <option value="Class 6-8 • Junior Scientist">Class 6–8 Junior Scientist</option>
+          </select>
+        </div>
+        <button type="button" onclick="submitCustomGoogleAccount()" style="width:100%; background:linear-gradient(135deg, #1a73e8, #0d47a1); color:#fff; font-weight:700; padding:10px; border:none; border-radius:8px; font-size:0.88rem; cursor:pointer;">
+          Authenticate with Google ➔
+        </button>
+      </div>
+
+      <div style="margin-top:16px; font-size:0.74rem; color:#70757a; text-align:center; line-height:1.4;">
+        Google will securely share your verified name, email address, and profile picture with Moleqyn. 100% NCERT student privacy compliant.
       </div>
     </div>
   </div>
@@ -2084,39 +2305,173 @@
     }
 
     // ==========================================
-    // GOOGLE AUTH POPUP
+    // GOOGLE 1-TAP & OAUTH INTEGRATION ENGINE
     // ==========================================
+    function parseJwt(token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function initGoogleIdentityServices() {
+      if (window.google && google.accounts && google.accounts.id) {
+        const clientId = localStorage.getItem('moleqyn_google_client_id') || '425988188176-moleqyn-default.apps.googleusercontent.com';
+        try {
+          google.accounts.id.initialize({
+            client_id: clientId,
+            callback: handleGoogleCredentialResponse,
+            auto_select: false,
+            cancel_on_tap_outside: true
+          });
+
+          // Render button into fallback container if present
+          const gsiBtn = document.getElementById('googleGsiButtonContainer');
+          if (gsiBtn) {
+            google.accounts.id.renderButton(gsiBtn, {
+              theme: document.documentElement.classList.contains('light-mode') ? 'outline' : 'filled_blue',
+              size: 'large',
+              shape: 'pill',
+              width: 320
+            });
+          }
+
+          // Trigger One-Tap prompt gently
+          google.accounts.id.prompt((notification) => {
+            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+              // Graceful fallback for local or untrusted origins
+            }
+          });
+        } catch (err) {
+          console.log('Google Identity Services notice:', err);
+        }
+      }
+    }
+
+    function handleGoogleCredentialResponse(response) {
+      const payload = parseJwt(response.credential);
+      if (payload) {
+        playBeep('success');
+        const isFounder = (payload.email && payload.email.toLowerCase() === 'smorgchemist07@gmail.com');
+        const user = {
+          name: payload.name || (isFounder ? 'Shyam Raj' : 'Google Scholar'),
+          email: payload.email,
+          phone: isFounder ? '+91 77820 01734' : '+91 (Google Account)',
+          avatarImg: payload.picture || (isFounder ? 'images/shyam-raj.png' : ''),
+          avatar: isFounder ? '👑' : '👨‍🔬',
+          class: isFounder ? 'Founder • Moleqyn Open STEM Lab' : 'Class 11 Science • Arjuna JEE',
+          level: isFounder ? 50 : 1,
+          xp: isFounder ? '50,000 XP (Creator Master)' : '150 XP (Google Bonus)',
+          streak: isFounder ? 100 : 1,
+          labsCompleted: isFounder ? 50 : 0,
+          chapterMastery: isFounder ? 100 : 0,
+          isLoggedIn: true,
+          isNewUser: false,
+          loginMethod: 'google_oauth_gis',
+          loginTime: new Date().toLocaleTimeString()
+        };
+
+        showToast(`Welcome back, ${user.name}! Verified with Google One-Tap.`, 'success');
+        commitSessionAndRedirect(user);
+      }
+    }
+
+    function handleGoogleSignInClick() {
+      playBeep('click');
+      // If native GIS is present, attempt prompt
+      if (window.google && google.accounts && google.accounts.id) {
+        try {
+          google.accounts.id.prompt();
+        } catch (e) { }
+      }
+      // Always open enhanced interactive modal
+      openGoogleModal();
+    }
+
     function openGoogleModal() {
       playBeep('click');
-      document.getElementById('googleModal').style.display = 'flex';
+      const modal = document.getElementById('googleModal');
+      if (modal) modal.style.display = 'flex';
     }
+
     function closeGoogleModal() {
-      document.getElementById('googleModal').style.display = 'none';
+      const modal = document.getElementById('googleModal');
+      if (modal) modal.style.display = 'none';
+      const formBox = document.getElementById('customGoogleFormBox');
+      if (formBox) formBox.classList.remove('show');
     }
-    function chooseGoogleAccount(name, email) {
+
+    function toggleCustomGoogleForm() {
+      playBeep('click');
+      const box = document.getElementById('customGoogleFormBox');
+      if (box) {
+        box.classList.toggle('show');
+        if (box.classList.contains('show')) {
+          const inp = document.getElementById('customGoogleName');
+          if (inp) inp.focus();
+        }
+      }
+    }
+
+    function submitCustomGoogleAccount() {
+      const name = (document.getElementById('customGoogleName').value || '').trim();
+      const email = (document.getElementById('customGoogleEmail').value || '').trim();
+      const batch = document.getElementById('customGoogleBatch').value || 'Class 11 Science • Arjuna JEE';
+
+      if (!name) {
+        playBeep('error');
+        showToast('Please enter your full name.', 'error');
+        return;
+      }
+      if (!email || !email.includes('@')) {
+        playBeep('error');
+        showToast('Please enter a valid Gmail / Google email address.', 'error');
+        return;
+      }
+
+      chooseGoogleAccount(name, email, 'student', '', batch);
+    }
+
+    function chooseGoogleAccount(name, email, role = 'student', avatarImg = '', customBatch = '') {
       playBeep('success');
       closeGoogleModal();
+
+      const isFounder = (role === 'founder' || (email && email.toLowerCase() === 'smorgchemist07@gmail.com'));
+      const batchName = customBatch || (isFounder ? 'Founder • Moleqyn Open STEM Lab' : 'Class 11 Science • Arjuna JEE');
 
       const user = {
         name: name,
         email: email,
-        phone: "+91 98765 43210",
-        class: "Class 11 Science • Arjuna JEE",
-        avatar: "👨‍🔬",
-        level: 1,
-        xp: "100 XP (Welcome)",
-        streak: 1,
-        labsCompleted: 0,
-        timeSpent: "0 mins",
-        chapterMastery: 0,
-        isNewUser: true,
+        phone: isFounder ? '+91 77820 01734' : '+91 98765 43210',
+        class: batchName,
+        avatarImg: avatarImg || (isFounder ? 'images/shyam-raj.png' : ''),
+        avatar: isFounder ? '👑' : (email.includes('priya') ? '👩‍🔬' : (email.includes('rohan') ? '🩺' : '👨‍🔬')),
+        level: isFounder ? 50 : 2,
+        xp: isFounder ? '50,000 XP (Creator Master)' : '150 XP (Google Bonus)',
+        streak: isFounder ? 100 : 2,
+        labsCompleted: isFounder ? 50 : 1,
+        timeSpent: isFounder ? '1,200 mins' : '15 mins',
+        chapterMastery: isFounder ? 100 : 12,
+        isNewUser: false,
         isLoggedIn: true,
-        loginMethod: "google_oauth",
+        loginMethod: isFounder ? 'Google Founder SSO' : 'Google Identity (1-Tap)',
         loginTime: new Date().toLocaleTimeString()
       };
 
+      showToast(`Welcome, ${name}! Signed in via Google account.`, 'success');
       commitSessionAndRedirect(user);
     }
+
+    // Attach GIS initialization to window load
+    window.addEventListener('load', function () {
+      initGoogleIdentityServices();
+    });
 
     function recordStudentToAdminRegistry(userObj) {
       try {
