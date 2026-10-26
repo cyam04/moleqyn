@@ -731,7 +731,7 @@
           noRes = document.createElement('div');
           noRes.id = 'noResultsMsg';
           noRes.className = 'no-results';
-          noRes.innerHTML = 'ðŸ” No chemistry resources matched your search filter. <button class="action-btn-outline" style="margin-left:10px; cursor:pointer;" onclick="resetFilters()">Reset Filters</button>';
+          noRes.innerHTML = '\u{1F50D} No chemistry resources matched your search filter. <button class="action-btn-outline" style="margin-left:10px; cursor:pointer;" onclick="resetFilters()">Reset Filters</button>'; cursor:pointer;" onclick="resetFilters()">Reset Filters</button>';
           document.getElementById('resourcesGrid').appendChild(noRes);
         }
         noRes.style.display = 'block';
@@ -749,7 +749,7 @@
     // Rich Educational Documents for in-browser modal viewer
     const resourceDocuments = {
       titration: {
-        title: "ðŸ“˜ Acid-Base Titration: Standard Procedure & Viva Notes",
+        title: "\u{1F4D8} Acid-Base Titration: Standard Procedure & Viva Notes",
         content: `
           <h4>1. Aim of the Experiment</h4>
           <p>To determine the molar concentration (molarity) of an unknown solution of Hydrochloric Acid (HCl) by titrating it against a standard 0.1 M Sodium Hydroxide (NaOH) solution using phenolphthalein indicator.</p>
@@ -766,7 +766,7 @@
             <thead><tr><th>Medium</th><th>pH Range</th><th>Phenolphthalein Color</th></tr></thead>
             <tbody>
               <tr><td>Acidic (HCl in conical flask)</td><td>&lt; 8.2</td><td>Colorless</td></tr>
-              <tr><td>Equivalence Point</td><td>8.3 â€“ 10.0</td><td>Permanent faint pink (lasting 30s)</td></tr>
+              <tr><td>Equivalence Point</td><td>8.3 &ndash; 10.0</td><td>Permanent faint pink (lasting 30s)</td></tr>
               <tr><td>Basic Excess (NaOH)</td><td>&gt; 10.0</td><td>Deep pink / magenta</td></tr>
             </tbody>
           </table>
@@ -789,7 +789,7 @@
         `
       },
       periodic: {
-        title: "ðŸ”¢ Printable IUPAC Periodic Table & Orbitals Reference",
+        title: "\u{1F522} Printable IUPAC Periodic Table & Orbitals Reference",
         content: `
           <h4>1. Organization of the Periodic Table</h4>
           <p>The modern periodic table organizes 118 chemical elements in order of increasing atomic number (Z), based on Moseley's Periodic Law.</p>
@@ -817,7 +817,7 @@
         `
       },
       formula: {
-        title: "ðŸ§® Chemical Formula & Valency Matrix (Criss-Cross Guide)",
+        title: "\u{1F9EE} Chemical Formula & Valency Matrix (Criss-Cross Guide)",
         content: `
           <h4>1. The Criss-Cross Method</h4>
           <p>Write symbols with positive ion (cation) on the left and negative ion (anion) on the right. Swap charges as subscripts, omitting charges and reducing ratios to simplest integers.</p>
@@ -846,7 +846,7 @@
         `
       },
       nomenclature: {
-        title: "ðŸ·ï¸ IUPAC Organic Nomenclature Rules & Priority Sequence",
+        title: "\u{1F3F7}\uFE0F IUPAC Organic Nomenclature Rules & Priority Sequence",
         content: `
           <h4>1. Fundamental IUPAC Framework</h4>
           <div style="background:var(--panel-sub); padding:10px 14px; border-radius:8px; font-family:'JetBrains Mono',monospace; margin:8px 0;">
@@ -873,10 +873,10 @@
         `
       },
       viva: {
-        title: "ðŸŽ¯ Practical Board Viva Voce Examiner 100+ Q&A Bank",
+        title: "\u{1F3AF} Practical Board Viva Voce Examiner 100+ Q&A Bank",
         content: `
           <h4>Q1: Why is Phenolphthalein indicator suitable for strong acid-strong base titration?</h4>
-          <p><strong>Answer:</strong> The pH at the equivalence point of a strong acid vs strong base titration is 7.0, and near the end point it rises sharply from ~3.5 to ~10.5. The pH range of phenolphthalein is 8.3 â€“ 10.0, which falls completely within this sharp inflection interval.</p>
+          <p><strong>Answer:</strong> The pH at the equivalence point of a strong acid vs strong base titration is 7.0, and near the end point it rises sharply from ~3.5 to ~10.5. The pH range of phenolphthalein is 8.3 &ndash; 10.0, which falls completely within this sharp inflection interval.</p>
 
           <h4>Q2: What is a standard solution?</h4>
           <p><strong>Answer:</strong> A solution whose exact concentration (molarity, normality) is precisely known is called a standard solution. A primary standard (e.g. Oxalic acid, Anhydrous Sodium Carbonate) can be weighed directly.</p>
@@ -889,7 +889,7 @@
         `
       },
       safety: {
-        title: "âš ï¸ Chemistry Laboratory Safety Rules & WHMIS Protocol",
+        title: "\u26A0\uFE0F Chemistry Laboratory Safety Rules & WHMIS Protocol",
         content: `
           <h4>1. The Golden Acid Dilution Rule</h4>
           <p style="color:var(--secondary); font-weight:bold;">ALWAYS ADD ACID TO WATER SLOWLY WITH CONSTANT STIRRING (A &rarr; W). NEVER ADD WATER TO ACID!</p>
@@ -899,14 +899,14 @@
           <table>
             <thead><tr><th>Flame Zone</th><th>Air Hole Position</th><th>Color</th><th>Temperature</th><th>Use</th></tr></thead>
             <tbody>
-              <tr><td>Luminous (Safety)</td><td>Closed</td><td>Bright Yellow</td><td>~300Â°C</td><td>Standby / visibility only (deposits soot).</td></tr>
-              <tr><td>Non-Luminous (Roaring)</td><td>Fully Open</td><td>Pale Blue / Violet</td><td>~1000Â°C â€“ 1400Â°C</td><td>Fast heating, crucible ignition, flame tests.</td></tr>
+              <tr><td>Luminous (Safety)</td><td>Closed</td><td>Bright Yellow</td><td>~300&deg;C</td><td>Standby / visibility only (deposits soot).</td></tr>
+              <tr><td>Non-Luminous (Roaring)</td><td>Fully Open</td><td>Pale Blue / Violet</td><td>~1000&deg;C &ndash; 1400&deg;C</td><td>Fast heating, crucible ignition, flame tests.</td></tr>
             </tbody>
           </table>
         `
       },
       gaslaws: {
-        title: "ðŸ’¨ Gas Laws & Thermodynamics Formula Cheatsheet",
+        title: "\u{1F4A8} Gas Laws & Thermodynamics Formula Cheatsheet",
         content: `
           <h4>1. Empirical Gas Laws</h4>
           <table>
@@ -927,7 +927,7 @@
         `
       },
       reactions: {
-        title: "âš–ï¸ Stoichiometry & Chemical Equation Balancing Guide",
+        title: "\u2696\uFE0F Stoichiometry & Chemical Equation Balancing Guide",
         content: `
           <h4>1. Law of Conservation of Mass</h4>
           <p>In every closed chemical system, mass is neither created nor destroyed. The number of atoms of each element must remain identical on both reactant and product sides.</p>
@@ -943,16 +943,16 @@
         `
       },
       teacher: {
-        title: "ðŸ§‘â€ðŸ« Smart Board Interactive Lesson Plan Pack for Educators",
+        title: "\u{1F9D1}\u200D\u{1F3EB} Smart Board Interactive Lesson Plan Pack for Educators",
         content: `
           <h4>1. 45-Minute Lesson Structure for Virtual Lab Class</h4>
           <table>
             <thead><tr><th>Time</th><th>Phase</th><th>Teacher Action</th><th>Student Action</th></tr></thead>
             <tbody>
-              <tr><td>0 â€“ 7 min</td><td>Hook &amp; Curiosity</td><td>Display AtomVerse live orbit or titration colour change.</td><td>Hypothesize why color suddenly turns pink.</td></tr>
-              <tr><td>8 â€“ 22 min</td><td>Interactive Simulation</td><td>Run simulation with students adjusting concentration sliders.</td><td>Record readings in observation table template.</td></tr>
-              <tr><td>23 â€“ 35 min</td><td>Mathematical Analysis</td><td>Guide calculation using Nernst / M1V1 equations on smart board.</td><td>Solve numerical problems in pairs.</td></tr>
-              <tr><td>36 â€“ 45 min</td><td>Assessment &amp; Exit Ticket</td><td>Launch Moleqyn 5-question MCQ quiz arena.</td><td>Submit scores for classroom leaderboard review.</td></tr>
+              <tr><td>0 &ndash; 7 min</td><td>Hook &amp; Curiosity</td><td>Display AtomVerse live orbit or titration colour change.</td><td>Hypothesize why color suddenly turns pink.</td></tr>
+              <tr><td>8 &ndash; 22 min</td><td>Interactive Simulation</td><td>Run simulation with students adjusting concentration sliders.</td><td>Record readings in observation table template.</td></tr>
+              <tr><td>23 &ndash; 35 min</td><td>Mathematical Analysis</td><td>Guide calculation using Nernst / M1V1 equations on smart board.</td><td>Solve numerical problems in pairs.</td></tr>
+              <tr><td>36 &ndash; 45 min</td><td>Assessment &amp; Exit Ticket</td><td>Launch Moleqyn 5-question MCQ quiz arena.</td><td>Submit scores for classroom leaderboard review.</td></tr>
             </tbody>
           </table>
         `
