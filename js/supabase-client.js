@@ -12,27 +12,28 @@
   const STORAGE_KEY_URL = 'moleqyn_supabase_url';
   const STORAGE_KEY_ANON = 'moleqyn_supabase_anon_key';
 
-  // Default cloud endpoint (configurable from Admin Hub)
-  const DEFAULT_SUPABASE_URL = 'https://moleqyn-db.supabase.co';
-  const DEFAULT_SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1vbGVxeW4tZGIiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTczMDAwMDAwMCwiZXhwIjoyMDQ1MDAwMDAwfQ.demo_key_moleqyn_active';
+  // Default placeholder (configurable from Admin Hub)
+  const DEFAULT_SUPABASE_URL = '';
+  const DEFAULT_SUPABASE_ANON = '';
 
   let _client = null;
 
   function getSupabaseUrl() {
-    return localStorage.getItem(STORAGE_KEY_URL) || DEFAULT_SUPABASE_URL;
+    return (localStorage.getItem(STORAGE_KEY_URL) || '').trim();
   }
 
   function getSupabaseAnonKey() {
-    return localStorage.getItem(STORAGE_KEY_ANON) || DEFAULT_SUPABASE_ANON;
+    return (localStorage.getItem(STORAGE_KEY_ANON) || '').trim();
   }
 
   function isConfigured() {
     const url = getSupabaseUrl();
     const key = getSupabaseAnonKey();
-    return !!(url && key && url.includes('supabase.co'));
+    return !!(url && key && url.includes('supabase.co') && !url.includes('moleqyn-db.supabase.co'));
   }
 
   function getClient() {
+    if (!isConfigured()) return null;
     if (_client) return _client;
     const url = getSupabaseUrl();
     const key = getSupabaseAnonKey();
@@ -56,13 +57,22 @@
    * Test live round-trip latency to the Supabase Cloud endpoint
    */
   async function pingCloud() {
+    if (!isConfigured()) {
+      return {
+        success: false,
+        configured: false,
+        latencyMs: 0,
+        message: 'No custom Supabase credentials configured yet. Operating in Local Offline Mode.'
+      };
+    }
     const start = performance.now();
     const client = getClient();
     if (!client) {
       return {
         success: false,
+        configured: true,
         latencyMs: 0,
-        message: 'Supabase JS library not loaded or configuration empty'
+        message: 'Supabase JS library not loaded or invalid client instance'
       };
     }
 
@@ -155,6 +165,7 @@
    * Fetch all students from cloud database
    */
   async function fetchStudents() {
+    if (!isConfigured()) return null;
     const client = getClient();
     if (!client) return null;
 
