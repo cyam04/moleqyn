@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -10,6 +10,10 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
     rel="stylesheet" />
+
+  <!-- Supabase JS Client for Cloud Telemetry & Lab Score Sync -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-client.js"></script>
 
   <script>
     (function () {
@@ -739,6 +743,7 @@
       <li><a href="learn.html">Learn</a></li>
       <li><a href="quiz.html">Quiz</a></li>
       <li><a href="dashboard.html">Student Portal</a></li>
+      <li><a href="certificate.html">🎓 Certificates</a></li>
       <li><a href="about.html">About us</a></li>
     </ul>
 
@@ -968,6 +973,25 @@
           <button class="big-btn"
             style="margin-top:0;background:rgba(0,212,255,0.15);color:var(--primary);border:1px solid var(--primary);"
             onclick="generateLabReport()">📄 Lab Report</button>
+        </div>
+        <button class="big-btn" id="btnClaimCert"
+          style="margin-top:8px;background:linear-gradient(135deg,#ffd700,#f59e0b);color:#030a16;font-weight:800;border:none;box-shadow:0 4px 15px rgba(255,215,0,0.3);display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;"
+          onclick="openOfficialCertificate()">
+          🎓 Claim Official Mastery Certificate
+        </button>
+
+        <!-- NCERT PRACTICAL PROGRESS TRACKER -->
+        <div style="margin-top:12px;background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.2);border-radius:10px;padding:10px 12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <span style="font-size:0.75rem;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:0.5px;">📋 NCERT Practical Tasks</span>
+            <span id="ncertTaskScore" style="font-size:0.72rem;font-family:'JetBrains Mono',monospace;color:var(--accent);font-weight:700;">1 / 4 Completed</span>
+          </div>
+          <div style="font-size:0.72rem;color:var(--muted);display:flex;flex-direction:column;gap:4px;">
+            <div id="task1" style="color:var(--green);">✓ Standard Daniell Cell EMF (+1.100 V)</div>
+            <div id="task2" style="color:var(--muted);">○ Test Nernst Effect by changing [Zn²⁺] or [Cu²⁺]</div>
+            <div id="task3" style="color:var(--muted);">○ Disconnect Salt Bridge to observe circuit break</div>
+            <div id="task4" style="color:var(--muted);">○ Run current for ≥5s to measure mass deposited</div>
+          </div>
         </div>
       </div>
 
@@ -1309,6 +1333,7 @@
       document.getElementById('massDisplay').textContent = mass.toFixed(4) + ' g';
       document.getElementById('fQ').textContent = Q.toFixed(2) + ' C';
       document.getElementById('fMol').textContent = molesElectrons.toFixed(5) + ' mol';
+      if (typeof checkPracticalTasks === 'function') checkPracticalTasks();
       document.getElementById('fMolDep').textContent = molesDeposited.toFixed(5) + ' mol';
       document.getElementById('fMass').textContent = mass.toFixed(4) + ' g';
 
@@ -1963,11 +1988,82 @@
 
       <div style="display:flex;justify-content:flex-end;gap:10px;border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;">
         <button type="button" class="m-tab" onclick="document.getElementById('reportModal').style.display='none'">✕ Close</button>
+        <button type="button" class="m-tab" style="background:rgba(255,215,0,0.15);color:#ffd700;border:1px solid #ffd700;font-weight:bold;" onclick="openOfficialCertificate()">🎓 Official Certificate</button>
         <button type="button" class="m-tab active" style="background:#00d4ff;color:#000;font-weight:bold;" onclick="window.print()">🖨️ Print / Save PDF</button>
       </div>
     </div>
   `;
       modal.style.display = 'flex';
+    }
+
+    // NCERT Practical Task Evaluation & Mastery
+    const completedTasks = { t1: true, t2: false, t3: false, t4: false };
+
+    function checkPracticalTasks() {
+      // Task 2: Concentration changed
+      if (Math.abs(cellState.anodeConc - 1.0) > 0.05 || Math.abs(cellState.cathodeConc - 1.0) > 0.05) {
+        if (!completedTasks.t2) {
+          completedTasks.t2 = true;
+          const el = document.getElementById('task2');
+          if (el) { el.textContent = '✓ Test Nernst Effect by changing [Zn²⁺] or [Cu²⁺]'; el.style.color = 'var(--green)'; }
+        }
+      }
+      // Task 3: Salt Bridge tested
+      if (!saltBridgeConnected) {
+        if (!completedTasks.t3) {
+          completedTasks.t3 = true;
+          const el = document.getElementById('task3');
+          if (el) { el.textContent = '✓ Disconnect Salt Bridge to observe circuit break'; el.style.color = 'var(--green)'; }
+        }
+      }
+      // Task 4: Ran for at least 5s
+      if (timeElapsed >= 5.0) {
+        if (!completedTasks.t4) {
+          completedTasks.t4 = true;
+          const el = document.getElementById('task4');
+          if (el) { el.textContent = '✓ Run current for ≥5s to measure mass deposited'; el.style.color = 'var(--green)'; }
+        }
+      }
+
+      const count = Object.values(completedTasks).filter(Boolean).length;
+      const scoreEl = document.getElementById('ncertTaskScore');
+      if (scoreEl) {
+        scoreEl.textContent = `${count} / 4 Completed`;
+        if (count === 4) {
+          scoreEl.style.color = 'var(--green)';
+          scoreEl.textContent = '4 / 4 (100% Mastery!)';
+        }
+      }
+    }
+
+    // Hook into updateCell and timer ticks
+    const _origUpdateCell = updateCell;
+    updateCell = function() {
+      _origUpdateCell();
+      checkPracticalTasks();
+    };
+
+    function openOfficialCertificate() {
+      const _storedUser = localStorage.getItem('moleqyn_user');
+      const currentUser = _storedUser ? JSON.parse(_storedUser).name : 'Alex Sharma';
+      const topic = encodeURIComponent('Daniell Galvanic Cell EMF & Nernst Equation (Zn/Zn²⁺ ‖ Cu²⁺/Cu)');
+      const nameParam = encodeURIComponent(currentUser);
+
+      let count = Object.values(completedTasks).filter(Boolean).length;
+      let score = 88 + (count * 3);
+      if (score > 100) score = 100;
+
+      // Sync to Supabase if configured
+      if (window.MoleqynSupabase && typeof window.MoleqynSupabase.syncLabScore === 'function') {
+        window.MoleqynSupabase.syncLabScore({
+          studentName: currentUser,
+          labTitle: 'Daniell Galvanic Cell EMF & Nernst Equation (Zn/Zn²⁺ ‖ Cu²⁺/Cu)',
+          score: score,
+          xpAwarded: 100
+        });
+      }
+
+      window.open(`certificate.html?student=${nameParam}&topic=${topic}&score=${score}&autosync=1`, '_blank');
     }
 
     updateCell();

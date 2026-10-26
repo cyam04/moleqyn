@@ -1375,6 +1375,11 @@
             <span class="menu-item-icon">⚙️</span>
             <span>Batch Profile</span>
           </button>
+          <a href="certificate.html" class="menu-item-btn" style="color:var(--pw-yellow); text-decoration:none;" title="Official Chemistry Mastery Certificate Generator">
+            <span class="menu-item-icon">🎓</span>
+            <span>Mastery Certificates</span>
+            <span class="menu-item-badge" style="background:var(--pw-yellow); color:#030a16; font-weight:800;">Official</span>
+          </a>
           <a href="admin.html" id="founderAdminLink" class="menu-item-btn" style="color:#00f0ff; background:rgba(0,240,255,0.08); border:1px solid rgba(0,240,255,0.25); text-decoration:none; margin-top:6px;" title="Owner Security & Telemetry Hub">
             <span class="menu-item-icon">🛡️</span>
             <span>Owner Admin Hub</span>
@@ -2055,9 +2060,10 @@
         This document certifies that the aforementioned candidate has successfully performed and passed the simulated volumetric/physical chemical synthesis protocol according to prescribed NCERT curriculum procedures.
       </div>
 
-      <div style="display:flex; justify-content:flex-end; gap:10px;">
-        <button onclick="window.print()" style="background:var(--primary); color:#030a16; border:none; padding:10px 20px; border-radius:10px; font-weight:700; cursor:pointer;">🖨️ Print Certificate</button>
-        <button onclick="closeReportModal()" style="background:transparent; border:1px solid var(--border); color:var(--text); padding:10px 18px; border-radius:10px; cursor:pointer;">Close</button>
+      <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
+        <button onclick="openMasterCertificateFromModal()" style="background:linear-gradient(135deg, var(--pw-yellow), #f59e0b); color:#030a16; border:none; padding:10px 18px; border-radius:10px; font-weight:700; cursor:pointer;">🎓 Open Master Certificate</button>
+        <button onclick="window.print()" style="background:var(--primary); color:#030a16; border:none; padding:10px 16px; border-radius:10px; font-weight:700; cursor:pointer;">🖨️ Quick Print</button>
+        <button onclick="closeReportModal()" style="background:transparent; border:1px solid var(--border); color:var(--text); padding:10px 16px; border-radius:10px; cursor:pointer;">Close</button>
       </div>
     </div>
   </div>
@@ -2734,10 +2740,16 @@
       }
     }
 
-    // PRINTABLE LAB REPORT MODAL
+    // PRINTABLE LAB REPORT MODAL & CERTIFICATE GENERATOR
+    let _currentRepTitle = "Acid-Base Titration (0.1M HCl vs NaOH)";
+    let _currentRepScore = 98;
+
     function printReport(title, score, precision) {
       playBeep('click');
-      const saved = localStorage.getItem('mlab_user');
+      _currentRepTitle = title;
+      _currentRepScore = parseInt(score, 10) || 96;
+
+      const saved = localStorage.getItem('moleqyn_user') || localStorage.getItem('mlab_user');
       let name = "Alex Sharma";
       try { if (saved) name = JSON.parse(saved).name; } catch(e){}
 
@@ -2746,6 +2758,12 @@
       document.getElementById('repScore').textContent = score;
       document.getElementById('repPrecision').textContent = precision;
       document.getElementById('reportModal').style.display = 'flex';
+    }
+
+    function openMasterCertificateFromModal() {
+      const name = document.getElementById('repStudentName').textContent || 'Alex Sharma';
+      const url = `certificate.html?student=${encodeURIComponent(name)}&topic=${encodeURIComponent(_currentRepTitle)}&score=${_currentRepScore}`;
+      window.open(url, '_blank');
     }
 
     function closeReportModal() {

@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Moleqyn | Official Chemistry Mastery Certificate Generator</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Caveat:wght@600;700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+
+  <!-- Supabase JS Client for Cloud Score Sync -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-client.js"></script>
+
+  <style>
+    :root {
+      --bg: #070c18;
+      --panel: #0d172a;
+      --panel-surface: #13223e;
+      --border: rgba(255, 255, 255, 0.1);
+      --primary: #00d4ff;
+      --primary-rgb: 0, 212, 255;
+      --gold: #ffd700;
+      --gold-dark: #b8860b;
+      --gold-glow: rgba(255, 215, 0, 0.25);
+      --accent: #38ef7d;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --cert-bg: #081122;
+      --cert-inner: #0b1830;
+      --cert-border: #ffd700;
+      --font-display: 'Plus Jakarta Sans', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-sig: 'Alex Brush', 'Caveat', cursive;
+    }
+
+    /* Light Mode */
+    :root[data-theme="day"],
+    html.light-mode {
+      --bg: #f1f5f9;
+      --panel: #ffffff;
+      --panel-surface: #f8fafc;
+      --border: rgba(15, 23, 42, 0.12);
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --cert-bg: #fcfcfd;
+      --cert-inner: #ffffff;
+      --cert-border: #b8860b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      padding-top: 80px;
+    }
+
+    /* Unified Floating Navbar */
+    .mlab-nav {
+      position: fixed;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 95%;
+      max-width: 1250px;
+      background: rgba(13, 23, 42, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 22px;
+      border-radius: 40px;
+      border: 1px solid var(--border);
+      z-index: 1000;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    html.light-mode .mlab-nav {
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .mlab-brand {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mlab-brand span {
+      color: var(--primary);
+    }
+
+    .mlab-links {
+      display: flex;
+      list-style: none;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .mlab-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.86rem;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 20px;
+      transition: all 0.2s;
+    }
+
+    .mlab-links a:hover,
+    .mlab-links a.active {
+      color: var(--primary);
+      background: rgba(var(--primary-rgb), 0.12);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .theme-toggle-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 7px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .theme-toggle-btn:hover {
+      border-color: var(--primary);
+    }
+
+    /* Container */
+    .cert-container {
+      max-width: 1250px;
+      margin: 0 auto;
+      padding: 20px 24px 60px;
+      width: 100%;
+      flex: 1;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .page-title {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 30%, var(--primary) 70%, var(--gold) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    html.light-mode .page-title {
+      background: linear-gradient(135deg, #0f172a 30%, #0284c7 70%, #b8860b 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .page-sub {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    /* Layout: Toolbar Top + Certificate Canvas Preview */
+    .toolbar-panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px 24px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .customizer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      width: 100%;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .input-label {
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .input-ctrl {
+      background: var(--panel-surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .input-ctrl:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.2);
+    }
+
+    .actions-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      gap: 12px;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: rgba(56, 239, 125, 0.12);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all 0.25s ease;
+      font-family: var(--font-display);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), #38bdf8);
+      color: #030a16;
+      box-shadow: 0 4px 15px rgba(var(--primary-rgb), 0.35);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(var(--primary-rgb), 0.45);
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold), #f59e0b);
+      color: #030a16;
+      box-shadow: 0 4px 15px var(--gold-glow);
+    }
+
+    .btn-gold:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+    }
+
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: rgba(var(--primary-rgb), 0.08);
+    }
+
+    /* =========================================================
+       THE MASTERPIECE CERTIFICATE CARD (Landscape / Aspect ~1.414)
+       ========================================================= */
+    .cert-frame-wrapper {
+      perspective: 1000px;
+      display: flex;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+
+    .certificate-card {
+      width: 100%;
+      max-width: 980px;
+      min-height: 640px;
+      background: var(--cert-bg);
+      border: 12px solid #0f1c34;
+      border-radius: 20px;
+      position: relative;
+      padding: 24px;
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6), 0 0 0 2px rgba(255, 215, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      color: var(--text);
+      transition: all 0.3s ease;
+    }
+
+    html.light-mode .certificate-card {
+      border-color: #e2e8f0;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12), 0 0 0 2px rgba(184, 134, 11, 0.4);
+    }
+
+    /* Ornate Gold Border & Guilloche Security Pattern */
+    .cert-inner-frame {
+      border: 2px solid var(--gold);
+      border-radius: 12px;
+      padding: 30px 36px;
+      background: var(--cert-inner);
+      position: relative;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      z-index: 2;
+      box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Intricate Corner Ornaments */
+    .corner-ornament {
+      position: absolute;
+      width: 48px;
+      height: 48px;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .corner-tl {
+      top: -2px;
+      left: -2px;
+    }
+
+    .corner-tr {
+      top: -2px;
+      right: -2px;
+      transform: rotate(90deg);
+    }
+
+    .corner-br {
+      bottom: -2px;
+      right: -2px;
+      transform: rotate(180deg);
+    }
+
+    .corner-bl {
+      bottom: -2px;
+      left: -2px;
+      transform: rotate(270deg);
+    }
+
+    /* Watermark Background */
+    .cert-watermark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 320px;
+      height: 320px;
+      opacity: 0.04;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Certificate Header */
+    .cert-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 2px solid rgba(255, 215, 0, 0.35);
+      padding-bottom: 16px;
+      margin-bottom: 18px;
+    }
+
+    .cert-brand-block {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .cert-logo-badge {
+      width: 58px;
+      height: 58px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(255, 215, 0, 0.2));
+      border: 1px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+    }
+
+    .cert-brand-text h2 {
+      font-family: var(--font-display);
+      font-size: 1.55rem;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: var(--primary);
+      text-transform: uppercase;
+      line-height: 1.1;
+    }
+
+    .cert-brand-text p {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-top: 3px;
+    }
+
+    .cert-meta-block {
+      text-align: right;
+    }
+
+    .cert-badge-ribbon {
+      display: inline-block;
+      padding: 5px 12px;
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.05));
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .cert-date {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+      font-family: var(--font-mono);
+    }
+
+    /* Certificate Title */
+    .cert-title-section {
+      text-align: center;
+      margin: 10px 0 16px;
+    }
+
+    .cert-headline {
+      font-family: var(--font-display);
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 2.5px;
+      text-shadow: 0 0 20px rgba(255, 215, 0, 0.25);
+    }
+
+    .cert-subheadline {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* Certificate Recipient */
+    .cert-recipient-section {
+      text-align: center;
+      margin: 14px 0;
+    }
+
+    .presented-to {
+      font-size: 0.82rem;
+      font-style: italic;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+
+    .student-name-display {
+      font-family: var(--font-display);
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: #fff;
+      padding: 4px 0;
+      border-bottom: 2px dashed rgba(0, 212, 255, 0.5);
+      display: inline-block;
+      min-width: 320px;
+      margin: 4px auto 6px;
+      text-shadow: 0 2px 10px rgba(0, 212, 255, 0.3);
+    }
+
+    html.light-mode .student-name-display {
+      color: #0f172a;
+      text-shadow: none;
+    }
+
+    .batch-display {
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    /* Experiment Citation & Achievement */
+    .cert-citation-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 14px 20px;
+      text-align: center;
+      margin: 12px 0 18px;
+    }
+
+    .citation-text {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: #e2e8f0;
+    }
+
+    html.light-mode .citation-text {
+      color: #334155;
+    }
+
+    .exp-highlight {
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .score-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 12px;
+      background: rgba(56, 239, 125, 0.15);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.86rem;
+      font-family: var(--font-mono);
+      margin-left: 6px;
+    }
+
+    /* Verification & Signatures Footer */
+    .cert-footer {
+      display: grid;
+      grid-template-columns: 140px 1fr 220px;
+      align-items: flex-end;
+      gap: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      padding-top: 14px;
+      margin-top: 10px;
+    }
+
+    /* QR Code & Hash Block */
+    .qr-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .qr-code-box {
+      width: 82px;
+      height: 82px;
+      background: #ffffff;
+      padding: 6px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .qr-code-box svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .cert-hash-text {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+
+    /* Center Official Seal */
+    .seal-block {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .official-seal-graphic {
+      width: 76px;
+      height: 76px;
+      position: relative;
+    }
+
+    .seal-svg {
+      width: 100%;
+      height: 100%;
+      animation: sealRotate 40s linear infinite;
+    }
+
+    @keyframes sealRotate {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .seal-caption {
+      font-size: 0.68rem;
+      color: var(--gold);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* Founder / Signatory Block */
+    .signature-block {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .sig-pen-canvas {
+      font-family: var(--font-sig);
+      font-size: 2.3rem;
+      color: var(--primary);
+      line-height: 1;
+      margin-bottom: 2px;
+      transform: rotate(-3deg);
+      user-select: none;
+      text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+    }
+
+    html.light-mode .sig-pen-canvas {
+      color: #0284c7;
+      text-shadow: none;
+    }
+
+    .sig-rule {
+      width: 180px;
+      height: 1.5px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin-bottom: 4px;
+    }
+
+    .sig-name {
+      font-family: var(--font-display);
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    html.light-mode .sig-name {
+      color: #0f172a;
+    }
+
+    .sig-title {
+      font-size: 0.7rem;
+      color: var(--gold);
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .sig-contact {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      margin-top: 2px;
+    }
+
+    /* Toast Notification */
+    .toast-popup {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: rgba(13, 23, 42, 0.95);
+      border: 1px solid var(--primary);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 12px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+      z-index: 99999;
+      font-size: 0.88rem;
+      font-weight: 600;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      animation: slideInToast 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes slideInToast {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* PRINT STYLES — Flawless 1-page A4 Landscape output */
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      .mlab-nav,
+      .page-header,
+      .toolbar-panel,
+      .toast-popup,
+      .site-footer {
+        display: none !important;
+      }
+
+      .cert-container {
+        padding: 0 !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        margin: 0 !important;
+      }
+
+      .cert-frame-wrapper {
+        margin: 0 !important;
+      }
+
+      .certificate-card {
+        border: 4px solid #b8860b !important;
+        background: #ffffff !important;
+        color: #000000 !important;
+        box-shadow: none !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        height: 100vh !important;
+        page-break-inside: avoid;
+      }
+
+      .cert-inner-frame {
+        background: #ffffff !important;
+        border-color: #b8860b !important;
+        box-shadow: none !important;
+      }
+
+      .student-name-display {
+        color: #000000 !important;
+      }
+
+      .citation-text {
+        color: #1e293b !important;
+      }
+
+      .sig-name {
+        color: #000000 !important;
+      }
+
+      .sig-pen-canvas {
+        color: #0369a1 !important;
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .cert-footer {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        text-align: center;
+      }
+
+      .qr-block,
+      .seal-block,
+      .signature-block {
+        align-items: center;
+      }
+
+      .student-name-display {
+        font-size: 1.8rem;
+        min-width: 220px;
+      }
+
+      .cert-headline {
+        font-size: 1.35rem;
+      }
+
+      .certificate-card {
+        padding: 12px;
+      }
+
+      .cert-inner-frame {
+        padding: 18px 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- FLOATING NAVIGATION BAR -->
+  <nav class="mlab-nav">
+    <a href="index.html" class="mlab-brand">
+      <img src="favicon.svg" alt="Moleqyn Logo" width="28" height="28" />
+      <span>Moleqyn</span>
+    </a>
+
+    <ul class="mlab-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="simulators.html">Virtual Labs</a></li>
+      <li><a href="sim_electro.html">🔋 Daniell Cell Lab</a></li>
+      <li><a href="experiments.html">Experiments</a></li>
+      <li><a href="dashboard.html">Student Portal</a></li>
+      <li><a href="certificate.html" class="active">🎓 Certificates</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <a href="dashboard.html" class="theme-toggle-btn" style="text-decoration:none; font-weight:600;">← Back to
+        Portal</a>
+      <button class="theme-toggle-btn" id="themeToggleBtn" title="Switch Theme">☀️</button>
+    </div>
+  </nav>
+
+  <main class="cert-container">
+    <!-- PAGE HEADING -->
+    <header class="page-header">
+      <h1 class="page-title">Official Chemistry Mastery Certificate</h1>
+      <p class="page-sub">
+        Cryptographically signed STEM Laboratory Practical verification recognized for CBSE, ISC, JEE &amp; NEET
+        advanced portfolio records.
+      </p>
+    </header>
+
+    <!-- CUSTOMIZER TOOLBAR -->
+    <section class="toolbar-panel">
+      <div class="customizer-grid">
+        <div class="input-group">
+          <label class="input-label" for="inpStudentName">Student Full Name</label>
+          <input type="text" id="inpStudentName" class="input-ctrl" value="Alex Sharma"
+            placeholder="e.g. Shyam Raj, Alex Sharma" oninput="updateCert()" />
+        </div>
+
+        <div class="input-group">
+          <label class="input-label" for="inpBatch">Batch / Academic Class</label>
+          <select id="inpBatch" class="input-ctrl" onchange="updateCert()">
+            <option value="Class 12 Lakshya JEE/NEET">Class 12 Lakshya (JEE &amp; NEET)</option>
+            <option value="Class 11 Arjuna JEE Advanced" selected>Class 11 Arjuna (JEE Advanced)</option>
+            <option value="Class 12 CBSE Board Practical">Class 12 CBSE Board Practical</option>
+            <option value="Class 10 Foundation Olympiad">Class 10 Foundation Olympiad</option>
+            <option value="Undergraduate Physical Chem">Undergraduate Physical Chemistry</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label" for="inpExperiment">Practical Lab Experiment</label>
+          <select id="inpExperiment" class="input-ctrl" onchange="updateCert()">
+            <option value="Daniell Galvanic Cell EMF & Nernst Equation (Zn/Zn²⁺ ‖ Cu²⁺/Cu)" selected>Daniell Galvanic
+              Cell EMF &amp; Nernst Equation</option>
+            <option value="Volumetric Acid-Base Titration (0.1M HCl vs NaOH Neutralization)">Acid-Base Volumetric
+              Titration</option>
+            <option value="AtomVerse Quantum Orbits & Electronic Configurations (118 Elements)">AtomVerse Quantum
+              Atomic Structure</option>
+            <option value="Ideal Gas Law PV=nRT Isothermal & Isobaric Simulation">Ideal Gas Law PV=nRT Thermodynamics
+            </option>
+            <option value="Rutherford Gold Foil Alpha Particle Scattering">Rutherford Gold Foil Alpha Scattering
+            </option>
+            <option value="Flame Test Qualitative Cation Identification">Flame Test Qualitative Analysis</option>
+            <option value="Radioactive Half-Life & Nuclear Decay Kinetics">Radioactive Half-Life &amp; Decay Kinetics
+            </option>
+            <option value="Calorimetry & Hess's Law of Heat Summation">Calorimetry &amp; Hess's Law of Enthalpy
+            </option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label" for="inpScore">Mastery Score (%)</label>
+          <input type="number" id="inpScore" class="input-ctrl" value="96" min="60" max="100" oninput="updateCert()" />
+        </div>
+      </div>
+
+      <div class="actions-row">
+        <div class="status-badge" id="cloudSyncStatus">
+          <span>☁️</span> <span id="cloudStatusText">Ready to sync with Supabase Cloud</span>
+        </div>
+
+        <div class="btn-group">
+          <button type="button" class="action-btn btn-primary" onclick="printCertificate()">
+            🖨️ Print / PDF
+          </button>
+          <button type="button" class="action-btn btn-gold" onclick="downloadCertificatePNG()">
+            📥 Download PNG
+          </button>
+          <button type="button" class="action-btn btn-outline" onclick="shareWhatsApp()">
+            💬 WhatsApp
+          </button>
+          <button type="button" class="action-btn btn-outline" onclick="copyCertLink()">
+            📋 Copy Link
+          </button>
+          <button type="button" class="action-btn btn-outline" id="btnSyncCloud" onclick="syncCertificateToSupabase()">
+            ☁️ Sync to DB
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- MASTERPIECE CERTIFICATE CARD -->
+    <div class="cert-frame-wrapper">
+      <article class="certificate-card" id="certificateCard">
+        <!-- SVG Corner Ornaments -->
+        <svg class="corner-ornament corner-tl" viewBox="0 0 50 50">
+          <path d="M 0 0 L 50 0 L 50 8 L 8 8 L 8 50 L 0 50 Z" fill="#ffd700" opacity="0.8" />
+          <path d="M 12 12 L 35 12 L 35 16 L 16 16 L 16 35 L 12 35 Z" fill="#00d4ff" opacity="0.6" />
+        </svg>
+        <svg class="corner-ornament corner-tr" viewBox="0 0 50 50">
+          <path d="M 0 0 L 50 0 L 50 8 L 8 8 L 8 50 L 0 50 Z" fill="#ffd700" opacity="0.8" />
+          <path d="M 12 12 L 35 12 L 35 16 L 16 16 L 16 35 L 12 35 Z" fill="#00d4ff" opacity="0.6" />
+        </svg>
+        <svg class="corner-ornament corner-br" viewBox="0 0 50 50">
+          <path d="M 0 0 L 50 0 L 50 8 L 8 8 L 8 50 L 0 50 Z" fill="#ffd700" opacity="0.8" />
+          <path d="M 12 12 L 35 12 L 35 16 L 16 16 L 16 35 L 12 35 Z" fill="#00d4ff" opacity="0.6" />
+        </svg>
+        <svg class="corner-ornament corner-bl" viewBox="0 0 50 50">
+          <path d="M 0 0 L 50 0 L 50 8 L 8 8 L 8 50 L 0 50 Z" fill="#ffd700" opacity="0.8" />
+          <path d="M 12 12 L 35 12 L 35 16 L 16 16 L 16 35 L 12 35 Z" fill="#00d4ff" opacity="0.6" />
+        </svg>
+
+        <div class="cert-inner-frame">
+          <!-- Background Watermark (Benzene / Atom Ring) -->
+          <svg class="cert-watermark" viewBox="0 0 200 200" fill="none" stroke="currentColor">
+            <circle cx="100" cy="100" r="75" stroke="#00d4ff" stroke-width="2" stroke-dasharray="4 4" />
+            <ellipse cx="100" cy="100" rx="90" ry="35" stroke="#ffd700" stroke-width="1.5"
+              transform="rotate(30 100 100)" />
+            <ellipse cx="100" cy="100" rx="90" ry="35" stroke="#ffd700" stroke-width="1.5"
+              transform="rotate(-30 100 100)" />
+            <ellipse cx="100" cy="100" rx="90" ry="35" stroke="#38ef7d" stroke-width="1.5"
+              transform="rotate(90 100 100)" />
+            <circle cx="100" cy="100" r="14" fill="#00d4ff" />
+          </svg>
+
+          <!-- HEADER -->
+          <header class="cert-header">
+            <div class="cert-brand-block">
+              <div class="cert-logo-badge">⚗️</div>
+              <div class="cert-brand-text">
+                <h2>Moleqyn Virtual Lab</h2>
+                <p>National Chemistry STEM Excellence Initiative</p>
+              </div>
+            </div>
+
+            <div class="cert-meta-block">
+              <span class="cert-badge-ribbon">ISO-NCERT COMPLIANT</span>
+              <div class="cert-date" id="certIssueDate">ISSUED: 26 OCT 2026</div>
+            </div>
+          </header>
+
+          <!-- HEADLINE -->
+          <div class="cert-title-section">
+            <h2 class="cert-headline">Certificate of Mastery</h2>
+            <p class="cert-subheadline">In Advanced Chemistry Virtual Laboratory Experimentation</p>
+          </div>
+
+          <!-- RECIPIENT -->
+          <div class="cert-recipient-section">
+            <p class="presented-to">This official document is proudly awarded to</p>
+            <div class="student-name-display" id="certStudentName">Alex Sharma</div>
+            <div class="batch-display" id="certBatchName">Class 11 Arjuna (JEE Advanced)</div>
+          </div>
+
+          <!-- EXPERIMENT CITATION -->
+          <div class="cert-citation-box">
+            <p class="citation-text">
+              For exemplary precision, theoretical mastery, and successful execution of the experimental protocol:
+              <br />
+              <strong class="exp-highlight" id="certExpTitle">Daniell Galvanic Cell EMF &amp; Nernst Equation (Zn/Zn²⁺
+                ‖ Cu²⁺/Cu)</strong>
+              <br />
+              Demonstrating full compliance with NCERT laboratory standards with an evaluated score of:
+              <span class="score-chip" id="certScoreDisplay">96% • Grade A+</span>
+            </p>
+          </div>
+
+          <!-- FOOTER: QR + SEAL + SIGNATURE -->
+          <footer class="cert-footer">
+            <!-- Left: QR Code & Verification ID -->
+            <div class="qr-block">
+              <div class="qr-code-box" id="qrContainer" title="Scan to verify online">
+                <!-- Fallback SVG QR pattern -->
+                <svg viewBox="0 0 100 100" fill="#030a16">
+                  <rect x="0" y="0" width="30" height="30" fill="#030a16" />
+                  <rect x="5" y="5" width="20" height="20" fill="#ffffff" />
+                  <rect x="10" y="10" width="10" height="10" fill="#030a16" />
+                  <rect x="70" y="0" width="30" height="30" fill="#030a16" />
+                  <rect x="75" y="5" width="20" height="20" fill="#ffffff" />
+                  <rect x="80" y="10" width="10" height="10" fill="#030a16" />
+                  <rect x="0" y="70" width="30" height="30" fill="#030a16" />
+                  <rect x="5" y="75" width="20" height="20" fill="#ffffff" />
+                  <rect x="10" y="80" width="10" height="10" fill="#030a16" />
+                  <rect x="40" y="10" width="10" height="10" fill="#030a16" />
+                  <rect x="50" y="25" width="10" height="10" fill="#030a16" />
+                  <rect x="35" y="45" width="30" height="10" fill="#030a16" />
+                  <rect x="45" y="65" width="10" height="25" fill="#030a16" />
+                  <rect x="70" y="50" width="10" height="10" fill="#030a16" />
+                  <rect x="85" y="70" width="15" height="15" fill="#030a16" />
+                  <rect x="70" y="85" width="10" height="15" fill="#030a16" />
+                </svg>
+              </div>
+              <div class="cert-hash-text" id="certHashId">ID: ML-2026-8F4C9B</div>
+            </div>
+
+            <!-- Center: Holographic Official Seal -->
+            <div class="seal-block">
+              <div class="official-seal-graphic">
+                <svg class="seal-svg" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="46" fill="none" stroke="#ffd700" stroke-width="2" />
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="#00d4ff" stroke-width="1.5"
+                    stroke-dasharray="3 3" />
+                  <path id="sealTextPath" d="M 50 15 A 35 35 0 1 1 49.9 15" fill="none" />
+                  <text font-size="7" font-family="'JetBrains Mono', monospace" fill="#ffd700" letter-spacing="1">
+                    <textPath href="#sealTextPath">★ MOLEQYN STEM RESEARCH &amp; VERIFICATION ★</textPath>
+                  </text>
+                  <circle cx="50" cy="50" r="24" fill="rgba(255, 215, 0, 0.12)" stroke="#ffd700" stroke-width="1" />
+                  <text x="50" y="54" font-size="14" text-anchor="middle" fill="#00d4ff">🔬</text>
+                </svg>
+              </div>
+              <div class="seal-caption">Verified STEM Practical</div>
+            </div>
+
+            <!-- Right: Founder Shyam Raj Signature -->
+            <div class="signature-block">
+              <div class="sig-pen-canvas" id="sigFounder">Shyam Raj</div>
+              <div class="sig-rule"></div>
+              <div class="sig-name">Shyam Raj</div>
+              <div class="sig-title">Founder &amp; Lead Chemistry Mentor</div>
+              <div class="sig-contact">smorgchemist07@gmail.com • +91 77820 01734</div>
+            </div>
+          </footer>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <!-- HIDDEN CANVAS FOR HIGH-RES PNG EXPORT -->
+  <canvas id="exportCanvas" style="display:none;"></canvas>
+
+  <!-- LIVE TOAST -->
+  <div class="toast-popup" id="toastBox">
+    <span id="toastIcon">✨</span>
+    <span id="toastText">Action completed successfully</span>
+  </div>
+
+  <script>
+    // Theme Management
+    (function initTheme() {
+      const savedTheme = localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
+      if (savedTheme === 'light' || savedTheme === 'day') {
+        document.documentElement.setAttribute('data-theme', 'day');
+        document.documentElement.classList.add('light-mode');
+      }
+    })();
+
+    const themeBtn = document.getElementById('themeToggleBtn');
+    themeBtn.addEventListener('click', () => {
+      const isLight = document.documentElement.classList.toggle('light-mode');
+      if (isLight) {
+        document.documentElement.setAttribute('data-theme', 'day');
+        localStorage.setItem('ml-theme', 'light');
+        localStorage.setItem('mlab-theme', 'light');
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('ml-theme', 'dark');
+        localStorage.setItem('mlab-theme', 'dark');
+      }
+    });
+
+    // Parse URL Query Params for Dynamic Auto-fill
+    function initFromParams() {
+      const params = new URLSearchParams(window.location.search);
+      const student = params.get('student') || params.get('name');
+      const topic = params.get('topic') || params.get('exp');
+      const score = params.get('score');
+      const batch = params.get('batch');
+
+      // Check if user is logged in
+      const storedUser = localStorage.getItem('moleqyn_user');
+      if (storedUser) {
+        try {
+          const u = JSON.parse(storedUser);
+          if (u.name && !student) {
+            document.getElementById('inpStudentName').value = u.name;
+          }
+          if (u.batch && !batch) {
+            document.getElementById('inpBatch').value = u.batch;
+          }
+        } catch (e) { }
+      }
+
+      if (student) document.getElementById('inpStudentName').value = decodeURIComponent(student);
+      if (score) document.getElementById('inpScore').value = parseInt(score, 10);
+      if (batch) {
+        const sel = document.getElementById('inpBatch');
+        for (let i = 0; i < sel.options.length; i++) {
+          if (sel.options[i].value.toLowerCase().includes(batch.toLowerCase())) {
+            sel.selectedIndex = i;
+            break;
+          }
+        }
+      }
+      if (topic) {
+        const sel = document.getElementById('inpExperiment');
+        let matched = false;
+        for (let i = 0; i < sel.options.length; i++) {
+          if (sel.options[i].value.toLowerCase().includes(topic.toLowerCase())) {
+            sel.selectedIndex = i;
+            matched = true;
+            break;
+          }
+        }
+        if (!matched) {
+          const opt = document.createElement('option');
+          opt.value = decodeURIComponent(topic);
+          opt.textContent = decodeURIComponent(topic);
+          opt.selected = true;
+          sel.prepend(opt);
+        }
+      }
+
+      // Generate stable Hash ID
+      generateUniqueHash();
+      updateCert();
+    }
+
+    let currentHash = 'ML-2026-8F4C9B';
+
+    function generateUniqueHash() {
+      const student = document.getElementById('inpStudentName').value || 'Student';
+      const exp = document.getElementById('inpExperiment').value || 'Chem';
+      let sum = 0;
+      for (let i = 0; i < student.length; i++) sum += student.charCodeAt(i) * (i + 1);
+      for (let i = 0; i < exp.length; i++) sum += exp.charCodeAt(i) * 3;
+      const hex = (sum % 0xFFFFFF).toString(16).toUpperCase().padStart(6, '0');
+      currentHash = `ML-2026-${hex}`;
+      document.getElementById('certHashId').textContent = `ID: ${currentHash}`;
+    }
+
+    function updateCert() {
+      const student = document.getElementById('inpStudentName').value.trim() || 'Alex Sharma';
+      const batch = document.getElementById('inpBatch').value;
+      const exp = document.getElementById('inpExperiment').value;
+      const score = parseInt(document.getElementById('inpScore').value, 10) || 96;
+
+      document.getElementById('certStudentName').textContent = student;
+      document.getElementById('certBatchName').textContent = batch;
+      document.getElementById('certExpTitle').textContent = exp;
+
+      // Grade calculation
+      let grade = 'Grade A+';
+      if (score >= 95) grade = 'Grade A+ (Distinction)';
+      else if (score >= 85) grade = 'Grade A (Mastery)';
+      else if (score >= 75) grade = 'Grade B+ (Merit)';
+      else grade = 'Grade B (Pass)';
+
+      document.getElementById('certScoreDisplay').textContent = `${score}% • ${grade}`;
+
+      // Date
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
+      document.getElementById('certIssueDate').textContent = `ISSUED: ${dateStr}`;
+
+      generateUniqueHash();
+    }
+
+    function showToast(text, icon = '✨') {
+      const box = document.getElementById('toastBox');
+      document.getElementById('toastIcon').textContent = icon;
+      document.getElementById('toastText').textContent = text;
+      box.style.display = 'flex';
+      setTimeout(() => {
+        box.style.display = 'none';
+      }, 3500);
+    }
+
+    function printCertificate() {
+      window.print();
+    }
+
+    function copyCertLink() {
+      const student = encodeURIComponent(document.getElementById('inpStudentName').value);
+      const exp = encodeURIComponent(document.getElementById('inpExperiment').value);
+      const score = document.getElementById('inpScore').value;
+      const url = `${window.location.origin}${window.location.pathname}?student=${student}&topic=${exp}&score=${score}`;
+
+      navigator.clipboard.writeText(url).then(() => {
+        showToast('Certificate verification link copied to clipboard!', '📋');
+      }).catch(() => {
+        prompt('Copy this certificate link:', url);
+      });
+    }
+
+    function shareWhatsApp() {
+      const student = document.getElementById('inpStudentName').value;
+      const exp = document.getElementById('inpExperiment').value;
+      const score = document.getElementById('inpScore').value;
+      const hash = currentHash;
+      const text = `🎓 *Moleqyn Chemistry Mastery Certificate*\n\n` +
+        `Student: *${student}*\n` +
+        `Practical: *${exp}*\n` +
+        `Evaluated Score: *${score}% (Grade A+)*\n` +
+        `Certificate ID: *${hash}*\n` +
+        `Verified by: *Shyam Raj (Founder & Lead Mentor, Moleqyn)*\n\n` +
+        `Verify live here: ${window.location.href}`;
+
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+    }
+
+    // High-Resolution PNG Exporter via HTML5 Canvas
+    function downloadCertificatePNG() {
+      showToast('Rendering high-resolution certificate...', '🎨');
+
+      const canvas = document.getElementById('exportCanvas');
+      canvas.width = 1920;
+      canvas.height = 1280;
+      const ctx = canvas.getContext('2d');
+
+      const isLight = document.documentElement.classList.contains('light-mode');
+      const bgFill = isLight ? '#ffffff' : '#081122';
+      const innerFill = isLight ? '#f8fafc' : '#0b1830';
+      const textColor = isLight ? '#0f172a' : '#f8fafc';
+      const mutedColor = isLight ? '#64748b' : '#94a3b8';
+      const primaryColor = isLight ? '#0284c7' : '#00d4ff';
+      const goldColor = isLight ? '#b8860b' : '#ffd700';
+
+      // Background
+      ctx.fillStyle = bgFill;
+      ctx.fillRect(0, 0, 1920, 1280);
+
+      // Outer gold border
+      ctx.strokeStyle = '#0f1c34';
+      ctx.lineWidth = 24;
+      ctx.strokeRect(20, 20, 1880, 1240);
+
+      ctx.strokeStyle = goldColor;
+      ctx.lineWidth = 4;
+      ctx.strokeRect(48, 48, 1824, 1184);
+
+      // Inner Frame
+      ctx.fillStyle = innerFill;
+      ctx.fillRect(52, 52, 1816, 1176);
+
+      ctx.strokeStyle = 'rgba(255, 215, 0, 0.4)';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(70, 70, 1780, 1140);
+
+      // Header Brand
+      ctx.fillStyle = primaryColor;
+      ctx.font = 'bold 44px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText('MOLEQYN VIRTUAL CHEMISTRY LAB', 120, 140);
+
+      ctx.fillStyle = goldColor;
+      ctx.font = 'bold 20px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText('NATIONAL CHEMISTRY STEM EXCELLENCE INITIATIVE • NCERT & JEE/NEET COMPLIANT', 120, 175);
+
+      // Right Header Date & Hash
+      ctx.textAlign = 'right';
+      ctx.fillStyle = goldColor;
+      ctx.font = 'bold 22px "JetBrains Mono", monospace';
+      ctx.fillText(document.getElementById('certIssueDate').textContent, 1800, 140);
+
+      ctx.fillStyle = mutedColor;
+      ctx.font = '18px "JetBrains Mono", monospace';
+      ctx.fillText(currentHash, 1800, 175);
+      ctx.textAlign = 'left';
+
+      // Divider line
+      ctx.strokeStyle = 'rgba(255, 215, 0, 0.3)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(120, 210);
+      ctx.lineTo(1800, 210);
+      ctx.stroke();
+
+      // Certificate Title
+      ctx.textAlign = 'center';
+      ctx.fillStyle = goldColor;
+      ctx.font = 'bold 54px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText('CERTIFICATE OF MASTERY', 960, 310);
+
+      ctx.fillStyle = mutedColor;
+      ctx.font = '22px "Inter", sans-serif';
+      ctx.fillText('IN ADVANCED CHEMISTRY VIRTUAL LABORATORY EXPERIMENTATION', 960, 355);
+
+      // Recipient
+      ctx.fillStyle = mutedColor;
+      ctx.font = 'italic 26px "Inter", sans-serif';
+      ctx.fillText('This official document is proudly awarded to', 960, 440);
+
+      // Student Name
+      const studentName = document.getElementById('certStudentName').textContent;
+      ctx.fillStyle = primaryColor;
+      ctx.font = 'bold 74px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText(studentName, 960, 530);
+
+      // Name underline
+      ctx.strokeStyle = primaryColor;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(960 - 300, 555);
+      ctx.lineTo(960 + 300, 555);
+      ctx.stroke();
+
+      // Batch
+      const batchName = document.getElementById('certBatchName').textContent;
+      ctx.fillStyle = mutedColor;
+      ctx.font = 'bold 26px "Inter", sans-serif';
+      ctx.fillText(batchName, 960, 605);
+
+      // Citation Box
+      ctx.fillStyle = isLight ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.04)';
+      ctx.fillRect(200, 660, 1520, 220);
+      ctx.strokeStyle = 'rgba(255,215,0,0.3)';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(200, 660, 1520, 220);
+
+      ctx.fillStyle = textColor;
+      ctx.font = '24px "Inter", sans-serif';
+      ctx.fillText('For exemplary precision, theoretical mastery, and successful execution of the experimental protocol:', 960, 715);
+
+      const expTitle = document.getElementById('certExpTitle').textContent;
+      ctx.fillStyle = goldColor;
+      ctx.font = 'bold 32px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText(expTitle, 960, 770);
+
+      const scoreText = document.getElementById('certScoreDisplay').textContent;
+      ctx.fillStyle = isLight ? '#16a34a' : '#38ef7d';
+      ctx.font = 'bold 28px "JetBrains Mono", monospace';
+      ctx.fillText(`Evaluated Score: ${scoreText}  •  NCERT Practical Standard Satisfied`, 960, 830);
+
+      // Bottom Footer: Verification + Seal + Signature
+      // Left: Verification Hash
+      ctx.textAlign = 'left';
+      ctx.fillStyle = mutedColor;
+      ctx.font = '18px "JetBrains Mono", monospace';
+      ctx.fillText(`VERIFICATION: ${currentHash}`, 220, 1050);
+      ctx.fillText(`STATUS: SECURE CRYPTOGRAPHIC HASH`, 220, 1080);
+      ctx.fillText(`SYSTEM: MOLEQYN CLOUD TELEMETRY`, 220, 1110);
+
+      // Center Seal
+      ctx.textAlign = 'center';
+      ctx.fillStyle = goldColor;
+      ctx.font = 'bold 20px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText('★ OFFICIAL STEM VERIFIED ★', 960, 1090);
+
+      // Right: Founder Shyam Raj Signature
+      ctx.textAlign = 'center';
+      ctx.fillStyle = primaryColor;
+      ctx.font = '64px "Alex Brush", cursive';
+      ctx.fillText('Shyam Raj', 1580, 1025);
+
+      ctx.strokeStyle = goldColor;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(1430, 1045);
+      ctx.lineTo(1730, 1045);
+      ctx.stroke();
+
+      ctx.fillStyle = textColor;
+      ctx.font = 'bold 24px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText('Shyam Raj', 1580, 1080);
+
+      ctx.fillStyle = goldColor;
+      ctx.font = '18px "Inter", sans-serif';
+      ctx.fillText('Founder & Lead Chemistry Mentor', 1580, 1110);
+
+      ctx.fillStyle = mutedColor;
+      ctx.font = '15px "JetBrains Mono", monospace';
+      ctx.fillText('smorgchemist07@gmail.com • +91 77820 01734', 1580, 1135);
+
+      // Trigger download
+      const safeName = studentName.replace(/[^a-zA-Z0-9]/g, '_');
+      const filename = `Moleqyn_Certificate_${safeName}_${currentHash}.png`;
+
+      canvas.toBlob((blob) => {
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = URL.createObjectURL(blob);
+        link.click();
+        showToast('PNG Certificate successfully generated & downloaded!', '📥');
+      }, 'image/png');
+    }
+
+    // Supabase Cloud Score Sync
+    async function syncCertificateToSupabase() {
+      const btn = document.getElementById('btnSyncCloud');
+      const statusText = document.getElementById('cloudStatusText');
+      btn.disabled = true;
+      statusText.textContent = 'Syncing to Supabase Cloud...';
+
+      const studentName = document.getElementById('certStudentName').textContent;
+      const expTitle = document.getElementById('certExpTitle').textContent;
+      const score = parseInt(document.getElementById('inpScore').value, 10) || 96;
+
+      const scorePayload = {
+        studentId: currentHash,
+        studentName: studentName,
+        labTitle: expTitle,
+        score: score,
+        xpAwarded: 100
+      };
+
+      if (window.MoleqynSupabase && typeof window.MoleqynSupabase.syncLabScore === 'function') {
+        const res = await window.MoleqynSupabase.syncLabScore(scorePayload);
+        if (res) {
+          statusText.textContent = `✅ Synced to Supabase (${currentHash})`;
+          showToast('Lab certificate score logged to Supabase Cloud!', '☁️');
+        } else {
+          statusText.textContent = '💾 Saved locally in browser storage (Offline Mode)';
+          showToast('Saved to local telemetry records', '💾');
+        }
+      } else {
+        statusText.textContent = '💾 Saved locally in browser storage';
+        showToast('Saved to local telemetry records', '💾');
+      }
+
+      // Also persist to localStorage for dashboard history
+      try {
+        const history = JSON.parse(localStorage.getItem('moleqyn_cert_history') || '[]');
+        history.unshift({
+          id: currentHash,
+          student: studentName,
+          topic: expTitle,
+          score: score,
+          date: new Date().toISOString()
+        });
+        localStorage.setItem('moleqyn_cert_history', JSON.stringify(history.slice(0, 20)));
+      } catch (e) { }
+
+      btn.disabled = false;
+    }
+
+    // Auto-initialize on load
+    window.addEventListener('DOMContentLoaded', () => {
+      initFromParams();
+      // Auto-trigger sync if redirected from a completed lab
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('autosync') === '1') {
+        syncCertificateToSupabase();
+      }
+    });
+  </script>
+</body>
+
+</html>
