@@ -23,6 +23,9 @@
     rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/pages.css" />
+  <!-- SUPABASE CLOUD DATABASE JS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-client.js"></script>
   <style>
     :root {
       --bg: #07111f;
@@ -791,6 +794,11 @@
         existing.unshift(inquiry);
         localStorage.setItem('moleqyn_inquiries', JSON.stringify(existing));
         localStorage.setItem('mlab_inquiries', JSON.stringify(existing));
+
+        // 1.5 Sync to Supabase PostgreSQL Cloud Database
+        if (window.MoleqynCloud && typeof window.MoleqynCloud.syncInquiry === 'function') {
+          window.MoleqynCloud.syncInquiry(inquiry);
+        }
       } catch (err) {
         console.warn('Storage sync error:', err);
       }

@@ -20,6 +20,9 @@
     href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
     rel="stylesheet" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <!-- SUPABASE CLOUD DATABASE JS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-client.js"></script>
   <style>
     :root {
       --bg: #060d1b;
@@ -995,6 +998,9 @@
       <button class="btn-nav" onclick="openGoogleOauthModal()" title="Google 1-Tap &amp; OAuth Gateway Configuration">
         🔑 Google OAuth
       </button>
+      <button class="btn-nav" onclick="openSupabaseModal()" title="Supabase PostgreSQL Cloud Database Configuration">
+        ☁️ Supabase Cloud
+      </button>
       <button class="btn-nav" onclick="openInquiriesModal()" title="Helpdesk &amp; Contact Inquiries"
         style="position:relative;">
         📬 Inquiries <span id="inquiriesNavBadge"
@@ -1267,6 +1273,78 @@
         <div style="display: flex; gap: 8px;">
           <button type="button" class="btn-nav" onclick="closeWebhookModal()">Cancel</button>
           <button type="button" class="btn-nav btn-primary-action" onclick="saveWebhookUrl()">Save URL</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUPABASE POSTGRESQL CLOUD DATABASE MODAL -->
+  <div class="modal-overlay" id="supabaseModal" onclick="if(event.target===this) closeSupabaseModal()">
+    <div class="modal-card" style="max-width: 620px;">
+      <div class="modal-header">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M12.986 2.05a1 1 0 0 0-1.708 0L2.146 16.634a1 1 0 0 0 .854 1.522h7.842l-1.025 4.356a1 1 0 0 0 1.708.798l9.132-14.584a1 1 0 0 0-.854-1.522H11.96l1.026-5.154Z" fill="#3ECF8E"/>
+          </svg>
+          <h3 class="modal-title">Supabase Cloud Database</h3>
+        </div>
+        <button class="btn-close" onclick="closeSupabaseModal()">✕</button>
+      </div>
+
+      <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 14px;">
+        Connect your free Supabase PostgreSQL cloud database to automatically synchronize student telemetry, quiz mastery, and contact inquiries across all browsers, school PCs, and mobile devices.
+      </p>
+
+      <!-- Live Connection Status Pill -->
+      <div style="background: rgba(62,207,142,0.08); border: 1px solid rgba(62,207,142,0.25); border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px; color: #3ECF8E; font-weight: 800;">Cloud Synchronization Engine</div>
+          <div id="supabaseConnectionBadge" style="font-size: 0.88rem; font-weight: 700; color: var(--text); margin-top: 2px;">
+            ● Checking status...
+          </div>
+        </div>
+        <button type="button" class="btn-nav" onclick="testSupabasePing()" style="font-size: 0.78rem; padding: 5px 12px; color: #3ECF8E; border-color: rgba(62,207,142,0.4);">
+          ⚡ Test Live Ping
+        </button>
+      </div>
+
+      <!-- Credentials Inputs -->
+      <div class="form-group">
+        <label class="form-label">Supabase Project URL</label>
+        <input type="url" class="form-control" id="supabaseUrlInput" placeholder="https://your-project.supabase.co" />
+        <div style="font-size:0.74rem; color:var(--muted); margin-top:3px;">
+          Found in your Supabase Dashboard &gt; Project Settings &gt; API &gt; Project URL
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Supabase Anon Public API Key</label>
+        <input type="text" class="form-control" id="supabaseAnonKeyInput" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6..." />
+        <div style="font-size:0.74rem; color:var(--muted); margin-top:3px;">
+          Found in Project Settings &gt; API &gt; Project API Keys &gt; <code>anon</code> (public)
+        </div>
+      </div>
+
+      <!-- Quick SQL Schema Setup Accordion -->
+      <div style="background: var(--bg-card-sub); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-bottom: 16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <strong style="font-size:0.82rem; color:var(--text);">📋 Quick Database SQL Schema (Tables Setup):</strong>
+          <button type="button" class="btn-nav" onclick="copySupabaseSchemaSql()" id="btnCopySqlSchema" style="font-size:0.74rem; padding:4px 10px;">
+            📋 Copy SQL Query
+          </button>
+        </div>
+        <p style="font-size:0.76rem; color:var(--muted); margin: 6px 0 0; line-height: 1.4;">
+          Create the <code>moleqyn_students</code>, <code>moleqyn_inquiries</code>, and <code>moleqyn_lab_scores</code> tables in your Supabase SQL Editor in 1-click!
+        </p>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+        <button type="button" class="btn-nav" onclick="pullCloudStudentsToLocal()" title="Pull cloud database records now">
+          🔄 Sync Cloud Now
+        </button>
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="btn-nav" onclick="closeSupabaseModal()">Cancel</button>
+          <button type="button" class="btn-nav btn-primary-action" onclick="saveSupabaseConfig()">Save Configuration</button>
         </div>
       </div>
     </div>
@@ -2491,12 +2569,167 @@
       closeGoogleOauthModal();
     }
 
+    // SUPABASE CLOUD DATABASE HANDLERS
+    function openSupabaseModal() {
+      const modal = document.getElementById('supabaseModal');
+      const urlInput = document.getElementById('supabaseUrlInput');
+      const keyInput = document.getElementById('supabaseAnonKeyInput');
+      if (window.MoleqynCloud) {
+        const config = window.MoleqynCloud.getConfig();
+        if (urlInput) urlInput.value = config.url || '';
+        if (keyInput) keyInput.value = config.anonKey || '';
+      }
+      testSupabasePing(true);
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeSupabaseModal() {
+      const modal = document.getElementById('supabaseModal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function saveSupabaseConfig() {
+      const url = (document.getElementById('supabaseUrlInput').value || '').trim();
+      const key = (document.getElementById('supabaseAnonKeyInput').value || '').trim();
+
+      if (window.MoleqynCloud) {
+        window.MoleqynCloud.saveConfig(url, key);
+        showToast('✓ Supabase credentials saved successfully!', 'success');
+        testSupabasePing(false);
+      }
+      closeSupabaseModal();
+    }
+
+    async function testSupabasePing(silent = false) {
+      const badge = document.getElementById('supabaseConnectionBadge');
+      if (badge) badge.innerHTML = '● Testing cloud round-trip...';
+
+      if (!window.MoleqynCloud) {
+        if (badge) badge.innerHTML = '<span style="color:var(--danger)">● Cloud SDK not loaded</span>';
+        return;
+      }
+
+      const res = await window.MoleqynCloud.pingCloud();
+      if (res.success) {
+        if (badge) badge.innerHTML = `<span style="color:#3ECF8E">● Online &amp; Connected (${res.latencyMs}ms)</span>`;
+        if (!silent) showToast(`✓ Supabase Cloud active! Latency: ${res.latencyMs}ms`, 'success');
+      } else {
+        if (badge) badge.innerHTML = `<span style="color:var(--warning)">○ Local Fallback Mode (${res.message || 'Configured'})</span>`;
+        if (!silent) showToast(`ℹ️ Supabase status: ${res.message}`, 'info');
+      }
+    }
+
+    async function pullCloudStudentsToLocal(silent = false) {
+      if (!window.MoleqynCloud) return;
+      try {
+        const cloudStudents = await window.MoleqynCloud.fetchStudents();
+        if (cloudStudents && cloudStudents.length > 0) {
+          let registry = getRegistry();
+          let added = 0;
+          cloudStudents.forEach(cs => {
+            const idx = registry.findIndex(s => s.id === cs.id || s.phone === cs.phone || s.email === cs.email);
+            const formatted = {
+              id: cs.id,
+              name: cs.name,
+              email: cs.email,
+              phone: cs.phone,
+              class: cs.class,
+              avatar: cs.avatar || '👨‍🔬',
+              level: cs.level || 1,
+              xp: cs.xp || 100,
+              labsCompleted: cs.labs_completed || 0,
+              loginMethod: cs.login_method || 'Supabase Cloud',
+              lastActive: 'Cloud Sync',
+              status: 'Active'
+            };
+            if (idx !== -1) {
+              registry[idx] = { ...registry[idx], ...formatted };
+            } else {
+              registry.unshift(formatted);
+              added++;
+            }
+          });
+          localStorage.setItem('moleqyn_students_registry', JSON.stringify(registry));
+          refreshAllViews();
+          if (!silent) showToast(`✓ Synced ${cloudStudents.length} students from Supabase (${added} new)!`, 'success');
+        } else {
+          if (!silent) showToast('ℹ️ No new cloud records found. Local registry up to date.', 'info');
+        }
+      } catch (err) {
+        if (!silent) showToast('Could not fetch cloud records, keeping local cache.', 'info');
+      }
+    }
+
+    function copySupabaseSchemaSql() {
+      const sql = `-- MOLEQYN VIRTUAL CHEMISTRY LAB — SUPABASE DATABASE SCHEMA
+CREATE TABLE IF NOT EXISTS moleqyn_students (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  email TEXT,
+  phone TEXT,
+  class TEXT,
+  avatar TEXT,
+  level INT DEFAULT 1,
+  xp INT DEFAULT 100,
+  labs_completed INT DEFAULT 0,
+  login_method TEXT,
+  last_active TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS moleqyn_inquiries (
+  id TEXT PRIMARY KEY,
+  ticket TEXT UNIQUE NOT NULL,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  role TEXT,
+  category TEXT,
+  subject TEXT,
+  message TEXT,
+  status TEXT DEFAULT 'New',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS moleqyn_lab_scores (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  student_id TEXT,
+  student_name TEXT,
+  lab_title TEXT NOT NULL,
+  score INT,
+  xp_awarded INT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Enable Row Level Security (RLS) & Public Policies
+ALTER TABLE moleqyn_students ENABLE ROW LEVEL SECURITY;
+ALTER TABLE moleqyn_inquiries ENABLE ROW LEVEL SECURITY;
+ALTER TABLE moleqyn_lab_scores ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow public read and write for students" ON moleqyn_students FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public read and write for inquiries" ON moleqyn_inquiries FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public read and write for lab scores" ON moleqyn_lab_scores FOR ALL USING (true) WITH CHECK (true);`;
+
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(sql).then(() => {
+          const btn = document.getElementById('btnCopySqlSchema');
+          if (btn) {
+            btn.textContent = '✓ SQL Copied!';
+            setTimeout(() => { btn.textContent = '📋 Copy SQL Query'; }, 2500);
+          }
+          showToast('✓ SQL Schema copied! Paste into Supabase SQL Editor.', 'success');
+        });
+      }
+    }
+
     // INITIALIZATION
     document.addEventListener('DOMContentLoaded', () => {
       checkAdminSession();
       seedSampleStudents(false);
       refreshAllViews();
       updateInquiriesBadge();
+      // Test Supabase and pull cloud records in background
+      testSupabasePing(true);
+      pullCloudStudentsToLocal(true);
     });
   </script>
   <script src="js/shared-nav.js"></script>

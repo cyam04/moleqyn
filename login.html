@@ -22,6 +22,9 @@
     rel="stylesheet" />
   <!-- GOOGLE IDENTITY SERVICES SDK (OFFICIAL 1-TAP & OAUTH) -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <!-- SUPABASE CLOUD DATABASE JS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-client.js"></script>
   <style>
     :root {
       --bg: #060d1b;
@@ -2517,6 +2520,11 @@
           registry.unshift(record);
         }
         localStorage.setItem('moleqyn_students_registry', JSON.stringify(registry));
+
+        // Background Cloud Database Sync (Supabase PostgreSQL)
+        if (window.MoleqynCloud && typeof window.MoleqynCloud.syncStudent === 'function') {
+          window.MoleqynCloud.syncStudent(record);
+        }
 
         // Background Webhook Sync if Admin configured an endpoint
         const webhook = localStorage.getItem('moleqyn_webhook_url');
