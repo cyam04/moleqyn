@@ -2359,6 +2359,9 @@
       if (payload) {
         playBeep('success');
         const isFounder = (payload.email && payload.email.toLowerCase() === 'smorgchemist07@gmail.com');
+        if (isFounder) {
+          sessionStorage.setItem('moleqyn_admin_auth', 'true');
+        }
         const user = {
           name: payload.name || (isFounder ? 'Shyam Raj' : 'Google Scholar'),
           email: payload.email,
@@ -2444,6 +2447,10 @@
 
       const isFounder = (role === 'founder' || (email && email.toLowerCase() === 'smorgchemist07@gmail.com'));
       const batchName = customBatch || (isFounder ? 'Founder • Moleqyn Open STEM Lab' : 'Class 11 Science • Arjuna JEE');
+
+      if (isFounder) {
+        sessionStorage.setItem('moleqyn_admin_auth', 'true');
+      }
 
       const user = {
         name: name,
