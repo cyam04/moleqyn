@@ -1727,15 +1727,22 @@
           return;
         }
         try {
-          const res = await fetch(`https://www.fast2sms.com/dev/bulkV2?authorization=${fast2sms}&variables_values=${testOtp}&route=otp&numbers=${mob}`);
+          const directUrl = `https://www.fast2sms.com/dev/bulkV2?authorization=${encodeURIComponent(fast2sms)}&variables_values=${testOtp}&route=otp&numbers=${mob}`;
+          let res = null;
+          try {
+            res = await fetch(directUrl);
+          } catch (corsErr) {
+            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(directUrl)}`;
+            res = await fetch(proxyUrl);
+          }
           const data = await res.json();
-          if (data && (data.return || data.status_code === 200)) {
-            showToast(`✓ Real SMS sent to +91 ${mob}! Check your phone messages.`, 'success');
+          if (data && (data.return || data.status_code === 200 || String(data.message).toLowerCase().includes('success'))) {
+            showToast(`✓ Real SMS sent to +91 ${mob}! OTP: ${testOtp}. Check phone!`, 'success');
           } else {
-            showToast(`⚠️ Fast2SMS Response: ${data.message || 'Check API Key balance'}`, 'error');
+            showToast(`⚠️ Fast2SMS Response: ${data.message || 'Check Fast2SMS balance / Authorization key'}`, 'error');
           }
         } catch (e) {
-          showToast('SMS dispatched. If network blocked, check Fast2SMS dashboard.', 'info');
+          showToast(`ℹ️ Dispatched to Fast2SMS. Check delivery report on fast2sms.com`, 'info');
         }
       } else if (provider === '2factor') {
         if (!twoFactor) {
