@@ -1393,9 +1393,10 @@
       <div class="form-group">
         <label class="form-label">Select SMS Authentication Engine</label>
         <select class="form-control" id="smsProviderChoice" onchange="toggleSmsProviderFields()">
-          <option value="firebase" selected>Google Firebase Phone Auth (Free 10,000 Real SMS/mo • Recommended)</option>
+          <option value="firebase" selected>Google Firebase Phone Auth (Requires Blaze Plan or Test Numbers)</option>
           <option value="fast2sms">Fast2SMS (Quick Indian API - Free Trial Available)</option>
           <option value="2factor">2Factor.in (Official Telecom DLT Route)</option>
+          <option value="dev">⚡ Instant Test OTP Mode (Zero Billing • Works for Local Testing)</option>
         </select>
       </div>
 
@@ -1405,9 +1406,16 @@
           <span>Google Firebase Web Project Config</span>
           <span id="firebaseStatusBadge" style="font-size:0.75rem; padding:2px 8px; border-radius:12px; background:rgba(56,239,125,0.12); color:var(--success); border:1px solid rgba(56,239,125,0.3);">● Ready</span>
         </label>
+
+        <div style="font-size:0.76rem; color:#ffb703; background:rgba(255,183,3,0.1); border:1px solid rgba(255,183,3,0.3); border-radius:8px; padding:10px 12px; margin-bottom:12px; line-height:1.45;">
+          ⚠️ <strong>Why "auth/billing-not-enabled" happens:</strong><br/>
+          Google Cloud hard-blocks cellular SMS dispatch on the free Spark plan unless upgraded to <strong>Blaze (Pay-as-you-go)</strong>.<br/>
+          • <strong>Free Solution:</strong> Add your phone in <a href="https://console.firebase.google.com/project/moleqyn-957e3/authentication/providers" target="_blank" style="color:var(--primary); text-decoration:underline;">Firebase Console &gt; Authentication &gt; Phone numbers for testing</a> with code <code>123456</code>.<br/>
+          • <strong>Carrier SMS Solution:</strong> Upgrade to Blaze in Firebase Console, or switch to <strong>Fast2SMS</strong>.
+        </div>
         
         <p style="font-size:0.78rem; color:var(--muted); margin-bottom:8px;">
-          Paste your Firebase web project credentials below or quick-paste the <code>firebaseConfig</code> JSON snippet. Google provides 10,000 real cellular SMS/month to Indian numbers with invisible reCAPTCHA.
+          Paste your Firebase web project credentials below or quick-paste the <code>firebaseConfig</code> JSON snippet:
         </p>
 
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
@@ -1876,6 +1884,14 @@
 
       showToast('Dispatching test cellular SMS...', 'info');
 
+      // 0. Test in Instant Dev / Test Mode
+      if (provider === 'dev') {
+        const testOtp = Math.floor(100000 + Math.random() * 900000);
+        showToast(`⚡ Instant Test Mode Active! Sample 6-digit OTP for +91 ${mob} is ${testOtp}`, 'success');
+        if (testBtn) { testBtn.disabled = false; testBtn.textContent = 'Send Test SMS'; }
+        return;
+      }
+
       // 1. Test via Google Firebase Phone Auth
       if (provider === 'firebase') {
         if (!window.MoleqynFirebase || !window.MoleqynFirebase.isConfigured()) {
@@ -1889,7 +1905,11 @@
           if (fbRes.success) {
             showToast(`✓ Genuine Cellular SMS dispatched to +91 ${mob} via Google Firebase! Check phone.`, 'success');
           } else {
-            showToast(`❌ Firebase SMS Failed: ${fbRes.error}`, 'error');
+            if (fbRes.isBillingError || String(fbRes.error).includes('billing-not-enabled')) {
+              showToast(`❌ Firebase SMS Blocked: Firebase project requires Blaze plan. Tip: Add +91 ${mob} under Firebase Console > Phone numbers for testing (code: 123456) to test for free!`, 'error');
+            } else {
+              showToast(`❌ Firebase SMS Failed: ${fbRes.error}`, 'error');
+            }
           }
         } catch (e) {
           showToast(`❌ Error: ${e.message}`, 'error');

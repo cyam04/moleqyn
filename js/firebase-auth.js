@@ -245,11 +245,16 @@
         userMsg = 'reCAPTCHA bot verification failed. Please try again.';
       } else if (err.code === 'auth/unauthorized-domain') {
         userMsg = 'This domain is not authorized in Firebase Console. Please add your domain under Firebase > Authentication > Settings > Authorized domains.';
+      } else if (err.code === 'auth/billing-not-enabled' || String(err.message || '').includes('billing-not-enabled')) {
+        userMsg = 'Firebase Phone Authentication requires the Blaze (pay-as-you-go) plan or whitelisted test phone numbers in Firebase Console.';
       }
+
+      const isBilling = err.code === 'auth/billing-not-enabled' || String(err.message || '').includes('billing-not-enabled');
 
       return {
         success: false,
         code: err.code,
+        isBillingError: isBilling,
         error: userMsg
       };
     }
