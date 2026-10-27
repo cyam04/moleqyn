@@ -2652,6 +2652,70 @@
         window.location.href = 'dashboard.html';
       }, 450);
     }
+
+    // ==========================================
+    // ACTIVE SESSION DETECTION (PREVENT UNNECESSARY RELOGIN)
+    // ==========================================
+    function checkActiveLoginSession() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('reauth') === 'true' || params.get('switch') === 'true' || params.get('logout') === 'true') {
+          return;
+        }
+        const savedStr = localStorage.getItem('moleqyn_user') || localStorage.getItem('mlab_user');
+        if (!savedStr) return;
+        const user = JSON.parse(savedStr);
+        if (user && (user.isLoggedIn || user.name)) {
+          const authCard = document.getElementById('authCard');
+          if (!authCard) return;
+
+          let banner = document.getElementById('activeSessionBanner');
+          if (!banner) {
+            banner = document.createElement('div');
+            banner.id = 'activeSessionBanner';
+            banner.style.cssText = 'background:rgba(0, 240, 255, 0.08); border:1.5px solid rgba(0, 240, 255, 0.4); border-radius:18px; padding:18px 20px; margin-bottom:22px; text-align:center; box-shadow:0 8px 30px rgba(0,240,255,0.12);';
+            authCard.parentNode.insertBefore(banner, authCard);
+          }
+          const avatar = user.avatar || '👨‍🔬';
+          const name = user.name || 'Student';
+          const batch = user.class || 'Student Batch';
+          banner.innerHTML = `
+            <div style="font-size:2.2rem; margin-bottom:4px;">${avatar}</div>
+            <div style="font-weight:700; font-size:1.1rem; color:var(--text); margin-bottom:4px;">Active Session Detected</div>
+            <div style="font-size:0.86rem; color:var(--muted); line-height:1.4; margin-bottom:14px;">
+              You are already signed in as <strong style="color:var(--primary);">${name}</strong> (${batch}).
+            </div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <a href="dashboard.html" class="btn-submit" style="text-decoration:none; margin-top:0;">
+                <span>Go Directly to Student Dashboard</span> ➔
+              </a>
+              <button type="button" onclick="logoutCurrentSession()" style="background:none; border:none; color:var(--muted); font-size:0.82rem; cursor:pointer; text-decoration:underline; padding:4px;">
+                Log in with another account / Sign out
+              </button>
+            </div>
+          `;
+        }
+      } catch (e) {}
+    }
+
+    function logoutCurrentSession() {
+      try {
+        localStorage.removeItem('moleqyn_user');
+        localStorage.removeItem('mlab_user');
+        localStorage.removeItem('matterlab_user');
+        sessionStorage.removeItem('moleqyn_user');
+        sessionStorage.removeItem('mlab_user');
+        const b = document.getElementById('activeSessionBanner');
+        if (b) b.remove();
+        showToast('Session cleared. You can now log in with a new number.', 'info');
+      } catch (e) {}
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', checkActiveLoginSession);
+    } else {
+      checkActiveLoginSession();
+    }
   </script>
   <script src="js/shared-nav.js"></script>
 </body>

@@ -2315,8 +2315,10 @@
       playBeep('click');
       localStorage.removeItem('mlab_user');
       localStorage.removeItem('moleqyn_user');
+      localStorage.removeItem('matterlab_user');
       sessionStorage.removeItem('mlab_user');
-      window.location.href = 'login.html';
+      sessionStorage.removeItem('moleqyn_user');
+      window.location.href = 'login.html?switch=true';
     }
 
     // SWITCH MODES (INTERACTIVE FOR TESTING & DEMONSTRATION)

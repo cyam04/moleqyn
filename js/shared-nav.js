@@ -255,26 +255,47 @@
     };
 
     /* Global Navbar Auth State Sync */
-    try {
-      var userStr = localStorage.getItem('mlab_user');
-      var user = null;
-      if (userStr) user = JSON.parse(userStr);
-      var isDash = window.location.pathname.toLowerCase().indexOf('dashboard.html') !== -1;
-      var isLog = window.location.pathname.toLowerCase().indexOf('login.html') !== -1;
-
-      document.querySelectorAll('.mlab-login-btn').forEach(function(btn) {
-        if (!isDash && !isLog) {
-          if (user && user.isLoggedIn) {
-            btn.textContent = '🧑‍🔬 ' + (user.name ? user.name.split(' ')[0] : 'Profile');
-            btn.href = 'dashboard.html';
-            btn.title = 'Open Student Dashboard';
-          } else {
-            btn.textContent = 'Login';
-            btn.href = 'login.html';
-          }
+    function syncNavAuthState() {
+      try {
+        var userStr = localStorage.getItem('moleqyn_user') || localStorage.getItem('mlab_user') || localStorage.getItem('matterlab_user');
+        var user = null;
+        if (userStr) {
+          try { user = JSON.parse(userStr); } catch (e) {}
         }
-      });
-    } catch(err) {}
+        var isDash = window.location.pathname.toLowerCase().indexOf('dashboard.html') !== -1;
+        var isLog = window.location.pathname.toLowerCase().indexOf('login.html') !== -1;
+
+        var loginTargets = document.querySelectorAll('.mlab-login-btn, #navLoginBtn, .nav-login-btn, nav a[href*="login.html"], header a[href*="login.html"]');
+        loginTargets.forEach(function (btn) {
+          if (!isDash && !isLog) {
+            if (user && (user.isLoggedIn || user.name)) {
+              var firstName = user.name ? user.name.split(' ')[0] : 'Profile';
+              var avatar = user.avatar || '🧑‍🔬';
+              btn.innerHTML = '<span>' + avatar + ' ' + firstName + '</span>';
+              btn.href = 'dashboard.html';
+              btn.title = 'Open Student Dashboard (Logged in as ' + (user.name || 'Student') + ')';
+              btn.setAttribute('aria-label', 'Open Student Dashboard');
+              btn.classList.add('logged-in-pill');
+            } else {
+              btn.innerHTML = 'Login';
+              btn.href = 'login.html';
+              btn.title = 'Sign In to Student Account';
+              btn.classList.remove('logged-in-pill');
+            }
+          }
+        });
+
+        // Also update any footer login links
+        document.querySelectorAll('footer a[href*="login.html"]').forEach(function (fLink) {
+          if (user && (user.isLoggedIn || user.name)) {
+            fLink.textContent = 'Student Dashboard';
+            fLink.href = 'dashboard.html';
+          }
+        });
+      } catch (err) {}
+    }
+    syncNavAuthState();
+    window.addEventListener('storage', syncNavAuthState);
 
     /* Progressive Web App (PWA) Service Worker Registration */
     if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
