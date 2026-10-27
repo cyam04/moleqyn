@@ -103,8 +103,8 @@
    * @param {string} size - 'invisible' or 'normal'
    */
   function getRecaptchaVerifier(containerId = 'recaptcha-container', size = 'invisible') {
-    const auth = getAuth();
-    if (!auth) return null;
+    const app = getApp();
+    if (!app) return null;
 
     const container = document.getElementById(containerId);
     if (!container) {
@@ -130,26 +130,21 @@
           console.warn('[MoleqynAuth] reCAPTCHA token expired. Resetting widget.');
           resetRecaptchaWidget();
         }
-      }, auth);
+      });
       return _recaptchaVerifier;
     } catch (err) {
-      console.warn('[MoleqynAuth] RecaptchaVerifier construction notice:', err);
-      // If error mentions already rendered, clear container and try with clean inner element
-      if (err.message && err.message.includes('already been rendered')) {
-        try {
-          container.innerHTML = '';
-          const freshDiv = document.createElement('div');
-          freshDiv.id = containerId + '-inner-' + Date.now();
-          container.appendChild(freshDiv);
-          _recaptchaVerifier = new window.firebase.auth.RecaptchaVerifier(freshDiv.id, {
-            size: size
-          }, auth);
-          return _recaptchaVerifier;
-        } catch (innerErr) {
-          console.error('[MoleqynAuth] Re-try reCAPTCHA failed:', innerErr);
-        }
+      console.error('[MoleqynAuth] RecaptchaVerifier construction error:', err);
+      // Fallback: Pass container DOM element directly
+      try {
+        container.innerHTML = '';
+        _recaptchaVerifier = new window.firebase.auth.RecaptchaVerifier(container, {
+          size: size
+        });
+        return _recaptchaVerifier;
+      } catch (innerErr) {
+        console.error('[MoleqynAuth] Re-try reCAPTCHA failed:', innerErr);
+        return null;
       }
-      return _recaptchaVerifier || null;
     }
   }
 
@@ -248,6 +243,8 @@
         userMsg = 'Daily SMS quota limit reached. Please check Firebase console or add test phone number.';
       } else if (err.code === 'auth/captcha-check-failed') {
         userMsg = 'reCAPTCHA bot verification failed. Please try again.';
+      } else if (err.code === 'auth/unauthorized-domain') {
+        userMsg = 'This domain is not authorized in Firebase Console. Please add your domain under Firebase > Authentication > Settings > Authorized domains.';
       }
 
       return {
