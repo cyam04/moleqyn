@@ -1278,15 +1278,11 @@
     <div class="auth-tabs">
       <button class="auth-tab active" id="tabOtp" onclick="switchAuthTab('otp')">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
-        <span>Phone OTP</span>
+        <span>Mobile Sign-in</span>
       </button>
       <button class="auth-tab" id="tabEmail" onclick="switchAuthTab('email')">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        <span>Password</span>
-      </button>
-      <button class="auth-tab" id="tabRegister" onclick="switchAuthTab('register')">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>
-        <span>Register</span>
+        <span>Email &amp; Password</span>
       </button>
       <button class="auth-tab" id="tabDemo" onclick="switchAuthTab('demo')" title="Access via verified batch student profile">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
@@ -1302,7 +1298,7 @@
         <div class="form-group">
           <label class="form-label" for="phoneInput">
             <span>Mobile Number <span class="req">*</span></span>
-            <span style="font-size:0.75rem; color:var(--muted);">10-digit Indian Mobile</span>
+            <span style="font-size:0.75rem; color:var(--muted);">Sign in or Register</span>
           </label>
           <div class="phone-input-row">
             <div class="country-code-pill">
@@ -1318,12 +1314,12 @@
         <div id="recaptcha-container" style="margin: 8px auto; display: flex; justify-content: center;"></div>
 
         <button class="btn-submit" type="button" id="btnSendOtp" onclick="sendOTP()">
-          <span>Get Verification OTP</span>
+          <span>Continue with Mobile OTP</span>
           <span>➔</span>
         </button>
 
         <div style="text-align: center; font-size: 0.72rem; color: var(--muted); margin-top: 10px;">
-          🔒 Secured with Google reCAPTCHA &amp; Cellular SMS Verification
+          🔒 One-step authentication: Existing students log in directly, new students are enrolled automatically.
         </div>
       </div>
 
@@ -1534,77 +1530,7 @@
       </button>
     </section>
 
-    <!-- ==========================================
-         VIEW 3: COMPLETE NEW REGISTRATION (PW ENROLLMENT)
-         ========================================== -->
-    <section class="auth-view" id="viewRegister">
-      <form id="regForm" onsubmit="event.preventDefault(); handleRegister();">
-        <div class="form-group">
-          <label class="form-label" for="regName">Student Full Name <span class="req">*</span></label>
-          <div class="input-wrapper">
-            <span class="input-icon">👤</span>
-            <input type="text" id="regName" class="form-input" placeholder="e.g. Ananya Sen" required />
-          </div>
-        </div>
 
-        <div class="form-group">
-          <label class="form-label" for="regEmail">Email Address <span class="req">*</span></label>
-          <div class="input-wrapper">
-            <span class="input-icon">✉️</span>
-            <input type="email" id="regEmail" class="form-input" placeholder="ananya@school.edu" required />
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Choose Your Target Batch &amp; Class <span class="req">*</span></label>
-          <div class="batch-selector-grid">
-            <div class="batch-chip selected" onclick="selectBatch(this, 'Class 11 Science • Arjuna JEE')">
-              <div class="batch-chip-name">⚡ Arjuna JEE</div>
-              <div class="batch-chip-sub">Class 11 • JEE 2027</div>
-            </div>
-            <div class="batch-chip" onclick="selectBatch(this, 'Class 12 Science • Lakshya Board+JEE')">
-              <div class="batch-chip-name">🎯 Lakshya JEE</div>
-              <div class="batch-chip-sub">Class 12 • Boards+JEE</div>
-            </div>
-            <div class="batch-chip" onclick="selectBatch(this, 'Class 12 Medical • Yakeen NEET')">
-              <div class="batch-chip-name">🩺 Yakeen NEET</div>
-              <div class="batch-chip-sub">Class 12 • Medical</div>
-            </div>
-            <div class="batch-chip" onclick="selectBatch(this, 'Class 10 CBSE • Udaan Batch')">
-              <div class="batch-chip-name">📘 Udaan Board</div>
-              <div class="batch-chip-sub">Class 10 • 95%+ Target</div>
-            </div>
-            <div class="batch-chip" onclick="selectBatch(this, 'Class 9 Science • Neev Foundation')">
-              <div class="batch-chip-name">🧪 Neev Foundation</div>
-              <div class="batch-chip-sub">Class 9 • Olympiad/NTSE</div>
-            </div>
-            <div class="batch-chip" onclick="selectBatch(this, 'Class 6-8 • Junior Scientist')">
-              <div class="batch-chip-name">🔬 Junior Scientist</div>
-              <div class="batch-chip-sub">Class 6–8 Discovery Lab</div>
-            </div>
-          </div>
-          <input type="hidden" id="selectedBatchVal" value="Class 11 Science • Arjuna JEE" />
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Pick Your Avatar</label>
-          <div class="avatar-picker-row">
-            <div class="avatar-choice selected" onclick="selectAvatar(this, '👨‍🔬')">👨‍🔬</div>
-            <div class="avatar-choice" onclick="selectAvatar(this, '👩‍🔬')">👩‍🔬</div>
-            <div class="avatar-choice" onclick="selectAvatar(this, '⚡')">⚡</div>
-            <div class="avatar-choice" onclick="selectAvatar(this, '🧪')">🧪</div>
-            <div class="avatar-choice" onclick="selectAvatar(this, '⚛️')">⚛️</div>
-            <div class="avatar-choice" onclick="selectAvatar(this, '🚀')">🚀</div>
-          </div>
-          <input type="hidden" id="selectedAvatarVal" value="👨‍🔬" />
-        </div>
-
-        <button class="btn-submit" type="submit">
-          <span>Complete Enrollment &amp; Enter Lab</span>
-          <span>🎓</span>
-        </button>
-      </form>
-    </section>
 
     <!-- ==========================================
          VIEW 4: INSTANT VERIFIED BATCH PROFILES
@@ -1867,9 +1793,6 @@
       } else if (tabName === 'email') {
         document.getElementById('tabEmail').classList.add('active');
         document.getElementById('viewEmail').classList.add('active');
-      } else if (tabName === 'register') {
-        document.getElementById('tabRegister').classList.add('active');
-        document.getElementById('viewRegister').classList.add('active');
       } else if (tabName === 'demo') {
         document.getElementById('tabDemo').classList.add('active');
         document.getElementById('viewDemo').classList.add('active');
