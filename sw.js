@@ -3,7 +3,7 @@
    Provides offline caching for school computer labs & slow networks
 ================================================================ */
 
-const CACHE_NAME = 'moleqyn-cache-v5';
+const CACHE_NAME = 'moleqyn-cache-v6';
 
 const STATIC_ASSETS = [
   './',
@@ -43,6 +43,8 @@ const STATIC_ASSETS = [
   'js/shared-nav.js',
   'js/main.js',
   'js/matter-lab.js',
+  'js/firebase-config.js',
+  'js/firebase-auth.js',
   'js/supabase-client.js',
   'favicon.svg',
   'manifest.json'
@@ -148,6 +150,23 @@ self.addEventListener('fetch', (event) => {
             }, Promise.resolve(null));
           });
         })
+    );
+    return;
+  }
+
+  // For authentication pages and scripts, always fetch fresh from network
+  const reqUrl = new URL(req.url);
+  if (reqUrl.pathname.includes('login') || reqUrl.pathname.includes('firebase') || reqUrl.pathname.includes('admin')) {
+    event.respondWith(
+      fetch(req)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const clone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(req, clone));
+          }
+          return networkResponse;
+        })
+        .catch(() => caches.match(req))
     );
     return;
   }

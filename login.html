@@ -13,6 +13,16 @@
         document.documentElement.setAttribute('data-theme', 'day');
         document.documentElement.classList.add('light-mode');
       }
+      // Purge legacy Service Worker cache
+      if ('caches' in window) {
+        caches.keys().then(function(keys) {
+          keys.forEach(function(k) {
+            if (k.startsWith('moleqyn-cache-v') && k !== 'moleqyn-cache-v6') {
+              caches.delete(k);
+            }
+          });
+        });
+      }
     })();
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -22,6 +32,11 @@
     rel="stylesheet" />
   <!-- GOOGLE IDENTITY SERVICES SDK (OFFICIAL 1-TAP & OAUTH) -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <!-- GOOGLE FIREBASE CELLULAR PHONE AUTH & RECAPTCHA SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/firebase-auth.js"></script>
   <!-- SUPABASE CLOUD DATABASE JS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-client.js"></script>
@@ -1199,19 +1214,18 @@
 
   <div class="bg-grid"></div>
 
-  <!-- LIVE SIMULATED SMS PUSH TOAST -->
+  <!-- SECURE CELLULAR SMS DISPATCH NOTIFICATION (ZERO ON-SCREEN LEAKAGE) -->
   <div class="sms-toast" id="smsToast">
     <div class="sms-icon">📲</div>
     <div class="sms-body">
       <div class="sms-title">
-        <span>SMS • MOLEQYN VERIFY</span>
-        <span style="font-size:0.7rem; color:var(--muted);">just now</span>
+        <span>CELLULAR SMS DISPATCHED</span>
+        <span style="font-size:0.7rem; color:var(--muted);">Telecom Network</span>
       </div>
-      <div>Your 6-digit login OTP is <strong id="smsOtpCode"
-          style="color:var(--primary); font-size:1rem; letter-spacing:1px;">739201</strong>. Do not share this with
-        anyone.</div>
+      <div style="font-size:0.82rem; color:var(--text); margin-top:2px;">
+        A real 6-digit verification code has been dispatched directly to your mobile phone. Please check your SMS inbox.
+      </div>
     </div>
-    <button class="sms-autofill-btn" onclick="autoFillOTP()">Auto-Fill</button>
   </div>
 
   <!-- AUTH HEADER BRANDING (SPACED BELOW NAV) -->
@@ -1288,7 +1302,7 @@
         <div class="form-group">
           <label class="form-label" for="phoneInput">
             <span>Mobile Number <span class="req">*</span></span>
-            <span style="font-size:0.75rem; color:var(--muted);">Any 10-digit number</span>
+            <span style="font-size:0.75rem; color:var(--muted);">10-digit Indian Mobile</span>
           </label>
           <div class="phone-input-row">
             <div class="country-code-pill">
@@ -1300,10 +1314,17 @@
           </div>
         </div>
 
+        <!-- GOOGLE RECAPTCHA SECURE BOT VERIFIER -->
+        <div id="recaptcha-container" style="margin: 8px auto; display: flex; justify-content: center;"></div>
+
         <button class="btn-submit" type="button" id="btnSendOtp" onclick="sendOTP()">
           <span>Get Verification OTP</span>
           <span>➔</span>
         </button>
+
+        <div style="text-align: center; font-size: 0.72rem; color: var(--muted); margin-top: 10px;">
+          🔒 Secured with Google reCAPTCHA &amp; Cellular SMS Verification
+        </div>
       </div>
 
       <!-- STEP 2: 6-DIGIT OTP ENTRY -->
@@ -1311,10 +1332,12 @@
         <div style="text-align:center; margin-bottom:12px;">
           <div style="font-weight:600; font-size:0.95rem;">Enter Verification Code</div>
           <div style="font-size:0.8rem; color:var(--muted); margin-top:2px;">
-            Sent via SMS to <span id="displayPhone" style="color:var(--primary); font-weight:600;">+91 98765
-              43210</span>
+            Sent via Real Cellular SMS to <span id="displayPhone" style="color:var(--primary); font-weight:600;">+91 98765 43210</span>
             <a href="javascript:void(0)" onclick="editPhone()"
               style="color:var(--primary); margin-left:6px; font-size:0.76rem;">Change</a>
+          </div>
+          <div style="font-size:0.74rem; color:var(--muted); margin-top:4px;">
+            📲 Enter the genuine 6-digit code delivered to your mobile phone inbox
           </div>
         </div>
 
@@ -1854,8 +1877,10 @@
     }
 
     // ==========================================
-    // OTP FLOW & REAL CELLULAR SMS GATEWAY
+    // OTP FLOW & REAL CELLULAR SMS AUTHENTICATION
     // ==========================================
+    let currentAuthMode = 'firebase'; // 'firebase' or 'gateway'
+
     async function dispatchRealMobileSms(mobileDigits, otpCode) {
       const fast2smsKey = localStorage.getItem('moleqyn_fast2sms_key');
       const twoFactorKey = localStorage.getItem('moleqyn_2factor_key');
@@ -1873,7 +1898,6 @@
           }
           const data = await res.json();
           if (data && (data.return || data.status_code === 200 || String(data.message).toLowerCase().includes('success'))) {
-            showToast(`✓ Real SMS OTP dispatched to +91 ${mobileDigits} via Fast2SMS network!`, 'success');
             return true;
           }
         } catch (e) {
@@ -1887,7 +1911,6 @@
           const res = await fetch(`https://2factor.in/API/V1/${twoFactorKey}/SMS/${mobileDigits}/${otpCode}/Moleqyn_Verification`);
           const data = await res.json();
           if (data && data.Status === 'Success') {
-            showToast(`✓ Real SMS OTP dispatched to +91 ${mobileDigits} via 2Factor!`, 'success');
             return true;
           }
         } catch (e) {
@@ -1898,7 +1921,7 @@
       return false;
     }
 
-    function sendOTP() {
+    async function sendOTP() {
       const phoneInput = document.getElementById('phoneInput');
       const val = phoneInput.value.replace(/\D/g, '');
       if (val.length < 10) {
@@ -1911,44 +1934,73 @@
 
       playBeep('click');
       const btn = document.getElementById('btnSendOtp');
-      btn.innerHTML = '<span>Dispatching Cellular SMS...</span>';
+      btn.innerHTML = '<span>Verifying Security &amp; Dispatching SMS...</span> ⏳';
       btn.disabled = true;
 
-      // Generate secure 6-digit OTP
-      generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
-      document.getElementById('smsOtpCode').textContent = generatedOTP;
-      document.getElementById('displayPhone').textContent = '+91 ' + val;
-
-      // Trigger Real Cellular SMS Dispatch
-      dispatchRealMobileSms(val, generatedOTP).then(sentReal => {
-        const hasRealGateway = localStorage.getItem('moleqyn_fast2sms_key') || localStorage.getItem('moleqyn_2factor_key');
-        const toast = document.getElementById('smsToast');
-
-        if (sentReal) {
-          // Real SMS sent successfully directly to mobile phone!
-          if (toast) toast.classList.remove('show');
-        } else if (!hasRealGateway) {
-          // If no gateway key configured in Admin Hub yet, show informational toast
-          showToast(`ℹ️ Live mobile SMS requires gateway key (Setup in Admin Hub > SMS Gateway). Showing verification code.`, 'info');
-          if (toast) toast.classList.add('show');
-        } else {
-          if (toast) toast.classList.add('show');
+      // 1. Primary: Google Firebase Phone Authentication
+      if (window.MoleqynFirebase && window.MoleqynFirebase.isConfigured()) {
+        currentAuthMode = 'firebase';
+        try {
+          const fbRes = await window.MoleqynFirebase.sendSmsOtp(val, 'recaptcha-container');
+          if (fbRes.success) {
+            document.getElementById('displayPhone').textContent = '+91 ' + val;
+            document.getElementById('phoneStep').classList.add('hidden');
+            document.getElementById('otpStep').classList.remove('hidden');
+            btn.innerHTML = '<span>Get Verification OTP</span> ➔';
+            btn.disabled = false;
+            playBeep('success');
+            showToast(`✓ Genuine Cellular SMS OTP dispatched to +91 ${val}! Check your phone.`, 'success');
+            startOtpCountdown();
+            document.getElementById('otp1').focus();
+            return;
+          } else {
+            console.error('Firebase Auth dispatch failed:', fbRes.error);
+            showToast(`❌ SMS Dispatch Failed: ${fbRes.error}`, 'error');
+            btn.innerHTML = '<span>Get Verification OTP</span> ➔';
+            btn.disabled = false;
+            return;
+          }
+        } catch (fbErr) {
+          console.error('Firebase Auth exception:', fbErr);
+          showToast(`❌ Security Verification Error: ${fbErr.message || 'SMS service error'}`, 'error');
+          btn.innerHTML = '<span>Get Verification OTP</span> ➔';
+          btn.disabled = false;
+          return;
         }
-      });
+      }
 
-      setTimeout(() => {
-        document.getElementById('phoneStep').classList.add('hidden');
-        document.getElementById('otpStep').classList.remove('hidden');
-        btn.innerHTML = '<span>Get Verification OTP</span> ➔';
-        btn.disabled = false;
-        playBeep('success');
+      // 2. Secondary: Indian Telecom Gateway (Fast2SMS / 2Factor)
+      const fast2smsKey = localStorage.getItem('moleqyn_fast2sms_key');
+      const twoFactorKey = localStorage.getItem('moleqyn_2factor_key');
 
-        // Start countdown
-        startOtpCountdown();
+      if (fast2smsKey || twoFactorKey) {
+        currentAuthMode = 'gateway';
+        generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+        const sentReal = await dispatchRealMobileSms(val, generatedOTP);
+        if (sentReal) {
+          document.getElementById('displayPhone').textContent = '+91 ' + val;
+          document.getElementById('phoneStep').classList.add('hidden');
+          document.getElementById('otpStep').classList.remove('hidden');
+          btn.innerHTML = '<span>Get Verification OTP</span> ➔';
+          btn.disabled = false;
+          playBeep('success');
+          showToast(`✓ Real Cellular SMS dispatched to +91 ${val}! Check your phone inbox.`, 'success');
+          startOtpCountdown();
+          document.getElementById('otp1').focus();
+          return;
+        } else {
+          showToast(`⚠️ SMS Gateway delivery failed. Please check provider balance or credentials in Admin Hub.`, 'error');
+          btn.innerHTML = '<span>Get Verification OTP</span> ➔';
+          btn.disabled = false;
+          return;
+        }
+      }
 
-        // Focus first OTP box
-        document.getElementById('otp1').focus();
-      }, 500);
+      // 3. Neither configured: Strictly enforce security, NO on-screen code leak
+      btn.innerHTML = '<span>Get Verification OTP</span> ➔';
+      btn.disabled = false;
+      playBeep('error');
+      showToast('⚠️ Real Cellular SMS gateway is not configured yet. Configure Firebase in Admin Hub (Admin Hub > SMS Gateway) or use Google 1-Tap / Email login.', 'error');
     }
 
     function editPhone() {
@@ -1959,7 +2011,6 @@
       const phoneSoc = document.getElementById('phoneSocialSection');
       if (phoneSoc) phoneSoc.classList.remove('hidden');
       document.getElementById('phoneStep').classList.remove('hidden');
-      document.getElementById('smsToast').classList.remove('show');
       if (otpTimerInterval) clearInterval(otpTimerInterval);
     }
 
@@ -1976,38 +2027,54 @@
           cdEl.innerHTML = `Resend OTP in <strong>${timerCountdown}s</strong>`;
         } else {
           clearInterval(otpTimerInterval);
-          cdEl.innerHTML = `<span style="color:var(--success);">OTP Expired / Ready to Resend</span>`;
+          cdEl.innerHTML = `<span style="color:var(--success);">Ready to Resend OTP</span>`;
           resendBtn.disabled = false;
         }
       }, 1000);
     }
 
-    function resendOTP() {
+    async function resendOTP() {
       playBeep('click');
       const phoneInput = document.getElementById('phoneInput');
       const val = phoneInput.value.replace(/\D/g, '') || '9876543210';
-      generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
-      document.getElementById('smsOtpCode').textContent = generatedOTP;
+      const resendBtn = document.getElementById('resendBtn');
+      resendBtn.disabled = true;
+      resendBtn.textContent = 'Sending...';
 
-      dispatchRealMobileSms(val, generatedOTP);
+      if (currentAuthMode === 'firebase' && window.MoleqynFirebase && window.MoleqynFirebase.isConfigured()) {
+        const res = await window.MoleqynFirebase.sendSmsOtp(val, 'recaptcha-container');
+        if (res.success) {
+          showToast(`✓ New real cellular SMS OTP dispatched to +91 ${val}!`, 'success');
+          startOtpCountdown();
+        } else {
+          showToast(`❌ Resend failed: ${res.error}`, 'error');
+          resendBtn.disabled = false;
+          resendBtn.textContent = 'Resend Code';
+        }
+        return;
+      }
 
-      const toast = document.getElementById('smsToast');
-      toast.classList.remove('show');
-      setTimeout(() => {
-        toast.classList.add('show');
-        playBeep('success');
-      }, 200);
-      startOtpCountdown();
+      if (localStorage.getItem('moleqyn_fast2sms_key') || localStorage.getItem('moleqyn_2factor_key')) {
+        generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+        const sent = await dispatchRealMobileSms(val, generatedOTP);
+        if (sent) {
+          showToast(`✓ New real SMS dispatched to +91 ${val}! Check phone inbox.`, 'success');
+          startOtpCountdown();
+        } else {
+          showToast(`⚠️ SMS delivery failed.`, 'error');
+          resendBtn.disabled = false;
+          resendBtn.textContent = 'Resend Code';
+        }
+        return;
+      }
+
+      showToast('SMS Gateway is not configured.', 'error');
+      resendBtn.disabled = false;
+      resendBtn.textContent = 'Resend Code';
     }
 
     function autoFillOTP() {
-      playBeep('click');
-      const digits = generatedOTP.split('');
-      for (let i = 1; i <= 6; i++) {
-        document.getElementById('otp' + i).value = digits[i - 1] || '';
-      }
-      document.getElementById('smsToast').classList.remove('show');
-      setTimeout(verifyAndLogin, 250);
+      showToast('🔒 For security, please enter the genuine 6-digit code received on your physical phone.', 'info');
     }
 
     function handleOtpInput(index) {
@@ -2082,7 +2149,7 @@
         chapterMastery: 0,
         isNewUser: true,
         isLoggedIn: true,
-        loginMethod: "phone_otp",
+        loginMethod: currentAuthMode === 'firebase' ? 'Firebase Phone OTP' : 'Cellular Phone OTP',
         loginTime: new Date().toLocaleTimeString()
       };
 
@@ -2090,7 +2157,7 @@
       commitSessionAndRedirect(user);
     }
 
-    function verifyAndLogin() {
+    async function verifyAndLogin() {
       let entered = '';
       for (let i = 1; i <= 6; i++) {
         entered += (document.getElementById('otp' + i).value || '');
@@ -2102,39 +2169,96 @@
         return;
       }
 
-      if (entered !== generatedOTP) {
-        playBeep('error');
-        showToast('Incorrect OTP! Please check the code shown in the SMS alert.', 'error');
-        return;
+      const verifyBtn = document.getElementById('btnVerifyOtp');
+      const origBtnHtml = verifyBtn.innerHTML;
+      verifyBtn.innerHTML = '<span>Verifying Code with Telecom Network...</span> ⏳';
+      verifyBtn.disabled = true;
+
+      const mob = document.getElementById('phoneInput').value.trim() || '9876543210';
+
+      // 1. Validate with Google Firebase if in Firebase mode
+      if (currentAuthMode === 'firebase' && window.MoleqynFirebase && window.MoleqynFirebase.isConfigured()) {
+        const verifyRes = await window.MoleqynFirebase.verifySmsOtp(entered);
+        if (!verifyRes.success) {
+          playBeep('error');
+          verifyBtn.innerHTML = origBtnHtml;
+          verifyBtn.disabled = false;
+          showToast(`❌ Verification Failed: ${verifyRes.error}`, 'error');
+          return;
+        }
+      } else {
+        // Indian Gateway verification
+        if (!generatedOTP || entered !== generatedOTP) {
+          playBeep('error');
+          verifyBtn.innerHTML = origBtnHtml;
+          verifyBtn.disabled = false;
+          showToast('❌ Incorrect verification code! Please check the SMS sent to your phone.', 'error');
+          return;
+        }
       }
 
       playBeep('success');
-      const mob = document.getElementById('phoneInput').value.trim() || '9876543210';
+      verifyBtn.innerHTML = origBtnHtml;
+      verifyBtn.disabled = false;
       pendingPhoneMob = mob;
 
-      // Check if existing user with THIS exact mobile number already has a configured full name
-      const savedStr = localStorage.getItem('mlab_user') || localStorage.getItem('moleqyn_user');
-      let existing = null;
-      try { if (savedStr) existing = JSON.parse(savedStr); } catch(e){}
-
+      // Check if existing student with THIS exact mobile number exists
       const phoneDigits = mob.replace(/\D/g, '');
-      const existingPhoneDigits = (existing && existing.phone) ? existing.phone.replace(/\D/g, '') : '';
-      const isSamePhone = existingPhoneDigits && (existingPhoneDigits.endsWith(phoneDigits) || phoneDigits.endsWith(existingPhoneDigits));
+      let existing = null;
 
-      if (isSamePhone && existing && existing.name && !existing.name.startsWith('Student (+91')) {
+      // A. Check active local user session
+      try {
+        const savedStr = localStorage.getItem('mlab_user') || localStorage.getItem('moleqyn_user');
+        if (savedStr) {
+          const parsed = JSON.parse(savedStr);
+          const pDigits = (parsed && parsed.phone) ? parsed.phone.replace(/\D/g, '') : '';
+          if (pDigits && (pDigits.endsWith(phoneDigits) || phoneDigits.endsWith(pDigits))) {
+            existing = parsed;
+          }
+        }
+      } catch (e) {}
+
+      // B. Check local student registry
+      if (!existing) {
+        try {
+          const reg = JSON.parse(localStorage.getItem('moleqyn_students_registry') || '[]');
+          const found = reg.find(s => {
+            const sDigits = (s.phone || '').replace(/\D/g, '');
+            return sDigits && (sDigits.endsWith(phoneDigits) || phoneDigits.endsWith(sDigits));
+          });
+          if (found) existing = found;
+        } catch (e) {}
+      }
+
+      // C. Cross-Device Cloud Check: Check Supabase Cloud Database if student registered from another device
+      if (!existing && window.MoleqynCloud && typeof window.MoleqynCloud.fetchStudents === 'function' && window.MoleqynCloud.isConfigured()) {
+        try {
+          const cloudRes = await window.MoleqynCloud.fetchStudents();
+          if (cloudRes && cloudRes.success && Array.isArray(cloudRes.data)) {
+            const foundCloud = cloudRes.data.find(s => {
+              const sDigits = (s.phone || '').replace(/\D/g, '');
+              return sDigits && (sDigits.endsWith(phoneDigits) || phoneDigits.endsWith(sDigits));
+            });
+            if (foundCloud) existing = foundCloud;
+          }
+        } catch (e) {
+          console.warn('Cloud cross-device lookup notice:', e);
+        }
+      }
+
+      if (existing && existing.name && !existing.name.startsWith('Student (+91')) {
         showToast(`Welcome back, ${existing.name}! Launching Dashboard...`, 'success');
         existing.isLoggedIn = true;
         commitSessionAndRedirect(existing);
         return;
       }
 
-      // First-time student: Show Step 3 Onboarding (Ask Name, Real Email & Batch Upfront)
+      // First-time student: Show Step 3 Onboarding (Ask Name, Genuine Email & Target Batch)
       document.getElementById('otpStep').classList.add('hidden');
       const phoneSoc = document.getElementById('phoneSocialSection');
       if (phoneSoc) phoneSoc.classList.add('hidden');
       const onboardStep = document.getElementById('onboardStep');
       onboardStep.classList.remove('hidden');
-      document.getElementById('smsToast').classList.remove('show');
       showToast('OTP Verified! Complete your student profile below.', 'success');
       setTimeout(() => {
         const inp = document.getElementById('onboardName');

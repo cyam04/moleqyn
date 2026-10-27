@@ -19,7 +19,11 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
     rel="stylesheet" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <!-- GOOGLE FIREBASE CELLULAR PHONE AUTH & RECAPTCHA SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/firebase-auth.js"></script>
   <!-- SUPABASE CLOUD DATABASE JS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-client.js"></script>
@@ -1375,28 +1379,71 @@
     </div>
   </div>
 
-  <!-- REAL MOBILE SMS GATEWAY MODAL -->
+  <!-- REAL MOBILE SMS & FIREBASE GATEWAY MODAL -->
   <div class="modal-overlay" id="smsGatewayModal" onclick="if(event.target===this) closeSmsGatewayModal()">
-    <div class="modal-card" style="max-width: 560px;">
+    <div class="modal-card" style="max-width: 600px;">
       <div class="modal-header">
-        <h3 class="modal-title">📱 Real Mobile SMS Gateway Setup</h3>
+        <h3 class="modal-title">📱 Real Mobile SMS &amp; Firebase Gateway Setup</h3>
         <button class="btn-close" onclick="closeSmsGatewayModal()">✕</button>
       </div>
       <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 16px;">
-        Connect an SMS Gateway API to deliver real 6-digit OTPs directly to Indian mobile numbers (+91) via cellular
-        networks.
+        Connect Google Firebase Phone Auth or Indian Telecom SMS Gateways to deliver genuine 6-digit OTPs directly to Indian mobile numbers (+91) via cellular networks.
       </p>
 
       <div class="form-group">
-        <label class="form-label">Select SMS Provider</label>
+        <label class="form-label">Select SMS Authentication Engine</label>
         <select class="form-control" id="smsProviderChoice" onchange="toggleSmsProviderFields()">
+          <option value="firebase" selected>Google Firebase Phone Auth (Free 10,000 Real SMS/mo • Recommended)</option>
           <option value="fast2sms">Fast2SMS (Quick Indian API - Free Trial Available)</option>
           <option value="2factor">2Factor.in (Official Telecom DLT Route)</option>
         </select>
       </div>
 
+      <!-- FIREBASE PHONE AUTH -->
+      <div id="fieldFirebase" class="form-group">
+        <label class="form-label" style="display:flex; justify-content:space-between; align-items:center;">
+          <span>Google Firebase Web Project Config</span>
+          <span id="firebaseStatusBadge" style="font-size:0.75rem; padding:2px 8px; border-radius:12px; background:rgba(56,239,125,0.12); color:var(--success); border:1px solid rgba(56,239,125,0.3);">● Ready</span>
+        </label>
+        
+        <p style="font-size:0.78rem; color:var(--muted); margin-bottom:8px;">
+          Paste your Firebase web project credentials below or quick-paste the <code>firebaseConfig</code> JSON snippet. Google provides 10,000 real cellular SMS/month to Indian numbers with invisible reCAPTCHA.
+        </p>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
+          <div>
+            <label style="font-size:0.75rem; color:var(--muted); font-weight:600;">API Key (apiKey)</label>
+            <input type="text" class="form-control" id="firebaseApiKey" placeholder="AIzaSy..." />
+          </div>
+          <div>
+            <label style="font-size:0.75rem; color:var(--muted); font-weight:600;">Auth Domain (authDomain)</label>
+            <input type="text" class="form-control" id="firebaseAuthDomain" placeholder="your-app.firebaseapp.com" />
+          </div>
+          <div>
+            <label style="font-size:0.75rem; color:var(--muted); font-weight:600;">Project ID (projectId)</label>
+            <input type="text" class="form-control" id="firebaseProjectId" placeholder="moleqyn-lab" />
+          </div>
+          <div>
+            <label style="font-size:0.75rem; color:var(--muted); font-weight:600;">App ID (appId)</label>
+            <input type="text" class="form-control" id="firebaseAppId" placeholder="1:123456789:web:abcdef" />
+          </div>
+        </div>
+
+        <div style="margin-top:6px;">
+          <label style="font-size:0.75rem; color:var(--muted); font-weight:600;">Or Quick Paste Full firebaseConfig Object / JSON:</label>
+          <textarea class="form-control" id="firebaseJsonSnippet" rows="3" style="font-family:'JetBrains Mono', monospace; font-size:0.75rem;" placeholder='{ "apiKey": "...", "authDomain": "...", "projectId": "...", "appId": "..." }' oninput="parseFirebaseSnippet()"></textarea>
+        </div>
+
+        <div style="font-size:0.75rem; color:var(--muted); margin-top:8px; line-height:1.45; background:var(--bg-card-sub); border:1px solid var(--border); border-radius:8px; padding:8px 12px;">
+          💡 <strong>Setup in 2 minutes:</strong><br/>
+          1. Go to <a href="https://console.firebase.google.com" target="_blank" style="color:var(--primary);">console.firebase.google.com</a> &gt; Create Project.<br/>
+          2. Under <em>Build &gt; Authentication &gt; Sign-in method</em>, enable <strong>Phone</strong>.<br/>
+          3. Go to <em>Project Settings &gt; General &gt; Your apps &gt; Web (&lt;/&gt;)</em>, copy the <code>firebaseConfig</code> code and paste above!
+        </div>
+      </div>
+
       <!-- FAST2SMS -->
-      <div id="fieldFast2Sms" class="form-group">
+      <div id="fieldFast2Sms" class="form-group" style="display:none;">
         <label class="form-label">Fast2SMS Authorization API Key</label>
         <input type="text" class="form-control" id="fast2SmsKeyInput"
           placeholder="Paste Fast2SMS API Key from fast2sms.com" />
@@ -1421,14 +1468,14 @@
         <div style="font-weight:600; font-size:0.85rem; margin-bottom:6px;">📲 Test Real Mobile SMS Dispatch:</div>
         <div style="display:flex; gap:8px;">
           <input type="tel" class="form-control" id="testSmsNumber" placeholder="7782001734" style="flex:1;" />
-          <button type="button" class="btn-nav btn-primary-action" onclick="sendTestRealSms()">Send Test SMS</button>
+          <button type="button" class="btn-nav btn-primary-action" id="btnAdminTestSms" onclick="sendTestRealSms()">Send Test SMS</button>
         </div>
+        <div id="admin-recaptcha-container" style="margin-top:8px; display:flex; justify-content:center;"></div>
       </div>
 
       <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px;">
         <button type="button" class="btn-nav" onclick="closeSmsGatewayModal()">Cancel</button>
-        <button type="button" class="btn-nav btn-primary-action" onclick="saveSmsGatewayConfig()">Save
-          Configuration</button>
+        <button type="button" class="btn-nav btn-primary-action" onclick="saveSmsGatewayConfig()">Save Configuration</button>
       </div>
     </div>
   </div>
@@ -1674,9 +1721,41 @@
     // ==========================================
     // REAL MOBILE SMS GATEWAY HANDLERS
     // ==========================================
+    // ==========================================
+    // REAL MOBILE SMS & FIREBASE GATEWAY HANDLERS
+    // ==========================================
     function openSmsGatewayModal() {
-      const provider = localStorage.getItem('moleqyn_sms_provider') || 'fast2sms';
+      const provider = localStorage.getItem('moleqyn_sms_provider') || 'firebase';
       document.getElementById('smsProviderChoice').value = provider;
+      
+      // Load Firebase config if available
+      const fbConfig = (window.MoleqynFirebase && typeof window.MoleqynFirebase.getConfig === 'function') 
+        ? window.MoleqynFirebase.getConfig() 
+        : null;
+
+      if (fbConfig) {
+        document.getElementById('firebaseApiKey').value = fbConfig.apiKey || '';
+        document.getElementById('firebaseAuthDomain').value = fbConfig.authDomain || '';
+        document.getElementById('firebaseProjectId').value = fbConfig.projectId || '';
+        document.getElementById('firebaseAppId').value = fbConfig.appId || '';
+      }
+
+      const fbBadge = document.getElementById('firebaseStatusBadge');
+      if (fbBadge) {
+        const isReady = window.MoleqynFirebase && window.MoleqynFirebase.isConfigured();
+        if (isReady) {
+          fbBadge.textContent = '● Active (10,000 SMS/mo)';
+          fbBadge.style.color = 'var(--success)';
+          fbBadge.style.background = 'rgba(56,239,125,0.12)';
+          fbBadge.style.borderColor = 'rgba(56,239,125,0.3)';
+        } else {
+          fbBadge.textContent = '● Pending Configuration';
+          fbBadge.style.color = 'var(--accent)';
+          fbBadge.style.background = 'rgba(255,209,102,0.12)';
+          fbBadge.style.borderColor = 'rgba(255,209,102,0.3)';
+        }
+      }
+
       document.getElementById('fast2SmsKeyInput').value = localStorage.getItem('moleqyn_fast2sms_key') || '';
       document.getElementById('twoFactorKeyInput').value = localStorage.getItem('moleqyn_2factor_key') || '';
       toggleSmsProviderFields();
@@ -1689,23 +1768,88 @@
 
     function toggleSmsProviderFields() {
       const provider = document.getElementById('smsProviderChoice').value;
+      const fb = document.getElementById('fieldFirebase');
       const f1 = document.getElementById('fieldFast2Sms');
       const f2 = document.getElementById('field2Factor');
-      if (provider === 'fast2sms') {
-        f1.style.display = 'block';
-        f2.style.display = 'none';
-      } else {
-        f1.style.display = 'none';
-        f2.style.display = 'block';
+
+      if (fb) fb.style.display = (provider === 'firebase') ? 'block' : 'none';
+      if (f1) f1.style.display = (provider === 'fast2sms') ? 'block' : 'none';
+      if (f2) f2.style.display = (provider === '2factor') ? 'block' : 'none';
+    }
+
+    function parseFirebaseSnippet() {
+      const raw = (document.getElementById('firebaseJsonSnippet').value || '').trim();
+      if (!raw) return;
+
+      try {
+        // Try direct JSON parse
+        let parsed = null;
+        if (raw.startsWith('{') && raw.endsWith('}')) {
+          try { parsed = JSON.parse(raw); } catch(e){}
+        }
+
+        // If not standard JSON, parse JavaScript object syntax with regex
+        const extractField = (fieldName) => {
+          const match = raw.match(new RegExp(`${fieldName}\\s*[:=]\\s*["']([^"']+)["']`));
+          return match ? match[1] : '';
+        };
+
+        const apiKey = (parsed && parsed.apiKey) || extractField('apiKey');
+        const authDomain = (parsed && parsed.authDomain) || extractField('authDomain');
+        const projectId = (parsed && parsed.projectId) || extractField('projectId');
+        const appId = (parsed && parsed.appId) || extractField('appId');
+
+        if (apiKey) document.getElementById('firebaseApiKey').value = apiKey;
+        if (authDomain) document.getElementById('firebaseAuthDomain').value = authDomain;
+        if (projectId) document.getElementById('firebaseProjectId').value = projectId;
+        if (appId) document.getElementById('firebaseAppId').value = appId;
+
+        if (apiKey && projectId) {
+          showToast('✓ Successfully parsed Firebase credentials from snippet!', 'success');
+        }
+      } catch (err) {
+        console.warn('Snippet parse notice:', err);
       }
     }
 
     function saveSmsGatewayConfig() {
       const provider = document.getElementById('smsProviderChoice').value;
+      localStorage.setItem('moleqyn_sms_provider', provider);
+
+      if (provider === 'firebase') {
+        const apiKey = (document.getElementById('firebaseApiKey').value || '').trim();
+        const authDomain = (document.getElementById('firebaseAuthDomain').value || '').trim();
+        const projectId = (document.getElementById('firebaseProjectId').value || '').trim();
+        const appId = (document.getElementById('firebaseAppId').value || '').trim();
+
+        if (!apiKey || !projectId) {
+          showToast('Please enter both Firebase API Key and Project ID.', 'error');
+          return;
+        }
+
+        const configObj = {
+          apiKey,
+          authDomain,
+          projectId,
+          storageBucket: `${projectId}.appspot.com`,
+          messagingSenderId: '',
+          appId
+        };
+
+        if (window.MoleqynFirebase && typeof window.MoleqynFirebase.setConfig === 'function') {
+          window.MoleqynFirebase.setConfig(configObj);
+        } else {
+          localStorage.setItem('moleqyn_firebase_config', JSON.stringify(configObj));
+        }
+
+        closeSmsGatewayModal();
+        showToast('✓ Google Firebase Phone Auth configured! Free 10,000 real SMS/month active.', 'success');
+        return;
+      }
+
       const fast2sms = document.getElementById('fast2SmsKeyInput').value.trim();
       const twoFactor = document.getElementById('twoFactorKeyInput').value.trim();
 
-      localStorage.setItem('moleqyn_sms_provider', provider);
       if (fast2sms) localStorage.setItem('moleqyn_fast2sms_key', fast2sms);
       else localStorage.removeItem('moleqyn_fast2sms_key');
 
@@ -1724,15 +1868,45 @@
       }
 
       const provider = document.getElementById('smsProviderChoice').value;
+      const testBtn = document.getElementById('btnAdminTestSms');
+      if (testBtn) {
+        testBtn.disabled = true;
+        testBtn.textContent = 'Dispatching...';
+      }
+
+      showToast('Dispatching test cellular SMS...', 'info');
+
+      // 1. Test via Google Firebase Phone Auth
+      if (provider === 'firebase') {
+        if (!window.MoleqynFirebase || !window.MoleqynFirebase.isConfigured()) {
+          showToast('Please paste your Firebase API Key and Project ID first.', 'error');
+          if (testBtn) { testBtn.disabled = false; testBtn.textContent = 'Send Test SMS'; }
+          return;
+        }
+
+        try {
+          const fbRes = await window.MoleqynFirebase.sendSmsOtp(mob, 'admin-recaptcha-container');
+          if (fbRes.success) {
+            showToast(`✓ Genuine Cellular SMS dispatched to +91 ${mob} via Google Firebase! Check phone.`, 'success');
+          } else {
+            showToast(`❌ Firebase SMS Failed: ${fbRes.error}`, 'error');
+          }
+        } catch (e) {
+          showToast(`❌ Error: ${e.message}`, 'error');
+        } finally {
+          if (testBtn) { testBtn.disabled = false; testBtn.textContent = 'Send Test SMS'; }
+        }
+        return;
+      }
+
       const fast2sms = document.getElementById('fast2SmsKeyInput').value.trim();
       const twoFactor = document.getElementById('twoFactorKeyInput').value.trim();
       const testOtp = Math.floor(100000 + Math.random() * 900000);
 
-      showToast('Dispatching test cellular SMS...', 'info');
-
       if (provider === 'fast2sms') {
         if (!fast2sms) {
           showToast('Please paste your Fast2SMS API key first.', 'error');
+          if (testBtn) { testBtn.disabled = false; testBtn.textContent = 'Send Test SMS'; }
           return;
         }
         try {
@@ -1752,10 +1926,13 @@
           }
         } catch (e) {
           showToast(`ℹ️ Dispatched to Fast2SMS. Check delivery report on fast2sms.com`, 'info');
+        } finally {
+          if (testBtn) { testBtn.disabled = false; testBtn.textContent = 'Send Test SMS'; }
         }
       } else if (provider === '2factor') {
         if (!twoFactor) {
           showToast('Please paste your 2Factor API key first.', 'error');
+          if (testBtn) { testBtn.disabled = false; testBtn.textContent = 'Send Test SMS'; }
           return;
         }
         try {
@@ -1768,6 +1945,8 @@
           }
         } catch (e) {
           showToast('SMS dispatched to 2Factor endpoint.', 'info');
+        } finally {
+          if (testBtn) { testBtn.disabled = false; testBtn.textContent = 'Send Test SMS'; }
         }
       }
     }
