@@ -1937,7 +1937,35 @@
       btn.innerHTML = '<span>Verifying Security &amp; Dispatching SMS...</span> ⏳';
       btn.disabled = true;
 
-      // 1. Primary: Google Firebase Phone Authentication
+      const preferredProvider = localStorage.getItem('moleqyn_sms_provider') || 'firebase';
+      const fast2smsKey = localStorage.getItem('moleqyn_fast2sms_key');
+      const twoFactorKey = localStorage.getItem('moleqyn_2factor_key');
+
+      // 1. Check if Indian Telecom Gateway (Fast2SMS / 2Factor) is preferred
+      if ((preferredProvider === 'fast2sms' || preferredProvider === '2factor') && (fast2smsKey || twoFactorKey)) {
+        currentAuthMode = 'gateway';
+        generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+        const sentReal = await dispatchRealMobileSms(val, generatedOTP);
+        if (sentReal) {
+          document.getElementById('displayPhone').textContent = '+91 ' + val;
+          document.getElementById('phoneStep').classList.add('hidden');
+          document.getElementById('otpStep').classList.remove('hidden');
+          btn.innerHTML = '<span>Get Verification OTP</span> ➔';
+          btn.disabled = false;
+          playBeep('success');
+          showToast(`✓ Real Cellular SMS dispatched to +91 ${val}! Check your phone inbox.`, 'success');
+          startOtpCountdown();
+          document.getElementById('otp1').focus();
+          return;
+        } else {
+          showToast(`⚠️ SMS Gateway delivery failed. Please check provider balance or credentials in Admin Hub.`, 'error');
+          btn.innerHTML = '<span>Get Verification OTP</span> ➔';
+          btn.disabled = false;
+          return;
+        }
+      }
+
+      // 2. Google Firebase Phone Authentication
       if (window.MoleqynFirebase && window.MoleqynFirebase.isConfigured()) {
         currentAuthMode = 'firebase';
         try {
@@ -1969,10 +1997,7 @@
         }
       }
 
-      // 2. Secondary: Indian Telecom Gateway (Fast2SMS / 2Factor)
-      const fast2smsKey = localStorage.getItem('moleqyn_fast2sms_key');
-      const twoFactorKey = localStorage.getItem('moleqyn_2factor_key');
-
+      // 3. Fallback to Gateway if available
       if (fast2smsKey || twoFactorKey) {
         currentAuthMode = 'gateway';
         generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
@@ -1987,11 +2012,6 @@
           showToast(`✓ Real Cellular SMS dispatched to +91 ${val}! Check your phone inbox.`, 'success');
           startOtpCountdown();
           document.getElementById('otp1').focus();
-          return;
-        } else {
-          showToast(`⚠️ SMS Gateway delivery failed. Please check provider balance or credentials in Admin Hub.`, 'error');
-          btn.innerHTML = '<span>Get Verification OTP</span> ➔';
-          btn.disabled = false;
           return;
         }
       }
