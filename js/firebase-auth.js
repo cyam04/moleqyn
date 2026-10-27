@@ -97,6 +97,11 @@
    * @param {string} containerId - DOM ID of container element
    * @param {string} size - 'invisible' or 'normal'
    */
+  /**
+   * Initialize or retrieve Google reCAPTCHA Verifier
+   * @param {string} containerId - DOM ID of container element
+   * @param {string} size - 'invisible' or 'normal'
+   */
   function getRecaptchaVerifier(containerId = 'recaptcha-container', size = 'invisible') {
     const auth = getAuth();
     if (!auth) return null;
@@ -107,28 +112,56 @@
       return null;
     }
 
+    // 1. If active verifier already exists, reuse it directly!
     if (_recaptchaVerifier) {
-      try {
-        _recaptchaVerifier.clear();
-      } catch (e) {}
-      _recaptchaVerifier = null;
+      return _recaptchaVerifier;
     }
+
+    // 2. Clear any lingering DOM children to prevent "already rendered" conflicts
+    container.innerHTML = '';
 
     try {
       _recaptchaVerifier = new window.firebase.auth.RecaptchaVerifier(containerId, {
         size: size,
         callback: function (response) {
-          // reCAPTCHA solved by genuine human user
           console.log('[MoleqynAuth] reCAPTCHA passed successfully');
         },
         'expired-callback': function () {
-          console.warn('[MoleqynAuth] reCAPTCHA token expired. Prompting user retry.');
+          console.warn('[MoleqynAuth] reCAPTCHA token expired. Resetting widget.');
+          resetRecaptchaWidget();
         }
-      });
+      }, auth);
       return _recaptchaVerifier;
     } catch (err) {
-      console.error('[MoleqynAuth] Failed to construct RecaptchaVerifier:', err);
-      return null;
+      console.warn('[MoleqynAuth] RecaptchaVerifier construction notice:', err);
+      // If error mentions already rendered, clear container and try with clean inner element
+      if (err.message && err.message.includes('already been rendered')) {
+        try {
+          container.innerHTML = '';
+          const freshDiv = document.createElement('div');
+          freshDiv.id = containerId + '-inner-' + Date.now();
+          container.appendChild(freshDiv);
+          _recaptchaVerifier = new window.firebase.auth.RecaptchaVerifier(freshDiv.id, {
+            size: size
+          }, auth);
+          return _recaptchaVerifier;
+        } catch (innerErr) {
+          console.error('[MoleqynAuth] Re-try reCAPTCHA failed:', innerErr);
+        }
+      }
+      return _recaptchaVerifier || null;
+    }
+  }
+
+  function resetRecaptchaWidget() {
+    if (_recaptchaVerifier) {
+      try {
+        if (typeof grecaptcha !== 'undefined' && _recaptchaVerifier.recaptchaWidgetId !== undefined) {
+          grecaptcha.reset(_recaptchaVerifier.recaptchaWidgetId);
+        }
+      } catch (e) {
+        console.warn('reCAPTCHA widget reset notice:', e);
+      }
     }
   }
 
@@ -203,11 +236,8 @@
     } catch (err) {
       console.error('[MoleqynAuth] Firebase Phone OTP Send Error:', err);
       
-      // Reset recaptcha verifier on error
-      if (_recaptchaVerifier) {
-        try { _recaptchaVerifier.clear(); } catch(e){}
-        _recaptchaVerifier = null;
-      }
+      // Reset reCAPTCHA widget token on error so user can retry smoothly without destroying verifier
+      resetRecaptchaWidget();
 
       let userMsg = err.message || 'SMS delivery failed.';
       if (err.code === 'auth/invalid-phone-number') {
@@ -215,7 +245,7 @@
       } else if (err.code === 'auth/too-many-requests') {
         userMsg = 'Too many requests sent from this device. Please wait a few moments before trying again.';
       } else if (err.code === 'auth/quota-exceeded') {
-        userMsg = 'SMS quota limit reached. Please check Firebase console or use Google 1-Tap.';
+        userMsg = 'Daily SMS quota limit reached. Please check Firebase console or add test phone number.';
       } else if (err.code === 'auth/captcha-check-failed') {
         userMsg = 'reCAPTCHA bot verification failed. Please try again.';
       }
