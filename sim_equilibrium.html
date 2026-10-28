@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -878,7 +878,8 @@ function generateEquilibriumReport() {
     document.body.appendChild(modal);
   }
 
-  const currentUser = localStorage.getItem('Moleqyn_user') ? JSON.parse(localStorage.getItem('Moleqyn_user')).name : 'Rahul Sharma (Student)';
+  const _storedUserStr = localStorage.getItem('moleqyn_user') || localStorage.getItem('mlab_user') || localStorage.getItem('Moleqyn_user');
+  const currentUser = _storedUserStr ? JSON.parse(_storedUserStr).name : 'Student Scholar';
   const dateStr = new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' });
 
   modal.innerHTML = `

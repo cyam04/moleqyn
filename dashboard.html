@@ -2377,26 +2377,10 @@
         if (saved) user = JSON.parse(saved);
       } catch(e) {}
 
-      // Fallback demo profile if none exists
-      if (!user) {
-        user = {
-          name: "Student Scholar",
-          email: "student@school.edu",
-          phone: "+91 98765 43210",
-          class: "Class 11 Science • Arjuna JEE",
-          avatar: "👨‍🔬",
-          level: 1,
-          xp: "100 XP (Welcome)",
-          streak: 1,
-          labsCompleted: 0,
-          timeSpent: "0 mins",
-          chapterMastery: 0,
-          isNewUser: true,
-          isDemo: false,
-          isLoggedIn: true
-        };
-        localStorage.setItem('mlab_user', JSON.stringify(user));
-        localStorage.setItem('moleqyn_user', JSON.stringify(user));
+      // ROUTE GUARD: If no active student session exists, redirect to login page (Bug 5 fix)
+      if (!user || (!user.isLoggedIn && !user.name)) {
+        window.location.replace('login.html?auth_required=true');
+        return;
       }
 
       const isNew = Boolean(user.isNewUser || (!user.isDemo && (!user.labsCompleted || user.labsCompleted === 0)));
