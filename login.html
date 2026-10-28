@@ -528,6 +528,44 @@
       transform: scale(1.05);
     }
 
+    /* HIGH-CONTRAST TEST OTP BADGE (NEVER INVISIBLE / NEVER WHITE-ON-WHITE) */
+    .test-otp-code-badge {
+      display: inline-block;
+      margin: 10px auto;
+      padding: 8px 24px;
+      border-radius: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.55rem;
+      font-weight: 800;
+      letter-spacing: 6px;
+      background: #060b14 !important;
+      color: #00f0ff !important;
+      border: 1.5px solid rgba(0, 240, 255, 0.5) !important;
+      box-shadow: 0 4px 20px rgba(0, 240, 255, 0.25);
+      user-select: all;
+    }
+
+    :root[data-theme="day"] .test-otp-code-badge,
+    html.light-mode .test-otp-code-badge {
+      background: #0c182e !important;
+      color: #00f0ff !important;
+      border: 1.5px solid #0284c7 !important;
+      box-shadow: 0 4px 18px rgba(2, 132, 199, 0.25);
+    }
+
+    .otp-digit:-webkit-autofill,
+    .otp-digit:-webkit-autofill:hover, 
+    .otp-digit:-webkit-autofill:focus {
+      -webkit-text-fill-color: var(--primary);
+      -webkit-box-shadow: 0 0 0px 1000px rgba(3, 9, 20, 0.8) inset;
+      transition: background-color 5000s ease-in-out 0s;
+    }
+    :root[data-theme="day"] .otp-digit:-webkit-autofill,
+    html.light-mode .otp-digit:-webkit-autofill {
+      -webkit-text-fill-color: #0f172a;
+      -webkit-box-shadow: 0 0 0px 1000px #f8fafc inset;
+    }
+
     /* RESEND OTP ROW */
     .resend-row {
       display: flex;
@@ -1296,8 +1334,8 @@
               <span>🇮🇳</span>
               <span>+91</span>
             </div>
-            <input type="tel" id="phoneInput" class="form-input" style="padding-left: 16px;" placeholder="98765 43210"
-              maxlength="10" onkeypress="if(event.key==='Enter') sendOTP()" />
+            <input type="tel" id="phoneInput" class="form-input" style="padding-left: 16px;" placeholder="98234 56789"
+              maxlength="10" inputmode="numeric" oninput="this.value=this.value.replace(/\D/g,'').slice(0,10)" onkeypress="if(event.key==='Enter') sendOTP()" />
           </div>
         </div>
 
@@ -1319,7 +1357,7 @@
         <div style="text-align:center; margin-bottom:12px;">
           <div style="font-weight:600; font-size:0.95rem;">Enter Verification Code</div>
           <div style="font-size:0.8rem; color:var(--muted); margin-top:2px;">
-            Sent via Real Cellular SMS to <span id="displayPhone" style="color:var(--primary); font-weight:600;">+91 98765 43210</span>
+            Sent to <span id="displayPhone" style="color:var(--primary); font-weight:600;">+91 ----------</span>
             <a href="javascript:void(0)" onclick="editPhone()"
               style="color:var(--primary); margin-left:6px; font-size:0.76rem;">Change</a>
           </div>
@@ -1760,11 +1798,53 @@
     async function sendOTP() {
       const phoneInput = document.getElementById('phoneInput');
       const val = phoneInput.value.replace(/\D/g, '');
-      if (val.length < 10) {
+
+      // Strict Validation: Valid Indian Mobile Number (10 digits starting with 6, 7, 8, or 9)
+      if (!val) {
         playBeep('error');
         phoneInput.parentElement.classList.add('shake-err');
         setTimeout(() => phoneInput.parentElement.classList.remove('shake-err'), 450);
-        showToast('Please enter a valid 10-digit mobile number.', 'error');
+        showToast('Please enter your 10-digit mobile number.', 'error');
+        phoneInput.focus();
+        return;
+      }
+
+      if (val.length !== 10) {
+        playBeep('error');
+        phoneInput.parentElement.classList.add('shake-err');
+        setTimeout(() => phoneInput.parentElement.classList.remove('shake-err'), 450);
+        showToast(`Mobile number must be exactly 10 digits (currently ${val.length} digits).`, 'error');
+        phoneInput.focus();
+        return;
+      }
+
+      if (!/^[6-9]/.test(val)) {
+        playBeep('error');
+        phoneInput.parentElement.classList.add('shake-err');
+        setTimeout(() => phoneInput.parentElement.classList.remove('shake-err'), 450);
+        showToast('Invalid prefix: Indian mobile numbers must start with 6, 7, 8, or 9.', 'error');
+        phoneInput.focus();
+        return;
+      }
+
+      // Disallow all-repeated digits (e.g. 0000000000, 1111111111, ..., 9999999999)
+      if (/^([0-9])\1{9}$/.test(val)) {
+        playBeep('error');
+        phoneInput.parentElement.classList.add('shake-err');
+        setTimeout(() => phoneInput.parentElement.classList.remove('shake-err'), 450);
+        showToast('Invalid mobile number: Repeated digits are not permitted.', 'error');
+        phoneInput.focus();
+        return;
+      }
+
+      // Disallow dummy sequential numbers (e.g. 1234567890, 0123456789, 9876543210)
+      const fakeSequences = ['1234567890', '0123456789', '9876543210', '0987654321', '6789012345', '5432109876'];
+      if (fakeSequences.includes(val)) {
+        playBeep('error');
+        phoneInput.parentElement.classList.add('shake-err');
+        setTimeout(() => phoneInput.parentElement.classList.remove('shake-err'), 450);
+        showToast('Invalid mobile number: Sequential numbers (like 1234567890) are not permitted. Please enter a real mobile number.', 'error');
+        phoneInput.focus();
         return;
       }
 
@@ -1787,9 +1867,9 @@
         btn.innerHTML = '<span>Get Verification OTP</span> ➔';
         btn.disabled = false;
         playBeep('success');
-        showToast(reasonMessage || `⚡ Test Mode: Verification OTP is ${generatedOTP}`, 'info');
+        showToast(reasonMessage || `⚡ Verification OTP is ${generatedOTP}`, 'info');
 
-        // Render test code helper card
+        // Render test code helper card with high-contrast badge (never white on white)
         let helperBanner = document.getElementById('otpTestModeBanner');
         if (!helperBanner) {
           helperBanner = document.createElement('div');
@@ -1799,16 +1879,16 @@
             otpBoxes.parentNode.insertBefore(helperBanner, otpBoxes);
           }
         }
-        helperBanner.style.cssText = 'background:rgba(0, 240, 255, 0.08); border:1px solid rgba(0, 240, 255, 0.3); border-radius:10px; padding:10px 14px; margin:0 0 14px 0; font-size:0.8rem; text-align:center;';
+        helperBanner.style.cssText = 'background:rgba(0, 240, 255, 0.08); border:1px solid rgba(0, 240, 255, 0.35); border-radius:14px; padding:12px 16px; margin:0 0 16px 0; font-size:0.82rem; text-align:center;';
         helperBanner.innerHTML = `
-          <div style="font-weight:700; color:var(--primary); margin-bottom:4px;">⚡ Instant Test Verification OTP</div>
+          <div style="font-weight:700; color:var(--primary); margin-bottom:4px; font-size:0.88rem;">⚡ Verification OTP Code</div>
           <div style="font-size:0.75rem; color:var(--muted); line-height:1.4;">
-            Google Firebase requires the <strong>Blaze (Pay-as-you-go)</strong> plan for real cellular SMS.
+            Firebase requires Blaze plan for cellular SMS. Enter the code below:
           </div>
-          <div style="margin:8px 0; font-size:1.15rem; font-weight:800; letter-spacing:4px; color:#fff;">
-            ${generatedOTP}
+          <div>
+            <div class="test-otp-code-badge">${generatedOTP}</div>
           </div>
-          <button type="button" onclick="autoFillTestOTP('${generatedOTP}')" style="background:var(--primary); color:#030a16; border:none; padding:5px 14px; border-radius:6px; font-weight:700; font-size:0.78rem; cursor:pointer;">
+          <button type="button" onclick="autoFillTestOTP('${generatedOTP}')" style="background:linear-gradient(135deg, var(--primary), #00c3ff); color:#030a16; border:none; padding:7px 18px; border-radius:8px; font-weight:700; font-size:0.82rem; cursor:pointer; margin-top:4px; box-shadow:0 3px 12px var(--primary-glow);">
             Auto-fill &amp; Verify Code ➔
           </button>
         `;
@@ -1978,7 +2058,8 @@
           showToast(`⚡ Firebase Billing requires Blaze plan. New Test OTP: ${generatedOTP}`, 'info');
           const tb = document.getElementById('otpTestModeBanner');
           if (tb) {
-            tb.querySelector('div[style*="font-size:1.15rem"]').textContent = generatedOTP;
+            const badge = tb.querySelector('.test-otp-code-badge') || tb.querySelector('div[style*="font-size:1.15rem"]');
+            if (badge) badge.textContent = generatedOTP;
           }
           startOtpCountdown();
           return;
@@ -2008,7 +2089,8 @@
       showToast(`⚡ New Test OTP Code: ${generatedOTP}`, 'info');
       const tb = document.getElementById('otpTestModeBanner');
       if (tb) {
-        tb.querySelector('div[style*="font-size:1.15rem"]').textContent = generatedOTP;
+        const badge = tb.querySelector('.test-otp-code-badge') || tb.querySelector('div[style*="font-size:1.15rem"]');
+        if (badge) badge.textContent = generatedOTP;
       }
       startOtpCountdown();
     }
@@ -2081,14 +2163,14 @@
       const batchVal = document.getElementById('onboardBatchVal').value || 'Class 11 Science • Arjuna JEE';
       const avatarVal = document.getElementById('onboardAvatarVal').value || '👨‍🔬';
 
-      if (!name) {
+      if (!name || name.length < 2) {
         playBeep('error');
-        showToast('Please enter your full name.', 'error');
+        showToast('Please enter your full name (minimum 2 characters).', 'error');
         return;
       }
 
       playBeep('success');
-      const mob = pendingPhoneMob || document.getElementById('phoneInput').value.trim() || '9876543210';
+      const mob = pendingPhoneMob || document.getElementById('phoneInput').value.replace(/\D/g, '');
       const user = {
         name: name,
         email: email || '',
