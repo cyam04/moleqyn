@@ -2736,7 +2736,7 @@
     }
 
     // ==========================================
-    // ACTIVE SESSION DETECTION (PREVENT UNNECESSARY RELOGIN)
+    // ACTIVE SESSION DETECTION (PREVENT UNNECESSARY RELOGIN - BUG 4)
     // ==========================================
     function checkActiveLoginSession() {
       try {
@@ -2751,33 +2751,69 @@
           const authCard = document.getElementById('authCard');
           if (!authCard) return;
 
+          // Hide redundant blank login form so returning student isn't asked to login again
+          authCard.style.display = 'none';
+
           let banner = document.getElementById('activeSessionBanner');
           if (!banner) {
             banner = document.createElement('div');
             banner.id = 'activeSessionBanner';
-            banner.style.cssText = 'background:rgba(0, 240, 255, 0.08); border:1.5px solid rgba(0, 240, 255, 0.4); border-radius:18px; padding:18px 20px; margin-bottom:22px; text-align:center; box-shadow:0 8px 30px rgba(0,240,255,0.12);';
+            banner.className = 'auth-card';
+            banner.style.cssText = 'text-align: center; padding: 36px 28px; animation: popIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);';
             authCard.parentNode.insertBefore(banner, authCard);
           }
           const avatar = user.avatar || '👨‍🔬';
-          const name = user.name || 'Student';
-          const batch = user.class || 'Student Batch';
+          const name = user.name || 'Student Scholar';
+          const batch = user.class || 'Class 11 Science • Arjuna JEE';
+          const contact = user.phone ? ('📱 ' + user.phone) : (user.email ? ('📧 ' + user.email) : '');
           banner.innerHTML = `
-            <div style="font-size:2.2rem; margin-bottom:4px;">${avatar}</div>
-            <div style="font-weight:700; font-size:1.1rem; color:var(--text); margin-bottom:4px;">Active Session Detected</div>
-            <div style="font-size:0.86rem; color:var(--muted); line-height:1.4; margin-bottom:14px;">
-              You are already signed in as <strong style="color:var(--primary);">${name}</strong> (${batch}).
+            <div style="width: 72px; height: 72px; margin: 0 auto 16px auto; border-radius: 50%; background: rgba(0, 240, 255, 0.12); border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; box-shadow: 0 0 25px var(--primary-glow);">
+              ${avatar}
             </div>
-            <div style="display:flex; flex-direction:column; gap:10px;">
-              <a href="dashboard.html" class="btn-submit" style="text-decoration:none; margin-top:0;">
-                <span>Go Directly to Student Dashboard</span> ➔
-              </a>
-              <button type="button" onclick="logoutCurrentSession()" style="background:none; border:none; color:var(--muted); font-size:0.82rem; cursor:pointer; text-decoration:underline; padding:4px;">
-                Log in with another account / Sign out
+            <div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 14px; border-radius: 999px; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; font-size: 0.76rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">
+              <span style="width: 6px; height: 6px; border-radius: 50%; background: #10b981; box-shadow: 0 0 6px #10b981;"></span>
+              Active Student Session
+            </div>
+            <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.45rem; font-weight: 800; color: var(--text); margin-bottom: 6px; letter-spacing: -0.3px;">
+              Welcome back, ${name}!
+            </h2>
+            <div style="font-size: 0.88rem; color: var(--muted); margin-bottom: 4px;">
+              ${batch}
+            </div>
+            ${contact ? `<div style="font-size: 0.8rem; color: var(--muted); margin-bottom: 22px; opacity: 0.85;">${contact}</div>` : '<div style="margin-bottom: 18px;"></div>'}
+            
+            <a href="dashboard.html" class="btn-submit" style="text-decoration: none; margin-bottom: 12px; font-size: 1rem; padding: 14px 20px;">
+              <span>Continue to Student Dashboard</span>
+              <span>➔</span>
+            </a>
+
+            <div style="display: flex; gap: 12px; justify-content: center; margin-top: 14px; border-top: 1px solid var(--border); padding-top: 14px;">
+              <button type="button" onclick="revealLoginForm()" style="background: none; border: none; color: var(--primary); font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: 0.2s;">
+                ⇄ Switch Student Profile
+              </button>
+              <span style="color: var(--border);">|</span>
+              <button type="button" onclick="logoutCurrentSession()" style="background: none; border: none; color: var(--danger, #ef4444); font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: 0.2s;">
+                Sign Out
               </button>
             </div>
           `;
         }
       } catch (e) {}
+    }
+
+    function revealLoginForm() {
+      const b = document.getElementById('activeSessionBanner');
+      if (b) b.remove();
+      const authCard = document.getElementById('authCard');
+      if (authCard) {
+        authCard.style.display = 'block';
+        const phoneInput = document.getElementById('phoneInput');
+        if (phoneInput) {
+          phoneInput.value = '';
+          phoneInput.focus();
+        }
+      }
+      showToast('Switched to sign-in form. Enter new number.', 'info');
     }
 
     function logoutCurrentSession() {
@@ -2789,7 +2825,9 @@
         sessionStorage.removeItem('mlab_user');
         const b = document.getElementById('activeSessionBanner');
         if (b) b.remove();
-        showToast('Session cleared. You can now log in with a new number.', 'info');
+        const authCard = document.getElementById('authCard');
+        if (authCard) authCard.style.display = 'block';
+        showToast('Logged out successfully. Please sign in.', 'info');
       } catch (e) {}
     }
 
