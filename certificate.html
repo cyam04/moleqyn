@@ -897,8 +897,8 @@
       <div class="customizer-grid">
         <div class="input-group">
           <label class="input-label" for="inpStudentName">Student Full Name</label>
-          <input type="text" id="inpStudentName" class="input-ctrl" value="Alex Sharma"
-            placeholder="e.g. Shyam Raj, Alex Sharma" oninput="updateCert()" />
+          <input type="text" id="inpStudentName" class="input-ctrl" value=""
+            placeholder="e.g. Enter your name" oninput="updateCert()" />
         </div>
 
         <div class="input-group">
@@ -1023,7 +1023,7 @@
           <!-- RECIPIENT -->
           <div class="cert-recipient-section">
             <p class="presented-to">This official document is proudly awarded to</p>
-            <div class="student-name-display" id="certStudentName">Alex Sharma</div>
+            <div class="student-name-display" id="certStudentName">Student Scholar</div>
             <div class="batch-display" id="certBatchName">Class 11 Arjuna (JEE Advanced)</div>
           </div>
 
@@ -1142,27 +1142,43 @@
       const batch = params.get('batch');
 
       // Check if user is logged in
-      const storedUser = localStorage.getItem('moleqyn_user');
+      const storedUser = localStorage.getItem('moleqyn_user') || localStorage.getItem('mlab_user') || localStorage.getItem('matterlab_user');
+      let activeStudentName = student ? decodeURIComponent(student) : '';
+      let activeBatch = batch ? decodeURIComponent(batch) : '';
+
       if (storedUser) {
         try {
           const u = JSON.parse(storedUser);
-          if (u.name && !student) {
-            document.getElementById('inpStudentName').value = u.name;
+          if (u.name && !activeStudentName) {
+            activeStudentName = u.name;
           }
-          if (u.batch && !batch) {
-            document.getElementById('inpBatch').value = u.batch;
+          const userBatch = u.class || u.batch;
+          if (userBatch && !activeBatch) {
+            activeBatch = userBatch;
           }
         } catch (e) { }
       }
 
-      if (student) document.getElementById('inpStudentName').value = decodeURIComponent(student);
+      if (!activeStudentName) {
+        activeStudentName = 'Student Scholar';
+      }
+
+      document.getElementById('inpStudentName').value = activeStudentName;
       if (score) document.getElementById('inpScore').value = parseInt(score, 10);
-      if (batch) {
+      if (activeBatch) {
         const sel = document.getElementById('inpBatch');
         for (let i = 0; i < sel.options.length; i++) {
-          if (sel.options[i].value.toLowerCase().includes(batch.toLowerCase())) {
-            sel.selectedIndex = i;
-            break;
+          const optVal = sel.options[i].value.toLowerCase();
+          const optText = sel.options[i].text.toLowerCase();
+          const t = activeBatch.toLowerCase();
+          if (t.includes('arjuna') && (optVal.includes('arjuna') || optText.includes('arjuna'))) {
+            sel.selectedIndex = i; break;
+          } else if (t.includes('lakshya') && (optVal.includes('lakshya') || optText.includes('lakshya'))) {
+            sel.selectedIndex = i; break;
+          } else if (t.includes('udaan') || t.includes('10')) {
+            if (optVal.includes('10') || optText.includes('10')) { sel.selectedIndex = i; break; }
+          } else if (optVal.includes(t) || t.includes(optVal)) {
+            sel.selectedIndex = i; break;
           }
         }
       }
@@ -1204,7 +1220,7 @@
     }
 
     function updateCert() {
-      const student = document.getElementById('inpStudentName').value.trim() || 'Alex Sharma';
+      const student = document.getElementById('inpStudentName').value.trim() || 'Student Scholar';
       const batch = document.getElementById('inpBatch').value;
       const exp = document.getElementById('inpExperiment').value;
       const score = parseInt(document.getElementById('inpScore').value, 10) || 96;
@@ -1507,6 +1523,7 @@
       }
     });
   </script>
+  <script src="js/shared-nav.js"></script>
 </body>
 
 </html>

@@ -2044,8 +2044,14 @@
     };
 
     function openOfficialCertificate() {
-      const _storedUser = localStorage.getItem('moleqyn_user');
-      const currentUser = _storedUser ? JSON.parse(_storedUser).name : 'Alex Sharma';
+      const _storedUser = localStorage.getItem('moleqyn_user') || localStorage.getItem('mlab_user') || localStorage.getItem('matterlab_user');
+      let currentUser = 'Student Scholar';
+      if (_storedUser) {
+        try {
+          const parsed = JSON.parse(_storedUser);
+          if (parsed && parsed.name) currentUser = parsed.name;
+        } catch (e) {}
+      }
       const topic = encodeURIComponent('Daniell Galvanic Cell EMF & Nernst Equation (Zn/Zn²⁺ ‖ Cu²⁺/Cu)');
       const nameParam = encodeURIComponent(currentUser);
 

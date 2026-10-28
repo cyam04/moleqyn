@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -1386,10 +1386,15 @@
         document.body.appendChild(modal);
       }
 
-      // SECURITY FIX: Use correct lowercase key 'moleqyn_user' (written by login.html).
-      // Old key 'Moleqyn_user' was never written by any login flow — always fell back.
-      const _storedUser = localStorage.getItem('moleqyn_user');
-      const currentUser = _storedUser ? JSON.parse(_storedUser).name : 'Guest Student';
+      // Check active student session across all valid keys
+      const _storedUser = localStorage.getItem('moleqyn_user') || localStorage.getItem('mlab_user') || localStorage.getItem('matterlab_user');
+      let currentUser = 'Student Scholar';
+      if (_storedUser) {
+        try {
+          const parsed = JSON.parse(_storedUser);
+          if (parsed && parsed.name) currentUser = parsed.name;
+        } catch(e) {}
+      }
       const dateStr = new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
       const aP = getActiveAcidParams();
       const bP = getActiveBaseParams();

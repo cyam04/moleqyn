@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -355,10 +355,10 @@
     const title = topicMap[currentTopic] || 'Chemistry Mastery Quiz';
 
     // Sync score & telemetry to Supabase Cloud & Admin Roster
-    let studentName = 'Alex Sharma';
+    let studentName = 'Student Scholar';
     let studentObj = null;
     try {
-      const savedUser = localStorage.getItem('moleqyn_user') || localStorage.getItem('mlab_user');
+      const savedUser = localStorage.getItem('moleqyn_user') || localStorage.getItem('mlab_user') || localStorage.getItem('matterlab_user');
       if (savedUser) {
         studentObj = JSON.parse(savedUser);
         studentName = studentObj.name || studentName;
@@ -404,8 +404,8 @@
   }
 
   function claimQuizCertificate() {
-    const savedUser = localStorage.getItem('moleqyn_user');
-    let studentName = 'Alex Sharma';
+    const savedUser = localStorage.getItem('moleqyn_user') || localStorage.getItem('mlab_user') || localStorage.getItem('matterlab_user');
+    let studentName = 'Student Scholar';
     try { if (savedUser) studentName = JSON.parse(savedUser).name || studentName; } catch(e){}
     const topicMap = {
       electro: 'Electrochemistry & Daniell Cell Mastery',

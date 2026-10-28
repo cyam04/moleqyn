@@ -1267,7 +1267,7 @@
     </ul>
     <div class="mlab-nav-right">
       <div id="navAuthArea" style="display:flex; align-items:center; gap:8px;">
-        <span class="mlab-user-tag"><span id="navAvatar">👨‍🔬</span> <span id="navUserName">Alex Sharma</span></span>
+        <span class="mlab-user-tag"><span id="navAvatar">👨‍🔬</span> <span id="navUserName">Student Scholar</span></span>
         <button class="mlab-logout-btn" id="navLogoutBtn" onclick="logout()" title="Logout of student account">Logout ↪</button>
       </div>
       <button class="mlab-theme-btn" id="mlabThemeBtn" title="Switch Theme">☀️</button>
@@ -1280,7 +1280,7 @@
     <header class="hero-banner">
       <div>
         <h1 class="hero-greeting-title">
-          <span id="timeGreeting">Good morning</span>, <span class="name" id="bannerStudentName">Alex Sharma</span>! 🚀
+          <span id="timeGreeting">Good morning</span>, <span class="name" id="bannerStudentName">Student Scholar</span>! 🚀
         </h1>
         <div>
           <span class="hero-batch-pill" id="bannerBatchTag">⚡ Arjuna JEE 2027 • Class 11 Chemistry</span>
@@ -1331,7 +1331,7 @@
         <!-- Student ID Card -->
         <div class="student-id-card">
           <div class="student-avatar" id="dashAvatar">👨‍🔬</div>
-          <div class="student-name" id="dashUserName">Alex Sharma</div>
+          <div class="student-name" id="dashUserName">Student Scholar</div>
           <div class="student-sub" id="dashUserClass">Class 11 Science • Arjuna Batch</div>
           <div class="student-rank-badge" id="dashPercentileBadge">Batch Percentile: 96.4%ile</div>
 
@@ -1725,7 +1725,7 @@
               <div class="lb-row highlight-me">
                 <div class="lb-rank" id="lbMyRank" style="color:var(--primary);">#42</div>
                 <div class="lb-avatar" id="lbMyAvatar">👨‍🔬</div>
-                <div class="lb-name"><strong id="lbMyName">Alex Sharma</strong> <span style="font-size:0.75rem; color:var(--primary); font-weight:700;">(YOU)</span></div>
+                <div class="lb-name"><strong id="lbMyName">Student Scholar</strong> <span style="font-size:0.75rem; color:var(--primary); font-weight:700;">(YOU)</span></div>
                 <div class="lb-xp" id="lbMyXp">6,500 XP</div>
               </div>
             </div>
@@ -2046,7 +2046,7 @@
 
       <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:14px; padding:18px; margin-bottom:18px;">
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:0.86rem;">
-          <div><span style="color:var(--muted);">Student Name:</span> <strong id="repStudentName">Alex Sharma</strong></div>
+          <div><span style="color:var(--muted);">Student Name:</span> <strong id="repStudentName">Student Scholar</strong></div>
           <div><span style="color:var(--muted);">Batch ID:</span> <strong id="repBatchId">ML-ARJUNA-2027</strong></div>
           <div><span style="color:var(--muted);">Experiment:</span> <strong id="repExpTitle" style="color:var(--primary);">Acid-Base Titration</strong></div>
           <div><span style="color:var(--muted);">Score Awarded:</span> <strong id="repScore" style="color:var(--success);">98 / 100 (Grade A+)</strong></div>
@@ -2734,9 +2734,9 @@
       _currentRepTitle = title;
       _currentRepScore = parseInt(score, 10) || 96;
 
-      const saved = localStorage.getItem('moleqyn_user') || localStorage.getItem('mlab_user');
-      let name = "Alex Sharma";
-      try { if (saved) name = JSON.parse(saved).name; } catch(e){}
+      const saved = localStorage.getItem('moleqyn_user') || localStorage.getItem('mlab_user') || localStorage.getItem('matterlab_user');
+      let name = "Student Scholar";
+      try { if (saved) name = JSON.parse(saved).name || name; } catch(e){}
 
       document.getElementById('repStudentName').textContent = name;
       document.getElementById('repExpTitle').textContent = title;
@@ -2746,7 +2746,7 @@
     }
 
     function openMasterCertificateFromModal() {
-      const name = document.getElementById('repStudentName').textContent || 'Alex Sharma';
+      const name = document.getElementById('repStudentName').textContent || 'Student Scholar';
       const url = `certificate.html?student=${encodeURIComponent(name)}&topic=${encodeURIComponent(_currentRepTitle)}&score=${_currentRepScore}`;
       window.open(url, '_blank');
     }
