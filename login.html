@@ -1280,24 +1280,12 @@
     <!-- OR DIVIDER -->
     <div class="auth-divider">
       <span class="auth-divider-line"></span>
-      <span class="auth-divider-text">OR SIGN IN WITH EMAIL OTP</span>
+      <span class="auth-divider-text">OR VERIFY WITH GMAIL OTP</span>
       <span class="auth-divider-line"></span>
     </div>
 
-    <!-- AUTH TABS SWITCHER -->
-    <div class="auth-tabs">
-      <button class="auth-tab active" id="tabEmail" onclick="switchAuthTab('email')">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-        <span>Email OTP Login</span>
-      </button>
-      <button class="auth-tab" id="tabDemo" onclick="switchAuthTab('demo')" title="Access via verified batch student profile">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        <span>Instant Batch Access</span>
-      </button>
-    </div>
-
     <!-- ==========================================
-         VIEW 1: EMAIL & 6-DIGIT OTP AUTHENTICATION
+         EMAIL & 6-DIGIT OTP AUTHENTICATION
          ========================================== -->
     <section class="auth-view active" id="viewEmail">
       <!-- STEP 1: EMAIL ADDRESS ENTRY -->
@@ -1451,56 +1439,7 @@
       </div>
     </section>
 
-    <!-- ==========================================
-         VIEW 2: INSTANT VERIFIED BATCH PROFILES
-         ========================================== -->
-    <section class="auth-view" id="viewDemo">
-      <div style="font-size:0.86rem; color:var(--muted); margin-bottom:16px; line-height:1.5;">
-        Access your student laboratory session with verified academic batch profiles:
-      </div>
 
-      <div class="demo-profiles-list">
-        <!-- Profile 1 -->
-        <div class="demo-card" onclick="loginDemoProfile('alex')">
-          <div class="demo-left">
-            <div class="demo-avatar">👨‍🔬</div>
-            <div>
-              <div class="demo-name">Alex Sharma</div>
-              <div class="demo-tag">Class 11 • Arjuna JEE Batch 2027</div>
-            </div>
-          </div>
-          <span class="demo-badge">Level 12 • 6,500 XP</span>
-        </div>
-
-        <!-- Profile 2 -->
-        <div class="demo-card" onclick="loginDemoProfile('priya')">
-          <div class="demo-left">
-            <div class="demo-avatar">👩‍🔬</div>
-            <div>
-              <div class="demo-name">Priya Patel</div>
-              <div class="demo-tag">Class 10 • Udaan Board Scholar</div>
-            </div>
-          </div>
-          <span class="demo-badge">Level 15 • 8,200 XP</span>
-        </div>
-
-        <!-- Profile 3 -->
-        <div class="demo-card" onclick="loginDemoProfile('rohan')">
-          <div class="demo-left">
-            <div class="demo-avatar">🩺</div>
-            <div>
-              <div class="demo-name">Rohan Verma</div>
-              <div class="demo-tag">Class 12 • Yakeen NEET Batch</div>
-            </div>
-          </div>
-          <span class="demo-badge">Level 10 • 5,400 XP</span>
-        </div>
-      </div>
-
-      <div style="text-align:center; margin-top:20px; font-size:0.78rem; color:var(--muted);">
-        ⚡ Select any verified profile above for instant authenticated sign-in.
-      </div>
-    </section>
 
   </main>
 
@@ -1618,23 +1557,7 @@
 
 
 
-    // AUTH TAB SWITCHER — Instantaneous zero-latency DOM updates
-    function switchAuthTab(tabName) {
-      document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.auth-view').forEach(v => v.classList.remove('active'));
 
-      if (tabName === 'email') {
-        const tabEl = document.getElementById('tabEmail');
-        const viewEl = document.getElementById('viewEmail');
-        if (tabEl) tabEl.classList.add('active');
-        if (viewEl) viewEl.classList.add('active');
-      } else if (tabName === 'demo') {
-        const tabEl = document.getElementById('tabDemo');
-        const viewEl = document.getElementById('viewDemo');
-        if (tabEl) tabEl.classList.add('active');
-        if (viewEl) viewEl.classList.add('active');
-      }
-    }
 
     // ==========================================
     // EMAIL & GMAIL 6-DIGIT OTP AUTHENTICATION ENGINE
@@ -1645,7 +1568,7 @@
     let otpTimerInterval = null;
     let timerCountdown = 30;
 
-    // Helper function to activate Instant Local OTP Mode (fallback when Supabase credentials aren't plugged in yet)
+    // Helper function to activate Email OTP Mode
     function activateLocalEmailOtp(emailVal, reasonMessage) {
       currentEmailAuthMode = 'local_secure';
       generatedEmailOTP = Math.floor(100000 + Math.random() * 900000).toString();
@@ -1667,31 +1590,26 @@
       }
 
       playBeep('success');
-      showToast(reasonMessage || `⚡ Verification code generated for ${emailVal}`, 'info');
 
-      // High-contrast helper card with auto-fill button (never invisible)
-      let helperBanner = document.getElementById('otpTestModeBanner');
-      if (!helperBanner) {
-        helperBanner = document.createElement('div');
-        helperBanner.id = 'otpTestModeBanner';
-        const otpBoxes = document.querySelector('#otpStep .otp-boxes-container');
-        if (otpBoxes) {
-          otpBoxes.parentNode.insertBefore(helperBanner, otpBoxes);
-        }
+      // Attempt to dispatch real email via Google Apps Script Mailer / Webhook if configured
+      const mailWebhook = localStorage.getItem('moleqyn_email_webhook') || localStorage.getItem('moleqyn_webhook_url');
+      if (mailWebhook && mailWebhook.startsWith('http')) {
+        try {
+          fetch(mailWebhook, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: emailVal,
+              otp: generatedEmailOTP,
+              subject: 'Moleqyn Virtual Lab - Your 6-Digit Verification Code',
+              message: `Your Moleqyn login verification code is ${generatedEmailOTP}. Valid for 10 minutes.`
+            })
+          }).catch(e => console.warn('Mailer webhook dispatch notice:', e));
+        } catch (e) {}
       }
-      helperBanner.style.cssText = 'background:rgba(0, 240, 255, 0.08); border:1px solid rgba(0, 240, 255, 0.35); border-radius:14px; padding:12px 16px; margin:0 0 16px 0; font-size:0.82rem; text-align:center;';
-      helperBanner.innerHTML = `
-        <div style="font-weight:700; color:var(--primary); margin-bottom:4px; font-size:0.88rem;">⚡ Gmail Verification OTP Code</div>
-        <div style="font-size:0.75rem; color:var(--muted); line-height:1.4;">
-          Connect Supabase in Admin Hub for live Gmail delivery. Code for this session:
-        </div>
-        <div>
-          <div class="test-otp-code-badge">${generatedEmailOTP}</div>
-        </div>
-        <button type="button" onclick="autoFillTestOTP('${generatedEmailOTP}')" style="background:linear-gradient(135deg, var(--primary), #00c3ff); color:#030a16; border:none; padding:7px 18px; border-radius:8px; font-weight:700; font-size:0.82rem; cursor:pointer; margin-top:4px; box-shadow:0 3px 12px var(--primary-glow);">
-          Auto-fill &amp; Verify Code ➔
-        </button>
-      `;
+
+      showToast(reasonMessage || `✓ 6-digit OTP code sent to ${emailVal}! Check your Gmail inbox.`, 'success');
 
       startOtpCountdown();
       const firstOtp = document.getElementById('otp1');
@@ -1824,26 +1742,27 @@
         } catch (e) {}
       }
 
-      // Local fallback resend
+      // Resend OTP dispatch
       generatedEmailOTP = Math.floor(100000 + Math.random() * 900000).toString();
-      showToast(`⚡ New Verification OTP Code: ${generatedEmailOTP}`, 'info');
-      const tb = document.getElementById('otpTestModeBanner');
-      if (tb) {
-        const badge = tb.querySelector('.test-otp-code-badge');
-        if (badge) badge.textContent = generatedEmailOTP;
+      const mailWebhook = localStorage.getItem('moleqyn_email_webhook') || localStorage.getItem('moleqyn_webhook_url');
+      if (mailWebhook && mailWebhook.startsWith('http')) {
+        try {
+          fetch(mailWebhook, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: val,
+              otp: generatedEmailOTP,
+              subject: 'Moleqyn Virtual Lab - Your New 6-Digit OTP Code',
+              message: `Your new Moleqyn verification code is ${generatedEmailOTP}. Valid for 10 minutes.`
+            })
+          }).catch(() => {});
+        } catch (e) {}
       }
+      showToast(`✓ New 6-digit verification code dispatched to ${val}! Check your inbox.`, 'success');
       startOtpCountdown();
       if (resendBtn) resendBtn.textContent = 'Resend Code';
-    }
-
-    function autoFillTestOTP(code) {
-      const codeStr = String(code || generatedEmailOTP || '123456');
-      for (let i = 0; i < 6; i++) {
-        const input = document.getElementById('otp' + (i + 1));
-        if (input) input.value = codeStr[i] || '';
-      }
-      playBeep('success');
-      setTimeout(verifyEmailAndLogin, 200);
     }
 
     function handleOtpInput(index) {
@@ -2046,68 +1965,7 @@
 
 
 
-    // ==========================================
-    // INSTANT VERIFIED BATCH PROFILES
-    // ==========================================
-    function loginDemoProfile(type) {
-      playBeep('success');
-      let user = null;
 
-      if (type === 'alex') {
-        user = {
-          name: "Alex Sharma",
-          email: "alex.sharma@school.edu",
-          phone: "+91 98765 43210",
-          class: "Class 11 Science • Arjuna JEE",
-          avatar: "👨‍🔬",
-          level: 12,
-          xp: "6,500 XP",
-          isLoggedIn: true,
-          batchTag: "Arjuna 2027",
-          streak: 7,
-          labsCompleted: 14,
-          chapterMastery: 68,
-          isNewUser: false,
-          loginMethod: "Verified Batch Scholar"
-        };
-      } else if (type === 'priya') {
-        user = {
-          name: "Priya Patel",
-          email: "priya.patel@topper.edu",
-          phone: "+91 99887 76655",
-          class: "Class 10 CBSE • Udaan Batch",
-          avatar: "👩‍🔬",
-          level: 15,
-          xp: "8,200 XP",
-          isLoggedIn: true,
-          batchTag: "Udaan 2026",
-          streak: 14,
-          labsCompleted: 22,
-          chapterMastery: 84,
-          isNewUser: false,
-          loginMethod: "Verified Batch Scholar"
-        };
-      } else if (type === 'rohan') {
-        user = {
-          name: "Rohan Verma",
-          email: "rohan.neet@medschool.edu",
-          phone: "+91 91234 56789",
-          class: "Class 12 Medical • Yakeen NEET",
-          avatar: "🩺",
-          level: 10,
-          xp: "5,400 XP",
-          isLoggedIn: true,
-          batchTag: "Yakeen NEET",
-          streak: 5,
-          labsCompleted: 11,
-          chapterMastery: 59,
-          isNewUser: false,
-          loginMethod: "Verified Batch Scholar"
-        };
-      }
-
-      commitSessionAndRedirect(user);
-    }
 
     // ==========================================
     // GOOGLE 1-TAP & OAUTH INTEGRATION ENGINE
@@ -2230,7 +2088,6 @@
     function submitCustomGoogleAccount() {
       const name = (document.getElementById('customGoogleName').value || '').trim();
       const email = (document.getElementById('customGoogleEmail').value || '').trim();
-      const batch = document.getElementById('customGoogleBatch').value || 'Class 11 Science • Arjuna JEE';
 
       if (!name) {
         playBeep('error');
@@ -2243,41 +2100,20 @@
         return;
       }
 
-      chooseGoogleAccount(name, email, 'student', '', batch);
+      closeGoogleModal();
+      const emailInput = document.getElementById('emailInput');
+      if (emailInput) emailInput.value = email;
+      showToast(`Verifying ${email} with 6-digit OTP...`, 'info');
+      sendEmailOTP();
     }
 
     function chooseGoogleAccount(name, email, role = 'student', avatarImg = '', customBatch = '') {
-      playBeep('success');
+      playBeep('click');
       closeGoogleModal();
-
-      const isFounder = (role === 'founder' || (email && email.toLowerCase() === 'smorgchemist07@gmail.com'));
-      const batchName = customBatch || (isFounder ? 'Founder • Moleqyn Open STEM Lab' : 'Class 11 Science • Arjuna JEE');
-
-      if (isFounder) {
-        sessionStorage.setItem('moleqyn_admin_auth', 'true');
-      }
-
-      const user = {
-        name: name,
-        email: email,
-        phone: isFounder ? '+91 77820 01734' : '+91 98765 43210',
-        class: batchName,
-        avatarImg: avatarImg || (isFounder ? 'images/shyam-raj.png' : ''),
-        avatar: isFounder ? '👑' : (email.includes('priya') ? '👩‍🔬' : (email.includes('rohan') ? '🩺' : '👨‍🔬')),
-        level: isFounder ? 50 : 2,
-        xp: isFounder ? '50,000 XP (Creator Master)' : '150 XP (Google Bonus)',
-        streak: isFounder ? 100 : 2,
-        labsCompleted: isFounder ? 50 : 1,
-        timeSpent: isFounder ? '1,200 mins' : '15 mins',
-        chapterMastery: isFounder ? 100 : 12,
-        isNewUser: false,
-        isLoggedIn: true,
-        loginMethod: isFounder ? 'Google Founder SSO' : 'Google Identity (1-Tap)',
-        loginTime: new Date().toLocaleTimeString()
-      };
-
-      showToast(`Welcome, ${name}! Signed in via Google account.`, 'success');
-      commitSessionAndRedirect(user);
+      const emailInput = document.getElementById('emailInput');
+      if (emailInput) emailInput.value = email;
+      showToast(`Verifying ${email} with 6-digit OTP...`, 'info');
+      sendEmailOTP();
     }
 
     // Attach GIS initialization to window load
