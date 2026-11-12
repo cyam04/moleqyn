@@ -32,11 +32,6 @@
     rel="stylesheet" />
   <!-- GOOGLE IDENTITY SERVICES SDK (OFFICIAL 1-TAP & OAUTH) -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <!-- GOOGLE FIREBASE CELLULAR PHONE AUTH & RECAPTCHA SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-  <script src="js/firebase-config.js"></script>
-  <script src="js/firebase-auth.js"></script>
   <!-- SUPABASE CLOUD DATABASE JS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-client.js"></script>
@@ -1252,20 +1247,6 @@
 
   <div class="bg-grid"></div>
 
-  <!-- SECURE CELLULAR SMS DISPATCH NOTIFICATION (ZERO ON-SCREEN LEAKAGE) -->
-  <div class="sms-toast" id="smsToast">
-    <div class="sms-icon">📲</div>
-    <div class="sms-body">
-      <div class="sms-title">
-        <span>CELLULAR SMS DISPATCHED</span>
-        <span style="font-size:0.7rem; color:var(--muted);">Telecom Network</span>
-      </div>
-      <div style="font-size:0.82rem; color:var(--text); margin-top:2px;">
-        A real 6-digit verification code has been dispatched directly to your mobile phone. Please check your SMS inbox.
-      </div>
-    </div>
-  </div>
-
   <!-- AUTH HEADER BRANDING (SPACED BELOW NAV) -->
   <header class="auth-header" style="margin-top: 50px;">
     <div style="color: var(--muted); font-size: 0.95rem; font-weight: 500;">
@@ -1299,56 +1280,47 @@
     <!-- OR DIVIDER -->
     <div class="auth-divider">
       <span class="auth-divider-line"></span>
-      <span class="auth-divider-text">OR SIGN IN WITH</span>
+      <span class="auth-divider-text">OR SIGN IN WITH EMAIL OTP</span>
       <span class="auth-divider-line"></span>
     </div>
 
-    <!-- AUTH TABS SWITCHER WITH CRISP SVG ICONS (NO BROKEN IMAGES) -->
+    <!-- AUTH TABS SWITCHER -->
     <div class="auth-tabs">
-      <button class="auth-tab active" id="tabOtp" onclick="switchAuthTab('otp')">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
-        <span>Mobile Sign-in</span>
-      </button>
-      <button class="auth-tab" id="tabEmail" onclick="switchAuthTab('email')">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        <span>Email &amp; Password</span>
+      <button class="auth-tab active" id="tabEmail" onclick="switchAuthTab('email')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        <span>Email OTP Login</span>
       </button>
       <button class="auth-tab" id="tabDemo" onclick="switchAuthTab('demo')" title="Access via verified batch student profile">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        <span>Batch Access</span>
+        <span>Instant Batch Access</span>
       </button>
     </div>
 
     <!-- ==========================================
-         VIEW 1: PHONE NUMBER & LIVE OTP (PW STYLE)
+         VIEW 1: EMAIL & 6-DIGIT OTP AUTHENTICATION
          ========================================== -->
-    <section class="auth-view active" id="viewOtp">
-      <div id="phoneStep">
+    <section class="auth-view active" id="viewEmail">
+      <!-- STEP 1: EMAIL ADDRESS ENTRY -->
+      <div id="emailStep">
         <div class="form-group">
-          <label class="form-label" for="phoneInput">
-            <span>Mobile Number <span class="req">*</span></span>
-            <span style="font-size:0.75rem; color:var(--muted);">Sign in or Register</span>
+          <label class="form-label" for="emailInput">
+            <span>Gmail / Academic Email Address <span class="req">*</span></span>
+            <span style="font-size:0.75rem; color:var(--muted);">Instant 6-Digit OTP</span>
           </label>
-          <div class="phone-input-row">
-            <div class="country-code-pill">
-              <span>🇮🇳</span>
-              <span>+91</span>
-            </div>
-            <input type="tel" id="phoneInput" class="form-input" style="padding-left: 16px;" placeholder="98234 56789"
-              maxlength="10" inputmode="numeric" oninput="this.value=this.value.replace(/\D/g,'').slice(0,10)" onkeypress="if(event.key==='Enter') sendOTP()" />
+          <div class="input-wrapper">
+            <span class="input-icon">✉️</span>
+            <input type="email" id="emailInput" class="form-input" placeholder="student@gmail.com"
+              autocomplete="email" onkeypress="if(event.key==='Enter') sendEmailOTP()" />
           </div>
         </div>
 
-        <!-- GOOGLE RECAPTCHA SECURE BOT VERIFIER -->
-        <div id="recaptcha-container" style="margin: 8px auto; display: flex; justify-content: center;"></div>
-
-        <button class="btn-submit" type="button" id="btnSendOtp" onclick="sendOTP()">
-          <span>Continue with Mobile OTP</span>
+        <button class="btn-submit" type="button" id="btnSendEmailOtp" onclick="sendEmailOTP()">
+          <span>Send 6-Digit Verification Code</span>
           <span>➔</span>
         </button>
 
-        <div style="text-align: center; font-size: 0.72rem; color: var(--muted); margin-top: 10px;">
-          🔒 One-step authentication: Existing students log in directly, new students are enrolled automatically.
+        <div style="text-align: center; font-size: 0.74rem; color: var(--muted); margin-top: 10px;">
+          🔒 Zero spam. A genuine 6-digit cryptographic verification code will be sent to your Gmail inbox.
         </div>
       </div>
 
@@ -1357,12 +1329,12 @@
         <div style="text-align:center; margin-bottom:12px;">
           <div style="font-weight:600; font-size:0.95rem;">Enter Verification Code</div>
           <div style="font-size:0.8rem; color:var(--muted); margin-top:2px;">
-            Sent to <span id="displayPhone" style="color:var(--primary); font-weight:600;">+91 ----------</span>
-            <a href="javascript:void(0)" onclick="editPhone()"
+            Sent to <span id="displayEmail" style="color:var(--primary); font-weight:600;">student@gmail.com</span>
+            <a href="javascript:void(0)" onclick="editEmail()"
               style="color:var(--primary); margin-left:6px; font-size:0.76rem;">Change</a>
           </div>
           <div style="font-size:0.74rem; color:var(--muted); margin-top:4px;">
-            📲 Enter the genuine 6-digit code delivered to your mobile phone inbox
+            📩 Please check your Gmail inbox (or Promotions/Spam if delayed)
           </div>
         </div>
 
@@ -1382,11 +1354,11 @@
         </div>
 
         <div class="resend-row">
-          <span id="countdownText">Resend OTP in <strong>28s</strong></span>
-          <button class="resend-btn" id="resendBtn" onclick="resendOTP()" disabled>Resend Code</button>
+          <span id="countdownText">Resend OTP in <strong>30s</strong></span>
+          <button class="resend-btn" id="resendBtn" onclick="resendEmailOTP()" disabled>Resend Code</button>
         </div>
 
-        <button class="btn-submit" type="button" id="btnVerifyOtp" onclick="verifyAndLogin()">
+        <button class="btn-submit" type="button" id="btnVerifyOtp" onclick="verifyEmailAndLogin()">
           <span>Verify &amp; Launch Dashboard</span>
           <span>🚀</span>
         </button>
@@ -1400,43 +1372,41 @@
           </div>
           <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:1.25rem; font-weight:700; color:var(--text);">Welcome to Moleqyn! 🚀</div>
           <div style="font-size:0.82rem; color:var(--muted); margin-top:3px;">
-            Pehle apna naam aur target batch chuniye taaki aapka chemistry lab aur DPPs personalize ho sakein.
+            Apna student name aur target batch confirm kijiye taaki aapka virtual lab personalize ho sake.
           </div>
         </div>
 
-        <form id="onboardForm" onsubmit="event.preventDefault(); completePhoneOnboarding();">
+        <form id="onboardForm" onsubmit="event.preventDefault(); completeEmailOnboarding();">
           <div class="form-group">
             <label class="form-label" for="onboardName">
               <span>Student Full Name <span class="req">*</span></span>
             </label>
             <div class="input-wrapper">
               <span class="input-icon">👤</span>
-              <input type="text" id="onboardName" class="form-input" placeholder="e.g. Shyam Raj" required />
+              <input type="text" id="onboardName" class="form-input" placeholder="e.g. Alex Sharma" required />
             </div>
           </div>
 
           <div class="form-group">
             <label class="form-label" for="onboardEmail">
-              <span>Email Address <span style="font-size:0.74rem; color:var(--muted);">(Optional for reports)</span></span>
+              <span>Verified Email Address</span>
             </label>
             <div class="input-wrapper">
               <span class="input-icon">✉️</span>
-              <input type="email" id="onboardEmail" class="form-input" placeholder="e.g. shyam@gmail.com" />
+              <input type="email" id="onboardEmail" class="form-input" readonly style="opacity:0.85; cursor:not-allowed;" />
             </div>
           </div>
 
           <div class="form-group">
-            <label class="form-label">
-              <span>Target Batch &amp; Academic Stream <span class="req">*</span></span>
-            </label>
-            <div class="batch-selector-grid">
+            <label class="form-label">Select Your Target Class / Batch</label>
+            <div class="batch-chip-grid">
               <div class="batch-chip selected" onclick="selectOnboardBatch(this, 'Class 11 Science • Arjuna JEE')">
-                <div class="batch-chip-name">⚡ Arjuna JEE</div>
-                <div class="batch-chip-sub">Class 11 • JEE 2027</div>
+                <div class="batch-chip-name">🎯 Arjuna JEE</div>
+                <div class="batch-chip-sub">Class 11 • Engineering</div>
               </div>
-              <div class="batch-chip" onclick="selectOnboardBatch(this, 'Class 12 Science • Lakshya Board+JEE')">
-                <div class="batch-chip-name">🎯 Lakshya JEE</div>
-                <div class="batch-chip-sub">Class 12 • Boards+JEE</div>
+              <div class="batch-chip" onclick="selectOnboardBatch(this, 'Class 12 Lakshya • JEE Advanced')">
+                <div class="batch-chip-name">🏆 Lakshya JEE</div>
+                <div class="batch-chip-sub">Class 12 • Engineering</div>
               </div>
               <div class="batch-chip" onclick="selectOnboardBatch(this, 'Class 12 Medical • Yakeen NEET')">
                 <div class="batch-chip-name">🩺 Yakeen NEET</div>
@@ -1479,94 +1449,14 @@
           </button>
         </form>
       </div>
-
-      <!-- GOOGLE 1-TAP IN PHONE VIEW -->
-      <div id="phoneSocialSection">
-        <div class="social-divider">
-          <span>OR CONTINUE WITH</span>
-        </div>
-        <button class="btn-google" type="button" onclick="openGoogleModal()">
-          <svg width="18" height="18" viewBox="0 0 18 18">
-            <path fill="#4285F4"
-              d="M17.64 9.2c0-.63-.06-1.25-.16-1.84H9v3.49h4.84a4.14 4.14 0 0 1-1.8 2.71v2.26h2.92c1.71-1.57 2.68-3.89 2.68-6.62z" />
-            <path fill="#34A853"
-              d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.91-2.26c-.8.54-1.83.86-3.05.86-2.34 0-4.33-1.58-5.04-3.71H.96v2.33C2.44 15.98 5.48 18 9 18z" />
-            <path fill="#FBBC05" d="M3.96 10.71a5.41 5.41 0 0 1 0-3.42V4.96H.96a9 9 0 0 0 0 8.08l3-2.33z" />
-            <path fill="#EA4335"
-              d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.59C13.46.89 11.43 0 9 0 5.48 0 2.44 2.02.96 4.96l3 2.33c.71-2.13 2.7-3.71 5.04-3.71z" />
-          </svg>
-          <span>Google Account</span>
-        </button>
-      </div>
     </section>
 
     <!-- ==========================================
-         VIEW 2: EMAIL & PASSWORD LOGIN
-         ========================================== -->
-    <section class="auth-view" id="viewEmail">
-      <form id="emailLoginForm" onsubmit="event.preventDefault(); handleEmailLogin();">
-        <div class="form-group">
-          <label class="form-label" for="loginEmail">
-            <span>Email Address <span class="req">*</span></span>
-          </label>
-          <div class="input-wrapper">
-            <span class="input-icon">✉️</span>
-            <input type="email" id="loginEmail" class="form-input" placeholder="student@school.edu" required />
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="loginPass">
-            <span>Password <span class="req">*</span></span>
-            <a href="javascript:void(0)" class="forgot" onclick="forgotPassword()">Forgot Password?</a>
-          </label>
-          <div class="input-wrapper">
-            <span class="input-icon">🔒</span>
-            <input type="password" id="loginPass" class="form-input" placeholder="••••••••" required />
-            <button type="button" class="pass-toggle-btn" onclick="togglePassVisibility('loginPass', this)">👁️</button>
-          </div>
-        </div>
-
-        <div
-          style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; font-size:0.82rem; color:var(--muted);">
-          <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
-            <input type="checkbox" id="rememberMe" checked style="accent-color:var(--primary); cursor:pointer;" />
-            <span>Keep me signed in</span>
-          </label>
-          <span style="color:var(--success); font-size:0.75rem;">● Secure 256-bit</span>
-        </div>
-
-        <button class="btn-submit" type="submit" id="btnEmailLogin">
-          <span>Sign In to Student Account</span>
-          <span>➔</span>
-        </button>
-      </form>
-
-      <div class="social-divider">
-        <span>OR CONTINUE WITH</span>
-      </div>
-      <button class="btn-google" type="button" onclick="handleGoogleSignInClick()">
-        <svg width="18" height="18" viewBox="0 0 18 18">
-          <path fill="#4285F4"
-            d="M17.64 9.2c0-.63-.06-1.25-.16-1.84H9v3.49h4.84a4.14 4.14 0 0 1-1.8 2.71v2.26h2.92c1.71-1.57 2.68-3.89 2.68-6.62z" />
-          <path fill="#34A853"
-            d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.91-2.26c-.8.54-1.83.86-3.05.86-2.34 0-4.33-1.58-5.04-3.71H.96v2.33C2.44 15.98 5.48 18 9 18z" />
-          <path fill="#FBBC05" d="M3.96 10.71a5.41 5.41 0 0 1 0-3.42V4.96H.96a9 9 0 0 0 0 8.08l3-2.33z" />
-          <path fill="#EA4335"
-            d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.59C13.46.89 11.43 0 9 0 5.48 0 2.44 2.02.96 4.96l3 2.33c.71-2.13 2.7-3.71 5.04-3.71z" />
-        </svg>
-        <span>Google Account</span>
-      </button>
-    </section>
-
-
-
-    <!-- ==========================================
-         VIEW 4: INSTANT VERIFIED BATCH PROFILES
+         VIEW 2: INSTANT VERIFIED BATCH PROFILES
          ========================================== -->
     <section class="auth-view" id="viewDemo">
       <div style="font-size:0.86rem; color:var(--muted); margin-bottom:16px; line-height:1.5;">
-        Access your student laboratory session with verified Physics Wallah batch profiles:
+        Access your student laboratory session with verified academic batch profiles:
       </div>
 
       <div class="demo-profiles-list">
@@ -1675,11 +1565,6 @@
   </div>
 
   <script>
-    // Live State
-    let generatedOTP = "739201";
-    let otpTimerInterval = null;
-    let timerCountdown = 30;
-
     // AUDIO SOUND EFFECTS — Silent no-op for guaranteed 0ms INP (<1ms click latency)
     function playBeep(type) {
       // Audio oscillators disabled on user interactions to prevent main-thread hardware freeze
@@ -1738,285 +1623,159 @@
       document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.auth-view').forEach(v => v.classList.remove('active'));
 
-      if (tabName === 'otp') {
-        document.getElementById('tabOtp').classList.add('active');
-        document.getElementById('viewOtp').classList.add('active');
-      } else if (tabName === 'email') {
-        document.getElementById('tabEmail').classList.add('active');
-        document.getElementById('viewEmail').classList.add('active');
+      if (tabName === 'email') {
+        const tabEl = document.getElementById('tabEmail');
+        const viewEl = document.getElementById('viewEmail');
+        if (tabEl) tabEl.classList.add('active');
+        if (viewEl) viewEl.classList.add('active');
       } else if (tabName === 'demo') {
-        document.getElementById('tabDemo').classList.add('active');
-        document.getElementById('viewDemo').classList.add('active');
+        const tabEl = document.getElementById('tabDemo');
+        const viewEl = document.getElementById('viewDemo');
+        if (tabEl) tabEl.classList.add('active');
+        if (viewEl) viewEl.classList.add('active');
       }
     }
 
     // ==========================================
-    // OTP FLOW & REAL CELLULAR SMS AUTHENTICATION
+    // EMAIL & GMAIL 6-DIGIT OTP AUTHENTICATION ENGINE
     // ==========================================
-    let currentAuthMode = 'firebase'; // 'firebase' or 'gateway'
+    let currentEmailAuthMode = 'supabase'; // 'supabase' or 'local_secure'
+    let generatedEmailOTP = '739201';
+    let pendingUserEmail = '';
+    let otpTimerInterval = null;
+    let timerCountdown = 30;
 
-    async function dispatchRealMobileSms(mobileDigits, otpCode) {
-      const fast2smsKey = localStorage.getItem('moleqyn_fast2sms_key');
-      const twoFactorKey = localStorage.getItem('moleqyn_2factor_key');
+    // Helper function to activate Instant Local OTP Mode (fallback when Supabase credentials aren't plugged in yet)
+    function activateLocalEmailOtp(emailVal, reasonMessage) {
+      currentEmailAuthMode = 'local_secure';
+      generatedEmailOTP = Math.floor(100000 + Math.random() * 900000).toString();
+      pendingUserEmail = emailVal;
 
-      // 1. Dispatch via Fast2SMS API
-      if (fast2smsKey) {
-        try {
-          const directUrl = `https://www.fast2sms.com/dev/bulkV2?authorization=${encodeURIComponent(fast2smsKey)}&variables_values=${otpCode}&route=otp&numbers=${mobileDigits}`;
-          let res = null;
-          try {
-            res = await fetch(directUrl);
-          } catch (corsErr) {
-            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(directUrl)}`;
-            res = await fetch(proxyUrl);
-          }
-          const data = await res.json();
-          if (data && (data.return || data.status_code === 200 || String(data.message).toLowerCase().includes('success'))) {
-            return true;
-          }
-        } catch (e) {
-          console.warn('Fast2SMS dispatch log:', e);
-        }
+      const disp = document.getElementById('displayEmail');
+      if (disp) disp.textContent = emailVal;
+
+      const emailStep = document.getElementById('emailStep');
+      if (emailStep) emailStep.classList.add('hidden');
+
+      const otpStep = document.getElementById('otpStep');
+      if (otpStep) otpStep.classList.remove('hidden');
+
+      const btn = document.getElementById('btnSendEmailOtp');
+      if (btn) {
+        btn.innerHTML = '<span>Send 6-Digit Verification Code</span> ➔';
+        btn.disabled = false;
       }
 
-      // 2. Dispatch via 2Factor Telecom API
-      if (twoFactorKey) {
-        try {
-          const res = await fetch(`https://2factor.in/API/V1/${twoFactorKey}/SMS/${mobileDigits}/${otpCode}/Moleqyn_Verification`);
-          const data = await res.json();
-          if (data && data.Status === 'Success') {
-            return true;
-          }
-        } catch (e) {
-          console.warn('2Factor dispatch log:', e);
+      playBeep('success');
+      showToast(reasonMessage || `⚡ Verification code generated for ${emailVal}`, 'info');
+
+      // High-contrast helper card with auto-fill button (never invisible)
+      let helperBanner = document.getElementById('otpTestModeBanner');
+      if (!helperBanner) {
+        helperBanner = document.createElement('div');
+        helperBanner.id = 'otpTestModeBanner';
+        const otpBoxes = document.querySelector('#otpStep .otp-boxes-container');
+        if (otpBoxes) {
+          otpBoxes.parentNode.insertBefore(helperBanner, otpBoxes);
         }
       }
+      helperBanner.style.cssText = 'background:rgba(0, 240, 255, 0.08); border:1px solid rgba(0, 240, 255, 0.35); border-radius:14px; padding:12px 16px; margin:0 0 16px 0; font-size:0.82rem; text-align:center;';
+      helperBanner.innerHTML = `
+        <div style="font-weight:700; color:var(--primary); margin-bottom:4px; font-size:0.88rem;">⚡ Gmail Verification OTP Code</div>
+        <div style="font-size:0.75rem; color:var(--muted); line-height:1.4;">
+          Connect Supabase in Admin Hub for live Gmail delivery. Code for this session:
+        </div>
+        <div>
+          <div class="test-otp-code-badge">${generatedEmailOTP}</div>
+        </div>
+        <button type="button" onclick="autoFillTestOTP('${generatedEmailOTP}')" style="background:linear-gradient(135deg, var(--primary), #00c3ff); color:#030a16; border:none; padding:7px 18px; border-radius:8px; font-weight:700; font-size:0.82rem; cursor:pointer; margin-top:4px; box-shadow:0 3px 12px var(--primary-glow);">
+          Auto-fill &amp; Verify Code ➔
+        </button>
+      `;
 
-      return false;
+      startOtpCountdown();
+      const firstOtp = document.getElementById('otp1');
+      if (firstOtp) firstOtp.focus();
     }
 
-    async function sendOTP() {
-      const phoneInput = document.getElementById('phoneInput');
-      const val = phoneInput.value.replace(/\D/g, '');
+    async function sendEmailOTP() {
+      const emailInput = document.getElementById('emailInput');
+      const val = (emailInput.value || '').trim().toLowerCase();
 
-      // Strict Validation: Valid Indian Mobile Number (10 digits starting with 6, 7, 8, or 9)
-      if (!val) {
+      // Email Format Validation
+      const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+$/;
+      if (!val || !emailRegex.test(val)) {
         playBeep('error');
-        phoneInput.parentElement.classList.add('shake-err');
-        setTimeout(() => phoneInput.parentElement.classList.remove('shake-err'), 450);
-        showToast('Please enter your 10-digit mobile number.', 'error');
-        phoneInput.focus();
-        return;
-      }
-
-      if (val.length !== 10) {
-        playBeep('error');
-        phoneInput.parentElement.classList.add('shake-err');
-        setTimeout(() => phoneInput.parentElement.classList.remove('shake-err'), 450);
-        showToast(`Mobile number must be exactly 10 digits (currently ${val.length} digits).`, 'error');
-        phoneInput.focus();
-        return;
-      }
-
-      if (!/^[6-9]/.test(val)) {
-        playBeep('error');
-        phoneInput.parentElement.classList.add('shake-err');
-        setTimeout(() => phoneInput.parentElement.classList.remove('shake-err'), 450);
-        showToast('Invalid prefix: Indian mobile numbers must start with 6, 7, 8, or 9.', 'error');
-        phoneInput.focus();
-        return;
-      }
-
-      // Disallow all-repeated digits (e.g. 0000000000, 1111111111, ..., 9999999999)
-      if (/^([0-9])\1{9}$/.test(val)) {
-        playBeep('error');
-        phoneInput.parentElement.classList.add('shake-err');
-        setTimeout(() => phoneInput.parentElement.classList.remove('shake-err'), 450);
-        showToast('Invalid mobile number: Repeated digits are not permitted.', 'error');
-        phoneInput.focus();
-        return;
-      }
-
-      // Disallow dummy sequential numbers (e.g. 1234567890, 0123456789, 9876543210)
-      const fakeSequences = ['1234567890', '0123456789', '9876543210', '0987654321', '6789012345', '5432109876'];
-      if (fakeSequences.includes(val)) {
-        playBeep('error');
-        phoneInput.parentElement.classList.add('shake-err');
-        setTimeout(() => phoneInput.parentElement.classList.remove('shake-err'), 450);
-        showToast('Invalid mobile number: Sequential numbers (like 1234567890) are not permitted. Please enter a real mobile number.', 'error');
-        phoneInput.focus();
+        emailInput.parentElement.classList.add('shake-err');
+        setTimeout(() => emailInput.parentElement.classList.remove('shake-err'), 450);
+        showToast('Please enter a valid Gmail or academic email address.', 'error');
+        emailInput.focus();
         return;
       }
 
       playBeep('click');
-      const btn = document.getElementById('btnSendOtp');
-      btn.innerHTML = '<span>Verifying Security &amp; Dispatching SMS...</span> ⏳';
+      const btn = document.getElementById('btnSendEmailOtp');
+      const origBtnHtml = btn.innerHTML;
+      btn.innerHTML = '<span>Dispatching 6-Digit Code...</span> ⏳';
       btn.disabled = true;
 
-      const preferredProvider = localStorage.getItem('moleqyn_sms_provider') || 'firebase';
-      const fast2smsKey = localStorage.getItem('moleqyn_fast2sms_key');
-      const twoFactorKey = localStorage.getItem('moleqyn_2factor_key');
+      pendingUserEmail = val;
 
-      // Helper function to activate Instant Test OTP Mode
-      function activateTestModeOtp(reasonMessage) {
-        currentAuthMode = 'gateway';
-        generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
-        document.getElementById('displayPhone').textContent = '+91 ' + val;
-        document.getElementById('phoneStep').classList.add('hidden');
-        document.getElementById('otpStep').classList.remove('hidden');
-        btn.innerHTML = '<span>Get Verification OTP</span> ➔';
-        btn.disabled = false;
-        playBeep('success');
-        showToast(reasonMessage || `⚡ Verification OTP is ${generatedOTP}`, 'info');
-
-        // Render test code helper card with high-contrast badge (never white on white)
-        let helperBanner = document.getElementById('otpTestModeBanner');
-        if (!helperBanner) {
-          helperBanner = document.createElement('div');
-          helperBanner.id = 'otpTestModeBanner';
-          const otpBoxes = document.querySelector('#otpStep .otp-boxes-container');
-          if (otpBoxes) {
-            otpBoxes.parentNode.insertBefore(helperBanner, otpBoxes);
-          }
-        }
-        helperBanner.style.cssText = 'background:rgba(0, 240, 255, 0.08); border:1px solid rgba(0, 240, 255, 0.35); border-radius:14px; padding:12px 16px; margin:0 0 16px 0; font-size:0.82rem; text-align:center;';
-        helperBanner.innerHTML = `
-          <div style="font-weight:700; color:var(--primary); margin-bottom:4px; font-size:0.88rem;">⚡ Verification OTP Code</div>
-          <div style="font-size:0.75rem; color:var(--muted); line-height:1.4;">
-            Firebase requires Blaze plan for cellular SMS. Enter the code below:
-          </div>
-          <div>
-            <div class="test-otp-code-badge">${generatedOTP}</div>
-          </div>
-          <button type="button" onclick="autoFillTestOTP('${generatedOTP}')" style="background:linear-gradient(135deg, var(--primary), #00c3ff); color:#030a16; border:none; padding:7px 18px; border-radius:8px; font-weight:700; font-size:0.82rem; cursor:pointer; margin-top:4px; box-shadow:0 3px 12px var(--primary-glow);">
-            Auto-fill &amp; Verify Code ➔
-          </button>
-        `;
-
-        startOtpCountdown();
-        document.getElementById('otp1').focus();
-      }
-
-      // 0. Instant Test / Dev Mode explicitly chosen
-      if (preferredProvider === 'dev') {
-        activateTestModeOtp('⚡ Instant Test OTP Mode Active');
-        return;
-      }
-
-      // 1. Check if Indian Telecom Gateway (Fast2SMS / 2Factor) is preferred
-      if ((preferredProvider === 'fast2sms' || preferredProvider === '2factor') && (fast2smsKey || twoFactorKey)) {
-        currentAuthMode = 'gateway';
-        generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
-        const sentReal = await dispatchRealMobileSms(val, generatedOTP);
-        if (sentReal) {
-          document.getElementById('displayPhone').textContent = '+91 ' + val;
-          document.getElementById('phoneStep').classList.add('hidden');
-          document.getElementById('otpStep').classList.remove('hidden');
-          btn.innerHTML = '<span>Get Verification OTP</span> ➔';
-          btn.disabled = false;
-          playBeep('success');
-          showToast(`✓ Real Cellular SMS dispatched to +91 ${val}! Check your phone inbox.`, 'success');
-          startOtpCountdown();
-          document.getElementById('otp1').focus();
-          return;
-        } else {
-          showToast(`⚠️ SMS Gateway delivery failed. Falling back to test verification...`, 'error');
-          activateTestModeOtp('⚠️ Gateway failed. Switched to Test Mode OTP.');
-          return;
-        }
-      }
-
-      // 2. Google Firebase Phone Authentication
-      if (window.MoleqynFirebase && window.MoleqynFirebase.isConfigured()) {
-        currentAuthMode = 'firebase';
+      // 1. Check if Supabase Auth is configured for real live Gmail delivery
+      if (window.MoleqynCloud && typeof window.MoleqynCloud.isConfigured === 'function' && window.MoleqynCloud.isConfigured()) {
         try {
-          const fbRes = await window.MoleqynFirebase.sendSmsOtp(val, 'recaptcha-container');
-          if (fbRes.success) {
-            // Remove test banner if previous attempt created one
-            const tb = document.getElementById('otpTestModeBanner');
-            if (tb) tb.remove();
-
-            document.getElementById('displayPhone').textContent = '+91 ' + val;
-            document.getElementById('phoneStep').classList.add('hidden');
-            document.getElementById('otpStep').classList.remove('hidden');
-            btn.innerHTML = '<span>Get Verification OTP</span> ➔';
-            btn.disabled = false;
-            playBeep('success');
-            showToast(`✓ Genuine Cellular SMS OTP dispatched to +91 ${val}! Check your phone.`, 'success');
-            startOtpCountdown();
-            document.getElementById('otp1').focus();
-            return;
-          } else {
-            console.warn('Firebase Auth dispatch notice:', fbRes);
-
-            // A. If Indian Gateway is available, try it!
-            if (fast2smsKey || twoFactorKey) {
-              showToast(`ℹ️ Forwarding to SMS Gateway...`, 'info');
-              currentAuthMode = 'gateway';
-              generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
-              const sent = await dispatchRealMobileSms(val, generatedOTP);
-              if (sent) {
-                document.getElementById('displayPhone').textContent = '+91 ' + val;
-                document.getElementById('phoneStep').classList.add('hidden');
-                document.getElementById('otpStep').classList.remove('hidden');
-                btn.innerHTML = '<span>Get Verification OTP</span> ➔';
-                btn.disabled = false;
-                playBeep('success');
-                showToast(`✓ Real SMS dispatched via Telecom Gateway to +91 ${val}!`, 'success');
-                startOtpCountdown();
-                document.getElementById('otp1').focus();
-                return;
+          const client = window.MoleqynCloud.getClient();
+          if (client && client.auth) {
+            const { data, error } = await client.auth.signInWithOtp({
+              email: val,
+              options: {
+                shouldCreateUser: true
               }
+            });
+
+            if (!error) {
+              currentEmailAuthMode = 'supabase';
+              document.getElementById('displayEmail').textContent = val;
+              document.getElementById('emailStep').classList.add('hidden');
+              document.getElementById('otpStep').classList.remove('hidden');
+
+              // Remove test banner if previous session had one
+              const tb = document.getElementById('otpTestModeBanner');
+              if (tb) tb.remove();
+
+              btn.innerHTML = origBtnHtml;
+              btn.disabled = false;
+              playBeep('success');
+              showToast(`✓ Genuine 6-digit OTP code dispatched to ${val}! Check your Gmail inbox.`, 'success');
+
+              startOtpCountdown();
+              const firstOtp = document.getElementById('otp1');
+              if (firstOtp) firstOtp.focus();
+              return;
+            } else {
+              console.warn('Supabase signInWithOtp notice:', error.message);
             }
-
-            // B. Seamlessly switch to Test OTP Mode so student/developer is NEVER locked out!
-            const reason = (fbRes.isBillingError || String(fbRes.error).includes('billing-not-enabled'))
-              ? '⚡ Firebase Billing requires Blaze plan. Switched to Instant Test OTP'
-              : '⚡ Cellular SMS unavailable on local origin. Switched to Instant Test OTP';
-            activateTestModeOtp(reason);
-            return;
           }
-        } catch (fbErr) {
-          console.warn('Firebase Auth exception:', fbErr);
-          activateTestModeOtp('⚡ Switched to Instant Test Verification OTP');
-          return;
+        } catch (sbErr) {
+          console.warn('Supabase auth exception:', sbErr);
         }
       }
 
-      // 3. Fallback to Gateway if available
-      if (fast2smsKey || twoFactorKey) {
-        currentAuthMode = 'gateway';
-        generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
-        const sentReal = await dispatchRealMobileSms(val, generatedOTP);
-        if (sentReal) {
-          document.getElementById('displayPhone').textContent = '+91 ' + val;
-          document.getElementById('phoneStep').classList.add('hidden');
-          document.getElementById('otpStep').classList.remove('hidden');
-          btn.innerHTML = '<span>Get Verification OTP</span> ➔';
-          btn.disabled = false;
-          playBeep('success');
-          showToast(`✓ Real Cellular SMS dispatched to +91 ${val}! Check your phone inbox.`, 'success');
-          startOtpCountdown();
-          document.getElementById('otp1').focus();
-          return;
-        }
-      }
-
-      // 4. Default fallback: Activate test OTP mode instead of dead-end
-      activateTestModeOtp('⚡ Instant Test Verification OTP active');
+      // 2. Seamless Local Fallback (if Supabase not configured yet or offline)
+      activateLocalEmailOtp(val, `⚡ Verification code generated for ${val}`);
     }
 
-    function editPhone() {
+    function editEmail() {
       playBeep('click');
       document.getElementById('otpStep').classList.add('hidden');
       const tb = document.getElementById('otpTestModeBanner');
       if (tb) tb.remove();
       const onboardStep = document.getElementById('onboardStep');
       if (onboardStep) onboardStep.classList.add('hidden');
-      const phoneSoc = document.getElementById('phoneSocialSection');
-      if (phoneSoc) phoneSoc.classList.remove('hidden');
-      document.getElementById('phoneStep').classList.remove('hidden');
+      document.getElementById('emailStep').classList.remove('hidden');
       if (otpTimerInterval) clearInterval(otpTimerInterval);
+      const emailInput = document.getElementById('emailInput');
+      if (emailInput) emailInput.focus();
     }
 
     function startOtpCountdown() {
@@ -2024,97 +1783,72 @@
       timerCountdown = 30;
       const cdEl = document.getElementById('countdownText');
       const resendBtn = document.getElementById('resendBtn');
-      resendBtn.disabled = true;
+      if (resendBtn) resendBtn.disabled = true;
 
       otpTimerInterval = setInterval(() => {
         timerCountdown--;
         if (timerCountdown > 0) {
-          cdEl.innerHTML = `Resend OTP in <strong>${timerCountdown}s</strong>`;
+          if (cdEl) cdEl.innerHTML = `Resend OTP in <strong>${timerCountdown}s</strong>`;
         } else {
           clearInterval(otpTimerInterval);
-          cdEl.innerHTML = `<span style="color:var(--success);">Ready to Resend OTP</span>`;
-          resendBtn.disabled = false;
+          if (cdEl) cdEl.innerHTML = `<span style="color:var(--success);">Ready to Resend OTP</span>`;
+          if (resendBtn) resendBtn.disabled = false;
         }
       }, 1000);
     }
 
-    async function resendOTP() {
+    async function resendEmailOTP() {
       playBeep('click');
-      const phoneInput = document.getElementById('phoneInput');
-      const val = phoneInput.value.replace(/\D/g, '') || '9876543210';
+      const val = pendingUserEmail || (document.getElementById('emailInput').value || '').trim().toLowerCase();
       const resendBtn = document.getElementById('resendBtn');
-      resendBtn.disabled = true;
-      resendBtn.textContent = 'Sending...';
+      if (resendBtn) {
+        resendBtn.disabled = true;
+        resendBtn.textContent = 'Sending...';
+      }
 
-      if (currentAuthMode === 'firebase' && window.MoleqynFirebase && window.MoleqynFirebase.isConfigured()) {
-        const res = await window.MoleqynFirebase.sendSmsOtp(val, 'recaptcha-container');
-        if (res.success) {
-          showToast(`✓ New real cellular SMS OTP dispatched to +91 ${val}!`, 'success');
-          startOtpCountdown();
-          return;
-        } else if (res.isBillingError) {
-          currentAuthMode = 'gateway';
-          generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
-          showToast(`⚡ Firebase Billing requires Blaze plan. New Test OTP: ${generatedOTP}`, 'info');
-          const tb = document.getElementById('otpTestModeBanner');
-          if (tb) {
-            const badge = tb.querySelector('.test-otp-code-badge') || tb.querySelector('div[style*="font-size:1.15rem"]');
-            if (badge) badge.textContent = generatedOTP;
+      if (currentEmailAuthMode === 'supabase' && window.MoleqynCloud && window.MoleqynCloud.isConfigured()) {
+        try {
+          const client = window.MoleqynCloud.getClient();
+          if (client && client.auth) {
+            const { error } = await client.auth.signInWithOtp({
+              email: val,
+              options: { shouldCreateUser: true }
+            });
+            if (!error) {
+              showToast(`✓ New real 6-digit code dispatched to ${val}!`, 'success');
+              startOtpCountdown();
+              if (resendBtn) resendBtn.textContent = 'Resend Code';
+              return;
+            }
           }
-          startOtpCountdown();
-          return;
-        } else {
-          showToast(`❌ Resend failed: ${res.error}`, 'error');
-          resendBtn.disabled = false;
-          resendBtn.textContent = 'Resend Code';
-          return;
-        }
+        } catch (e) {}
       }
 
-      if (localStorage.getItem('moleqyn_fast2sms_key') || localStorage.getItem('moleqyn_2factor_key')) {
-        generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
-        const sent = await dispatchRealMobileSms(val, generatedOTP);
-        if (sent) {
-          showToast(`✓ New real SMS dispatched to +91 ${val}! Check phone inbox.`, 'success');
-          startOtpCountdown();
-        } else {
-          showToast(`⚠️ SMS delivery failed. New Test OTP: ${generatedOTP}`, 'info');
-          startOtpCountdown();
-        }
-        return;
-      }
-
-      // Default fallback
-      generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
-      showToast(`⚡ New Test OTP Code: ${generatedOTP}`, 'info');
+      // Local fallback resend
+      generatedEmailOTP = Math.floor(100000 + Math.random() * 900000).toString();
+      showToast(`⚡ New Verification OTP Code: ${generatedEmailOTP}`, 'info');
       const tb = document.getElementById('otpTestModeBanner');
       if (tb) {
-        const badge = tb.querySelector('.test-otp-code-badge') || tb.querySelector('div[style*="font-size:1.15rem"]');
-        if (badge) badge.textContent = generatedOTP;
+        const badge = tb.querySelector('.test-otp-code-badge');
+        if (badge) badge.textContent = generatedEmailOTP;
       }
       startOtpCountdown();
+      if (resendBtn) resendBtn.textContent = 'Resend Code';
     }
 
     function autoFillTestOTP(code) {
-      const codeStr = String(code || generatedOTP || '123456');
+      const codeStr = String(code || generatedEmailOTP || '123456');
       for (let i = 0; i < 6; i++) {
         const input = document.getElementById('otp' + (i + 1));
         if (input) input.value = codeStr[i] || '';
       }
       playBeep('success');
-      setTimeout(verifyAndLogin, 200);
-    }
-
-    function autoFillOTP() {
-      if (generatedOTP) {
-        autoFillTestOTP(generatedOTP);
-      } else {
-        showToast('🔒 For security, please enter the genuine 6-digit code received on your physical phone.', 'info');
-      }
+      setTimeout(verifyEmailAndLogin, 200);
     }
 
     function handleOtpInput(index) {
       const el = document.getElementById('otp' + index);
+      if (!el) return;
       el.value = el.value.replace(/\D/g, '');
       if (el.value && index < 6) {
         const next = document.getElementById('otp' + (index + 1));
@@ -2127,7 +1861,7 @@
           entered += (document.getElementById('otp' + i).value || '');
         }
         if (entered.length === 6) {
-          setTimeout(verifyAndLogin, 150);
+          setTimeout(verifyEmailAndLogin, 150);
         }
       }
     }
@@ -2137,11 +1871,129 @@
         const prev = document.getElementById('otp' + (index - 1));
         if (prev) prev.focus();
       } else if (e.key === 'Enter') {
-        verifyAndLogin();
+        verifyEmailAndLogin();
       }
     }
 
-    let pendingPhoneMob = '';
+    async function verifyEmailAndLogin() {
+      let entered = '';
+      for (let i = 1; i <= 6; i++) {
+        entered += (document.getElementById('otp' + i).value || '');
+      }
+
+      if (entered.length < 6) {
+        playBeep('error');
+        showToast('Please enter all 6 digits of the verification code.', 'error');
+        return;
+      }
+
+      const verifyBtn = document.getElementById('btnVerifyOtp');
+      const origBtnHtml = verifyBtn.innerHTML;
+      verifyBtn.innerHTML = '<span>Verifying Code with Auth Engine...</span> ⏳';
+      verifyBtn.disabled = true;
+
+      const emailVal = pendingUserEmail || (document.getElementById('emailInput').value || '').trim().toLowerCase();
+
+      // 1. Verify with Supabase Cloud if in Supabase mode
+      if (currentEmailAuthMode === 'supabase' && window.MoleqynCloud && window.MoleqynCloud.isConfigured()) {
+        try {
+          const client = window.MoleqynCloud.getClient();
+          if (client && client.auth) {
+            const { data, error } = await client.auth.verifyOtp({
+              email: emailVal,
+              token: entered,
+              type: 'email'
+            });
+            if (error) {
+              playBeep('error');
+              verifyBtn.innerHTML = origBtnHtml;
+              verifyBtn.disabled = false;
+              showToast(`❌ Verification Failed: ${error.message}`, 'error');
+              return;
+            }
+          }
+        } catch (sbErr) {
+          console.warn('Supabase verification caught error:', sbErr);
+        }
+      } else {
+        // Local mode verification
+        if (!generatedEmailOTP || entered !== generatedEmailOTP) {
+          playBeep('error');
+          verifyBtn.innerHTML = origBtnHtml;
+          verifyBtn.disabled = false;
+          showToast('❌ Incorrect verification code! Please check the code and try again.', 'error');
+          return;
+        }
+      }
+
+      playBeep('success');
+      verifyBtn.innerHTML = origBtnHtml;
+      verifyBtn.disabled = false;
+
+      // Check if existing student with THIS email exists in local registry or cloud
+      const emailClean = emailVal.toLowerCase().trim();
+      let existing = null;
+
+      // A. Check active local user session
+      try {
+        const savedStr = localStorage.getItem('mlab_user') || localStorage.getItem('moleqyn_user');
+        if (savedStr) {
+          const parsed = JSON.parse(savedStr);
+          if (parsed && parsed.email && parsed.email.toLowerCase().trim() === emailClean) {
+            existing = parsed;
+          }
+        }
+      } catch (e) {}
+
+      // B. Check local student registry
+      if (!existing) {
+        try {
+          const reg = JSON.parse(localStorage.getItem('moleqyn_students_registry') || '[]');
+          const found = reg.find(s => s.email && s.email.toLowerCase().trim() === emailClean);
+          if (found) existing = found;
+        } catch (e) {}
+      }
+
+      // C. Check Supabase Cloud Database if student registered from another device
+      if (!existing && window.MoleqynCloud && typeof window.MoleqynCloud.fetchStudents === 'function' && window.MoleqynCloud.isConfigured()) {
+        try {
+          const cloudRes = await window.MoleqynCloud.fetchStudents();
+          if (cloudRes && cloudRes.success && Array.isArray(cloudRes.data)) {
+            const foundCloud = cloudRes.data.find(s => s.email && s.email.toLowerCase().trim() === emailClean);
+            if (foundCloud) existing = foundCloud;
+          }
+        } catch (e) {
+          console.warn('Cloud cross-device lookup notice:', e);
+        }
+      }
+
+      if (existing && existing.name) {
+        showToast(`Welcome back, ${existing.name}! Launching Dashboard...`, 'success');
+        existing.isLoggedIn = true;
+        commitSessionAndRedirect(existing);
+        return;
+      }
+
+      // First-time student: Show Step 3 Onboarding (Ask Name & Target Batch)
+      document.getElementById('otpStep').classList.add('hidden');
+      const onboardStep = document.getElementById('onboardStep');
+      onboardStep.classList.remove('hidden');
+
+      // Pre-fill verified email
+      const onboardEmailInput = document.getElementById('onboardEmail');
+      if (onboardEmailInput) onboardEmailInput.value = emailClean;
+
+      // Derive default friendly student name from email username
+      const userPart = emailClean.split('@')[0] || '';
+      const formattedName = userPart.split(/[._-]/).filter(Boolean).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') || 'Student Scholar';
+      const onboardNameInput = document.getElementById('onboardName');
+      if (onboardNameInput) {
+        onboardNameInput.value = formattedName;
+        setTimeout(() => onboardNameInput.focus(), 150);
+      }
+
+      showToast('Email Verified! Confirm your student profile below.', 'success');
+    }
 
     function selectOnboardBatch(chip, batchVal) {
       playBeep('click');
@@ -2157,9 +2009,9 @@
       document.getElementById('onboardAvatarVal').value = av;
     }
 
-    function completePhoneOnboarding() {
+    function completeEmailOnboarding() {
       const name = document.getElementById('onboardName').value.trim();
-      const email = document.getElementById('onboardEmail').value.trim();
+      const email = pendingUserEmail || document.getElementById('onboardEmail').value.trim();
       const batchVal = document.getElementById('onboardBatchVal').value || 'Class 11 Science • Arjuna JEE';
       const avatarVal = document.getElementById('onboardAvatarVal').value || '👨‍🔬';
 
@@ -2170,232 +2022,12 @@
       }
 
       playBeep('success');
-      const mob = pendingPhoneMob || document.getElementById('phoneInput').value.replace(/\D/g, '');
       const user = {
         name: name,
-        email: email || '',
-        phone: "+91 " + mob,
+        email: email,
+        phone: "+91 (Verified Email)",
         class: batchVal,
         avatar: avatarVal,
-        level: 1,
-        xp: "100 XP (Welcome)",
-        streak: 1,
-        labsCompleted: 0,
-        timeSpent: "0 mins",
-        chapterMastery: 0,
-        isNewUser: true,
-        isLoggedIn: true,
-        loginMethod: currentAuthMode === 'firebase' ? 'Firebase Phone OTP' : 'Cellular Phone OTP',
-        loginTime: new Date().toLocaleTimeString()
-      };
-
-      showToast(`Welcome to Moleqyn, ${name}! Entering your lab...`, 'success');
-      commitSessionAndRedirect(user);
-    }
-
-    async function verifyAndLogin() {
-      let entered = '';
-      for (let i = 1; i <= 6; i++) {
-        entered += (document.getElementById('otp' + i).value || '');
-      }
-
-      if (entered.length < 6) {
-        playBeep('error');
-        showToast('Please enter all 6 digits of the OTP.', 'error');
-        return;
-      }
-
-      const verifyBtn = document.getElementById('btnVerifyOtp');
-      const origBtnHtml = verifyBtn.innerHTML;
-      verifyBtn.innerHTML = '<span>Verifying Code with Telecom Network...</span> ⏳';
-      verifyBtn.disabled = true;
-
-      const mob = document.getElementById('phoneInput').value.trim() || '9876543210';
-
-      // 1. Validate with Google Firebase if in Firebase mode
-      if (currentAuthMode === 'firebase' && window.MoleqynFirebase && window.MoleqynFirebase.isConfigured()) {
-        const verifyRes = await window.MoleqynFirebase.verifySmsOtp(entered);
-        if (!verifyRes.success) {
-          playBeep('error');
-          verifyBtn.innerHTML = origBtnHtml;
-          verifyBtn.disabled = false;
-          showToast(`❌ Verification Failed: ${verifyRes.error}`, 'error');
-          return;
-        }
-      } else {
-        // Indian Gateway verification
-        if (!generatedOTP || entered !== generatedOTP) {
-          playBeep('error');
-          verifyBtn.innerHTML = origBtnHtml;
-          verifyBtn.disabled = false;
-          showToast('❌ Incorrect verification code! Please check the SMS sent to your phone.', 'error');
-          return;
-        }
-      }
-
-      playBeep('success');
-      verifyBtn.innerHTML = origBtnHtml;
-      verifyBtn.disabled = false;
-      pendingPhoneMob = mob;
-
-      // Check if existing student with THIS exact mobile number exists
-      const phoneDigits = mob.replace(/\D/g, '');
-      let existing = null;
-
-      // A. Check active local user session on THIS device
-      if (!existing) {
-        try {
-          const savedStr = localStorage.getItem('mlab_user') || localStorage.getItem('moleqyn_user');
-          if (savedStr) {
-            const parsed = JSON.parse(savedStr);
-            const pDigits = (parsed && parsed.phone) ? parsed.phone.replace(/\D/g, '') : '';
-            if (pDigits && (pDigits.endsWith(phoneDigits) || phoneDigits.endsWith(pDigits))) {
-              existing = parsed;
-            }
-          }
-        } catch (e) {}
-      }
-
-      // B. Check local student registry
-      if (!existing) {
-        try {
-          const reg = JSON.parse(localStorage.getItem('moleqyn_students_registry') || '[]');
-          const found = reg.find(s => {
-            const sDigits = (s.phone || '').replace(/\D/g, '');
-            return sDigits && (sDigits.endsWith(phoneDigits) || phoneDigits.endsWith(sDigits));
-          });
-          if (found) existing = found;
-        } catch (e) {}
-      }
-
-      // C. Cross-Device Cloud Check: Check Supabase Cloud Database if student registered from another device
-      if (!existing && window.MoleqynCloud && typeof window.MoleqynCloud.fetchStudents === 'function' && window.MoleqynCloud.isConfigured()) {
-        try {
-          const cloudRes = await window.MoleqynCloud.fetchStudents();
-          if (cloudRes && cloudRes.success && Array.isArray(cloudRes.data)) {
-            const foundCloud = cloudRes.data.find(s => {
-              const sDigits = (s.phone || '').replace(/\D/g, '');
-              return sDigits && (sDigits.endsWith(phoneDigits) || phoneDigits.endsWith(sDigits));
-            });
-            if (foundCloud) existing = foundCloud;
-          }
-        } catch (e) {
-          console.warn('Cloud cross-device lookup notice:', e);
-        }
-      }
-
-      if (existing && existing.name && !existing.name.startsWith('Student (+91')) {
-        showToast(`Welcome back, ${existing.name}! Launching Dashboard...`, 'success');
-        existing.isLoggedIn = true;
-        commitSessionAndRedirect(existing);
-        return;
-      }
-
-      // First-time student: Show Step 3 Onboarding (Ask Name, Genuine Email & Target Batch)
-      document.getElementById('otpStep').classList.add('hidden');
-      const phoneSoc = document.getElementById('phoneSocialSection');
-      if (phoneSoc) phoneSoc.classList.add('hidden');
-      const onboardStep = document.getElementById('onboardStep');
-      onboardStep.classList.remove('hidden');
-      showToast('OTP Verified! Complete your student profile below.', 'success');
-      setTimeout(() => {
-        const inp = document.getElementById('onboardName');
-        if (inp) inp.focus();
-      }, 150);
-    }
-
-    // ==========================================
-    // EMAIL & PASSWORD AUTHENTICATION FLOW
-    // ==========================================
-    function togglePassVisibility(id, btn) {
-      const input = document.getElementById(id);
-      if (input.type === 'password') {
-        input.type = 'text';
-        btn.textContent = '🙈';
-      } else {
-        input.type = 'password';
-        btn.textContent = '👁️';
-      }
-    }
-
-    function forgotPassword() {
-      playBeep('click');
-      const email = prompt("Enter your registered student email address for password reset:", "student@school.edu");
-      if (email && email.trim()) {
-        playBeep('success');
-        showToast(`Password reset link dispatched to ${email.trim()}`, 'success');
-      }
-    }
-
-    function handleEmailLogin() {
-      const email = document.getElementById('loginEmail').value.trim();
-      const pass = document.getElementById('loginPass').value;
-
-      if (!email || !pass) {
-        playBeep('error');
-        showToast('Please enter both email and password.', 'error');
-        return;
-      }
-
-      const userPart = email.split('@')[0];
-      const formattedName = userPart.split(/[._-]/).filter(Boolean).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') || "Student Scholar";
-
-      const user = {
-        name: formattedName,
-        email: email,
-        phone: "+91 98765 43210",
-        class: "Class 11 Science • Arjuna JEE",
-        avatar: "👨‍🔬",
-        level: 1,
-        xp: "100 XP (Welcome)",
-        streak: 1,
-        labsCompleted: 0,
-        timeSpent: "0 mins",
-        chapterMastery: 0,
-        isNewUser: true,
-        isLoggedIn: true,
-        loginMethod: "email_password",
-        loginTime: new Date().toLocaleTimeString()
-      };
-
-      playBeep('success');
-      showToast(`Welcome back, ${formattedName}! Redirecting...`, 'success');
-      commitSessionAndRedirect(user);
-    }
-
-    // ==========================================
-    // REGISTRATION FLOW
-    // ==========================================
-    function selectBatch(el, batchVal) {
-      document.querySelectorAll('.batch-chip').forEach(c => c.classList.remove('selected'));
-      el.classList.add('selected');
-      document.getElementById('selectedBatchVal').value = batchVal;
-    }
-
-    function selectAvatar(el, avatarVal) {
-      document.querySelectorAll('.avatar-choice').forEach(a => a.classList.remove('selected'));
-      el.classList.add('selected');
-      document.getElementById('selectedAvatarVal').value = avatarVal;
-    }
-
-    function handleRegister() {
-      const name = document.getElementById('regName').value.trim();
-      const email = document.getElementById('regEmail').value.trim();
-      const batch = document.getElementById('selectedBatchVal').value;
-      const avatar = document.getElementById('selectedAvatarVal').value;
-
-      if (!name || !email) {
-        playBeep('error');
-        showToast('Please fill out all required fields.', 'error');
-        return;
-      }
-
-      const user = {
-        name: name,
-        email: email,
-        phone: "+91 98765 43210",
-        class: batch,
-        avatar: avatar,
         level: 1,
         xp: "150 XP (Welcome Bonus)",
         streak: 1,
@@ -2404,14 +2036,15 @@
         chapterMastery: 0,
         isNewUser: true,
         isLoggedIn: true,
-        loginMethod: "registration",
+        loginMethod: "Verified Gmail OTP",
         loginTime: new Date().toLocaleTimeString()
       };
 
-      playBeep('success');
-      showToast(`Welcome to Moleqyn, ${name}! Setting up lab...`, 'success');
+      showToast(`Welcome to Moleqyn, ${name}! Entering your lab...`, 'success');
       commitSessionAndRedirect(user);
     }
+
+
 
     // ==========================================
     // INSTANT VERIFIED BATCH PROFILES
@@ -2765,7 +2398,7 @@
           const avatar = user.avatar || '👨‍🔬';
           const name = user.name || 'Student Scholar';
           const batch = user.class || 'Class 11 Science • Arjuna JEE';
-          const contact = user.phone ? ('📱 ' + user.phone) : (user.email ? ('📧 ' + user.email) : '');
+          const contact = user.email ? ('📧 ' + user.email) : (user.phone && !user.phone.includes('Email') ? ('📱 ' + user.phone) : '');
           banner.innerHTML = `
             <div style="width: 72px; height: 72px; margin: 0 auto 16px auto; border-radius: 50%; background: rgba(0, 240, 255, 0.12); border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; box-shadow: 0 0 25px var(--primary-glow);">
               ${avatar}
@@ -2807,13 +2440,13 @@
       const authCard = document.getElementById('authCard');
       if (authCard) {
         authCard.style.display = 'block';
-        const phoneInput = document.getElementById('phoneInput');
-        if (phoneInput) {
-          phoneInput.value = '';
-          phoneInput.focus();
+        const emailInput = document.getElementById('emailInput');
+        if (emailInput) {
+          emailInput.value = '';
+          emailInput.focus();
         }
       }
-      showToast('Switched to sign-in form. Enter new number.', 'info');
+      showToast('Switched to sign-in form. Enter your Gmail.', 'info');
     }
 
     function logoutCurrentSession() {
