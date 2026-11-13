@@ -625,16 +625,14 @@ html.light-mode .mlab-nav.scrolled {
 }
 .mlab-brand, .brand, .nav-brand, .brand-auth-link, .brand-wrap, .brand-group {
   font-family: var(--font-display);
-  font-size: 1.42rem;
+  font-size: 1.45rem;
   font-weight: 800;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   gap: 10px;
   letter-spacing: -0.03em;
-  line-height: 1;
-  vertical-align: middle;
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.25s ease;
 }
 .mlab-brand:hover, .brand:hover, .nav-brand:hover, .brand-auth-link:hover, .brand-wrap:hover, .brand-group:hover {
   transform: scale(1.02);
@@ -642,8 +640,8 @@ html.light-mode .mlab-nav.scrolled {
 .brand-logo, .mlab-brand-logo, .brand-logo-svg {
   width: 30px;
   height: 30px;
-  display: block;
-  object-fit: contain;
+  display: inline-block;
+  vertical-align: middle;
   filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.45));
   transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.35s ease;
   flex-shrink: 0;
@@ -655,21 +653,18 @@ html.light-mode .mlab-nav.scrolled {
 }
 .brand-text, .mlab-brand-text, .brand-name {
   font-family: var(--font-display);
-  font-size: 1.42rem;
+  font-size: 1.45rem;
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1;
-  display: inline-flex;
-  align-items: center;
+  display: inline-block;
+  vertical-align: middle;
   background: linear-gradient(135deg, #ffffff 45%, #00f0ff 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
-  display: inline-block;
   text-transform: none;
-  margin: 0;
-  padding: 0;
 }
 html.light-mode .brand-text,
 html.light-mode .mlab-brand-text,

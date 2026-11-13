@@ -89,13 +89,12 @@
     }
     .mlab-brand {
       display: inline-flex; align-items: center; gap: 10px; text-decoration: none;
-      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.42rem; font-weight: 800;
-      letter-spacing: -0.03em; line-height: 1; vertical-align: middle;
-      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      transition: transform 0.25s ease;
     }
     .mlab-brand:hover { transform: scale(1.02); }
     .brand-logo {
-      width: 30px; height: 30px; display: block; object-fit: contain;
+      width: 30px; height: 30px; display: inline-block; vertical-align: middle;
       filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.45));
       transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.35s ease;
       flex-shrink: 0;
@@ -104,12 +103,11 @@
       transform: rotate(15deg) scale(1.1); filter: drop-shadow(0 0 16px rgba(0, 240, 255, 0.8));
     }
     .mlab-brand-text {
-      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.42rem; font-weight: 800;
-      letter-spacing: -0.03em; line-height: 1; display: inline-flex; align-items: center;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.45rem; font-weight: 800;
+      letter-spacing: -0.03em; line-height: 1; display: inline-block; vertical-align: middle;
       background: linear-gradient(135deg, #ffffff 45%, #00f0ff 100%);
       -webkit-background-clip: text; background-clip: text;
       -webkit-text-fill-color: transparent; color: transparent;
-      margin: 0; padding: 0;
     }
     html.light-mode .mlab-brand-text, :root[data-theme="day"] .mlab-brand-text {
       background: linear-gradient(135deg, #0f172a 45%, #0284c7 100%);
