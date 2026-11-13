@@ -15,6 +15,63 @@
   --font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-label:   'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono:    'JetBrains Mono', 'Fira Code', Consolas, monospace;
+
+  /* Global Dark Palette (Default) */
+  --bg-base:        #070f1e;
+  --bg-surface:     #0c182c;
+  --bg-card:        #0d1a2d;
+  --bg-card2:       #12243e;
+  --bg-glass:       rgba(13, 26, 45, 0.75);
+  --border-subtle:  rgba(0, 240, 255, 0.15);
+  --border-glow:    rgba(0, 240, 255, 0.35);
+  --text-primary:   #f0f6fc;
+  --text-secondary: #94a3b8;
+  --text-muted:     #64748b;
+  --text-inverse:   #0f172a;
+  --accent-primary: #00f0ff;
+  --accent-secondary: #ff00aa;
+  --accent-tertiary:  #a855f7;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+}
+
+/* Global Light Mode Palette Tokens */
+html.light-mode, :root[data-theme="day"], :root[data-mode="light"] {
+  --bg-base:        #f4f8fc;
+  --bg-surface:     #ffffff;
+  --bg-card:        #ffffff;
+  --bg-card2:       #f1f5f9;
+  --bg-glass:       rgba(255, 255, 255, 0.88);
+  --border-subtle:  rgba(15, 23, 42, 0.10);
+  --border-glow:    rgba(2, 132, 199, 0.30);
+  --text-primary:   #0f172a;
+  --text-secondary: #334155;
+  --text-muted:     #64748b;
+  --text-inverse:   #ffffff;
+  --accent-primary: #0284c7;
+  --accent-secondary: #db2777;
+  --accent-tertiary:  #7c3aed;
+}
+
+/* Light Mode Global Page Overrides */
+html.light-mode body,
+html.light-mode .page-body,
+:root[data-theme="day"] body,
+:root[data-theme="day"] .page-body {
+  background: var(--bg-base) !important;
+  color: var(--text-primary) !important;
+}
+
+html.light-mode .section-title,
+:root[data-theme="day"] .section-title {
+  color: var(--text-primary) !important;
+}
+
+html.light-mode .section-sub,
+:root[data-theme="day"] .section-sub {
+  color: var(--text-secondary) !important;
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -669,11 +726,11 @@ html.light-mode .mlab-nav.scrolled {
   filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.45));
   transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.35s ease;
   flex-shrink: 0;
-  transform: translateY(-1.5px);
+  transform: none;
 }
 .mlab-brand:hover .brand-logo, .brand:hover .brand-logo, .nav-brand:hover .brand-logo, .brand-auth-link:hover .brand-logo,
 .mlab-brand:hover .mlab-brand-logo, .brand:hover .mlab-brand-logo, .brand-group:hover .brand-logo-svg {
-  transform: translateY(-1.5px) rotate(15deg) scale(1.1);
+  transform: rotate(15deg) scale(1.1);
   filter: drop-shadow(0 0 16px rgba(0, 240, 255, 0.8));
 }
 .brand-text, .mlab-brand-text, .brand-name {

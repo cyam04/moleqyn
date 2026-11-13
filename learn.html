@@ -11,13 +11,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <script>
     (function () {
-      var saved = localStorage.getItem('moleqyn_theme') || localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme') || localStorage.getItem('mlab_theme');
+      var saved = localStorage.getItem('moleqyn_theme') || localStorage.getItem('mlab_theme') || localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
       if (saved === 'light' || saved === 'day') {
         document.documentElement.setAttribute('data-theme', 'day');
+        document.documentElement.setAttribute('data-mode', 'light');
         document.documentElement.classList.add('light-mode');
-      } else {
-        document.documentElement.removeAttribute('data-theme');
+        document.documentElement.classList.remove('dark-mode');
+      } else if (saved === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.documentElement.setAttribute('data-mode', 'dark');
         document.documentElement.classList.remove('light-mode');
+        document.documentElement.classList.add('dark-mode');
       }
     })();
   </script>
@@ -161,10 +165,10 @@
       filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.45));
       transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.35s ease;
       flex-shrink: 0;
-      transform: translateY(-1.5px);
+      transform: none;
     }
     .brand:hover .brand-logo {
-      transform: translateY(-1.5px) rotate(15deg) scale(1.1);
+      transform: rotate(15deg) scale(1.1);
       filter: drop-shadow(0 0 16px rgba(0, 240, 255, 0.8));
     }
 
@@ -5352,42 +5356,7 @@
 
     // Theme sync & initial load logic
     document.addEventListener('DOMContentLoaded', () => {
-      // Bulletproof Theme Toggle for learn.html
-      // Theme button initialization & sync
-      const themeBtn = document.getElementById('themeBtn');
-      if (themeBtn) {
-        const isLight = document.documentElement.classList.contains('light-mode') || document.documentElement.getAttribute('data-theme') === 'day';
-        themeBtn.textContent = isLight ? '🌙' : '☀️';
-        themeBtn.title = isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode';
 
-        if (!themeBtn._hasSharedThemeListener) {
-          themeBtn._hasSharedThemeListener = true;
-          themeBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const currentIsLight = document.documentElement.classList.contains('light-mode') || document.documentElement.getAttribute('data-theme') === 'day';
-            const willBeLight = !currentIsLight;
-            if (willBeLight) {
-              document.documentElement.setAttribute('data-theme', 'day');
-              document.documentElement.classList.add('light-mode');
-              document.documentElement.classList.remove('dark-mode');
-              localStorage.setItem('moleqyn_theme', 'light');
-              localStorage.setItem('ml-theme', 'light');
-              localStorage.setItem('mlab-theme', 'light');
-              localStorage.setItem('mlab_theme', 'day');
-            } else {
-              document.documentElement.removeAttribute('data-theme');
-              document.documentElement.classList.remove('light-mode');
-              document.documentElement.classList.add('dark-mode');
-              localStorage.setItem('moleqyn_theme', 'dark');
-              localStorage.setItem('ml-theme', 'dark');
-              localStorage.setItem('mlab-theme', 'dark');
-              localStorage.setItem('mlab_theme', 'dark');
-            }
-            themeBtn.textContent = willBeLight ? '🌙' : '☀️';
-            themeBtn.title = willBeLight ? 'Switch to Dark Mode' : 'Switch to Light Mode';
-          });
-        }
-      }
 
       // Mobile navigation drawer toggle for learn.html
       const mobileBtn = document.getElementById('learnMobileBtn');

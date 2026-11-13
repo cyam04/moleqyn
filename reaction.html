@@ -1,7 +1,23 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
+  <script>
+    (function () {
+      var saved = localStorage.getItem('moleqyn_theme') || localStorage.getItem('mlab_theme') || localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
+      if (saved === 'light' || saved === 'day') {
+        document.documentElement.setAttribute('data-theme', 'day');
+        document.documentElement.setAttribute('data-mode', 'light');
+        document.documentElement.classList.add('light-mode');
+        document.documentElement.classList.remove('dark-mode');
+      } else if (saved === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.documentElement.setAttribute('data-mode', 'dark');
+        document.documentElement.classList.remove('light-mode');
+        document.documentElement.classList.add('dark-mode');
+      }
+    })();
+  </script>
+<meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Moleqyn | Universal Chemical Reaction Lab &amp; AI Predictor</title>
   <link rel="stylesheet" href="css/pages.css"/>
@@ -9,15 +25,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
 
-  <script>
-    (function () {
-      var saved = localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
-      if (saved === 'light') {
-        document.documentElement.setAttribute('data-theme', 'day');
-        document.documentElement.classList.add('light-mode');
-      }
-    })();
-  </script>
+  
 
   <style>
     :root {
@@ -102,9 +110,9 @@
       filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.45));
       transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.35s ease;
       flex-shrink: 0;
-      transform: translateY(-1.5px);
+      transform: none;
     }
-    .mlab-brand:hover .brand-logo { transform: translateY(-1.5px) rotate(15deg) scale(1.1); filter: drop-shadow(0 0 16px rgba(0, 240, 255, 0.8)); }
+    .mlab-brand:hover .brand-logo { transform: rotate(15deg) scale(1.1); filter: drop-shadow(0 0 16px rgba(0, 240, 255, 0.8)); }
     .mlab-brand-text {
       font-family: var(--font-display);
       font-size: 1.42rem;

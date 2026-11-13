@@ -6,35 +6,63 @@
 (function () {
   'use strict';
 
-  /* ── Unified Theme synchronization (sets BOTH data-theme="day" & class="light-mode") ── */
+  /* ── Unified Theme synchronization (sets BOTH data-theme="day"/"dark" & class="light-mode"/"dark-mode") ── */
   function applyTheme(isLight) {
     if (isLight) {
       document.documentElement.classList.add('light-mode');
+      document.documentElement.classList.remove('dark-mode');
       document.documentElement.setAttribute('data-theme', 'day');
+      document.documentElement.setAttribute('data-mode', 'light');
+      if (document.body) {
+        document.body.classList.add('light-mode');
+        document.body.classList.remove('dark-mode');
+      }
     } else {
       document.documentElement.classList.remove('light-mode');
-      document.documentElement.removeAttribute('data-theme');
+      document.documentElement.classList.add('dark-mode');
+      document.documentElement.setAttribute('data-theme', 'dark');
+      document.documentElement.setAttribute('data-mode', 'dark');
+      if (document.body) {
+        document.body.classList.remove('light-mode');
+        document.body.classList.add('dark-mode');
+      }
     }
+    // Update all theme buttons in the page
+    const themeBtns = document.querySelectorAll('#mlabThemeBtn, #themeBtn, #themeToggleBtn, #btn-theme, .mlab-theme-btn, .theme-toggle, .theme-toggle-btn');
+    themeBtns.forEach(function (btn) {
+      btn.textContent = isLight ? '🌙' : '☀️';
+      btn.title = isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode';
+      btn.setAttribute('aria-label', isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode');
+    });
+    try {
+      window.dispatchEvent(new CustomEvent('moleqynthemechange', { detail: { isLight: isLight } }));
+    } catch (e) {}
   }
 
   const savedTheme = localStorage.getItem('moleqyn_theme') || localStorage.getItem('mlab_theme') || localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
   if (savedTheme === 'light' || savedTheme === 'day') {
     applyTheme(true);
+  } else if (savedTheme === 'dark') {
+    applyTheme(false);
   }
 
   function setupThemeToggles() {
-    const themeBtns = document.querySelectorAll('#mlabThemeBtn, #themeBtn, #btn-theme, .mlab-theme-btn, .theme-toggle');
+    const themeBtns = document.querySelectorAll('#mlabThemeBtn, #themeBtn, #themeToggleBtn, #btn-theme, .mlab-theme-btn, .theme-toggle, .theme-toggle-btn');
     const isLightNow = document.documentElement.classList.contains('light-mode') || document.documentElement.getAttribute('data-theme') === 'day';
     themeBtns.forEach(function (btn) {
       btn.textContent = isLightNow ? '🌙' : '☀️';
+      btn.title = isLightNow ? 'Switch to Dark Mode' : 'Switch to Light Mode';
+      btn.setAttribute('aria-label', isLightNow ? 'Switch to Dark Mode' : 'Switch to Light Mode');
       if (btn._hasSharedThemeListener) return;
       btn._hasSharedThemeListener = true;
       btn.addEventListener('click', function (e) {
-        if (e) e.preventDefault();
+        if (e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
         const currentlyLight = document.documentElement.classList.contains('light-mode') || document.documentElement.getAttribute('data-theme') === 'day';
         const willBeLight = !currentlyLight;
         applyTheme(willBeLight);
-        themeBtns.forEach(function (b) { b.textContent = willBeLight ? '🌙' : '☀️'; });
         localStorage.setItem('moleqyn_theme', willBeLight ? 'light' : 'dark');
         localStorage.setItem('ml-theme', willBeLight ? 'light' : 'dark');
         localStorage.setItem('mlab-theme', willBeLight ? 'light' : 'dark');
@@ -42,6 +70,14 @@
       });
     });
   }
+
+  // Cross-tab theme sync
+  window.addEventListener('storage', function (e) {
+    if (e.key === 'moleqyn_theme' || e.key === 'mlab_theme' || e.key === 'mlab-theme' || e.key === 'ml-theme') {
+      const isL = e.newValue === 'light' || e.newValue === 'day';
+      applyTheme(isL);
+    }
+  });
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', setupThemeToggles);

@@ -1,7 +1,23 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
+  <script>
+    (function () {
+      var saved = localStorage.getItem('moleqyn_theme') || localStorage.getItem('mlab_theme') || localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
+      if (saved === 'light' || saved === 'day') {
+        document.documentElement.setAttribute('data-theme', 'day');
+        document.documentElement.setAttribute('data-mode', 'light');
+        document.documentElement.classList.add('light-mode');
+        document.documentElement.classList.remove('dark-mode');
+      } else if (saved === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.documentElement.setAttribute('data-mode', 'dark');
+        document.documentElement.classList.remove('light-mode');
+        document.documentElement.classList.add('dark-mode');
+      }
+    })();
+  </script>
+<meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Moleqyn | Experiment Library - NCERT &amp; CBSE Virtual Practicals</title>
   <link rel="stylesheet" href="css/pages.css"/>
@@ -816,16 +832,7 @@
     }
   </style>
 
-  <script>
-    /* Theme sync head script */
-    (function () {
-      var saved = localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
-      if (saved === 'light') {
-        document.documentElement.setAttribute('data-theme', 'day');
-        document.documentElement.classList.add('light-mode');
-      }
-    })();
-  </script>
+  
 </head>
 
 <body>

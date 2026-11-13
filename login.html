@@ -1,30 +1,28 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!-- MOLEQYN STUDENT AUTHENTICATION PORTAL -->
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Moleqyn | Student Authentication &amp; Batch Login</title>
   <script>
     (function () {
-      var saved = localStorage.getItem('mlab_theme') || localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
-      if (saved === 'day' || saved === 'light') {
+      var saved = localStorage.getItem('moleqyn_theme') || localStorage.getItem('mlab_theme') || localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
+      if (saved === 'light' || saved === 'day') {
         document.documentElement.setAttribute('data-theme', 'day');
+        document.documentElement.setAttribute('data-mode', 'light');
         document.documentElement.classList.add('light-mode');
-      }
-      // Purge legacy Service Worker cache
-      if ('caches' in window) {
-        caches.keys().then(function(keys) {
-          keys.forEach(function(k) {
-            if (k.startsWith('moleqyn-cache-v') && k !== 'moleqyn-cache-v6') {
-              caches.delete(k);
-            }
-          });
-        });
+        document.documentElement.classList.remove('dark-mode');
+      } else if (saved === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.documentElement.setAttribute('data-mode', 'dark');
+        document.documentElement.classList.remove('light-mode');
+        document.documentElement.classList.add('dark-mode');
       }
     })();
   </script>
+<meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Moleqyn | Student Authentication &amp; Batch Login</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link

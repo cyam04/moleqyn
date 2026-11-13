@@ -2,20 +2,28 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
+  <script>
+    (function () {
+      var saved = localStorage.getItem('moleqyn_theme') || localStorage.getItem('mlab_theme') || localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
+      if (saved === 'light' || saved === 'day') {
+        document.documentElement.setAttribute('data-theme', 'day');
+        document.documentElement.setAttribute('data-mode', 'light');
+        document.documentElement.classList.add('light-mode');
+        document.documentElement.classList.remove('dark-mode');
+      } else if (saved === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.documentElement.setAttribute('data-mode', 'dark');
+        document.documentElement.classList.remove('light-mode');
+        document.documentElement.classList.add('dark-mode');
+      }
+    })();
+  </script>
+<meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description"
     content="Contact Moleqyn – Connect with the educational support team, request school pilot workshops, report simulation issues, or ask chemistry curriculum questions." />
   <title>Moleqyn | Contact & Support</title>
-  <script>
-    (function () {
-      var saved = localStorage.getItem('mlab_theme') || localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
-      if (saved === 'day' || saved === 'light') {
-        document.documentElement.setAttribute('data-theme', 'day');
-        document.documentElement.classList.add('light-mode');
-      }
-    })();
-  </script>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -430,15 +438,7 @@
       margin: 12px 0 20px;
     }
   </style>
-  <script>
-    (function () {
-      var saved = localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
-      if (saved === 'light') {
-        document.documentElement.setAttribute('data-theme', 'day');
-        document.documentElement.classList.add('light-mode');
-      }
-    })();
-  </script>
+  
 </head>
 
 <body class="page-body">
