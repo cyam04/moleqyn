@@ -12,18 +12,31 @@
   const STORAGE_KEY_URL = 'moleqyn_supabase_url';
   const STORAGE_KEY_ANON = 'moleqyn_supabase_anon_key';
 
-  // Default placeholder (configurable from Admin Hub)
-  const DEFAULT_SUPABASE_URL = '';
-  const DEFAULT_SUPABASE_ANON = '';
+  // Default placeholder (configured with your official Moleqyn Supabase project)
+  const DEFAULT_SUPABASE_URL = 'https://edttcbudtaiactyhwjlm.supabase.co';
+  const DEFAULT_SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkdHRjYnVkdGFpYWN0eWh3amxtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ1Mjk1MzEsImV4cCI6MjExMDEwNTUzMX0.-aXAY-CdXJGgMKbrj9f5j2YpaWhyEyl5Mtj1p87aCEM';
+  const DEFAULT_SUPABASE_PUBLISHABLE = 'sb_publishable_CSpo2zW4dc87d85Jgi19Kg_0z2fflu2';
 
   let _client = null;
 
+  function cleanSupabaseUrl(url) {
+    if (!url) return '';
+    return url.trim().replace(/\/rest\/v1\/?$/, '').replace(/\/+$/, '');
+  }
+
+  function cleanAnonKey(key) {
+    if (!key) return '';
+    return key.trim().replace(/^_+/, '');
+  }
+
   function getSupabaseUrl() {
-    return (localStorage.getItem(STORAGE_KEY_URL) || '').trim();
+    const raw = localStorage.getItem(STORAGE_KEY_URL) || DEFAULT_SUPABASE_URL || '';
+    return cleanSupabaseUrl(raw);
   }
 
   function getSupabaseAnonKey() {
-    return (localStorage.getItem(STORAGE_KEY_ANON) || '').trim();
+    const raw = localStorage.getItem(STORAGE_KEY_ANON) || DEFAULT_SUPABASE_ANON || '';
+    return cleanAnonKey(raw);
   }
 
   function isConfigured() {
