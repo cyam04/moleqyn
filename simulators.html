@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
         rel="stylesheet" />
     <script>
         (function () {
@@ -240,7 +240,9 @@
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            transition: transform 0.25s ease;
+            line-height: 1;
+            vertical-align: middle;
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .brand:hover {
@@ -250,7 +252,8 @@
         .brand-logo {
             width: 30px;
             height: 30px;
-            display: inline-block;
+            display: block;
+            object-fit: contain;
             vertical-align: middle;
             filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.45));
             transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.35s ease;
@@ -264,15 +267,19 @@
 
         .brand-text {
             font-family: var(--font-display);
-            font-size: 1.45rem;
+            font-size: 1.42rem;
             font-weight: 800;
-            letter-spacing: -0.5px;
+            letter-spacing: -0.03em;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
             background: linear-gradient(135deg, #ffffff 45%, #00f0ff 100%);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
             color: transparent;
-            display: inline-block;
+            margin: 0;
+            padding: 0;
         }
 
         :root[data-theme="day"] .brand-text {

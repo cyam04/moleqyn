@@ -63,10 +63,14 @@ html.light-mode body {
 button,input,select{font:inherit}button{cursor:pointer}
 
 /* ===== UNIFIED Moleqyn FLOATING NAVBAR ===== */
-.mlab-nav{position:fixed;top:15px;left:50%;transform:translateX(-50%);width:95%;max-width:1250px;background:var(--glass-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;justify-content:space-between;align-items:center;padding:10px 22px;border-radius:40px;border:1px solid var(--glass-border);z-index:1000;box-shadow:0 10px 30px rgba(0,0,0,0.2);transition:all 0.3s ease;}
-.mlab-nav.scrolled{top:8px;background:var(--nav-bg-scrolled);box-shadow:0 15px 40px rgba(0,0,0,0.3);border-color:var(--primary);}
-.mlab-brand{font-family:var(--font-display);font-size:1.4rem;font-weight:800;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:6px}
-.mlab-brand span{color:var(--primary);}
+.mlab-nav{position:fixed;top:18px;left:50%;transform:translateX(-50%);width:95%;max-width:1220px;background:var(--glass-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;justify-content:space-between;align-items:center;padding:10px 24px;border-radius:999px;border:1px solid var(--glass-border);z-index:1000;box-shadow:0 10px 30px rgba(0,0,0,0.2);transition:all 0.35s cubic-bezier(0.16,1,0.3,1);}
+.mlab-nav.scrolled{top:12px;background:var(--nav-bg-scrolled);box-shadow:0 15px 40px rgba(0,0,0,0.3);border-color:var(--primary);}
+.mlab-brand{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--font-display);font-size:1.42rem;font-weight:800;letter-spacing:-0.03em;line-height:1;vertical-align:middle;transition:transform 0.25s cubic-bezier(0.16,1,0.3,1);}
+.mlab-brand:hover{transform:scale(1.02);}
+.brand-logo{width:30px;height:30px;display:block;object-fit:contain;vertical-align:middle;filter:drop-shadow(0 0 8px rgba(0,240,255,0.45));transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1),filter 0.35s ease;flex-shrink:0;}
+.mlab-brand:hover .brand-logo{transform:rotate(15deg) scale(1.1);filter:drop-shadow(0 0 16px rgba(0,240,255,0.8));}
+.mlab-brand-text{font-family:var(--font-display);font-size:1.42rem;font-weight:800;letter-spacing:-0.03em;line-height:1;display:inline-flex;align-items:center;background:linear-gradient(135deg,#ffffff 45%,#00f0ff 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;margin:0;padding:0;}
+html.light-mode .mlab-brand-text,:root[data-theme="day"] .mlab-brand-text{background:linear-gradient(135deg,#0f172a 45%,#0284c7 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;}
 .mlab-links{display:flex;list-style:none;align-items:center;gap:0.3rem;margin:0;padding:0}
 .mlab-links>li>a{color:var(--muted);text-decoration:none;font-size:0.86rem;font-weight:500;padding:6px 12px;border-radius:20px;transition:all 0.2s;display:block;}
 .mlab-links>li>a:hover,.mlab-links>li>a.active{color:var(--primary);background:var(--primary-glow);}
@@ -278,7 +282,7 @@ button,input,select{font:inherit}button{cursor:pointer}
 
 <!-- UNIFIED FLOATING NAVBAR -->
 <nav class="mlab-nav" id="mlabNav">
-  <a href="index.html" class="mlab-brand" aria-label="Moleqyn Home"><img src="favicon.svg" alt="Moleqyn Logo" class="brand-logo" width="28" height="28"><span class="mlab-brand-text">Moleqyn</span></a>
+  <a href="index.html" class="mlab-brand" aria-label="Moleqyn Home"><img src="favicon.svg" alt="Moleqyn Logo" class="brand-logo" width="30" height="30"><span class="mlab-brand-text">Moleqyn</span></a>
   <ul class="mlab-links">
     <li><a href="index.html">Home</a></li>
     <li class="mlab-dropdown">
