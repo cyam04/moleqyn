@@ -17,7 +17,7 @@
     }
   }
 
-  const savedTheme = localStorage.getItem('mlab_theme') || localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
+  const savedTheme = localStorage.getItem('moleqyn_theme') || localStorage.getItem('mlab_theme') || localStorage.getItem('mlab-theme') || localStorage.getItem('ml-theme');
   if (savedTheme === 'light' || savedTheme === 'day') {
     applyTheme(true);
   }
@@ -35,6 +35,7 @@
         const willBeLight = !currentlyLight;
         applyTheme(willBeLight);
         themeBtns.forEach(function (b) { b.textContent = willBeLight ? '🌙' : '☀️'; });
+        localStorage.setItem('moleqyn_theme', willBeLight ? 'light' : 'dark');
         localStorage.setItem('ml-theme', willBeLight ? 'light' : 'dark');
         localStorage.setItem('mlab-theme', willBeLight ? 'light' : 'dark');
         localStorage.setItem('mlab_theme', willBeLight ? 'day' : 'dark');

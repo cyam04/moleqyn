@@ -150,6 +150,31 @@ html.light-mode .footer-bottom, :root[data-theme="day"] .footer-bottom {
 .footer-bottom-links a:hover {
   color: var(--accent-primary, #00f0ff);
 }
+
+/* =========================================
+   ACCESSIBILITY & FOCUS-VISIBLE SYSTEM
+   ========================================= */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent-primary, #00f0ff) !important;
+  outline-offset: 3px !important;
+}
+:root[data-theme="day"] a:focus-visible,
+:root[data-theme="day"] button:focus-visible,
+:root[data-theme="day"] input:focus-visible,
+:root[data-theme="day"] select:focus-visible,
+:root[data-theme="day"] textarea:focus-visible,
+html.light-mode a:focus-visible,
+html.light-mode button:focus-visible,
+html.light-mode input:focus-visible,
+html.light-mode select:focus-visible,
+html.light-mode textarea:focus-visible {
+  outline: 2px solid #0284c7 !important;
+  outline-offset: 3px !important;
+}
 .page-body { min-height: 100vh; background: var(--bg-base); color: var(--text-primary); }
 
 /* ── Section wrapper ── */
