@@ -154,32 +154,34 @@
     }
 
     .brand-logo {
-      width: 30px;
-      height: 30px;
-      display: inline-block;
-      vertical-align: middle;
+      width: 28px;
+      height: 28px;
+      display: block;
       filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.45));
       transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.35s ease;
       flex-shrink: 0;
+      transform: translateY(-1.5px);
     }
     .brand:hover .brand-logo {
-      transform: rotate(15deg) scale(1.1);
+      transform: translateY(-1.5px) rotate(15deg) scale(1.1);
       filter: drop-shadow(0 0 16px rgba(0, 240, 255, 0.8));
     }
 
     .brand-text, .brand-name {
       font-family: var(--font-display);
-      font-size: 1.45rem;
+      font-size: 1.42rem;
       font-weight: 800;
       letter-spacing: -0.03em;
-      line-height: normal;
-      display: inline-block;
-      vertical-align: middle;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
       background: linear-gradient(135deg, #ffffff 45%, #00f0ff 100%);
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
       color: transparent;
+      margin: 0;
+      padding: 0;
     }
 
     html.light-mode .brand-text, html.light-mode .brand-name,
@@ -2426,7 +2428,7 @@
   <!-- 1. TOP NAVBAR -->
   <header class="top-navbar" id="learnTopNavbar">
     <a href="index.html" class="brand" aria-label="Moleqyn Home">
-      <img src="favicon.svg" alt="Moleqyn Logo" class="brand-logo" width="30" height="30">
+      <img src="favicon.svg" alt="Moleqyn Logo" class="brand-logo" width="28" height="28">
       <span class="brand-text">Moleqyn</span>
     </a>
 
