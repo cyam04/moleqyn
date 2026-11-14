@@ -1642,10 +1642,12 @@
         try {
           const client = window.MoleqynCloud.getClient();
           if (client && client.auth) {
+            const currentRedirect = window.location.origin + window.location.pathname;
             const { data, error } = await client.auth.signInWithOtp({
               email: val,
               options: {
-                shouldCreateUser: true
+                shouldCreateUser: true,
+                emailRedirectTo: currentRedirect
               }
             });
 
@@ -1726,9 +1728,13 @@
         try {
           const client = window.MoleqynCloud.getClient();
           if (client && client.auth) {
+            const currentRedirect = window.location.origin + window.location.pathname;
             const { error } = await client.auth.signInWithOtp({
               email: val,
-              options: { shouldCreateUser: true }
+              options: {
+                shouldCreateUser: true,
+                emailRedirectTo: currentRedirect
+              }
             });
             if (!error) {
               showToast(`✓ New real 6-digit code dispatched to ${val}!`, 'success');
@@ -1847,8 +1853,12 @@
       verifyBtn.innerHTML = origBtnHtml;
       verifyBtn.disabled = false;
 
-      // Check if existing student with THIS email exists in local registry or cloud
       const emailClean = emailVal.toLowerCase().trim();
+      await handlePostVerification(emailClean);
+    }
+
+    async function handlePostVerification(emailClean) {
+      // Check if existing student with THIS email exists in local registry or cloud
       let existing = null;
 
       // A. Check active local user session
@@ -1892,9 +1902,12 @@
       }
 
       // First-time student: Show Step 3 Onboarding (Ask Name & Target Batch)
-      document.getElementById('otpStep').classList.add('hidden');
+      const emailStep = document.getElementById('emailStep');
+      const otpStep = document.getElementById('otpStep');
+      if (emailStep) emailStep.classList.add('hidden');
+      if (otpStep) otpStep.classList.add('hidden');
       const onboardStep = document.getElementById('onboardStep');
-      onboardStep.classList.remove('hidden');
+      if (onboardStep) onboardStep.classList.remove('hidden');
 
       // Pre-fill verified email
       const onboardEmailInput = document.getElementById('onboardEmail');
@@ -2298,10 +2311,60 @@
       } catch (e) {}
     }
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', checkActiveLoginSession);
-    } else {
+    async function checkIncomingAuthCallback() {
+      try {
+        const client = window.MoleqynCloud && typeof window.MoleqynCloud.getClient === 'function' ? window.MoleqynCloud.getClient() : null;
+        if (!client || !client.auth) return;
+
+        // A. PKCE / Email confirmation hash in URL (#access_token=... or #type=signup)
+        const hash = window.location.hash || '';
+        if (hash.includes('access_token=') || hash.includes('type=')) {
+          const { data, error } = await client.auth.getSession();
+          if (data && data.session && data.session.user) {
+            const user = data.session.user;
+            const userEmail = (user.email || '').toLowerCase().trim();
+            if (userEmail) {
+              window.history.replaceState({}, document.title, window.location.pathname);
+              showToast(`✓ Email confirmed successfully!`, 'success');
+              pendingUserEmail = userEmail;
+              await handlePostVerification(userEmail);
+              return;
+            }
+          }
+        }
+
+        // B. Search param query token_hash (?token_hash=...&type=signup or email)
+        const params = new URLSearchParams(window.location.search);
+        const tokenHash = params.get('token_hash');
+        const authType = params.get('type') || 'email';
+        if (tokenHash) {
+          const { data, error } = await client.auth.verifyOtp({
+            token_hash: tokenHash,
+            type: authType
+          });
+          if (!error && data && data.user) {
+            const userEmail = (data.user.email || '').toLowerCase().trim();
+            window.history.replaceState({}, document.title, window.location.pathname);
+            showToast(`✓ Email confirmed successfully!`, 'success');
+            pendingUserEmail = userEmail;
+            await handlePostVerification(userEmail);
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn('Auth callback handling notice:', e);
+      }
+    }
+
+    async function initLoginPage() {
+      await checkIncomingAuthCallback();
       checkActiveLoginSession();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initLoginPage);
+    } else {
+      initLoginPage();
     }
   </script>
   <script src="js/shared-nav.js"></script>
