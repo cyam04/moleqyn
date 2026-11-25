@@ -31,9 +31,6 @@
 
   function getSupabaseUrl() {
     const customUrl = localStorage.getItem(STORAGE_KEY_URL);
-    if (customUrl) {
-      return cleanSupabaseUrl(customUrl);
-    }
     // Use same-origin Vercel proxy (/sb) on deployed HTTPS domains to bypass ISP DNS blocks on *.supabase.co
     const isHostedProd =
       typeof window !== 'undefined' &&
@@ -41,8 +38,11 @@
       (window.location.protocol === 'https:' || window.location.protocol === 'http:') &&
       window.location.hostname !== 'localhost' &&
       window.location.hostname !== '127.0.0.1';
-    if (isHostedProd) {
+    if (isHostedProd && (!customUrl || customUrl.includes('edttcbudtaiactyhwjlm.supabase.co'))) {
       return window.location.origin + '/sb';
+    }
+    if (customUrl) {
+      return cleanSupabaseUrl(customUrl);
     }
     return cleanSupabaseUrl(DEFAULT_SUPABASE_URL || '');
   }

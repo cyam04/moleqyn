@@ -80,8 +80,10 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const req = event.request;
 
-  // Only handle HTTP/HTTPS GET requests
+  // Only handle HTTP/HTTPS GET requests, and never intercept Supabase proxy (/sb/) requests
   if (req.method !== 'GET') return;
+  const reqUrl = new URL(req.url);
+  if (reqUrl.pathname.startsWith('/sb/') || reqUrl.pathname.includes('/sb/')) return;
 
   // Network-first navigation handler: try network first; on network failure, return precached HTML
   if (req.mode === 'navigate') {
@@ -155,8 +157,7 @@ self.addEventListener('fetch', (event) => {
   }
 
   // For authentication pages and scripts, always fetch fresh from network
-  const reqUrl = new URL(req.url);
-  if (reqUrl.pathname.includes('login') || reqUrl.pathname.includes('firebase') || reqUrl.pathname.includes('admin')) {
+  if (reqUrl.pathname.includes('login') || reqUrl.pathname.includes('firebase') || reqUrl.pathname.includes('supabase') || reqUrl.pathname.includes('admin')) {
     event.respondWith(
       fetch(req)
         .then((networkResponse) => {
