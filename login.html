@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <!-- MOLEQYN STUDENT AUTHENTICATION PORTAL -->
 <html lang="en">
 
@@ -1642,13 +1642,13 @@
         try {
           const client = window.MoleqynCloud.getClient();
           if (client && client.auth) {
-            const currentRedirect = window.location.origin + window.location.pathname;
+            const otpOptions = { shouldCreateUser: true };
+            if (window.location.protocol.startsWith('http')) {
+              otpOptions.emailRedirectTo = window.location.origin + window.location.pathname;
+            }
             const { data, error } = await client.auth.signInWithOtp({
               email: val,
-              options: {
-                shouldCreateUser: true,
-                emailRedirectTo: currentRedirect
-              }
+              options: otpOptions
             });
 
             if (!error) {
@@ -1672,15 +1672,33 @@
               return;
             } else {
               console.warn('Supabase signInWithOtp notice:', error.message);
+              btn.innerHTML = origBtnHtml;
+              btn.disabled = false;
+              playBeep('error');
+              showToast(`❌ OTP Dispatch Failed: ${error.message}`, 'error');
+              return;
             }
           }
         } catch (sbErr) {
           console.warn('Supabase auth exception:', sbErr);
+          btn.innerHTML = origBtnHtml;
+          btn.disabled = false;
+          playBeep('error');
+          showToast(`❌ Network/Auth Error: ${sbErr.message || 'Could not reach auth server.'}`, 'error');
+          return;
         }
       }
 
-      // 2. Seamless Local Fallback (if Supabase not configured yet or offline)
-      activateLocalEmailOtp(val, `⚡ Verification code generated for ${val}`);
+      // 2. Custom Email Webhook Fallback (only if Supabase is not configured)
+      const mailWebhook = localStorage.getItem('moleqyn_email_webhook') || localStorage.getItem('moleqyn_webhook_url');
+      if (mailWebhook && mailWebhook.startsWith('http')) {
+        activateLocalEmailOtp(val, `✓ 6-digit OTP code sent to ${val}! Check your Gmail inbox.`);
+      } else {
+        btn.innerHTML = origBtnHtml;
+        btn.disabled = false;
+        playBeep('error');
+        showToast('❌ Email OTP service is not configured or unreachable. Please check your connection.', 'error');
+      }
     }
 
     function editEmail() {
@@ -1728,28 +1746,44 @@
         try {
           const client = window.MoleqynCloud.getClient();
           if (client && client.auth) {
-            const currentRedirect = window.location.origin + window.location.pathname;
+            const otpOptions = { shouldCreateUser: true };
+            if (window.location.protocol.startsWith('http')) {
+              otpOptions.emailRedirectTo = window.location.origin + window.location.pathname;
+            }
             const { error } = await client.auth.signInWithOtp({
               email: val,
-              options: {
-                shouldCreateUser: true,
-                emailRedirectTo: currentRedirect
-              }
+              options: otpOptions
             });
             if (!error) {
               showToast(`✓ New real 6-digit code dispatched to ${val}!`, 'success');
               startOtpCountdown();
               if (resendBtn) resendBtn.textContent = 'Resend Code';
               return;
+            } else {
+              playBeep('error');
+              showToast(`❌ Resend Failed: ${error.message}`, 'error');
+              if (resendBtn) {
+                resendBtn.disabled = false;
+                resendBtn.textContent = 'Resend Code';
+              }
+              return;
             }
           }
-        } catch (e) {}
+        } catch (e) {
+          playBeep('error');
+          showToast(`❌ Network/Auth Error: ${e.message || 'Could not reach auth server.'}`, 'error');
+          if (resendBtn) {
+            resendBtn.disabled = false;
+            resendBtn.textContent = 'Resend Code';
+          }
+          return;
+        }
       }
 
-      // Resend OTP dispatch
-      generatedEmailOTP = Math.floor(100000 + Math.random() * 900000).toString();
+      // Resend OTP dispatch via webhook if configured
       const mailWebhook = localStorage.getItem('moleqyn_email_webhook') || localStorage.getItem('moleqyn_webhook_url');
       if (mailWebhook && mailWebhook.startsWith('http')) {
+        generatedEmailOTP = Math.floor(100000 + Math.random() * 900000).toString();
         try {
           fetch(mailWebhook, {
             method: 'POST',
@@ -1763,10 +1797,17 @@
             })
           }).catch(() => {});
         } catch (e) {}
+        showToast(`✓ New 6-digit verification code dispatched to ${val}! Check your inbox.`, 'success');
+        startOtpCountdown();
+        if (resendBtn) resendBtn.textContent = 'Resend Code';
+      } else {
+        playBeep('error');
+        showToast('❌ Could not resend OTP: Email service unreachable.', 'error');
+        if (resendBtn) {
+          resendBtn.disabled = false;
+          resendBtn.textContent = 'Resend Code';
+        }
       }
-      showToast(`✓ New 6-digit verification code dispatched to ${val}! Check your inbox.`, 'success');
-      startOtpCountdown();
-      if (resendBtn) resendBtn.textContent = 'Resend Code';
     }
 
     function handleOtpInput(index) {
@@ -1884,9 +1925,9 @@
       // C. Check Supabase Cloud Database if student registered from another device
       if (!existing && window.MoleqynCloud && typeof window.MoleqynCloud.fetchStudents === 'function' && window.MoleqynCloud.isConfigured()) {
         try {
-          const cloudRes = await window.MoleqynCloud.fetchStudents();
-          if (cloudRes && cloudRes.success && Array.isArray(cloudRes.data)) {
-            const foundCloud = cloudRes.data.find(s => s.email && s.email.toLowerCase().trim() === emailClean);
+          const cloudStudents = await window.MoleqynCloud.fetchStudents();
+          if (Array.isArray(cloudStudents)) {
+            const foundCloud = cloudStudents.find(s => s.email && s.email.toLowerCase().trim() === emailClean);
             if (foundCloud) existing = foundCloud;
           }
         } catch (e) {

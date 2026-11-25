@@ -30,8 +30,21 @@
   }
 
   function getSupabaseUrl() {
-    const raw = localStorage.getItem(STORAGE_KEY_URL) || DEFAULT_SUPABASE_URL || '';
-    return cleanSupabaseUrl(raw);
+    const customUrl = localStorage.getItem(STORAGE_KEY_URL);
+    if (customUrl) {
+      return cleanSupabaseUrl(customUrl);
+    }
+    // Use same-origin Vercel proxy (/sb) on deployed HTTPS domains to bypass ISP DNS blocks on *.supabase.co
+    const isHostedProd =
+      typeof window !== 'undefined' &&
+      window.location &&
+      (window.location.protocol === 'https:' || window.location.protocol === 'http:') &&
+      window.location.hostname !== 'localhost' &&
+      window.location.hostname !== '127.0.0.1';
+    if (isHostedProd) {
+      return window.location.origin + '/sb';
+    }
+    return cleanSupabaseUrl(DEFAULT_SUPABASE_URL || '');
   }
 
   function getSupabaseAnonKey() {
@@ -42,7 +55,8 @@
   function isConfigured() {
     const url = getSupabaseUrl();
     const key = getSupabaseAnonKey();
-    return !!(url && key && url.includes('supabase.co') && !url.includes('moleqyn-db.supabase.co'));
+    const hasValidHost = url && (url.includes('supabase.co') || url.endsWith('/sb')) && !url.includes('moleqyn-db.supabase.co');
+    return !!(hasValidHost && key);
   }
 
   function getClient() {
@@ -55,8 +69,9 @@
       try {
         _client = window.supabase.createClient(url, key, {
           auth: {
-            persistSession: false,
-            autoRefreshToken: false
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: true
           }
         });
       } catch (err) {
