@@ -2129,7 +2129,10 @@
 
     function initGoogleIdentityServices() {
       if (window.google && google.accounts && google.accounts.id) {
-        const clientId = localStorage.getItem('moleqyn_google_client_id') || '425988188176-moleqyn-default.apps.googleusercontent.com';
+        const savedGoogleId = localStorage.getItem('moleqyn_google_client_id');
+        const clientId = (savedGoogleId && !savedGoogleId.includes('425988188176-moleqyn-default'))
+          ? savedGoogleId
+          : '169442387430-vmdf6fj5u0qjup09d07r9kree7lvt211.apps.googleusercontent.com';
         try {
           google.accounts.id.initialize({
             client_id: clientId,
