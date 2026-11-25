@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /admin.html
 
-Sitemap: https://moleqyn.education/sitemap.xml
+Sitemap: https://moleqyn.vercel.app/sitemap.xml
